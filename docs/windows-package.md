@@ -50,7 +50,7 @@ It replaces the generated `dist/Windows` folder on each build.
 This package hosts a world on the same PC. It does not connect remote PCs into
 one online kingdom. World state is saved under
 `%LOCALAPPDATA%\ThronesOfMyth\Saves`; closing the local server pauses simulation.
-See [the current playtest guide](playtest-0.4.md) for save and backup behavior.
+See [the current playtest guide](playtest-0.5.md) for save and backup behavior.
 The initial package is unsigned. Signing and a shared hosted backend come later.
 
 ## Validation still required on Windows

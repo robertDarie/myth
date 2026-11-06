@@ -100,6 +100,6 @@ test('migration archives the original schema-1 save before autosaves rotate its 
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).stone, 150);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 2);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 3);
   assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
 });

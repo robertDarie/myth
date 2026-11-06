@@ -11,7 +11,7 @@ positions locally and never chooses damage or rewards.
 `content.mjs` defines five civilizations, four commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 4
+`http.mjs` provides a small versioned development protocol. Snapshot version 5
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -76,8 +76,8 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 2 stores (and migrates schema 1 without resetting progression) queues, reserves, map state and sessions. A loader validates
-the save and falls back to backup, retaining a schema-1 migration archive; if both fail it preserves files and refuses to
+Save schema 3 stores (and migrates schemas 1/2 without resetting progression) queues, reserves, map state and sessions. A loader validates
+the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
 field orders while retaining positions and all progression. The package launcher
 uses a per-launch secret for its save-and-shutdown endpoint; that capability is
@@ -95,3 +95,17 @@ Detailed 0.4 institution behavior, production caps, recipes, research modifiers,
 guarantee rules and deferred systems are specified in
 [the city/economy design](city-and-economy-design.md). Summon results use server-side
 cryptographic randomness by default; deterministic RNG/clock injection is for tests.
+
+Version 0.5 separates a city's shared resources/queues from its independently
+controlled marches. The founding army retains legacy player fields for save/API
+compatibility; extra armies live under `marches`. `World.armies()` flattens these
+for simulation, and `owner()` resolves shared treasury, territory and technology.
+Only the owning session can direct a march; global training capacity includes
+all armies. Rewards are grouped by city to prevent multi-march duplication.
+
+`progression.mjs` defines ages, crew counts and per-hero skill/XP/star records.
+`marches.mjs` handles deployment, selection-scoped orders and loadout ownership.
+A second construction field runs concurrently only after the Builders' Lodge is
+completed. Both jobs are validated, saved, cancellable and eligible for alliance
+help. Hero records are the XP source of truth; rage and shields belong to each
+march and are cleared on restore. See [the progression design](skills-ages-and-marches.md).

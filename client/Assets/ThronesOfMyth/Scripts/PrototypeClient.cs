@@ -16,7 +16,9 @@ namespace ThronesOfMyth
         private string playerName, token, playerId, allianceName = "Dawnkeepers";
         private string status = "Start the local server, then establish your city.";
         private bool joining, processing, placeBeacon, focused;
-        private int civilization, tab, cityTab, selectedBuilding;
+        private int civilization, tab, cityTab, selectedBuilding, deployHeroIndex, deployTroopIndex;
+        private bool deployMythic;
+        private string activeMarchId, inspectedHeroId = "captain";
         private bool cityOverviewOpen;
         private string lastDrawId;
         private float revealUntil;
@@ -31,6 +33,8 @@ namespace ThronesOfMyth
         private readonly string[] tabs = { "Army", "City", "Heroes", "Alliance", "Journal" };
         private GUIStyle titleStyle, sectionStyle, noteStyle;
 
+        private ArmyData ActiveArmy => world == null || world.armies == null ? me : Array.Find(world.armies, a => a.id == activeMarchId) ?? me;
+        private static bool HasJob(QueueJob job) => job != null && !string.IsNullOrEmpty(job.id);
         private string SessionKey => "ThronesOfMyth.session." + serverUrl.TrimEnd('/') + "." + playerName.Trim();
         private void Awake()
         {
@@ -46,7 +50,7 @@ namespace ThronesOfMyth
             if (me == null) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { placeBeacon = false; selectedId = ""; cityOverviewOpen = false; }
             if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.H)) cameraControl?.Focus(me.homeX, me.homeZ);
-            if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(me.x, me.z);
+            if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
             if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.R)) Send("return");
             if (PointerOverUI() || Camera.main == null) return;
             if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1)) return;
@@ -60,6 +64,7 @@ namespace ThronesOfMyth
             if (marker != null)
             {
                 selectedId = marker.id; selectedKind = marker.kind; map.selectedId = selectedId;
+                if (marker.kind == "army" && Array.Exists(world.armies, a => a.id == marker.id && a.ownerId == playerId)) activeMarchId = marker.id;
                 if (Input.GetMouseButtonDown(1)) ActOnSelection();
             }
             else if (hit.collider.gameObject.name == "Ground")
@@ -98,8 +103,8 @@ namespace ThronesOfMyth
             if (me == null) { DrawStatus(); return; }
             GUI.Box(new Rect(8, 70, 302, Mathf.Max(160, Screen.height - 120)), GUIContent.none);
             GUILayout.BeginArea(new Rect(18, 80, 282, Mathf.Max(140, Screen.height - 142)));
-            GUILayout.Label(CivilizationName(me.civilization) + " · " + me.state, sectionStyle);
-            GUILayout.Label($"Health {me.health}/{me.maxHealth}   |   Army Lv {me.level}", noteStyle);
+            GUILayout.Label(CivilizationName(me.civilization) + " · " + ActiveArmy.state, sectionStyle);
+            GUILayout.Label($"Health {ActiveArmy.health}/{ActiveArmy.maxHealth}   |   Hero Lv {ActiveArmy.level}", noteStyle);
             int newTab = GUILayout.Toolbar(tab, tabs);
             if (newTab != tab) { tab = newTab; scroll = Vector2.zero; }
             scroll = GUILayout.BeginScrollView(scroll);
@@ -131,20 +136,29 @@ namespace ThronesOfMyth
         }
         private void DrawArmy()
         {
-            GUILayout.Label("Field army", sectionStyle);
-            GUILayout.Label($"{me.troops} mortal troops · {me.mythic} mythic units\nDamage {me.damage:F1} · March {me.speed:F1}\nKills {me.kills} · Experience {me.xp}", noteStyle);
-            if (GUILayout.Button("Focus army [Space]")) cameraControl?.Focus(me.x, me.z);
+            GUILayout.Label(me.ageName + " · " + world.armies.Length + " armies in kingdom", sectionStyle);
+            foreach (var march in world.armies)
+            {
+                if (march.ownerId != playerId) continue;
+                if (GUILayout.Button((march.id == ActiveArmy.id ? "▶ " : "") + HeroName(march.commanderId) + " · " + march.state)) activeMarchId = march.id;
+            }
+            GUILayout.Label("Selected march", sectionStyle);
+            GUILayout.Label($"{ActiveArmy.troops} mortal troops · {ActiveArmy.mythic} mythic units\nDamage {ActiveArmy.damage:F1} · March {ActiveArmy.speed:F1}\nRage {ActiveArmy.rage}/1000 · Shield {ActiveArmy.shield}\nLast skill: {ActiveArmy.lastSkill}", noteStyle);
+            if (GUILayout.Button("Focus army [Space]")) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
             if (GUILayout.Button("Return & recover [R]")) Send("return");
             if (GUILayout.Button("Stop current order")) Send("stop");
             GUILayout.Label($"City reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", noteStyle);
             DrawReinforce();
+            GUI.enabled = CanEditArmy && ActiveArmy.id != playerId && ActiveArmy.health >= ActiveArmy.maxHealth;
+            if (GUILayout.Button("Return selected march to reserves")) Send("disband-march");
+            GUI.enabled = true;
+            DrawDeployment();
             GUILayout.Space(8); GUILayout.Label("Nearby threats", sectionStyle);
             foreach (var camp in world.camps)
                 if (GUILayout.Button($"Lv {camp.level} · {camp.name}")) { Select(camp.id, "camp"); cameraControl?.Focus(camp.x, camp.z); }
             GUILayout.Label("Inspect a camp before attacking. High-level camps may require stronger armies or help from another player.", noteStyle);
         }
-        private bool HasConstruction => me.construction != null && !string.IsNullOrEmpty(me.construction.id);
-        private bool CanEditArmy => me != null && Vector2.Distance(new Vector2(me.x, me.z), new Vector2(me.homeX, me.homeZ)) < 2 && !me.hasOrder && me.recovery <= 0;
+        private bool CanEditArmy => me != null && Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2 && !ActiveArmy.hasOrder && ActiveArmy.recovery <= 0;
         private void DrawReinforce()
         {
             GUI.enabled = CanEditArmy && (me.reserveTroops > 0 || me.reserveMythic > 0);
@@ -170,15 +184,15 @@ namespace ThronesOfMyth
             foreach (var job in me.trainingQueue)
                 if (job.type == "train") queuedTroops += job.amount; else queuedMythic += job.amount;
             int cap = me.troopCapacity;
-            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.troops + me.reserveTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
-            if (HasConstruction) DrawJob(me.construction, JobName(me.construction), false);
+            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.deployedTroops + me.reserveTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
+            DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
-            GUI.enabled = me.trainingQueue.Length < 3 && me.troops + me.reserveTroops + queuedTroops + 5 <= cap && me.food >= 50 && me.gold >= 20;
+            GUI.enabled = me.trainingQueue.Length < 3 && me.deployedTroops + me.reserveTroops + queuedTroops + 5 <= cap && me.food >= 50 && me.gold >= 20;
             if (GUILayout.Button("Train 5 troops · " + Mathf.CeilToInt(me.trainingDuration) + "s · 50 food / 20 gold")) Send("train");
             GUI.enabled = true;
             string mythic = "Mythic guardian";
             foreach (var civ in world.civilizations) if (civ.id == me.civilization) mythic = civ.mythic;
-            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.mythic + me.reserveMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
+            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.deployedMythic + me.reserveMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
             if (GUILayout.Button(mythic + " · " + Mathf.CeilToInt(me.recruitDuration) + "s · 80 food / 100 gold")) Send("recruit");
             GUI.enabled = true;
             GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment needs Citadel 2 and Sanctuary of Beasts.", noteStyle);
@@ -245,7 +259,7 @@ namespace ThronesOfMyth
                 GUI.enabled = true;
                 if (!selected.canUpgrade) GUILayout.Label(selected.lockedReason, noteStyle);
             }
-            if (HasConstruction) DrawJob(me.construction, JobName(me.construction), false);
+            DrawConstructionJobs();
             GUILayout.Label("Passive production limit: " + me.passiveLimit + " per resource. Gathering and rewards can exceed it.", noteStyle);
             foreach (var b in me.cityBuildings)
                 if (GUILayout.Button(b.name + " · " + (b.level == 0 ? "Not built" : "Lv " + b.level))) selectedBuilding = Array.IndexOf(me.cityBuildings, b);
@@ -260,8 +274,9 @@ namespace ThronesOfMyth
             if (GUILayout.Button("X", GUILayout.Width(32))) cityOverviewOpen = false;
             GUILayout.EndHorizontal();
             GUILayout.Label("Select an institution. Build and upgrade from the sidebar. Layout is a prototype overview, not free placement.", noteStyle);
-            float cardHeight = Mathf.Max(42, (height - 95) / 5);
-            for (int row = 0; row < 5; row++)
+            int rows = Mathf.CeilToInt(me.cityBuildings.Length / 3f);
+            float cardHeight = Mathf.Max(36, (height - 95) / rows);
+            for (int row = 0; row < rows; row++)
             {
                 GUILayout.BeginHorizontal();
                 for (int column = 0; column < 3; column++)
@@ -350,8 +365,8 @@ namespace ThronesOfMyth
                 }
                 else
                 {
-                    GUI.enabled = CanEditArmy && me.equippedRelic != relic.id;
-                    if (GUILayout.Button(me.equippedRelic == relic.id ? "Equipped" : "Equip at home")) Send("equip-relic", relic.id);
+                    GUI.enabled = CanEditArmy;
+                    if (GUILayout.Button(ActiveArmy.equippedRelic == relic.id ? "Unequip at home" : "Equip at home")) Send(ActiveArmy.equippedRelic == relic.id ? "unequip-relic" : "equip-relic", relic.id);
                 }
                 GUI.enabled = true;
             }
@@ -384,8 +399,8 @@ namespace ThronesOfMyth
                 }
                 else
                 {
-                    GUI.enabled = CanEditArmy && me.commanderId != hero.id;
-                    if (GUILayout.Button(me.commanderId == hero.id ? "Equipped" : "Equip at home")) Send("commander", hero.id);
+                    GUI.enabled = CanEditArmy && ActiveArmy.commanderId != hero.id && !AssignedElsewhere(hero.id);
+                    if (GUILayout.Button(ActiveArmy.commanderId == hero.id ? "Equipped" : "Equip at home")) Send("commander", hero.id);
                 }
                 GUI.enabled = true;
                 var progress = Array.Find(me.heroProgress, h => h.id == hero.id);
@@ -395,6 +410,11 @@ namespace ThronesOfMyth
                     GUI.enabled = progress.rank < 5 && progress.shards >= progress.nextShards && me.gold >= progress.nextGold;
                     if (GUILayout.Button("Ascend · " + progress.nextShards + " shards / " + progress.nextGold + " gold")) Send("upgrade-commander", hero.id);
                     GUI.enabled = true;
+                }
+                if (owned && progress != null)
+                {
+                    if (GUILayout.Button("Skills & progression")) inspectedHeroId = hero.id;
+                    if (inspectedHeroId == hero.id) DrawHeroSkills(hero, progress);
                 }
                 GUILayout.Space(10);
             }
@@ -423,7 +443,7 @@ namespace ThronesOfMyth
                 foreach (var ally in world.players)
                 {
                     if (ally.id == playerId || ally.allianceId != me.allianceId) continue;
-                    foreach (var job in new[] { ally.construction, ally.research })
+                    foreach (var job in new[] { ally.construction, ally.secondConstruction, ally.research })
                         if (job != null && !string.IsNullOrEmpty(job.id) && GUILayout.Button("Help " + ally.name + " · " + job.type)) Send("alliance-help", job.id);
                 }
             }
@@ -431,6 +451,7 @@ namespace ThronesOfMyth
         }
         private void DrawJournal()
         {
+            GUILayout.Label(me.ageName + " · " + me.marchSlots + "/5 march slots · " + me.constructionSlots + " builder(s)", sectionStyle);
             GUILayout.Label("A foothold in the fallen world", sectionStyle);
             GUILayout.Label($"Defeat three camps: {Mathf.Min(3, me.kills)}/3\nReward: Epic Atalanta, 200 gold, 150 wood, 150 food.", noteStyle);
             GUI.enabled = me.kills >= 3 && !me.questClaimed;
@@ -463,8 +484,54 @@ namespace ThronesOfMyth
                 GUILayout.Label(site.name + "\n" + site.description + "\nOwner: " + AllianceName(site.allianceId) + $"\nCapture: {site.progress:F1}/15s", noteStyle);
                 if (GUILayout.Button(site.allianceId == me.allianceId && !string.IsNullOrEmpty(me.allianceId) ? "March & defend" : "March & capture")) Send("capture", site.id);
             }
-            foreach (var p in world.players) if (selectedId == p.id || selectedId == "city-" + p.id)
+            foreach (var p in world.players) if (selectedId == "city-" + p.id)
                 GUILayout.Label($"{p.name} · {CivilizationName(p.civilization)}\n{p.troops} troops · {p.mythic} mythic\nAlliance: {AllianceName(p.allianceId)}", noteStyle);
+        }
+        private bool AssignedElsewhere(string heroId) => Array.Exists(world.armies, a => a.ownerId == playerId && a.id != ActiveArmy.id && a.commanderId == heroId);
+        private void DrawConstructionJobs()
+        {
+            int count = (HasJob(me.construction) ? 1 : 0) + (HasJob(me.secondConstruction) ? 1 : 0);
+            GUILayout.Label($"Construction crews: {count}/{me.constructionSlots} busy", sectionStyle);
+            if (HasJob(me.construction)) DrawJob(me.construction, JobName(me.construction), false);
+            if (HasJob(me.secondConstruction)) DrawJob(me.secondConstruction, JobName(me.secondConstruction), false);
+            if (me.constructionSlots == 1) GUILayout.Label("Age of Oaths (Citadel 2): build the Lodge of the First Builders for a permanent second crew.", noteStyle);
+        }
+        private void DrawDeployment()
+        {
+            int ownCount = 0; foreach (var a in world.armies) if (a.ownerId == playerId) ownCount++;
+            GUILayout.Space(8); GUILayout.Label($"Marches {ownCount}/{me.marchSlots} · maximum 5", sectionStyle);
+            GUILayout.Label("Each new age unlocks one march. Assign an unused commander and troops from city reserves.", noteStyle);
+            var available = new List<string>(); var labels = new List<string>();
+            foreach (var hero in world.commanders)
+                if (Array.IndexOf(me.ownedCommanders, hero.id) >= 0 && !Array.Exists(world.armies, a => a.ownerId == playerId && a.commanderId == hero.id)) { available.Add(hero.id); labels.Add(hero.name); }
+            if (available.Count == 0) { GUILayout.Label("Recruit another commander to lead a new march.", noteStyle); return; }
+            deployHeroIndex = Mathf.Clamp(deployHeroIndex, 0, available.Count - 1);
+            deployHeroIndex = GUILayout.SelectionGrid(deployHeroIndex, labels.ToArray(), 1);
+            deployTroopIndex = GUILayout.Toolbar(deployTroopIndex, new[] { "5 troops", "10", "20" });
+            deployMythic = GUILayout.Toggle(deployMythic, "Include 1 mythic unit");
+            int troops = new[] { 5, 10, 20 }[deployTroopIndex];
+            GUI.enabled = ownCount < me.marchSlots && me.reserveTroops >= troops && (!deployMythic || me.reserveMythic >= 1);
+            if (GUILayout.Button("Deploy from city reserves")) Send(new GameCommand { type = "deploy-march", targetId = available[deployHeroIndex], troops = troops, mythic = deployMythic ? 1 : 0 });
+            GUI.enabled = true;
+        }
+        private void DrawHeroSkills(CommanderData hero, HeroProgress progress)
+        {
+            GUILayout.Label($"Level {progress.heroLevel}/{progress.stars * 10} · {progress.stars} stars · XP {progress.xp:F0}", sectionStyle);
+            GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20;
+            if (GUILayout.Button("Mentor +100 XP · 40 gold / 20 food")) Send("mentor-commander", hero.id);
+            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.aether >= progress.stars * 10;
+            if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " aether")) Send("promote-commander", hero.id);
+            GUI.enabled = true;
+            foreach (var skill in progress.skills)
+            {
+                GUILayout.Label(skill.name + " · " + skill.kind + " · " + skill.level + "/5", sectionStyle);
+                GUILayout.Label(skill.description + (skill.level == 0 ? " Unlocks at " + skill.unlockStar + " stars." : ""), noteStyle);
+                GUI.enabled = skill.level > 0 && skill.level < 5 && progress.shards >= 5 * (skill.level + 1) && me.gold >= 25 * (skill.level + 1);
+                if (GUILayout.Button("Upgrade · " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold")) Send(new GameCommand { type = "upgrade-skill", targetId = hero.id, skillIndex = skill.index });
+                GUI.enabled = true;
+            }
+            GUILayout.Label((progress.expertise ? "EXPERTISE ACTIVE · " : "Expertise · ") + progress.expertiseDescription, noteStyle);
+            GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Active skills fire automatically at 1,000 rage.", noteStyle);
         }
         private void DrawMinimap()
         {
@@ -473,7 +540,7 @@ namespace ThronesOfMyth
             var area = new Rect(rect.x + 10, rect.y + 26, 176, 150);
             GUI.color = new Color(0.25f, 0.34f, 0.25f); GUI.DrawTexture(area, Texture2D.whiteTexture); GUI.color = Color.white;
             foreach (var site in world.sites) Dot(area, site.x, site.z, new Color(0.8f, 0.6f, 1), 5);
-            foreach (var p in world.players) Dot(area, p.x, p.z, p.id == playerId ? Color.cyan : Color.yellow, 4);
+            foreach (var p in world.armies) Dot(area, p.x, p.z, p.ownerId == playerId ? Color.cyan : Color.yellow, 4);
             Dot(area, me.homeX, me.homeZ, Color.white, 6);
             if (Event.current.type == EventType.MouseDown && area.Contains(Event.current.mousePosition))
             {
@@ -525,7 +592,7 @@ namespace ThronesOfMyth
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     var session = JsonUtility.FromJson<JoinResponse>(request.downloadHandler.text);
-                    token = session.token; playerId = session.playerId; focused = false;
+                    token = session.token; playerId = session.playerId; activeMarchId = playerId; focused = false;
                     PlayerPrefs.SetString(SessionKey, token); PlayerPrefs.SetString("ThronesOfMyth.name", playerName); PlayerPrefs.Save();
                     status = "Connected. Right-click ground to march; left-click objects to inspect.";
                     StartCoroutine(Poll());
@@ -544,10 +611,11 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 4) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; break; }
+                        if (next.version != 5) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; break; }
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
                         {
+                            if (!Array.Exists(world.armies, a => a.id == activeMarchId && a.ownerId == playerId)) activeMarchId = playerId;
                             if (me.summonHistory.Length > 0 && me.summonHistory[0].id != lastDrawId)
                             {
                                 if (lastDrawId != null) revealUntil = Time.unscaledTime + 0.8f;
@@ -587,6 +655,7 @@ namespace ThronesOfMyth
         private void Send(GameCommand command)
         {
             if (string.IsNullOrEmpty(token) || commands.Count >= 8) return;
+            command.marchId = activeMarchId;
             commands.Enqueue(command); if (!processing) StartCoroutine(ProcessCommands());
         }
         private IEnumerator ProcessCommands()

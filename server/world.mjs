@@ -1,5 +1,7 @@
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES } from './city-content.mjs';
+import { marchCommand } from './marches.mjs';
+import { AGES, age, crews, armyList, constructionJobs, totalTroops, totalMythic, ensureHero, heroLevel, initializeProgression, skillModifiers, activeSkill, progressionCommand, validateProgression } from './progression.mjs';
 import { initializeCity, capacity, mythicCapacity, cityCommand, citySnapshot, tickCity, validateCity } from './city.mjs';
 import { SIZE, CIVILIZATIONS, COMMANDERS, campDefinitions, siteDefinitions } from './content.mjs';
 export class GameError extends Error {
@@ -38,7 +40,7 @@ export class World {
       health: 0, gold: 150, wood: 150, food: 200, troops: 20, mythic: 0, cityLevel: 1,
       commanderId: 'captain', ownedCommanders: ['captain'], xp: 0, level: 1, kills: 0, questClaimed: false,
       allianceId: '', target: null, cooldown: 0, gatherClock: 0, lastSeen: 0, state: 'Idle', recovery: 0, reserveTroops: 0, reserveMythic: 0, construction: null, trainingQueue: [], offline: false };
-    initializeCity(player);
+    initializeCity(player); initializeProgression(player);
     player.health = this.stats(player).maxHealth;
     this.players.set(id, player); this.sessions.set(token, id);
     this.event(`${player.name} founded a ${civilization} city.`);
@@ -49,16 +51,22 @@ export class World {
     if (!id || !this.players.has(id)) throw new GameError('Session expired. Join the world again.', 401);
     return this.players.get(id);
   }
-  stats(p) {
-    const civ = CIVILIZATIONS.find(c => c.id === p.civilization), commander = COMMANDERS.find(c => c.id === p.commanderId);
-    const rank = p.commanderRanks[p.commanderId] ?? 0;
-    const relic = RELICS.find(r => r.id === p.equippedRelic) ?? { damage: 1, health: 1 };
+  owner(a) { return this.players.get(a.ownerId || a.id) ?? a; }
+  armies() { return [...this.players.values()].flatMap(armyList); }
+  army(id) { return this.armies().find(a => a.id === id); }
+  stats(a) {
+    const p = this.owner(a), r = ensureHero(p, a.commanderId);
+    const civ = CIVILIZATIONS.find(c => c.id === p.civilization), commander = COMMANDERS.find(c => c.id === a.commanderId);
+    const rank = p.commanderRanks[a.commanderId] ?? 0;
+    const relic = RELICS.find(r => r.id === a.equippedRelic) ?? { damage: 1, health: 1 };
+    const skill = skillModifiers(p, a), level = heroLevel(r);
     const owns = id => !!p.allianceId && this.sites.some(s => s.id === id && s.allianceId === p.allianceId);
-    return { maxHealth: Math.round((p.troops * 5 + p.mythic * 35) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health),
-      damage: (p.troops * 0.75 + p.mythic * 12 * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (p.level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1),
-      speed: 4 * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march),
-      heal: 12 * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1),
-      gather: civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) };
+    return { level, maxHealth: Math.round((a.troops * 5 + a.mythic * 35) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health),
+      damage: (a.troops * 0.75 + a.mythic * 12 * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage,
+      speed: 4 * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march) * skill.speed,
+      heal: 12 * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1) * skill.heal,
+      gather: civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) * skill.gather,
+      pve: skill.pve, mitigation: skill.mitigation };
   }
   atHome(p) { return distance(p, { x: p.homeX, z: p.homeZ }) < 2; }
   requireHome(p) { if (!this.atHome(p) || p.target) throw new GameError('Return your army home and stop before changing its composition or commander.'); }
@@ -67,48 +75,32 @@ export class World {
     for (const [key, value] of Object.entries(cost)) p[key] -= value;
   }
   canEnter(p, destination) {
+    p = this.owner(p);
     const owns = id => !!p.allianceId && this.sites.find(s => s.id === id).allianceId === p.allianceId;
     return (destination.x <= 40 || owns('gate-east')) && (destination.z <= 40 || owns('gate-north'));
   }
   command(p, c) {
     if (!c || typeof c !== 'object') throw new GameError('Invalid command.');
-    if (c.type === 'return') { p.target = { type: 'return', x: p.homeX, z: p.homeZ }; p.state = 'Returning'; return; }
-    if (c.type === 'stop') { p.target = null; p.state = 'Idle'; return; }
-    const armyOrders = ['move', 'attack', 'gather', 'capture', 'flag', 'commander', 'reinforce', 'equip-relic'];
-    if (armyOrders.includes(c.type) && (p.health <= 0 || p.recovery > 0)) throw new GameError('Your army is recovering at home.');
-    if (cityCommand(this, p, c, message => { throw new GameError(message); })) return;
+    const fail = message => { throw new GameError(message); };
+    if (marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) return;
     switch (c.type) {
-      case 'move':
-        if (!finitePoint(c)) throw new GameError('Destination must be inside the map (1–79).');
-        if (!this.canEnter(p, c)) throw new GameError('Your alliance must capture the corresponding Divine Gate first.');
-        p.target = { type: 'move', x: c.x, z: c.z }; break;
-      case 'attack': {
-        const camp = this.camps.find(e => e.id === c.targetId && e.health > 0);
-        if (!camp || !this.canEnter(p, camp)) throw new GameError('Camp unavailable or behind a locked gate.');
-        p.target = { type: 'attack', id: camp.id }; break;
-      }
-      case 'gather': {
-        const node = this.nodes.find(n => n.id === c.targetId && n.remaining > 0);
-        if (!node || !this.canEnter(p, node)) throw new GameError('Resource unavailable.');
-        p.target = { type: 'gather', id: node.id }; p.gatherClock = 0; break;
-      }
       case 'train': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
         const queued = p.trainingQueue.filter(j => j.type === 'train').reduce((total, j) => total + j.amount, 0);
-        if (p.troops + p.reserveTroops + queued + 5 > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
+        if (totalTroops(p) + p.reserveTroops + queued + 5 > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
         const cost = { food: 50, gold: 20 }; this.spend(p, cost);
         p.trainingQueue.push(this.job('train', 8 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), cost, 5)); return;
       }
       case 'recruit': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
         const queued = p.trainingQueue.filter(j => j.type === 'recruit').length;
-        if (p.cityLevel < 2 || !p.buildings.menagerie || p.mythic + p.reserveMythic + queued >= mythicCapacity(p)) throw new GameError('Mythic units require Citadel level 2 and a Sanctuary of Beasts; capacity reached or building missing.');
+        if (p.cityLevel < 2 || !p.buildings.menagerie || totalMythic(p) + p.reserveMythic + queued >= mythicCapacity(p)) throw new GameError('Mythic units require Citadel level 2 and a Sanctuary of Beasts; capacity reached or building missing.');
         const cost = { food: 80, gold: 100 }; this.spend(p, cost);
         p.trainingQueue.push(this.job('recruit', 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)), cost, 1)); return;
       }
       case 'cancel-job': {
         let job;
-        const lane = ['construction', 'research', 'crafting'].find(key => p[key]?.id === c.targetId);
+        const lane = ['construction', 'secondConstruction', 'research', 'crafting'].find(key => p[key]?.id === c.targetId);
         if (lane) { job = p[lane]; p[lane] = null; }
         else {
           const index = p.trainingQueue.findIndex(j => j.id === c.targetId);
@@ -118,26 +110,11 @@ export class World {
         for (const [resource, amount] of Object.entries(job.cost)) p[resource] += amount;
         return;
       }
-      case 'reinforce': {
-        this.requireHome(p);
-        if (!p.reserveTroops && !p.reserveMythic) throw new GameError('No reserves are ready.');
-        const oldMax = this.stats(p).maxHealth;
-        p.troops += p.reserveTroops; p.mythic += p.reserveMythic;
-        p.reserveTroops = 0; p.reserveMythic = 0;
-        p.health = Math.min(this.stats(p).maxHealth, p.health + this.stats(p).maxHealth - oldMax); return;
-      }
       case 'unlock-commander': {
         const commander = COMMANDERS.find(k => k.id === c.targetId);
         if (!commander) throw new GameError('Unknown commander.');
         if (p.ownedCommanders.includes(commander.id)) throw new GameError('Commander is already recruited.');
         this.spend(p, { gold: commander.cost }); p.ownedCommanders.push(commander.id); return;
-      }
-      case 'commander': {
-        this.requireHome(p);
-        const commander = COMMANDERS.find(k => k.id === c.targetId);
-        if (!commander) throw new GameError('Unknown commander.');
-        if (!p.ownedCommanders.includes(commander.id)) { this.spend(p, { gold: commander.cost }); p.ownedCommanders.push(commander.id); }
-        p.commanderId = commander.id; p.health = Math.min(p.health, this.stats(p).maxHealth); return;
       }
       case 'quest':
         if (p.questClaimed || p.kills < 3) throw new GameError('Defeat three camps to claim this reward once.');
@@ -154,30 +131,8 @@ export class World {
       case 'alliance-join':
         if (p.allianceId || !this.alliances.has(c.targetId)) throw new GameError('Choose an existing alliance while unaffiliated.');
         p.allianceId = c.targetId; this.event(`${p.name} joined ${this.alliances.get(p.allianceId).name}.`); return;
-      case 'flag': {
-        if (!p.allianceId) throw new GameError('Join an alliance first.');
-        if (!finitePoint(c) || !this.canEnter(p, c) || distance(p, c) > 4) throw new GameError('Place a beacon within 4 units of your army in an accessible province.');
-        const flags = this.flags.filter(f => f.allianceId === p.allianceId);
-        if (flags.length >= 20) throw new GameError('Alliance beacon limit reached.');
-        if (this.flags.some(f => distance(f, c) < 4)) throw new GameError('Too close to another beacon.');
-        if (!flags.length) {
-          const alliance = this.alliances.get(p.allianceId);
-          if (alliance.leaderId !== p.id || distance({ x: p.homeX, z: p.homeZ }, c) > 6) throw new GameError('The leader must place the first beacon near their city.');
-        } else if (!flags.some(f => distance(f, c) <= 12)) throw new GameError('Beacons must connect within 12 units of alliance territory.');
-        if (this.flags.some(f => f.allianceId !== p.allianceId && distance(f, c) < 10)) throw new GameError('Enemy territory blocks this location.');
-        this.spend(p, { wood: 60, gold: 20 });
-        this.flags.push({ id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z }); return;
-      }
-      case 'capture': {
-        const site = this.sites.find(s => s.id === c.targetId);
-        if (!site || !p.allianceId) throw new GameError('Join an alliance to capture a site.');
-        if (!this.canEnter(p, site)) throw new GameError('Capture the necessary gates first.');
-        if (!this.flags.some(f => f.allianceId === p.allianceId && distance(f, site) <= 12)) throw new GameError('Extend alliance beacons to within 12 units of this site.');
-        p.target = { type: 'capture', id: site.id }; break;
-      }
       default: throw new GameError('Unknown command.');
     }
-    p.state = ({ move: 'Marching', attack: 'Attacking', gather: 'Gathering', capture: 'Capturing' })[c.type];
   }
   tick(dt) {
     if (!Number.isFinite(dt) || dt <= 0) return;
@@ -189,8 +144,11 @@ export class World {
     for (const node of this.nodes) if (node.remaining <= 0) {
       node.refill += dt; if (node.refill >= 30) { node.remaining = node.capacity; node.refill = 0; }
     }
-    for (const p of this.players.values()) {
-      this.cityTick(p, dt);
+    for (const owner of this.players.values()) this.cityTick(owner, dt);
+    for (const p of this.armies()) {
+      const owner = this.owner(p);
+      p.shieldTime = Math.max(0, p.shieldTime - dt); if (p.shieldTime === 0) p.shield = 0;
+      if (p.target?.type !== 'attack' || !this.camps.some(c => c.id === p.target.id && c.health > 0 && distance(p, c) <= 2.001)) p.rage = Math.max(0, p.rage - 50 * dt);
       const stats = this.stats(p); p.cooldown = Math.max(0, p.cooldown - dt);
       if (p.recovery > 0) { p.recovery = Math.max(0, p.recovery - dt); p.state = 'Recovering'; continue; }
       if (!p.target && this.atHome(p)) { p.health = Math.min(stats.maxHealth, p.health + stats.heal * dt); p.state = p.health < stats.maxHealth ? 'Healing' : 'Idle'; }
@@ -213,36 +171,46 @@ export class World {
       if (target.type === 'attack' && p.cooldown === 0) this.battle(p, destination, stats);
       if (target.type === 'gather') {
         p.gatherClock += dt;
-        if (p.gatherClock >= 1) { p.gatherClock -= 1; const amount = Math.min(destination.remaining, Math.ceil(8 * stats.gather)); destination.remaining -= amount; p[destination.resource] += amount; }
+        if (p.gatherClock >= 1) { p.gatherClock -= 1; const amount = Math.min(destination.remaining, Math.ceil(8 * stats.gather)); destination.remaining -= amount; owner[destination.resource] += amount; }
       }
     }
     for (const site of this.sites) this.captureTick(site, dt);
   }
-  battle(p, camp, stats) {
-    p.cooldown = 1;
-    const damage = Math.min(camp.health, Math.round(stats.damage)); camp.health -= damage;
-    camp.contributors[p.id] = (camp.contributors[p.id] ?? 0) + damage;
+  battle(a, camp, stats) {
+    const p = this.owner(a);
+    a.cooldown = 1;
+    let damage = Math.min(camp.health, Math.round(stats.damage * stats.pve)); camp.health -= damage;
+    a.rage = Math.min(1000, a.rage + 200);
+    if (camp.health > 0 && a.rage >= 1000) {
+      const extra = Math.min(camp.health, activeSkill(p, a, { ...stats, damage: stats.damage * stats.pve }));
+      camp.health -= extra; damage += extra;
+    }
+    camp.contributors[a.id] = (camp.contributors[a.id] ?? 0) + damage;
     if (camp.health === 0) {
       camp.respawn = 45;
-      // Contributors share rewards once, even when the final blow comes from a different army.
-      const contributors = Object.keys(camp.contributors).map(id => this.players.get(id)).filter(Boolean);
-      for (const member of contributors) {
-        member.gold += Math.floor(50 * camp.level / contributors.length);
-        member.food += Math.floor(30 * camp.level / contributors.length);
-        member.stone += 20 * camp.level; member.aether += 5 * camp.level; member.sigils++;
-        member.xp += 25 * camp.level; member.level = 1 + Math.floor(member.xp / 100); member.kills++;
+      const participants = Object.keys(camp.contributors).map(id => this.army(id)).filter(Boolean);
+      const owners = [...new Set(participants.map(actor => this.owner(actor).id))].map(id => this.players.get(id));
+      for (const member of owners) {
+        member.gold += Math.floor(50 * camp.level / owners.length); member.food += Math.floor(30 * camp.level / owners.length);
+        member.stone += 20 * camp.level; member.aether += 5 * camp.level; member.sigils++; member.kills++;
+        const ownArmies = participants.filter(actor => this.owner(actor).id === member.id);
+        for (const actor of ownArmies) {
+          const record = ensureHero(member, actor.commanderId);
+          record.xp += 25 * camp.level / ownArmies.length; actor.xp = record.xp; actor.level = heroLevel(record);
+        }
       }
-      this.event(`${p.name} defeated ${camp.name} (level ${camp.level}).`); p.target = null; p.state = 'Victorious';
+      this.event(`${p.name} defeated ${camp.name} (level ${camp.level}).`); a.target = null; a.state = 'Victorious';
     } else {
-      p.health = Math.max(0, p.health - 8 * camp.level);
-      if (p.health === 0) {
-        p.x = p.homeX; p.z = p.homeZ; p.target = null; p.recovery = 8; p.health = 1; p.state = 'Recovering';
-        this.event(`${p.name}'s army retreated home after defeat.`);
+      const hit = 8 * camp.level * (1 - stats.mitigation), absorbed = Math.min(a.shield, hit);
+      a.shield -= absorbed; a.health = Math.max(0, a.health - (hit - absorbed));
+      if (a.health === 0) {
+        a.x = p.homeX; a.z = p.homeZ; a.target = null; a.recovery = 8; a.health = 1; a.rage = 0; a.shield = 0; a.state = 'Recovering';
+        this.event(`${p.name}'s march retreated home after defeat.`);
       }
     }
   }
   captureTick(site, dt) {
-    const contenders = new Set([...this.players.values()].filter(p => p.target?.type === 'capture' && p.target.id === site.id && p.health > 0 && p.recovery === 0 && distance(p, site) <= 2.001 && p.allianceId && this.canEnter(p, site) && this.flags.some(f => f.allianceId === p.allianceId && distance(f, site) <= 12)).map(p => p.allianceId));
+    const contenders = new Set(this.armies().filter(p => p.target?.type === 'capture' && p.target.id === site.id && p.health > 0 && p.recovery === 0 && distance(p, site) <= 2.001 && this.owner(p).allianceId && this.canEnter(p, site) && this.flags.some(f => f.allianceId === this.owner(p).allianceId && distance(f, site) <= 12)).map(p => this.owner(p).allianceId));
     if (contenders.size !== 1) { if (contenders.size === 0) site.progress = Math.max(0, site.progress - dt); return; }
     const allianceId = [...contenders][0];
     if (site.allianceId === allianceId) { site.progress = Math.max(0, site.progress - dt); return; }
@@ -251,7 +219,7 @@ export class World {
     if (site.progress >= 15) {
       site.allianceId = allianceId; site.progress = 0; site.challengerId = '';
       this.event(`${this.alliances.get(allianceId).name} captured ${site.name}.`);
-      for (const p of this.players.values()) if (p.target?.id === site.id && p.target.type === 'capture') { p.target = null; p.state = 'Idle'; }
+      for (const p of this.armies()) if (p.target?.id === site.id && p.target.type === 'capture') { p.target = null; p.state = 'Idle'; }
     }
   }
   job(type, duration, cost, amount) {
@@ -274,32 +242,40 @@ export class World {
   expire(now) {
     // Saved cities and their alliance territory are never deleted for inactivity.
     for (const p of this.players.values()) if (!p.offline && now - p.lastSeen > 30 * 60_000) {
-      p.offline = true; p.target = null; p.state = 'Offline';
+      p.offline = true; for (const a of armyList(p)) { a.target = null; a.state = 'Offline'; }
     }
   }
   toSave() {
-    return { schema: 2, world: { players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 3, world: { players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, time: this.time, events: this.events } };
   }
   static fromSave(data) {
     const w = structuredClone(data?.world);
-    if (![1, 2].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World();
     if (data.schema === 1) for (const node of resourceNodes) if (!w.nodes.some(n => n.id === node.id)) w.nodes.push({ ...node });
     for (const p of w.players) {
-      if (data.schema === 1 && p) initializeCity(p, true);
+      if (data.schema < 3 && p) { initializeCity(p, true); initializeProgression(p); }
       if (!p || typeof p.id !== 'string' || typeof p.name !== 'string' || world.players.has(p.id) || !CIVILIZATIONS.some(c => c.id === p.civilization) || !COMMANDERS.some(c => c.id === p.commanderId)) throw new Error('Invalid saved city.');
       if (!['gold', 'wood', 'food', 'troops', 'mythic', 'reserveTroops', 'reserveMythic', 'health', 'xp', 'recovery', 'cooldown', 'gatherClock'].every(k => Number.isFinite(p[k]) && p[k] >= 0) || !finitePoint(p) || !finitePoint({ x: p.homeX, z: p.homeZ }) || !Number.isInteger(p.cityLevel) || p.cityLevel < 1 || p.cityLevel > 5) throw new Error('Invalid saved city values.');
       if (!Number.isInteger(p.slot) || p.slot < 0 || p.slot >= 32 || !Number.isInteger(p.level) || p.level < 1 || !Number.isInteger(p.kills) || p.kills < 0 || !Array.isArray(p.ownedCommanders) || !p.ownedCommanders.includes(p.commanderId) || p.ownedCommanders.some(id => !COMMANDERS.some(c => c.id === id)) || !Array.isArray(p.trainingQueue) || p.trainingQueue.length > 3) throw new Error('Invalid saved roster or queue.');
-      validateCity(p);
-      for (const job of [p.construction, p.research, p.crafting, ...p.trainingQueue].filter(Boolean)) {
+      validateCity(p); validateProgression(p);
+      for (const job of [...constructionJobs(p), p.research, p.crafting, ...p.trainingQueue].filter(Boolean)) {
         if (!['upgrade', 'building', 'research', 'craft', 'train', 'recruit'].includes(job.type) || typeof job.id !== 'string' || !Number.isFinite(job.remaining) || job.remaining < 0 || !Number.isFinite(job.duration) || job.duration <= 0 || job.remaining > job.duration || !Number.isInteger(job.amount) || job.amount < 1 || !job.cost || Object.entries(job.cost).some(([k, v]) => !RESOURCES.includes(k) || !Number.isFinite(v) || v < 0)) throw new Error('Invalid saved queue.');
       }
-      if ((p.construction && !['upgrade', 'building'].includes(p.construction.type)) || (p.research && p.research.type !== 'research') || (p.crafting && p.crafting.type !== 'craft') || p.trainingQueue.some(job => !['train', 'recruit'].includes(job.type))) throw new Error('Invalid saved queue lane.');
-      world.players.set(p.id, { ...p, target: null, lastSeen: 0, offline: true, state: 'Paused' });
+      if (constructionJobs(p).some(job => !['upgrade', 'building'].includes(job.type)) || (p.research && p.research.type !== 'research') || (p.crafting && p.crafting.type !== 'craft') || p.trainingQueue.some(job => !['train', 'recruit'].includes(job.type))) throw new Error('Invalid saved queue lane.');
+      const ids = new Set([p.id]), commanders = new Set([p.commanderId]);
+      for (const a of p.marches) {
+        if (!a || typeof a.id !== 'string' || ids.has(a.id) || a.ownerId !== p.id || !p.ownedCommanders.includes(a.commanderId) || commanders.has(a.commanderId) || !finitePoint(a) || ['troops', 'mythic', 'health', 'recovery', 'cooldown', 'gatherClock', 'rage', 'shield', 'shieldTime'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.homeX !== p.homeX || a.homeZ !== p.homeZ) throw new Error('Invalid saved march.');
+        ids.add(a.id); commanders.add(a.commanderId); a.target = null; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Paused';
+      }
+      if (new Set(constructionJobs(p).map(job => job.targetId || 'citadel')).size !== constructionJobs(p).length) throw new Error('Duplicate saved building upgrade.');
+      if (armyList(p).length > age(p).marches || (p.secondConstruction && crews(p) < 2)) throw new Error('Invalid saved age unlock.');
+      world.players.set(p.id, { ...p, target: null, rage: 0, shield: 0, shieldTime: 0, lastSeen: 0, offline: true, state: 'Paused' });
     }
+    if (new Set(world.armies().map(a => a.id)).size !== world.armies().length) throw new Error('Duplicate saved march ID.');
     for (const [token, id] of w.sessions) {
       if (typeof token !== 'string' || !world.players.has(id) || world.sessions.has(token)) throw new Error('Invalid saved session.');
       world.sessions.set(token, id);
@@ -319,10 +295,17 @@ export class World {
     world.flags = w.flags; world.events = w.events.slice(0, 12); world.time = w.time;
     return world;
   }
+  armySnapshot(a) {
+    const p = this.owner(a);
+    return { id: a.id, ownerId: p.id, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
+      commanderId: a.commanderId, equippedRelic: a.equippedRelic, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
+      troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), recovery: a.recovery, rage: Math.floor(a.rage), shield: Math.ceil(a.shield), lastSkill: a.lastSkill, skillCasts: a.skillCasts,
+      state: a.state, hasOrder: !!a.target, targetId: a.target?.id ?? '', ...this.stats(a) };
+  }
   snapshot() {
-    return { version: 4, summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
+    return { version: 5, ages: AGES, armies: this.armies().map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
       players: [...this.players.values()].map(p => {
-        const { lastSeen, target, cooldown, gatherClock, slot, ...visible } = p;
+        const { lastSeen, target, cooldown, gatherClock, slot, marches, ...visible } = p;
         return { ...visible, ...citySnapshot(this, p), ...this.stats(p), health: Math.ceil(p.health), hasOrder: !!target, targetId: target?.id ?? '', targetX: target?.x ?? p.x, targetZ: target?.z ?? p.z };
       }), camps: this.camps.map(({ contributors, ...camp }) => ({ ...camp, respawn: Math.ceil(camp.respawn) })),
       nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s })), flags: this.flags.map(f => ({ ...f })),

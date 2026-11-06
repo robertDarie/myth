@@ -90,9 +90,9 @@ namespace ThronesOfMyth
         public void Sync(WorldSnapshot world, string ownId, string allianceId)
         {
             var seen = new HashSet<string>();
-            foreach (var p in world.players)
+            foreach (var p in world.armies)
             {
-                var color = p.id == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
+                var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
                 Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth));
                 var armyPiece = pieces[p.id];
                 if (armyPiece.mythicCount != p.mythic)
@@ -109,7 +109,11 @@ namespace ThronesOfMyth
                     }
                     armyPiece.mythicCount = p.mythic;
                 }
-                Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · City " + p.cityLevel + (p.construction != null && !string.IsNullOrEmpty(p.construction.id) ? " · Building " + Mathf.CeilToInt(p.construction.remaining) + "s" : ""));
+            }
+            foreach (var p in world.players)
+            {
+                var color = p.id == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
+                Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · " + p.ageName + " · City " + p.cityLevel);
                 pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.9f + 0.1f * p.cityLevel);
             }
             foreach (var c in world.camps) Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth);

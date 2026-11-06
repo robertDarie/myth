@@ -6,8 +6,9 @@ export class WorldStore {
   constructor(path, warn = console.warn) { this.path = path; this.warn = warn; }
   read(path) { return World.fromSave(JSON.parse(readFileSync(path, 'utf8'))); }
   archiveLegacy(path) {
-    const archive = this.path + '.schema1.bak';
-    if (!existsSync(archive) && JSON.parse(readFileSync(path, 'utf8')).schema === 1) copyFileSync(path, archive);
+    const schema = JSON.parse(readFileSync(path, 'utf8')).schema;
+    const archive = this.path + '.schema' + schema + '.bak';
+    if ([1, 2].includes(schema) && !existsSync(archive)) copyFileSync(path, archive);
   }
   load() {
     if (!existsSync(this.path) && !existsSync(this.path + '.bak')) return new World();

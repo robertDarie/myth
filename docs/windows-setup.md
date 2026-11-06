@@ -36,7 +36,7 @@ files and help diagnose errors you share.
    `Assets/ThronesOfMyth/Scenes/Prototype.unity` and adds it to Build Settings.
 8. Press Play, choose a civilization and player name, and click **Establish /
    Resume City**. Left-click to inspect, right-click to march or act. See
-   [the playtest guide](playtest-0.4.md) for the complete gameplay loop.
+   [the playtest guide](playtest-0.5.md) for the complete gameplay loop.
 9. For a second player, build a Windows standalone player from this scene and
    run it alongside the editor with a different player name. Both should see
    each other's movement and the same camp health. Two editor windows must use

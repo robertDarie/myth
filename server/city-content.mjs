@@ -16,6 +16,7 @@ export const BUILDINGS = [
   { id: 'market', name: 'Agora of Fates', category: 'Economy', description: 'Fixed, visible resource exchanges. Ally caravans and tax rules will come with transport gameplay.', unlock: 2, requirements: [{ id: 'vault', level: 1 }], base: { wood: 60, stone: 40, gold: 30 } },
   { id: 'oathhall', name: 'Oathbound Hall', category: 'Alliance', description: 'Help alliance members with construction or research. Each member can help a job once.', unlock: 2, base: { wood: 70, stone: 50, gold: 40 } },
   { id: 'forge', name: 'Forge of Dawn', category: 'Military', description: 'Craft relics in an independent lane. Equip completed relics when the army is at home.', unlock: 3, requirements: [{ id: 'quarry', level: 2 }], base: { wood: 80, stone: 80, gold: 50, aether: 15 } },
+  { id: 'builders', name: 'Lodge of the First Builders', category: 'Civic', description: 'Permanently unlocks a second independent construction crew in the Age of Oaths. Two crews cannot upgrade the same structure simultaneously.', unlock: 2, base: { wood: 120, stone: 80, gold: 100 } },
 ];
 export const INITIAL_BUILDINGS = Object.fromEntries(BUILDINGS.filter(b => b.id !== 'citadel').map(b => [b.id, ['barracks', 'farm', 'lumber', 'vault', 'infirmary'].includes(b.id) ? 1 : 0]));
 export const CITADEL_REQUIREMENTS = {

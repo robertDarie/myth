@@ -4,9 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.4
+## Playable slice 0.5
 
-- Fifteen themed institutions, a clickable city overview, eight technologies,
+- Five age-based march slots, independently controlled armies, a permanent
+  earnable second construction crew, and individual commander XP/stars/skills.
+- Sixteen themed institutions, a clickable city overview, eight technologies,
   passive production, resource exchanges, relic crafting and alliance job help.
 - Temple of Echoes: earned-sigil summons with published odds, persistent rarity
   guarantees, duplicate shards and commander ascension; 11 commanders.
@@ -58,8 +60,9 @@ For a second player, run a Windows standalone build beside the editor and use a
 **different player name**. Both clients connect to the local server. A matching
 name and saved local token resume the same city; names alone are not credentials.
 
-See [the current playtest guide](docs/playtest-0.4.md), [architecture](docs/architecture.md),
+See [the current playtest guide](docs/playtest-0.5.md), [architecture](docs/architecture.md),
 [the full city/economy design](docs/city-and-economy-design.md),
+[skills, ages and marches](docs/skills-ages-and-marches.md),
 and [milestones](docs/milestones.md).
 
 Server gameplay and HTTP integration are covered by automated tests. Unity

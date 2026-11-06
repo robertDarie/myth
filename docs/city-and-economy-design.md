@@ -1,6 +1,7 @@
 # Thrones of Myth: city, progression and economy design
 
-Status: design baseline plus implemented 0.4 foundation, reviewed 6 November 2026.
+Status: 0.4 design baseline; see [the 0.5 progression design](skills-ages-and-marches.md)
+for current builders, marches and commander skills. Original baseline reviewed 6 November 2026.
 Numbers below are our prototype tuning, not copied reference-game statistics.
 
 ## What the reference games teach us

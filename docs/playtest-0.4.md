@@ -1,4 +1,6 @@
-# Playtest 0.4: institutions, knowledge and echoes
+# Playtest 0.4: institutions, knowledge and echoes (historical)
+
+For current behavior see [Playtest 0.5](playtest-0.5.md).
 
 The [city/economy design](city-and-economy-design.md) explains all reference roles,
 our thematic adaptations, resource sinks, prototype tuning and future systems.

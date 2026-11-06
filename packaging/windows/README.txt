@@ -24,3 +24,7 @@ Bundled Node.js license: Runtime\LICENSE
 World saves: %LOCALAPPDATA%\ThronesOfMyth\Saves
 City upgrades and training work while your army is away. New units wait in city
 reserves; bring your army home to reinforce.
+
+Each new age unlocks a march, up to five. Select it in Army before issuing orders.
+At Citadel 2, build Lodge of the First Builders for a second construction crew.
+Heroes now have individual XP, stars, skills and automatic rage abilities.

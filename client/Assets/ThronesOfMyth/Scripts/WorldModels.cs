@@ -5,12 +5,14 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name; public int count; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId; public int count, troops, mythic, skillIndex; }
     [Serializable] public sealed class ArmyData
     {
-        public string id, name, civilization, commanderId, allianceId, state, targetId;
+        public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill;
         public float x, z, homeX, homeZ, targetX, targetZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
-        public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, xp, level, kills;
+        public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
+        public float xp;
+        public int rage, shield, skillCasts, marchSlots, constructionSlots, deployedTroops, deployedMythic;
         public bool questClaimed, hasOrder, offline;
         public int reserveTroops, reserveMythic, stone, aether, sigils, troopCapacity, mythicCapacity, passiveLimit, epicPity, legendaryPity, offeringAmount;
         public bool offeringAvailable;
@@ -22,7 +24,7 @@ namespace ThronesOfMyth
         public HeroProgress[] heroProgress;
         public DrawResult[] summonHistory;
         public ResourceAmounts sealCost;
-        public QueueJob construction;
+        public QueueJob construction, secondConstruction;
         public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
     }
@@ -30,7 +32,8 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ResourceAmounts { public int food, wood, stone, gold, aether; }
     [Serializable] public sealed class BuildingCard { public string id, name, category, description, lockedReason; public int level, maxLevel; public bool canUpgrade; public ResourceAmounts nextCost; public float nextDuration; }
     [Serializable] public sealed class ResearchCard { public string id, name, branch, description, lockedReason; public int level, maxLevel; public bool canResearch; public ResourceAmounts cost; public float duration; }
-    [Serializable] public sealed class HeroProgress { public string id; public int rank, shards, nextShards, nextGold; }
+    [Serializable] public sealed class HeroProgress { public string id, expertiseDescription; public int rank, shards, nextShards, nextGold, heroLevel, stars; public float xp; public bool expertise; public HeroSkill[] skills; }
+    [Serializable] public sealed class HeroSkill { public int index, level, unlockStar; public string name, kind, description; }
     [Serializable] public sealed class DrawResult { public string id, commanderId, rarity; public bool duplicate; public int shards, number; }
     [Serializable] public sealed class RelicData { public string id, name, description; public ResourceAmounts cost; public float duration; }
     [Serializable] public sealed class TradeData { public string id, name; public ResourceAmounts cost, reward; }
@@ -52,7 +55,7 @@ namespace ThronesOfMyth
         public RelicData[] relics;
         public TradeData[] trades;
         public SummonRules summonRules;
-        public ArmyData[] players;
+        public ArmyData[] players, armies;
         public CampData[] camps;
         public NodeData[] nodes;
         public SiteData[] sites;
