@@ -9,8 +9,13 @@ this build once in your installed Windows Unity Editor.
 
 - Unity 6.3 LTS on Windows with Windows Build Support, already used for the editor
   prototype. The build uses Mono; Android/iOS and IL2CPP modules are not required.
-- Official Node.js 24 LTS installed, including its LICENSE. Restart Unity after
-  installing Node so its updated PATH is visible.
+- Official Node.js 24 LTS installed. Restart Unity after installing Node so its
+  updated PATH is visible. If the installation omits its license file, the build
+  downloads the complete LICENSE and third-party notices from the official
+  nodejs/node GitHub tag for your exact runtime version. Internet access is only
+  needed for that first download; it is cached under `work/node-licenses/`.
+  For offline builds, put that exact release LICENSE in
+  `work/node-licenses/v<version>/LICENSE` before building.
 - Optional: [Inno Setup 6.3 or newer](https://jrsoftware.org/isdl.php) if you want
   a single installer executable, Start menu shortcut and uninstaller.
 

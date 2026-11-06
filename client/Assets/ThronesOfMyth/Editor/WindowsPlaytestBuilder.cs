@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Net.Http;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -50,8 +51,7 @@ namespace ThronesOfMyth.Editor
             string version = Run(node, "--version").Trim().TrimStart('v');
             if (!Version.TryParse(version, out var nodeVersion) || nodeVersion.Major < 24)
                 throw new BuildFailedException("Node.js 24 or later is required on the build PC.");
-            string license = FindNodeLicense(node);
-            if (license == null) throw new BuildFailedException("Cannot find the installed Node.js LICENSE beside node.exe. Install the official Node.js Windows distribution, which includes its license.");
+            string license = ResolveNodeLicense(node, nodeVersion.ToString(), repository);
 
             PrototypeSceneBuilder.EnsureBuildScene();
             if (!File.Exists(ScenePath)) throw new BuildFailedException("Prototype scene could not be created.");
@@ -122,14 +122,44 @@ namespace ThronesOfMyth.Editor
             }
             return null;
         }
-        private static string FindNodeLicense(string node)
+        private static bool IsNodeLicense(string path)
+        {
+            if (!File.Exists(path)) return false;
+            string content = File.ReadAllText(path);
+            return content.Length > 1000 && content.Contains("Node.js is licensed for use as follows");
+        }
+        private static string ResolveNodeLicense(string node, string version, string repository)
         {
             foreach (string name in new[] { "LICENSE", "LICENSE.txt", "LICENSE.md" })
             {
-                string path = Path.Combine(Path.GetDirectoryName(node), name);
-                if (File.Exists(path)) return path;
+                string local = Path.Combine(Path.GetDirectoryName(node), name);
+                if (IsNodeLicense(local)) return local;
             }
-            return null;
+            // Retrieve the full license, including third-party notices, for this
+            // exact runtime release. Cache outside the output folder being rebuilt.
+            string cache = Path.Combine(repository, "work", "node-licenses", "v" + version, "LICENSE");
+            if (IsNodeLicense(cache)) return cache;
+            string url = "https://raw.githubusercontent.com/nodejs/node/v" + version + "/LICENSE";
+            try
+            {
+                EditorUtility.DisplayProgressBar("Windows playtest", "Retrieving Node.js " + version + " license and notices…", 0.05f);
+                using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(20) })
+                {
+                    string content = client.GetStringAsync(url).GetAwaiter().GetResult();
+                    if (content.Length <= 1000 || !content.Contains("Node.js is licensed for use as follows"))
+                        throw new InvalidDataException("The response was not the expected Node.js license.");
+                    Directory.CreateDirectory(Path.GetDirectoryName(cache));
+                    File.WriteAllText(cache, content);
+                }
+                Debug.Log("Retrieved Node.js " + version + " redistribution notices from " + url);
+                return cache;
+            }
+            catch (Exception error)
+            {
+                throw new BuildFailedException("Could not retrieve the Node.js license: " + error.Message +
+                    "\nConnect to the internet and retry, or save the complete license from " + url + " to " + cache + ". No Node reinstall is needed.");
+            }
+            finally { EditorUtility.ClearProgressBar(); }
         }
         private static string FindInnoSetup()
         {
