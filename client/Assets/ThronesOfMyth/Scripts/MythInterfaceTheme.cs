@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ThronesOfMyth
 {
-    // Original procedural UI materials. No external assets or downloaded UI packages.
+    // Original painted artwork with procedural interface frames and ornaments.
     public sealed class MythInterfaceTheme : IDisposable
     {
         public static readonly Color Gold = new Color(0.85f, 0.69f, 0.37f);
@@ -16,6 +16,24 @@ namespace ThronesOfMyth
         public GUIStyle Title, Heading, Body, Small, Eyebrow, Number, Center, Primary, Danger, Tab, Card;
         private GUIStyle panel, inset, selected;
         private Texture2D disk;
+        private readonly MythArtwork artwork = new MythArtwork();
+        public bool ReducedMotion;
+        public void Backdrop(Rect rect, float opacity = 1) => artwork.Backdrop(rect, opacity);
+        public void PortraitCard(Rect rect, string id, Color rarity)
+        {
+            Fill(rect, rarity);
+            var inner = new Rect(rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8);
+            if (!artwork.Portrait(inner, id, false)) Portrait(inner, id, rarity);
+            float length = Mathf.Min(22, rect.width * 0.15f);
+            foreach (var corner in new[] { new Vector2(rect.x, rect.y), new Vector2(rect.xMax, rect.y), new Vector2(rect.x, rect.yMax), new Vector2(rect.xMax, rect.yMax) })
+            {
+                float dx = corner.x == rect.x ? 1 : -1, dy = corner.y == rect.y ? 1 : -1;
+                Line(corner, corner + new Vector2(dx * length, 0), 3, Cream);
+                Line(corner, corner + new Vector2(0, dy * length), 3, Cream);
+                float pulse = ReducedMotion ? 1 : 0.86f + 0.14f * Mathf.Sin(Time.unscaledTime * 1.8f);
+                Diamond(new Rect(corner.x - 4, corner.y - 4, 8, 8), Color.Lerp(rarity, Cream, pulse * 0.25f));
+            }
+        }
         private readonly List<Texture2D> textures = new List<Texture2D>();
         public MythInterfaceTheme(GUISkin original)
         {
@@ -140,6 +158,11 @@ namespace ThronesOfMyth
         {
             Circle(rect, rarity);
             var inner = new Rect(rect.x + 3, rect.y + 3, rect.width - 6, rect.height - 6); Circle(inner, new Color(0.1f, 0.18f, 0.22f));
+            if (artwork.Portrait(inner, id, true))
+            {
+                Diamond(new Rect(rect.center.x - 4, rect.yMax - 4, 8, 8), rarity);
+                return;
+            }
             float unit = inner.width / 100;
             var skin = id == "rune-seer" ? new Color(0.72f, 0.77f, 0.79f) : new Color(0.76f, 0.6f, 0.43f);
             Circle(new Rect(inner.x + 20 * unit, inner.y + 53 * unit, 60 * unit, 43 * unit), Color.Lerp(rarity, new Color(0.1f, 0.22f, 0.24f), 0.6f));
@@ -151,6 +174,7 @@ namespace ThronesOfMyth
         }
         public void Dispose()
         {
+            artwork.Dispose();
             foreach (var texture in textures) UnityEngine.Object.Destroy(texture);
             UnityEngine.Object.Destroy(Skin);
         }

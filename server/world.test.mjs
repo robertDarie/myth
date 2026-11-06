@@ -205,3 +205,20 @@ test('complete economic and territory campaign reaches the sanctuary using legal
   assert.equal(p.cityLevel, 2); assert.equal(p.mythic, 1); assert.equal(p.troops, 40);
   assert.ok(w.stats(p).gather > 1); assert.ok(p.gold >= 0 && p.wood >= 0 && p.food >= 0);
 });
+
+test('visual snapshots identify civilization and count real attacks without replaying idle time', () => {
+  const w = new World(), p = player(w, 'Artist', 'egyptian'), c = w.camps[0];
+  let visual = w.snapshot().armies.find(a => a.id === p.id);
+  assert.equal(visual.civilization, 'egyptian'); assert.equal(visual.attackSequence, 0);
+  advance(w, 2); assert.equal(w.armySnapshot(p).attackSequence, 0);
+  p.x = c.x - 1; p.z = c.z;
+  cmd(w, p, 'attack', { targetId: c.id }); w.tick(0.1);
+  assert.equal(w.armySnapshot(p).attackSequence, 1);
+  w.tick(0.1); assert.equal(w.armySnapshot(p).attackSequence, 1);
+  advance(w, 1.1); assert.equal(w.armySnapshot(p).attackSequence, 2);
+  const saved = w.toSave(), restored = World.fromSave(saved);
+  assert.equal(restored.armySnapshot(restored.players.get(p.id)).attackSequence, 2);
+  delete saved.world.players[0].attackSequence; // Existing schema-3 worlds remain compatible.
+  const legacy = World.fromSave(saved);
+  assert.equal(legacy.armySnapshot(legacy.players.get(p.id)).attackSequence, 0);
+});

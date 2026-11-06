@@ -292,18 +292,32 @@ namespace ThronesOfMyth
         private void DrawHeroSkills(CommanderData hero, HeroProgress progress)
         {
             GUILayout.Label($"Level {progress.heroLevel}/{progress.stars * 10} · {progress.stars} stars · XP {progress.xp:F0}", sectionStyle);
-            GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20;
+            var experience = GUILayoutUtility.GetRect(80, 9, GUILayout.ExpandWidth(true));
+            theme.Bar(experience, progress.heroLevel >= progress.stars * 10 ? 1 : progress.xp % 100 / 100f, MythInterfaceTheme.Teal);
+            GUILayout.Space(8);
+            GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20 && !processing;
             if (GUILayout.Button("Mentor +100 XP · 40 gold / 20 food")) Send("mentor-commander", hero.id);
-            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.aether >= progress.stars * 10;
+            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.aether >= progress.stars * 10 && !processing;
             if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " aether")) Send("promote-commander", hero.id);
             GUI.enabled = true;
             foreach (var skill in progress.skills)
             {
-                GUILayout.Label(skill.name + " · " + skill.kind + " · " + skill.level + "/5", sectionStyle);
+                GUILayout.Space(10); GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.BeginHorizontal();
+                var emblem = GUILayoutUtility.GetRect(46, 46, GUILayout.Width(46), GUILayout.Height(46));
+                var color = skill.level == 0 ? MythInterfaceTheme.Muted : skill.kind == "Active" ? RarityColor(hero.color) : MythInterfaceTheme.Teal;
+                theme.Panel(emblem, skill.kind == "Active" && skill.level > 0);
+                theme.Icon(new Rect(emblem.x + 10, emblem.y + 10, 26, 26), skill.level == 0 ? "lock" : skill.kind == "Active" ? "aether" : "research", color);
+                GUILayout.Space(10); GUILayout.BeginVertical();
+                GUILayout.Label(skill.kind.ToUpperInvariant() + (skill.level == 0 ? " · LOCKED" : " · LEVEL " + skill.level + " / 5"), theme.Eyebrow);
+                GUILayout.Label(skill.name, sectionStyle);
+                GUILayout.EndVertical(); GUILayout.EndHorizontal();
+                var pips = GUILayoutUtility.GetRect(80, 10, GUILayout.ExpandWidth(true));
+                for (int i = 0; i < 5; i++) MythInterfaceTheme.Fill(new Rect(pips.x + i * (pips.width / 5), pips.y + 3, pips.width / 5 - 4, 3), i < skill.level ? color : new Color(0.22f, 0.29f, 0.3f));
                 GUILayout.Label(skill.description + (skill.level == 0 ? " Unlocks at " + skill.unlockStar + " stars." : ""), noteStyle);
-                GUI.enabled = skill.level > 0 && skill.level < 5 && progress.shards >= 5 * (skill.level + 1) && me.gold >= 25 * (skill.level + 1);
+                GUI.enabled = skill.level > 0 && skill.level < 5 && progress.shards >= 5 * (skill.level + 1) && me.gold >= 25 * (skill.level + 1) && !processing;
                 if (GUILayout.Button("Upgrade · " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold")) Send(new GameCommand { type = "upgrade-skill", targetId = hero.id, skillIndex = skill.index });
-                GUI.enabled = true;
+                GUI.enabled = true; GUILayout.EndVertical();
             }
             GUILayout.Label((progress.expertise ? "EXPERTISE ACTIVE · " : "Expertise · ") + progress.expertiseDescription, noteStyle);
             GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Active skills fire automatically at 1,000 rage.", noteStyle);

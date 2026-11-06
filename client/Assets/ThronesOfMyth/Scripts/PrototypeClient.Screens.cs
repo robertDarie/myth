@@ -90,11 +90,15 @@ namespace ThronesOfMyth
             var selected = Array.Find(world.commanders, h => h.id == inspectedHeroId) ?? world.commanders[0];
             var progress = Array.Find(me.heroProgress, h => h.id == selected.id);
             bool recruited = Array.IndexOf(me.ownedCommanders, selected.id) >= 0;
-            theme.Portrait(new Rect(detail.x + 24, detail.y + 22, 120, 120), selected.id, RarityColor(selected.color));
-            theme.Text(new Rect(detail.x + 165, detail.y + 20, detail.width - 189, 22), selected.rarity.ToUpperInvariant() + " COMMANDER", theme.Eyebrow);
-            theme.Text(new Rect(detail.x + 165, detail.y + 50, detail.width - 189, 42), selected.name, theme.Title);
-            theme.Text(new Rect(detail.x + 165, detail.y + 98, detail.width - 189, 54), selected.description, theme.Body);
-            var actions = new Rect(detail.x + 22, detail.y + 167, detail.width - 44, 45);
+            theme.PortraitCard(new Rect(detail.x + 24, detail.y + 22, 156, 208), selected.id, RarityColor(selected.color));
+            theme.Text(new Rect(detail.x + 205, detail.y + 20, detail.width - 229, 22), selected.rarity.ToUpperInvariant() + " COMMANDER", theme.Eyebrow);
+            theme.Text(new Rect(detail.x + 205, detail.y + 50, detail.width - 229, 42), selected.name, theme.Title);
+            theme.Text(new Rect(detail.x + 205, detail.y + 98, detail.width - 229, 54), selected.description, theme.Body);
+            if (progress != null)
+            {
+                theme.Text(new Rect(detail.x + 205, detail.y + 159, detail.width - 229, 25), recruited ? "STARS  " + progress.stars + "    ·    ASCENSION  " + progress.rank : "A legend waiting to be remembered", theme.Eyebrow);
+            }
+            var actions = new Rect(detail.x + 205, detail.y + 191, detail.width - 229, 42);
             if (!recruited)
             {
                 if (theme.Button(actions, "Recruit · " + selected.cost.ToString("N0") + " gold", true, me.gold >= selected.cost && !processing)) Send("unlock-commander", selected.id);
@@ -104,7 +108,7 @@ namespace ThronesOfMyth
                 string action = ActiveArmy.commanderId == selected.id ? "Leading selected march" : AssignedElsewhere(selected.id) ? "Assigned to another march" : CanEditArmy ? "Assign to selected march" : "Return selected march home to assign";
                 if (theme.Button(actions, action, true, CanEditArmy && ActiveArmy.commanderId != selected.id && !AssignedElsewhere(selected.id) && !processing)) Send("commander", selected.id);
             }
-            GUILayout.BeginArea(new Rect(detail.x + 24, detail.y + 231, detail.width - 48, detail.height - 246));
+            GUILayout.BeginArea(new Rect(detail.x + 24, detail.y + 251, detail.width - 48, detail.height - 266));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
             if (recruited && progress != null)
             {
@@ -118,7 +122,7 @@ namespace ThronesOfMyth
             else
             {
                 GUILayout.Label("SIGNATURE & PASSIVES", theme.Eyebrow);
-                foreach (var skill in progress.skills) { GUILayout.Label(skill.name, theme.Heading); GUILayout.Label(skill.description, theme.Body); }
+                if (progress != null) foreach (var skill in progress.skills) { GUILayout.Label(skill.name, theme.Heading); GUILayout.Label(skill.description, theme.Body); }
                 GUILayout.Space(12); GUILayout.Label("Recruit this commander to develop its individual experience, stars and skills.", theme.Small);
             }
             GUILayout.EndScrollView(); GUILayout.EndArea();
@@ -126,7 +130,10 @@ namespace ThronesOfMyth
         private void RenderTempleWindow(Rect r)
         {
             var stage = new Rect(r.x, r.y, r.width - 474, r.height); var information = new Rect(r.xMax - 454, r.y, 454, r.height);
-            theme.Panel(stage, true); theme.Panel(information, false, true);
+            theme.Panel(stage, true);
+            theme.Backdrop(new Rect(stage.x + 4, stage.y + 4, stage.width - 8, stage.height - 8), 0.48f);
+            MythInterfaceTheme.Fill(new Rect(stage.x + 4, stage.y + 4, stage.width - 8, stage.height - 8), new Color(0.02f, 0.06f, 0.09f, 0.48f));
+            theme.Panel(information, false, true);
             theme.Text(new Rect(stage.x + 24, stage.y + 19, stage.width - 48, 22), "WHERE LEGENDS ANSWER", theme.Eyebrow);
             theme.Text(new Rect(stage.x + 24, stage.y + 50, stage.width - 48, 48), "Invoke a remembered hero", theme.Title);
             DrawResult latest = me.summonHistory.Length > 0 ? me.summonHistory[0] : null;
@@ -134,7 +141,7 @@ namespace ThronesOfMyth
             var orbit = new Rect(stage.center.x - size / 2, stage.y + 118, size, size);
             theme.Circle(new Rect(orbit.x - 15, orbit.y - 15, size + 30, size + 30), new Color(0.32f, 0.28f, 0.18f));
             theme.Circle(new Rect(orbit.x - 12, orbit.y - 12, size + 24, size + 24), new Color(0.055f, 0.11f, 0.15f));
-            bool revealing = Time.unscaledTime < revealUntil;
+            bool revealing = !reducedMotion && Time.unscaledTime < revealUntil;
             for (int i = 0; i < 8; i++)
             {
                 float angle = (i * 45 + (revealing ? Time.unscaledTime * 35 : 0)) * Mathf.Deg2Rad;
@@ -232,11 +239,13 @@ namespace ThronesOfMyth
             if (Mathf.Abs(scale - interfaceScalePreference) > 0.005f) { interfaceScalePreference = scale; PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", scale); }
             labelsEnabled = GUILayout.Toggle(labelsEnabled, "Show world names and health bars");
             PlayerPrefs.SetInt("ThronesOfMyth.labels", labelsEnabled ? 1 : 0);
+            reducedMotion = GUILayout.Toggle(reducedMotion, "Reduced motion · still portraits, banners and troop poses");
+            PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", reducedMotion ? 1 : 0);
             GUILayout.Space(20); GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
             GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
             GUILayout.Space(18); GUILayout.Label("Connected to " + serverUrl, theme.Small);
             GUILayout.Label(world.persistence != null && world.persistence.enabled ? "Your local kingdom autosaves. Time pauses while its server is closed." : "This server is not saving world progress.", theme.Small);
-            if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
+            if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
             GUILayout.EndArea();
         }
         private void DrawContextActions()

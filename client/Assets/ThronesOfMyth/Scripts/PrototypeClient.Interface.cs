@@ -10,7 +10,7 @@ namespace ThronesOfMyth
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
-        private bool compactHud, labelsEnabled = true, advancedConnection;
+        private bool compactHud, labelsEnabled = true, advancedConnection, reducedMotion;
         private string previousToast = "";
         private Vector2 contentScroll, rosterScroll;
         private int heroFilter;
@@ -31,6 +31,7 @@ namespace ThronesOfMyth
         private void InitializeInterface()
         {
             interfaceScalePreference = Mathf.Clamp(PlayerPrefs.GetFloat("ThronesOfMyth.uiScale", 1), 0.85f, 1.15f);
+            reducedMotion = PlayerPrefs.GetInt("ThronesOfMyth.reducedMotion", 0) == 1;
             labelsEnabled = PlayerPrefs.GetInt("ThronesOfMyth.labels", 1) == 1;
         }
         private void OpenInterface(InterfacePage page)
@@ -122,6 +123,8 @@ namespace ThronesOfMyth
             }
             var skinBefore = GUI.skin; var matrixBefore = GUI.matrix; var colorBefore = GUI.color;
             GUI.skin = theme.Skin;
+            theme.ReducedMotion = reducedMotion;
+            if (map != null) map.reducedMotion = reducedMotion;
             if (world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main); }
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(InterfaceScale, InterfaceScale, 1));
             GUI.color = Color.white;
@@ -154,7 +157,8 @@ namespace ThronesOfMyth
         }
         private void RenderKingdomEntry()
         {
-            MythInterfaceTheme.Fill(new Rect(0, 0, ViewWidth, ViewHeight), new Color(0.025f, 0.06f, 0.09f, 0.96f));
+            theme.Backdrop(new Rect(0, 0, ViewWidth, ViewHeight));
+            MythInterfaceTheme.Fill(new Rect(0, 0, ViewWidth, ViewHeight), new Color(0.025f, 0.06f, 0.09f, 0.48f));
             float centerY = ViewHeight / 2;
             theme.Icon(new Rect(120, centerY - 245, 180, 180), "temple", MythInterfaceTheme.Gold);
             theme.Text(new Rect(120, centerY - 30, 620, 38), "THE GODS HAVE FALLEN SILENT", theme.Eyebrow);

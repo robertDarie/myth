@@ -4,8 +4,12 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.6
+## Playable slice 0.7
 
+- Original painted commander portraits, ornate rarity frames, sanctuary key art,
+  civilization city silhouettes, recognizable resources and mythic escorts.
+- March, attack, gathering, banner and skill animations, observed health-change
+  captions, actual shield indicators, and a saved reduced-motion option.
 - Original map-first interface: compact HUD, march rail, context actions,
   city grid, research graph, searchable commanders and a dedicated Temple screen.
 - Five age-based march slots, independently controlled armies, a permanent
@@ -55,14 +59,14 @@ its map at runtime. Restart an older server before connecting the updated client
 
 **Controls:** WASD/arrows or middle-drag to pan; wheel to zoom; left-click to
 inspect; right-click to march, attack, gather or capture; H to focus home; Space
-to focus your army; R to return; Esc to cancel beacon placement. The sidebar
-provides equivalent action buttons. Keyboard camera input pauses over UI.
+to focus your army; R to return; Esc to cancel beacon placement. On-screen controls
+provide equivalent action buttons. Keyboard camera input pauses over UI.
 
 For a second player, run a Windows standalone build beside the editor and use a
 **different player name**. Both clients connect to the local server. A matching
 name and saved local token resume the same city; names alone are not credentials.
 
-See [the interface guide](docs/interface-0.6.md),
+See [the art and animation guide](docs/art-direction-0.7.md), [the interface guide](docs/interface-0.6.md),
 [the gameplay playtest guide](docs/playtest-0.5.md), [architecture](docs/architecture.md),
 [the full city/economy design](docs/city-and-economy-design.md),
 [skills, ages and marches](docs/skills-ages-and-marches.md),
@@ -70,7 +74,8 @@ and [milestones](docs/milestones.md).
 
 Server gameplay and HTTP integration are covered by automated tests. Unity
 compilation, rendering, and Windows builds have not been run in the cloud.
-Graphics are procedural placeholders, including generic mythic escort models.
+Commander portraits and sanctuary backgrounds use original generated artwork.
+World models are stylized procedural proxies, awaiting authored meshes and rigs.
 There is no PvP army combat, destructible territory, online account system,
 production database, hosted kingdom service, or KvK yet. The CLI saves locally;
 time pauses while the server is closed. See the playtest guide for save paths.

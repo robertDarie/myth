@@ -12,7 +12,7 @@ namespace ThronesOfMyth
         public float x, z, homeX, homeZ, targetX, targetZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
         public float xp;
-        public int rage, shield, skillCasts, marchSlots, constructionSlots, deployedTroops, deployedMythic;
+        public int rage, shield, skillCasts, attackSequence, marchSlots, constructionSlots, deployedTroops, deployedMythic;
         public bool questClaimed, hasOrder, offline;
         public int reserveTroops, reserveMythic, stone, aether, sigils, troopCapacity, mythicCapacity, passiveLimit, epicPity, legendaryPity, offeringAmount;
         public bool offeringAvailable;
