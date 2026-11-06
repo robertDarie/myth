@@ -64,7 +64,7 @@ namespace ThronesOfMyth.Editor
             PlayerSettings.resizableWindow = true;
             PlayerSettings.runInBackground = true;
             // Mono avoids requiring a separate C++/IL2CPP toolchain for this playtest.
-            PlayerSettings.SetScriptingBackend(BuildTargetGroup.Standalone, ScriptingImplementation.Mono2x);
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
             AssetDatabase.SaveAssets();
 
             string dist = Path.Combine(repository, "dist");
@@ -95,7 +95,7 @@ namespace ThronesOfMyth.Editor
                 File.Copy(Path.Combine(packaging, file), Path.Combine(package, file), true);
             string zip = Path.Combine(dist, "Thrones-of-Myth-Windows.zip");
             if (File.Exists(zip)) File.Delete(zip);
-            ZipFile.CreateFromDirectory(package, zip, CompressionLevel.Optimal, false);
+            ZipFile.CreateFromDirectory(package, zip, System.IO.Compression.CompressionLevel.Optimal, false);
             Debug.Log("Portable playtest created: " + zip);
 
             string compiler = FindInnoSetup();
