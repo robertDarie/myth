@@ -7,6 +7,13 @@ export const CIVILIZATIONS = [
   { id: 'japanese', name: 'Japanese', specialty: 'Spirit paths: +15% march speed', mythic: 'Tengu', damage: 1, speed: 1.15, healing: 1, gathering: 1, health: 1 },
 ];
 export const COMMANDERS = [
+  { id: 'warden', name: 'Sanctuary Warden', rarity: 'Common', color: 'green', description: 'Original guardian. +5% damage.', damage: 1.05, health: 1, speed: 1, gather: 1, cost: 40 },
+  { id: 'rune-seer', name: 'Rune Seer', rarity: 'Rare', color: 'blue', description: 'Original Norse-inspired seer. +10% health and gathering.', damage: 1, health: 1.1, speed: 1, gather: 1.1, cost: 100 },
+  { id: 'mulan', name: 'Hua Mulan', rarity: 'Epic', color: 'purple', description: 'Legendary defender. +15% health and +10% gathering.', damage: 1, health: 1.15, speed: 1, gather: 1.1, cost: 250 },
+  { id: 'tomoe', name: 'Tomoe Gozen', rarity: 'Epic', color: 'purple', description: 'Warrior of legend. +20% damage.', damage: 1.2, health: 1, speed: 1, gather: 1, cost: 250 },
+  { id: 'sigurd', name: 'Sigurd', rarity: 'Legendary', color: 'gold', description: 'Dragon-slayer. +25% damage and +20% health.', damage: 1.25, health: 1.2, speed: 1, gather: 1, cost: 750 },
+  { id: 'wukong', name: 'Sun Wukong', rarity: 'Legendary', color: 'gold', description: 'Monkey King. +25% damage and +20% speed.', damage: 1.25, health: 1, speed: 1.2, gather: 1, cost: 750 },
+  { id: 'horus-champion', name: 'Champion of Horus', rarity: 'Epic', color: 'purple', description: 'Original mortal champion. +10% health and +15% gathering.', damage: 1, health: 1.1, speed: 1, gather: 1.15, cost: 250 },
   { id: 'captain', name: 'Frontier Captain', rarity: 'Common', color: 'green', description: 'Steady mortal leadership. +5% health.', damage: 1, health: 1.05, speed: 1, gather: 1, cost: 0 },
   { id: 'scout', name: 'Pathfinder', rarity: 'Rare', color: 'blue', description: 'Explore and gather. +15% speed, +20% gathering.', damage: 1, health: 1, speed: 1.15, gather: 1.2, cost: 80 },
   { id: 'atalanta', name: 'Atalanta', rarity: 'Epic', color: 'purple', description: 'Swift hunter. +15% damage and march speed.', damage: 1.15, health: 1, speed: 1.15, gather: 1, cost: 250 },

@@ -1,4 +1,6 @@
-# Playtest 0.3: a working city and saved kingdom
+# Playtest 0.3: a working city and saved kingdom (historical)
+
+For the current version, see [Playtest 0.4](playtest-0.4.md).
 
 ## Update
 

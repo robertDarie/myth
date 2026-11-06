@@ -16,7 +16,11 @@ namespace ThronesOfMyth
         private string playerName, token, playerId, allianceName = "Dawnkeepers";
         private string status = "Start the local server, then establish your city.";
         private bool joining, processing, placeBeacon, focused;
-        private int civilization, tab;
+        private int civilization, tab, cityTab, selectedBuilding;
+        private bool cityOverviewOpen;
+        private string lastDrawId;
+        private float revealUntil;
+        private readonly string[] cityTabs = { "Districts", "Training", "Research", "Temple", "Forge", "Market" };
         private string selectedId = "", selectedKind = "";
         private Vector2 scroll;
         private WorldSnapshot world;
@@ -40,7 +44,7 @@ namespace ThronesOfMyth
         {
             if (cameraControl != null) cameraControl.blockInput = string.IsNullOrEmpty(token) || PointerOverUI() || GUIUtility.keyboardControl != 0;
             if (me == null) return;
-            if (Input.GetKeyDown(KeyCode.Escape)) { placeBeacon = false; selectedId = ""; }
+            if (Input.GetKeyDown(KeyCode.Escape)) { placeBeacon = false; selectedId = ""; cityOverviewOpen = false; }
             if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.H)) cameraControl?.Focus(me.homeX, me.homeZ);
             if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(me.x, me.z);
             if (GUIUtility.keyboardControl == 0 && Input.GetKeyDown(KeyCode.R)) Send("return");
@@ -67,7 +71,7 @@ namespace ThronesOfMyth
         private bool PointerOverUI()
         {
             var p = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
-            return p.x < 320 || p.y < 65 || p.y > Screen.height - 44 || (p.x > Screen.width - 220 && p.y > Screen.height - 250);
+            return (cityOverviewOpen && tab == 1 && cityTab == 0) || p.x < 320 || p.y < 65 || p.y > Screen.height - 44 || (p.x > Screen.width - 220 && p.y > Screen.height - 250);
         }
         private void Styles()
         {
@@ -86,7 +90,7 @@ namespace ThronesOfMyth
             GUILayout.BeginHorizontal(); GUILayout.Label("THRONES OF MYTH", titleStyle, GUILayout.Width(285));
             if (me != null)
             {
-                GUILayout.Label($"Gold {me.gold}    Wood {me.wood}    Food {me.food}    |    City {me.cityLevel}    |    {me.name}", sectionStyle);
+                GUILayout.Label($"Gold {me.gold}    Wood {me.wood}    Food {me.food}    Stone {me.stone}    Aether {me.aether}    |    City {me.cityLevel}    |    {me.name}", sectionStyle);
                 if (GUILayout.Button("Home [H]", GUILayout.Width(85))) cameraControl?.Focus(me.homeX, me.homeZ);
             }
             GUILayout.EndHorizontal(); GUILayout.EndArea();
@@ -106,6 +110,7 @@ namespace ThronesOfMyth
             if (tab == 4) DrawJournal();
             GUILayout.Space(14); DrawSelection();
             GUILayout.EndScrollView(); GUILayout.EndArea();
+            if (cityOverviewOpen && tab == 1 && cityTab == 0) DrawCityOverview();
             DrawMinimap(); DrawStatus();
         }
         private void DrawJoin()
@@ -148,28 +153,35 @@ namespace ThronesOfMyth
         }
         private void DrawCity()
         {
+            cityTab = GUILayout.SelectionGrid(cityTab, cityTabs, 3);
+            GUILayout.Space(6);
+            if (cityTab == 0) DrawDistricts();
+            if (cityTab == 1) DrawTraining();
+            if (cityTab == 2) DrawResearch();
+            if (cityTab == 3) DrawTemple();
+            if (cityTab == 4) DrawForge();
+            if (cityTab == 5) DrawMarket();
+        }
+        private void DrawTraining()
+        {
             GUILayout.Label("City development", sectionStyle);
             GUILayout.Label("Your city works while armies march, gather or fight. New recruits wait in city reserves until you reinforce at home.", noteStyle);
             int queuedTroops = 0, queuedMythic = 0;
             foreach (var job in me.trainingQueue)
                 if (job.type == "train") queuedTroops += job.amount; else queuedMythic += job.amount;
-            int cap = me.cityLevel * 20 + 20;
+            int cap = me.troopCapacity;
             GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.troops + me.reserveTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
-            GUI.enabled = !HasConstruction && me.cityLevel < 5 && me.wood >= me.cityLevel * 100 && me.gold >= me.cityLevel * 75;
-            if (GUILayout.Button("Upgrade · " + me.cityLevel * 100 + " wood / " + me.cityLevel * 75 + " gold")) Send("upgrade");
-            GUI.enabled = true;
-            if (HasConstruction) DrawJob(me.construction, "City level " + (me.cityLevel + 1), false);
-            else GUILayout.Label("Builder available · upgrades take 20s × current level.", noteStyle);
+            if (HasConstruction) DrawJob(me.construction, JobName(me.construction), false);
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
             GUI.enabled = me.trainingQueue.Length < 3 && me.troops + me.reserveTroops + queuedTroops + 5 <= cap && me.food >= 50 && me.gold >= 20;
-            if (GUILayout.Button("Train 5 troops · 8s · 50 food / 20 gold")) Send("train");
+            if (GUILayout.Button("Train 5 troops · " + Mathf.CeilToInt(me.trainingDuration) + "s · 50 food / 20 gold")) Send("train");
             GUI.enabled = true;
             string mythic = "Mythic guardian";
             foreach (var civ in world.civilizations) if (civ.id == me.civilization) mythic = civ.mythic;
-            GUI.enabled = me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.mythic + me.reserveMythic + queuedMythic < me.cityLevel && me.food >= 80 && me.gold >= 100;
-            if (GUILayout.Button(mythic + " · 20s · 80 food / 100 gold")) Send("recruit");
+            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.mythic + me.reserveMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
+            if (GUILayout.Button(mythic + " · " + Mathf.CeilToInt(me.recruitDuration) + "s · 80 food / 100 gold")) Send("recruit");
             GUI.enabled = true;
-            GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment unlocks at city level 2.", noteStyle);
+            GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment needs Citadel 2 and Sanctuary of Beasts.", noteStyle);
             for (int i = 0; i < me.trainingQueue.Length; i++)
                 DrawJob(me.trainingQueue[i], me.trainingQueue[i].type == "train" ? "5 mortal troops" : mythic, i > 0);
             GUILayout.Label($"Ready reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", sectionStyle);
@@ -188,8 +200,173 @@ namespace ThronesOfMyth
             GUI.color = new Color(0.8f, 0.65f, 0.3f);
             GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * Mathf.Clamp01(1 - job.remaining / job.duration), bar.height), Texture2D.whiteTexture);
             GUI.color = Color.white;
+            GUILayout.Label("Refund: " + Cost(job.cost), noteStyle);
             if (GUILayout.Button("Cancel & refund resources")) Send("cancel-job", job.id);
             GUILayout.EndVertical();
+        }
+        private static string Cost(ResourceAmounts cost)
+        {
+            if (cost == null) return "none";
+            var parts = new List<string>();
+            if (cost.food > 0) parts.Add(cost.food + " food");
+            if (cost.wood > 0) parts.Add(cost.wood + " wood");
+            if (cost.stone > 0) parts.Add(cost.stone + " stone");
+            if (cost.gold > 0) parts.Add(cost.gold + " gold");
+            if (cost.aether > 0) parts.Add(cost.aether + " aether");
+            return string.Join(" / ", parts);
+        }
+        private bool Afford(ResourceAmounts c) => c != null && me.food >= c.food && me.wood >= c.wood && me.stone >= c.stone && me.gold >= c.gold && me.aether >= c.aether;
+        private int BuildingLevel(string id)
+        {
+            foreach (var b in me.cityBuildings) if (b.id == id) return b.level;
+            return 0;
+        }
+        private string JobName(QueueJob job)
+        {
+            if (job.type == "upgrade") return "Citadel level " + (me.cityLevel + 1);
+            foreach (var b in me.cityBuildings) if (b.id == job.targetId) return b.name;
+            foreach (var t in me.researchOptions) if (t.id == job.targetId) return t.name;
+            foreach (var r in world.relics) if (r.id == job.targetId) return r.name;
+            return job.type;
+        }
+        private void DrawDistricts()
+        {
+            GUILayout.Label("City of the fallen age", sectionStyle);
+            if (GUILayout.Button(cityOverviewOpen ? "Close city overview" : "Open city overview")) cityOverviewOpen = !cityOverviewOpen;
+            selectedBuilding = Mathf.Clamp(selectedBuilding, 0, me.cityBuildings.Length - 1);
+            var selected = me.cityBuildings[selectedBuilding];
+            GUILayout.Label(selected.name + " · " + selected.level + "/" + selected.maxLevel, sectionStyle);
+            GUILayout.Label(selected.category + " · " + selected.description, noteStyle);
+            if (selected.level < selected.maxLevel)
+            {
+                GUILayout.Label(Cost(selected.nextCost) + " · " + Mathf.CeilToInt(selected.nextDuration) + "s", noteStyle);
+                GUI.enabled = selected.canUpgrade;
+                if (GUILayout.Button(selected.level == 0 ? "Construct" : "Upgrade")) Send("building-upgrade", selected.id);
+                GUI.enabled = true;
+                if (!selected.canUpgrade) GUILayout.Label(selected.lockedReason, noteStyle);
+            }
+            if (HasConstruction) DrawJob(me.construction, JobName(me.construction), false);
+            GUILayout.Label("Passive production limit: " + me.passiveLimit + " per resource. Gathering and rewards can exceed it.", noteStyle);
+            foreach (var b in me.cityBuildings)
+                if (GUILayout.Button(b.name + " · " + (b.level == 0 ? "Not built" : "Lv " + b.level))) selectedBuilding = Array.IndexOf(me.cityBuildings, b);
+        }
+        private void DrawCityOverview()
+        {
+            float width = Mathf.Max(300, Screen.width - 555), height = Mathf.Max(280, Screen.height - 150);
+            var area = new Rect(325, 72, width, height);
+            GUI.Box(area, GUIContent.none);
+            GUILayout.BeginArea(new Rect(area.x + 12, area.y + 10, width - 24, height - 20));
+            GUILayout.BeginHorizontal(); GUILayout.Label("YOUR CITY · " + me.name, titleStyle);
+            if (GUILayout.Button("X", GUILayout.Width(32))) cityOverviewOpen = false;
+            GUILayout.EndHorizontal();
+            GUILayout.Label("Select an institution. Build and upgrade from the sidebar. Layout is a prototype overview, not free placement.", noteStyle);
+            float cardHeight = Mathf.Max(42, (height - 95) / 5);
+            for (int row = 0; row < 5; row++)
+            {
+                GUILayout.BeginHorizontal();
+                for (int column = 0; column < 3; column++)
+                {
+                    int index = row * 3 + column;
+                    if (index >= me.cityBuildings.Length) continue;
+                    var building = me.cityBuildings[index];
+                    GUI.backgroundColor = index == selectedBuilding ? new Color(0.95f, 0.75f, 0.35f) : building.level > 0 ? new Color(0.45f, 0.7f, 0.65f) : Color.gray;
+                    if (GUILayout.Button(building.name + "\n" + building.category + " · " + (building.level > 0 ? "Level " + building.level : "Not constructed"), GUILayout.Height(cardHeight), GUILayout.Width((width - 40) / 3))) selectedBuilding = index;
+                }
+                GUI.backgroundColor = Color.white; GUILayout.EndHorizontal();
+            }
+            GUILayout.EndArea();
+        }
+        private void DrawResearch()
+        {
+            GUILayout.Label("Athenaeum of Ages", sectionStyle);
+            if (me.research != null && !string.IsNullOrEmpty(me.research.id)) DrawJob(me.research, JobName(me.research), false);
+            GUILayout.Label("Research uses its own lane and continues alongside city construction and training.", noteStyle);
+            foreach (var tech in me.researchOptions)
+            {
+                GUILayout.Label(tech.name + " · " + tech.level + "/" + tech.maxLevel, sectionStyle);
+                GUILayout.Label(tech.branch + " · " + tech.description, noteStyle);
+                if (tech.level >= tech.maxLevel) continue;
+                GUILayout.Label(Cost(tech.cost) + " · " + Mathf.CeilToInt(tech.duration) + "s", noteStyle);
+                GUI.enabled = tech.canResearch;
+                if (GUILayout.Button("Research")) Send("research", tech.id);
+                GUI.enabled = true;
+                if (!tech.canResearch) GUILayout.Label(tech.lockedReason, noteStyle);
+            }
+        }
+        private string HeroName(string id)
+        {
+            foreach (var hero in world.commanders) if (hero.id == id) return hero.name;
+            return id;
+        }
+        private void DrawTemple()
+        {
+            GUILayout.Label("Temple of Echoes", titleStyle);
+            GUILayout.Label("Call the memory of a hero through the veil. Oracle Sigils are earned from camps and offerings, or exchanged with in-game resources.", noteStyle);
+            GUILayout.Label("Oracle Sigils: " + me.sigils, sectionStyle);
+            bool built = BuildingLevel("oracle") > 0;
+            if (!built) GUILayout.Label("Construct the Temple in Districts first.", noteStyle);
+            GUI.enabled = built && me.offeringAvailable && !processing;
+            if (GUILayout.Button("Free offering · " + me.offeringAmount + " sigil(s)")) Send("temple-offering");
+            GUI.enabled = built && Afford(me.sealCost) && !processing;
+            if (GUILayout.Button("Exchange for 1 sigil · " + Cost(me.sealCost))) Send("buy-sigil");
+            GUI.enabled = built && me.sigils >= 1 && !processing;
+            if (GUILayout.Button("Invoke one echo · 1 sigil", GUILayout.Height(32))) Send(new GameCommand { type = "summon", count = 1 });
+            GUI.enabled = built && me.sigils >= 10 && !processing;
+            if (GUILayout.Button("Invoke ten echoes · 10 sigils", GUILayout.Height(32))) Send(new GameCommand { type = "summon", count = 10 });
+            GUI.enabled = true;
+            GUILayout.Label($"Base odds: Common {world.summonRules.common:P0}, Rare {world.summonRules.rare:P0}, Epic {world.summonRules.epic:P0}, Legendary {world.summonRules.legendary:P0}. Uniform within each rarity. No paid currency.", noteStyle);
+            GUILayout.Label($"Epic or better within {world.summonRules.epicPity - me.epicPity} summons. Legendary within {world.summonRules.legendaryPity - me.legendaryPity}. Guarantees persist; qualifying results reset their counters.", noteStyle);
+            GUILayout.Label($"At the Epic guarantee: {1 - world.summonRules.legendary:P0} Epic / {world.summonRules.legendary:P0} Legendary. At the Legendary guarantee: 100% Legendary. Temple level never changes odds. Free offering resets at 00:00 UTC.", noteStyle);
+            if (me.summonHistory.Length > 0)
+            {
+                var latest = me.summonHistory[0];
+                GUILayout.Space(10);
+                if (Time.unscaledTime < revealUntil) GUILayout.Label("The veil parts…", titleStyle);
+                else
+                {
+                    GUI.color = RarityColor(latest.rarity.ToLowerInvariant());
+                    GUILayout.Label(HeroName(latest.commanderId), titleStyle); GUI.color = Color.white;
+                    GUILayout.Label(latest.rarity + (latest.duplicate ? " · +" + latest.shards + " Echo Shards" : " · NEW COMMANDER"), sectionStyle);
+                }
+                GUILayout.Label("Recent echoes", sectionStyle);
+                foreach (var draw in me.summonHistory) GUILayout.Label("#" + draw.number + " " + HeroName(draw.commanderId) + (draw.duplicate ? " · " + draw.shards + " shards" : " · new"), noteStyle);
+            }
+        }
+        private void DrawForge()
+        {
+            GUILayout.Label("Forge of Dawn", sectionStyle);
+            bool built = BuildingLevel("forge") > 0;
+            if (!built) GUILayout.Label("Requires Citadel 3 and Titan Stoneworks 2. Construct it in Districts.", noteStyle);
+            if (me.crafting != null && !string.IsNullOrEmpty(me.crafting.id)) DrawJob(me.crafting, JobName(me.crafting), false);
+            foreach (var relic in world.relics)
+            {
+                bool owned = Array.IndexOf(me.ownedRelics, relic.id) >= 0;
+                GUILayout.Label(relic.name, sectionStyle); GUILayout.Label(relic.description, noteStyle);
+                if (!owned)
+                {
+                    GUILayout.Label(Cost(relic.cost), noteStyle);
+                    GUI.enabled = built && (me.crafting == null || string.IsNullOrEmpty(me.crafting.id)) && Afford(relic.cost);
+                    if (GUILayout.Button("Craft · " + relic.duration + "s")) Send("craft", relic.id);
+                }
+                else
+                {
+                    GUI.enabled = CanEditArmy && me.equippedRelic != relic.id;
+                    if (GUILayout.Button(me.equippedRelic == relic.id ? "Equipped" : "Equip at home")) Send("equip-relic", relic.id);
+                }
+                GUI.enabled = true;
+            }
+        }
+        private void DrawMarket()
+        {
+            GUILayout.Label("Agora of Fates", sectionStyle);
+            if (BuildingLevel("market") == 0) GUILayout.Label("Build the Agora in Districts to exchange resources.", noteStyle);
+            foreach (var trade in world.trades)
+            {
+                GUI.enabled = BuildingLevel("market") > 0 && Afford(trade.cost);
+                if (GUILayout.Button(trade.name)) Send("trade", trade.id);
+                GUI.enabled = true;
+            }
+            GUILayout.Label("Rates are fixed and displayed before exchange. Resource trades cannot create profit loops.", noteStyle);
         }
         private void DrawCommanders()
         {
@@ -210,7 +387,16 @@ namespace ThronesOfMyth
                     GUI.enabled = CanEditArmy && me.commanderId != hero.id;
                     if (GUILayout.Button(me.commanderId == hero.id ? "Equipped" : "Equip at home")) Send("commander", hero.id);
                 }
-                GUI.enabled = true; GUILayout.Space(10);
+                GUI.enabled = true;
+                var progress = Array.Find(me.heroProgress, h => h.id == hero.id);
+                if (progress != null && owned)
+                {
+                    GUILayout.Label($"Rank {progress.rank}/5 · Echo Shards {progress.shards}. Each rank: +3% damage and +2% maximum health.", noteStyle);
+                    GUI.enabled = progress.rank < 5 && progress.shards >= progress.nextShards && me.gold >= progress.nextGold;
+                    if (GUILayout.Button("Ascend · " + progress.nextShards + " shards / " + progress.nextGold + " gold")) Send("upgrade-commander", hero.id);
+                    GUI.enabled = true;
+                }
+                GUILayout.Space(10);
             }
         }
         private void DrawAlliance()
@@ -230,6 +416,16 @@ namespace ThronesOfMyth
             foreach (var site in world.sites)
             {
                 if (GUILayout.Button(site.name + (site.allianceId == me.allianceId ? " ✓" : ""))) { Select(site.id, "site"); cameraControl?.Focus(site.x, site.z); }
+            }
+            if (BuildingLevel("oathhall") > 0)
+            {
+                GUILayout.Label("Alliance assistance", sectionStyle);
+                foreach (var ally in world.players)
+                {
+                    if (ally.id == playerId || ally.allianceId != me.allianceId) continue;
+                    foreach (var job in new[] { ally.construction, ally.research })
+                        if (job != null && !string.IsNullOrEmpty(job.id) && GUILayout.Button("Help " + ally.name + " · " + job.type)) Send("alliance-help", job.id);
+                }
             }
             GUILayout.Label("Eastern gate unlocks x > 40; northern gate unlocks z > 40. The central sanctuary requires both.", noteStyle);
         }
@@ -314,9 +510,9 @@ namespace ThronesOfMyth
         }
         private static Color RarityColor(string rarity)
         {
-            if (rarity == "green") return new Color(0.4f, 0.9f, 0.4f);
-            if (rarity == "blue") return new Color(0.4f, 0.7f, 1);
-            if (rarity == "purple") return new Color(0.85f, 0.5f, 1);
+            if ((rarity == "green" || rarity == "common")) return new Color(0.4f, 0.9f, 0.4f);
+            if ((rarity == "blue" || rarity == "rare")) return new Color(0.4f, 0.7f, 1);
+            if ((rarity == "purple" || rarity == "epic")) return new Color(0.85f, 0.5f, 1);
             return new Color(1, 0.8f, 0.25f);
         }
         private IEnumerator Join()
@@ -348,10 +544,16 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 3) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; break; }
+                        if (next.version != 4) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; break; }
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
                         {
+                            if (me.summonHistory.Length > 0 && me.summonHistory[0].id != lastDrawId)
+                            {
+                                if (lastDrawId != null) revealUntil = Time.unscaledTime + 0.8f;
+                                lastDrawId = me.summonHistory[0].id;
+                            }
+                            else if (lastDrawId == null) lastDrawId = "";
                             map.Sync(world, playerId, me.allianceId);
                             if (!focused) { cameraControl?.Focus(me.homeX, me.homeZ); focused = true; }
                         }

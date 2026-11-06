@@ -67,6 +67,7 @@ test('city development continues while the army is gathering; recruits stay in r
   assert.equal(p.health, armyHealth); assert.deepEqual(p.target, order);
   assert.throws(() => cmd(w, p, 'reinforce'), /home/);
   advance(w, 12); assert.equal(p.cityLevel, 2);
+  p.buildings.menagerie = 1;
   cmd(w, p, 'recruit'); advance(w, 21); assert.equal(p.reserveMythic, 1); assert.equal(p.mythic, 0);
   assert.throws(() => cmd(w, p, 'commander', { targetId: 'atalanta' }), /home/);
   cmd(w, p, 'return'); advance(w, 20); cmd(w, p, 'reinforce');
@@ -165,11 +166,11 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 3);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 4);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(b.token);
-  assert.equal(after.version, 3); assert.equal(after.players.length, 2);
+  assert.equal(after.version, 4); assert.equal(after.players.length, 2);
   assert.ok(after.players.find(p => p.id === a.playerId).x > before.players.find(p => p.id === a.playerId).x);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);
@@ -182,11 +183,13 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
 test('complete economic and territory campaign reaches the sanctuary using legal commands', () => {
   const w = new World(), p = player(w);
   // Advance actual marching and gathering; do not grant resources or teleport.
-  for (const index of [0, 3, 1, 4, 2]) {
+  for (const index of [0, 3, 1, 4, 2, 12]) {
     cmd(w, p, 'gather', { targetId: w.nodes[index].id }); advance(w, 100);
   }
   cmd(w, p, 'return'); advance(w, 30);
-  cmd(w, p, 'upgrade'); advance(w, 21); cmd(w, p, 'recruit'); advance(w, 21);
+  cmd(w, p, 'upgrade'); advance(w, 21);
+  for (const id of ['oracle', 'academy', 'menagerie']) { cmd(w, p, 'building-upgrade', { targetId: id }); advance(w, 13); }
+  cmd(w, p, 'recruit'); advance(w, 21);
   for (let i = 0; i < 4; i++) { cmd(w, p, 'train'); advance(w, 9); }
   cmd(w, p, 'reinforce');
   cmd(w, p, 'commander', { targetId: 'atalanta' });

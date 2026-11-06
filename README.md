@@ -4,15 +4,19 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.3
+## Playable slice 0.4
 
+- Fifteen themed institutions, a clickable city overview, eight technologies,
+  passive production, resource exchanges, relic crafting and alliance job help.
+- Temple of Echoes: earned-sigil summons with published odds, persistent rarity
+  guarantees, duplicate shards and commander ascension; 11 commanders.
 - Five civilization choices with working combat, recovery, health, gathering,
   or movement bonuses. Each has a named mythic recruit.
 - An 80×80 shared map with cities, camera pan/zoom, object selection, health bars,
   movement smoothing, a minimap, and a kingdom event feed.
 - Seven enemy camps across five levels, shared combat rewards, XP, retreat and
   recovery, and 45-second camp respawns.
-- Twelve gatherable resource sites; wood, gold, and food support city upgrades,
+- Eighteen gatherable resource sites; food, wood, stone, gold and aether support city upgrades,
   troop training, and mythic recruitment.
 - Green/Common, blue/Rare, purple/Epic, and gold/Legendary commanders with stat
   bonuses. A three-camp quest unlocks Epic Atalanta.
@@ -54,7 +58,8 @@ For a second player, run a Windows standalone build beside the editor and use a
 **different player name**. Both clients connect to the local server. A matching
 name and saved local token resume the same city; names alone are not credentials.
 
-See [the current playtest guide](docs/playtest-0.3.md), [architecture](docs/architecture.md),
+See [the current playtest guide](docs/playtest-0.4.md), [architecture](docs/architecture.md),
+[the full city/economy design](docs/city-and-economy-design.md),
 and [milestones](docs/milestones.md).
 
 Server gameplay and HTTP integration are covered by automated tests. Unity

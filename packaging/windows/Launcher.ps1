@@ -14,7 +14,7 @@ function Get-LocalServer {
     catch { return $null }
 }
 function Is-Compatible($health) {
-    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 3
+    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 4
 }
 try {
     try { $lockTaken = $launcherMutex.WaitOne(0) }

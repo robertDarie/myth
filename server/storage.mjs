@@ -5,12 +5,16 @@ import { World } from './world.mjs';
 export class WorldStore {
   constructor(path, warn = console.warn) { this.path = path; this.warn = warn; }
   read(path) { return World.fromSave(JSON.parse(readFileSync(path, 'utf8'))); }
+  archiveLegacy(path) {
+    const archive = this.path + '.schema1.bak';
+    if (!existsSync(archive) && JSON.parse(readFileSync(path, 'utf8')).schema === 1) copyFileSync(path, archive);
+  }
   load() {
     if (!existsSync(this.path) && !existsSync(this.path + '.bak')) return new World();
-    try { return this.read(this.path); }
+    try { const world = this.read(this.path); this.archiveLegacy(this.path); return world; }
     catch (error) {
       try {
-        const world = this.read(this.path + '.bak');
+        const world = this.read(this.path + '.bak'); this.archiveLegacy(this.path + '.bak');
         this.warn('Primary save could not be read; recovered the previous backup.'); return world;
       } catch { throw new Error('The world save and backup could not be loaded. They have been preserved. Restore a valid backup before starting this world.'); }
     }

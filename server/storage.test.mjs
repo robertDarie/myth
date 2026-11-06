@@ -89,3 +89,17 @@ test('failed save writes leave the last valid world readable', t => {
   assert.throws(() => store.save(w));
   assert.equal(new WorldStore(path).load().authenticate(session.token).gold, gold);
 });
+
+test('migration archives the original schema-1 save before autosaves rotate its ordinary backup', t => {
+  const path = fixture(t), w = new World(), session = w.join('Legacy');
+  const legacy = structuredClone(w.toSave()); legacy.schema = 1;
+  const p = legacy.world.players[0];
+  for (const field of ['buildings', 'technologies', 'stone', 'aether', 'sigils', 'research', 'crafting', 'economyClock', 'productionCarry', 'commanderShards', 'commanderRanks', 'summonHistory', 'summonCount', 'epicPity', 'legendaryPity', 'lastOfferingDay', 'ownedRelics', 'equippedRelic']) delete p[field];
+  legacy.world.nodes = legacy.world.nodes.filter(n => n.id.startsWith('resource-'));
+  const original = JSON.stringify(legacy); writeFileSync(path, original);
+  const store = new WorldStore(path), migrated = store.load();
+  assert.equal(migrated.authenticate(session.token).stone, 150);
+  store.save(migrated); store.save(migrated);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 2);
+  assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
+});

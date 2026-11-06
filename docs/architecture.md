@@ -9,8 +9,9 @@ and render snapshots at 5 Hz; the server simulates at 10 Hz. Unity smooths army
 positions locally and never chooses damage or rewards.
 
 `content.mjs` defines five civilizations, four commanders, seven camps, and five
-strategic sites. `world.mjs` implements game rules independently of transport;
-`http.mjs` provides a small versioned development protocol. Snapshot version 3
+strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
+and `city.mjs` define institutions, resource sinks, research, summons and relics;
+`http.mjs` provides a small versioned development protocol. Snapshot version 4
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -23,7 +24,9 @@ prevents the new client silently connecting to the earlier server.
 Commands use `type` plus `targetId`, `x`/`z`, or `name` as appropriate:
 `move`, `attack`, `gather`, `return`, `stop`, `train`, `recruit`, `upgrade`,
 `commander`, `unlock-commander`, `reinforce`, `cancel-job`, `quest`,
-`alliance-create`, `alliance-join`, `flag`, `capture`.
+`alliance-create`, `alliance-join`, `flag`, `capture`, `building-upgrade`,
+`research`, `summon`, `temple-offering`, `buy-sigil`, `upgrade-commander`, `trade`,
+`craft`, `equip-relic`, `alliance-help`.
 Invalid commands return HTTP 400 with `{ error }`; unknown sessions return 401.
 Bodies are limited to 4 KiB and sessions to 32. Tokens never appear in snapshots.
 
@@ -73,8 +76,8 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 1 stores queues, reserves, map state and sessions. A loader validates
-the save and falls back to backup; if both fail it preserves files and refuses to
+Save schema 2 stores (and migrates schema 1 without resetting progression) queues, reserves, map state and sessions. A loader validates
+the save and falls back to backup, retaining a schema-1 migration archive; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
 field orders while retaining positions and all progression. The package launcher
 uses a per-launch secret for its save-and-shutdown endpoint; that capability is
@@ -87,3 +90,8 @@ rate limiting, a production database and deployment hardening are not implemente
 Unity 6.3 LTS is the intended line. Commit the exact patch and package lock after
 successful local import. Built-in render pipeline, legacy input and IMGUI keep
 this prototype dependency-light. No production backend choice is implied.
+
+Detailed 0.4 institution behavior, production caps, recipes, research modifiers,
+guarantee rules and deferred systems are specified in
+[the city/economy design](city-and-economy-design.md). Summon results use server-side
+cryptographic randomness by default; deterministic RNG/clock injection is for tests.

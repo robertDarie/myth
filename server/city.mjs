@@ -1,0 +1,185 @@
+import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
+import { COMMANDERS } from './content.mjs';
+
+export function initializeCity(p, migrated = false) {
+  p.buildings ??= { ...INITIAL_BUILDINGS };
+  for (const [id, level] of Object.entries(INITIAL_BUILDINGS)) p.buildings[id] ??= level;
+  p.technologies ??= Object.fromEntries(TECHNOLOGIES.map(t => [t.id, 0]));
+  for (const t of TECHNOLOGIES) p.technologies[t.id] ??= 0;
+  p.stone ??= 150; p.aether ??= 30; p.sigils ??= 3;
+  p.research ??= null; p.crafting ??= null; p.economyClock ??= 0;
+  p.productionCarry ??= Object.fromEntries(RESOURCES.map(id => [id, 0]));
+  p.commanderShards ??= {}; p.commanderRanks ??= {};
+  p.summonHistory ??= []; p.summonCount ??= 0; p.epicPity ??= 0; p.legendaryPity ??= 0; p.lastOfferingDay ??= '';
+  p.ownedRelics ??= []; p.equippedRelic ??= '';
+  if (migrated && (p.mythic || p.reserveMythic || p.trainingQueue?.some(j => j.type === 'recruit'))) p.buildings.menagerie = Math.max(1, p.buildings.menagerie);
+}
+export const buildingLevel = (p, id) => id === 'citadel' ? p.cityLevel : p.buildings[id] ?? 0;
+export const capacity = p => p.cityLevel * 20 + 20 + Math.max(0, p.buildings.barracks - 1) * 5;
+export const mythicCapacity = p => p.cityLevel + Math.max(0, p.buildings.menagerie - 1);
+export const passiveCap = p => 500 + p.buildings.vault * 250 + p.cityLevel * 50;
+const scaled = (cost, factor) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * factor)]));
+const affordable = (p, cost) => Object.entries(cost).every(([id, value]) => p[id] >= value);
+function missing(p, requirements) {
+  for (const r of requirements ?? []) if (buildingLevel(p, r.id) < r.level) return `${BUILDINGS.find(b => b.id === r.id).name} level ${r.level} required.`;
+  return '';
+}
+export function buildingCard(p, b) {
+  const level = buildingLevel(p, b.id), next = level + 1;
+  const nextCost = scaled(b.base, b.id === 'citadel' ? level : Math.pow(next, 1.4));
+  const nextDuration = (b.id === 'citadel' ? 20 * level : 12 * next) / (1 + 0.05 * p.technologies.masonry);
+  let lockedReason = '';
+  if (level >= 5) lockedReason = 'Maximum prototype level.';
+  else if (p.construction) lockedReason = 'The construction lane is busy.';
+  else if (p.cityLevel < b.unlock) lockedReason = `Citadel level ${b.unlock} required.`;
+  else if (b.id !== 'citadel' && next > p.cityLevel) lockedReason = 'Upgrade the Citadel first.';
+  else lockedReason = missing(p, b.id === 'citadel' ? CITADEL_REQUIREMENTS[next] : b.requirements);
+  if (!lockedReason && !affordable(p, nextCost)) lockedReason = 'Not enough resources.';
+  return { ...b, level, maxLevel: 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason };
+}
+export function technologyCard(p, t) {
+  const level = p.technologies[t.id], next = level + 1, cost = scaled(t.base, next * next);
+  const duration = 12 * next / (1 + 0.05 * p.technologies.writing);
+  let lockedReason = '';
+  if (level >= 3) lockedReason = 'Maximum research rank.';
+  else if (p.research) lockedReason = 'Research lane is busy.';
+  else if (p.buildings.academy < Math.max(t.academy, next)) lockedReason = `Athenaeum level ${Math.max(t.academy, next)} required.`;
+  else if (t.prerequisite && p.technologies[t.prerequisite] < 1) lockedReason = `${TECHNOLOGIES.find(k => k.id === t.prerequisite).name} rank 1 required.`;
+  else if (t.building && !p.buildings[t.building]) lockedReason = `${BUILDINGS.find(b => b.id === t.building).name} required.`;
+  else if (!affordable(p, cost)) lockedReason = 'Not enough resources.';
+  return { ...t, level, maxLevel: 3, cost, duration, canResearch: !lockedReason, lockedReason };
+}
+export function citySnapshot(world, p) {
+  return { cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
+    trainingDuration: 8 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
+    troopCapacity: capacity(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
+    heroProgress: COMMANDERS.map(c => ({ id: c.id, rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
+    offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(world.now()).toISOString().slice(0, 10),
+    offeringAmount: p.buildings.oracle >= 5 ? 3 : p.buildings.oracle >= 3 ? 2 : 1,
+    sealCost: { gold: Math.ceil(75 / (1 + 0.05 * Math.max(0, p.buildings.oracle - 1))), aether: 10 } };
+}
+export function cityCommand(world, p, c, fail) {
+  const requireBuilding = id => { if (!p.buildings[id]) fail(`${BUILDINGS.find(b => b.id === id).name} must be built first.`); };
+  switch (c.type) {
+    case 'upgrade': case 'building-upgrade': {
+      const id = c.type === 'upgrade' ? 'citadel' : c.targetId;
+      const b = BUILDINGS.find(b => b.id === id); if (!b) fail('Unknown building.');
+      const card = buildingCard(p, b); if (!card.canUpgrade) fail(card.lockedReason);
+      world.spend(p, card.nextCost); p.construction = { ...world.job(id === 'citadel' ? 'upgrade' : 'building', card.nextDuration, card.nextCost, 1), targetId: id }; return true;
+    }
+    case 'research': {
+      const t = TECHNOLOGIES.find(t => t.id === c.targetId); if (!t) fail('Unknown technology.');
+      const card = technologyCard(p, t); if (!card.canResearch) fail(card.lockedReason);
+      world.spend(p, card.cost); p.research = { ...world.job('research', card.duration, card.cost, 1), targetId: t.id }; return true;
+    }
+    case 'temple-offering':
+      requireBuilding('oracle');
+      if (!citySnapshot(world, p).offeringAvailable) fail('The free offering has already been claimed for this UTC day.');
+      p.sigils += citySnapshot(world, p).offeringAmount; p.lastOfferingDay = new Date(world.now()).toISOString().slice(0, 10); return true;
+    case 'buy-sigil':
+      requireBuilding('oracle'); world.spend(p, citySnapshot(world, p).sealCost); p.sigils++; return true;
+    case 'summon': {
+      requireBuilding('oracle'); const count = c.count ?? 1;
+      if (![1, 10].includes(count)) fail('Choose one or ten summons.');
+      if (p.sigils < count) fail('Not enough Oracle Sigils.');
+      p.sigils -= count;
+      for (let i = 0; i < count; i++) summon(world, p);
+      world.event(`${p.name} invoked ${count} echo${count === 1 ? '' : 'es'} at the Temple.`); return true;
+    }
+    case 'upgrade-commander': {
+      const id = c.targetId;
+      if (!p.ownedCommanders.includes(id)) fail('Recruit this commander first.');
+      const rank = p.commanderRanks[id] ?? 0, shards = 10 * (rank + 1);
+      if (rank >= 5) fail('Commander is at maximum rank.');
+      if ((p.commanderShards[id] ?? 0) < shards) fail('Not enough commander-specific Echo Shards.');
+      world.spend(p, { gold: 50 * (rank + 1) }); p.commanderShards[id] -= shards; p.commanderRanks[id] = rank + 1; return true;
+    }
+    case 'trade': {
+      requireBuilding('market'); const trade = TRADES.find(t => t.id === c.targetId); if (!trade) fail('Unknown exchange.');
+      world.spend(p, trade.cost); for (const [id, amount] of Object.entries(trade.reward)) p[id] += amount; return true;
+    }
+    case 'craft': {
+      requireBuilding('forge'); if (p.crafting) fail('The forge is busy.');
+      const relic = RELICS.find(r => r.id === c.targetId); if (!relic) fail('Unknown relic.');
+      if (p.ownedRelics.includes(relic.id)) fail('This relic is already crafted.');
+      world.spend(p, relic.cost); p.crafting = { ...world.job('craft', relic.duration, relic.cost, 1), targetId: relic.id }; return true;
+    }
+    case 'equip-relic':
+      world.requireHome(p); if (!p.ownedRelics.includes(c.targetId)) fail('Craft this relic first.');
+      p.equippedRelic = c.targetId; p.health = Math.min(p.health, world.stats(p).maxHealth); return true;
+    case 'alliance-help': {
+      requireBuilding('oathhall'); if (!p.allianceId) fail('Join an alliance first.');
+      let receiver, job;
+      for (const member of world.players.values()) {
+        const found = [member.construction, member.research].find(j => j?.id === c.targetId);
+        if (found) { receiver = member; job = found; break; }
+      }
+      if (!receiver || receiver.id === p.id || receiver.allianceId !== p.allianceId || !receiver.buildings.oathhall) fail('An allied Oathbound Hall with an active job is required.');
+      job.helpedBy ??= [];
+      if (job.helpedBy.includes(p.id)) fail('You already helped this job.');
+      if (job.helpedBy.length >= Math.min(5, 1 + receiver.buildings.oathhall)) fail('This job has received its maximum alliance help.');
+      job.helpedBy.push(p.id); job.remaining = Math.max(0.1, job.remaining - Math.max(2, job.duration * 0.1)); return true;
+    }
+    default: return false;
+  }
+}
+function summon(world, p) {
+  p.summonCount++; p.epicPity++; p.legendaryPity++;
+  let rarity;
+  // One rarity roll per summon; pity takes priority and resets on its qualifying result.
+  const roll = world.random(), legendaryChance = SUMMON_RULES.legendary;
+  const epicThreshold = legendaryChance + SUMMON_RULES.epic, rareThreshold = epicThreshold + SUMMON_RULES.rare;
+  if (p.legendaryPity >= SUMMON_RULES.legendaryPity) rarity = 'Legendary';
+  else if (p.epicPity >= SUMMON_RULES.epicPity) rarity = roll < legendaryChance ? 'Legendary' : 'Epic';
+  else rarity = roll < legendaryChance ? 'Legendary' : roll < epicThreshold ? 'Epic' : roll < rareThreshold ? 'Rare' : 'Common';
+  const pool = COMMANDERS.filter(c => c.rarity === rarity);
+  const hero = pool[world.chooseIndex(pool.length)];
+  if (rarity === 'Legendary') p.legendaryPity = 0;
+  if (rarity === 'Legendary' || rarity === 'Epic') p.epicPity = 0;
+  const duplicate = p.ownedCommanders.includes(hero.id), shards = duplicate ? SUMMON_RULES.duplicateShards[rarity] : 0;
+  if (duplicate) p.commanderShards[hero.id] = (p.commanderShards[hero.id] ?? 0) + shards;
+  else p.ownedCommanders.push(hero.id);
+  p.summonHistory.unshift({ id: world.job('summon', 1, {}, 1).id, commanderId: hero.id, rarity, duplicate, shards, number: p.summonCount });
+  p.summonHistory.length = Math.min(20, p.summonHistory.length);
+}
+export function tickCity(world, p, dt) {
+  p.economyClock += dt;
+  while (p.economyClock >= 5) {
+    p.economyClock -= 5;
+    for (const b of BUILDINGS.filter(b => b.resource)) {
+      const level = p.buildings[b.id]; if (!level) continue;
+      const cap = passiveCap(p);
+      // Carry fractional production so a 15% bonus actually works at level one.
+      // Production pauses at its ceiling; existing wealth is never clamped.
+      if (p[b.resource] >= cap) { p.productionCarry[b.resource] = 0; continue; }
+      p.productionCarry[b.resource] += (b.resource === 'aether' ? 1 : 2) * level * (1 + 0.15 * p.technologies.harvest);
+      const amount = Math.floor(p.productionCarry[b.resource] + 0.000001);
+      p.productionCarry[b.resource] = Math.max(0, p.productionCarry[b.resource] - amount);
+      p[b.resource] += Math.min(amount, cap - p[b.resource]);
+    }
+  }
+  for (const lane of ['construction', 'research', 'crafting']) {
+    const job = p[lane]; if (!job) continue;
+    job.remaining = Math.max(0, job.remaining - dt); if (job.remaining >= 0.00001) continue;
+    if (job.type === 'upgrade') p.cityLevel++;
+    if (job.type === 'building') p.buildings[job.targetId]++;
+    if (job.type === 'research') p.technologies[job.targetId]++;
+    if (job.type === 'craft') p.ownedRelics.push(job.targetId);
+    p[lane] = null;
+    const name = job.type === 'upgrade' ? 'Citadel level ' + p.cityLevel : [...BUILDINGS, ...TECHNOLOGIES, ...RELICS].find(item => item.id === job.targetId)?.name ?? job.type;
+    world.event(`${p.name} completed ${name}.`);
+  }
+}
+export function validateCity(p) {
+  if (p.construction?.type === 'building' && !BUILDINGS.some(b => b.id !== 'citadel' && b.id === p.construction.targetId)) throw new Error('Invalid saved building job.');
+  if (p.research && !TECHNOLOGIES.some(t => t.id === p.research.targetId)) throw new Error('Invalid saved research job.');
+  if (p.crafting && !RELICS.some(r => r.id === p.crafting.targetId)) throw new Error('Invalid saved crafting job.');
+  if (![p.stone, p.aether, p.sigils, p.economyClock, p.summonCount, p.epicPity, p.legendaryPity].every(v => Number.isFinite(v) && v >= 0)) throw new Error('Invalid saved city economy.');
+  if (!p.productionCarry || RESOURCES.some(id => !Number.isFinite(p.productionCarry[id]) || p.productionCarry[id] < 0 || p.productionCarry[id] >= 1)) throw new Error('Invalid saved production carry.');
+  for (const [levels, definitions, cap] of [[p.buildings, BUILDINGS.filter(b => b.id !== 'citadel'), 5], [p.technologies, TECHNOLOGIES, 3]])
+    if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > cap)) throw new Error('Invalid saved city progression.');
+  if (!Array.isArray(p.ownedRelics) || p.ownedRelics.some(id => !RELICS.some(r => r.id === id)) || (p.equippedRelic && !p.ownedRelics.includes(p.equippedRelic))) throw new Error('Invalid saved relic.');
+  if (!Number.isInteger(p.sigils) || !Number.isInteger(p.epicPity) || p.epicPity >= SUMMON_RULES.epicPity || !Number.isInteger(p.legendaryPity) || p.legendaryPity >= SUMMON_RULES.legendaryPity || !Array.isArray(p.summonHistory) || p.summonHistory.length > 20 || p.summonHistory.some(d => !d || !COMMANDERS.some(c => c.id === d.commanderId) || !Number.isInteger(d.shards) || d.shards < 0) || typeof p.lastOfferingDay !== 'string') throw new Error('Invalid saved summon history.');
+  for (const map of [p.commanderShards, p.commanderRanks]) if (!map || typeof map !== 'object' || Object.entries(map).some(([id, value]) => !COMMANDERS.some(c => c.id === id) || !Number.isInteger(value) || value < 0)) throw new Error('Invalid saved hero progression.');
+  if (Object.values(p.commanderRanks).some(rank => rank > 5)) throw new Error('Invalid saved hero rank.');
+}

@@ -113,7 +113,7 @@ namespace ThronesOfMyth
                 pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.9f + 0.1f * p.cityLevel);
             }
             foreach (var c in world.camps) Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth);
-            foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining);
+            foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining);
             foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""));
             foreach (var f in world.flags) Put(seen, f.id, "flag", f.x, f.z, f.allianceId == allianceId ? blue : red, "Alliance Beacon");
             var removed = new List<string>();
