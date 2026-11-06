@@ -2,7 +2,7 @@
 
 ## Client and server boundary
 
-The Unity client draws a 40×40 world with placeholder cities, armies, and a
+The Unity client draws a 40×40 world with placeholder armies and a
 Forsaken enemy. It polls snapshots and submits intent over HTTP. It cannot
 choose damage, position updates, rewards, health, or elapsed time.
 
