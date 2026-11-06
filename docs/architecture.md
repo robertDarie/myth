@@ -1,41 +1,72 @@
 # Prototype architecture
 
-## Client and server boundary
+## Authority
 
-The Unity client draws a 40×40 world with placeholder armies and a
-Forsaken enemy. It polls snapshots and submits intent over HTTP. It cannot
-choose damage, position updates, rewards, health, or elapsed time.
+The Node.js 24 server owns movement, health, battle cadence, gathering stock,
+resources, troop capacity, commander unlocks, alliance membership, territorial
+connections, capture progress and gate access. Clients submit intent over HTTP
+and render snapshots at 5 Hz; the server simulates at 10 Hz. Unity smooths army
+positions locally and never chooses damage or rewards.
 
-The Node.js server advances the simulation at 10 Hz using a monotonic clock.
-Movement speed, bounds, melee range, attack cadence, death, and one-time kill
-rewards are validated server-side. Attack intent automatically approaches the
-target. This establishes an authority boundary, not production anti-cheat.
+`content.mjs` defines five civilizations, four commanders, seven camps, and five
+strategic sites. `world.mjs` implements game rules independently of transport;
+`http.mjs` provides a small versioned development protocol. Snapshot version 2
+prevents the new client silently connecting to the earlier server.
 
-## Local HTTP protocol
+## HTTP
 
 - `GET /health`: readiness.
-- `POST /join` with `{ "name": "Player" }`: returns a random session token and
-  player ID. Sessions expire after 60 seconds without authenticated requests.
-- `GET /world`, header `Authorization: Bearer <token>`: current shared snapshot.
-- `POST /command`, same header, body `{ "type": "move", "x": 10, "z": 15 }`
-  or `{ "type": "attack", "targetId": "forsaken-1" }`.
+- `POST /join`: `{ name, civilization, resumeToken? }`; returns `{ playerId, token }`.
+- `GET /world`: shared state; requires `Authorization: Bearer <token>`.
+- `POST /command`: an intent; requires the same header.
 
-Commands act only on the token's army. Request bodies are limited to 4 KiB and
-sessions are capped at 32. This developer server binds to `127.0.0.1` by default;
-use `HOST` and `PORT` environment variables to override. Never expose it publicly
-as-is: it lacks real accounts, TLS, abuse controls, persistence, and deployment
-hardening. Native Unity clients do not require browser CORS.
+Commands use `type` plus `targetId`, `x`/`z`, or `name` as appropriate:
+`move`, `attack`, `gather`, `return`, `stop`, `train`, `recruit`, `upgrade`,
+`commander`, `quest`, `alliance-create`, `alliance-join`, `flag`, `capture`.
+Invalid commands return HTTP 400 with `{ error }`; unknown sessions return 401.
+Bodies are limited to 4 KiB and sessions to 32. Tokens never appear in snapshots.
 
-## Technology decision
+Unity serializable DTOs in `WorldModels.cs` match this protocol. `PrototypeClient`
+handles transport and UI, `WorldView` constructs placeholder visuals, and
+`StrategyCamera` implements map navigation. Outgoing commands are queued rather
+than silently dropped while another request is pending.
 
-Node.js 24 with built-in HTTP and tests keeps the first slice runnable without
-downloaded dependencies. This is a prototype choice, not a commitment to the
-production MMO backend. Benchmark and select production services after defining
-concurrency, battle simulation, storage, deployment, and team expertise.
+## Gameplay rules
 
-Unity 6.3 LTS is the intended editor line. Pin the exact patch generated in
-`ProjectSettings/ProjectVersion.txt` after the first successful local import and
-commit Unity's generated package lock. The scaffold declares the 6.3.0 baseline without an editor revision hash; use
-the latest available patch in that LTS line and commit the imported settings.
-Only core built-in Unity packages are used; the prototype uses the built-in
-render pipeline and legacy input.
+- Cities start with 20 mortal troops and resources. Upgrade costs are 100 wood and
+  75 gold times current city level; level cap is 5.
+- Train five troops for 50 food and 20 gold. Capacity is 20 + 20 × city level.
+- Mythic recruitment requires city level 2, costs 80 food and 100 gold, and is
+  capped at city level. Base stats are currently shared across mythic types;
+  unique mythic abilities and creature art are future work.
+- City and commander management require an idle army at home. Healing is
+  automatic there. Defeat returns an army home with an 8-second recovery delay.
+- Camps retaliate against attacking armies. Contributors split gold/food and
+  each earn kill credit and XP. Camps respawn after 45 seconds.
+- Gathering transfers finite resources each second. Empty nodes refill in 30s.
+- Alliance creation costs 50 gold. The leader places the first beacon near home;
+  new beacons connect within 12 units and cost 60 wood / 20 gold. Enemy beacons
+  block nearby placement. Prototype cap: 20 beacons per alliance.
+- A site requires alliance territory within 12 units and an army within 2 units
+  for 15 uncontested seconds. Opposing occupiers pause capture; sole defenders
+  reverse progress. Beacons cannot yet be attacked or removed.
+- The eastern gate controls destinations x > 40; the northern gate controls
+  z > 40. Both are required for the sanctuary. This is a province permission
+  model, not physical pass pathfinding. Armies can always return home.
+- Dawn shrine grants +10% damage, Renewal +25% healing, sanctuary +20% gathering.
+
+## Sessions and operations
+
+Tokens are stored locally in Unity PlayerPrefs, keyed by server URL and player
+name. Resume requires possession of the token. Inactivity expires sessions after
+30 minutes. If a leader expires, leadership transfers to a remaining member;
+empty alliances release objectives and beacons. All state is in memory and a
+server restart resets it. This is not a production account system.
+
+The server binds to 127.0.0.1:8080; HOST and PORT can override this for controlled
+local testing. Do not expose this prototype publicly as-is: real accounts, TLS,
+rate limiting, storage and deployment hardening are not implemented.
+
+Unity 6.3 LTS is the intended line. Commit the exact patch and package lock after
+successful local import. Built-in render pipeline, legacy input and IMGUI keep
+this prototype dependency-light. No production backend choice is implied.

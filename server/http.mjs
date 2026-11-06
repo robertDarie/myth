@@ -26,7 +26,7 @@ export function createGameServer() {
       if (request.method === 'GET' && path === '/health') return send(200, { status: 'ok' });
       if (request.method === 'POST' && path === '/join') {
         const body = await readJson(request);
-        const session = world.join(body?.name);
+        const session = world.join(body?.name, body?.civilization, body?.resumeToken);
         world.authenticate(session.token).lastSeen = performance.now();
         return send(201, session);
       }

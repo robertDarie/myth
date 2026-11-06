@@ -1,16 +1,24 @@
 # Delivery milestones
 
-1. **Local two-player slice:** shared snapshots, movement, one neutral enemy,
-   server-owned combat, placeholder Unity rendering. Server implementation and
-   tests can run in cloud; Unity import and two-client play need local validation.
-2. **Civilization combat experiment:** one mortal unit family and one mythic
-   unit per prototype civilization, commander rarity data, tactical counters.
-3. **Alliance territory experiment:** join an alliance, place a citadel, extend
-   connected flags, capture a shrine and a pass. Validate placement and ownership.
-4. **Persistent kingdom:** accounts, durable state, reconnects, scheduled zone
-   openings, central objective, operations and load testing.
-5. **Seasonal campaign:** kingdom eligibility, matchmaking, separate KvK map,
-   rewards, migration, and season reset rules.
+## Implemented in slice 0.2
 
-Each milestone needs playable acceptance criteria before content production.
-Do not treat this as an MMO delivery timeline or a production readiness claim.
+Server-authoritative shared map; five civilizations with bonuses; cities,
+resources, training and mythic recruitment; four commander rarities; PvE combat
+and respawning camps; retreat/recovery; alliance creation/joining; connected
+beacons; contested shrine and gate captures; province access; central sanctuary;
+Unity camera, inspection, minimap and management panels. Server tests include a
+complete legal economy-to-sanctuary campaign. New Unity client validation remains
+pending; implementation is not a claim of production readiness.
+
+## Next stages
+
+1. **Visual playtest and refinement:** validate Unity import and build, controls,
+   feedback, pacing, civilization balance, and multiplayer usability.
+2. **Tactical identity:** distinct mythic skills and counters, commander skills,
+   multiple army types, ability feedback and real character assets.
+3. **Alliance warfare:** PvP combat, destructible flags, garrisons, rallies,
+   permissions, membership management, pass pathfinding and opening schedules.
+4. **Persistent kingdom:** real accounts, durable state, reconnect security,
+   operations, load testing, world scheduling and city construction queues.
+5. **Seasonal campaign:** kingdom eligibility, matchmaking, separate KvK map,
+   rewards, migration and season reset rules.

@@ -34,14 +34,16 @@ files and help diagnose errors you share.
    version choice. Unity will update the version file on import.
 7. After import, choose **Thrones of Myth → Create Prototype Scene**. It saves
    `Assets/ThronesOfMyth/Scenes/Prototype.unity` and adds it to Build Settings.
-8. Press Play, enter a player name, and click Join. Click ground to move; click
-   the red Forsaken army to attack. Watch health and gold in the top-left HUD.
+8. Press Play, choose a civilization and player name, and click **Establish /
+   Resume City**. Left-click to inspect, right-click to march or act. See
+   [the playtest guide](playtest-0.2.md) for the complete gameplay loop.
 9. For a second player, build a Windows standalone player from this scene and
-   run it alongside the editor. Both should see each other's movement and the
-   same enemy health. Two editor windows must use separate repository copies.
+   run it alongside the editor with a different player name. Both should see
+   each other's movement and the same camp health. Two editor windows must use
+   separate repository copies.
 10. Commit the generated scene, its `.meta` files, package lock, and exact editor
     version after a successful import. Library, Temp, Logs, and builds stay ignored.
 
 The client defaults to localhost. A remote cloud server is not your PC's
 localhost. Run this server locally for the first test. The prototype polls at
-5 Hz; smoothing, mobile controls, real art, and persistence come later.
+5 Hz; mobile controls, real art, and persistence come later.

@@ -1,17 +1,29 @@
 # Thrones of Myth
 
-A mythology strategy game about building civilizations, commanding mortal and
-mythic armies, and restoring the fallen gods. See [the game concept](docs/game-design.md).
+A shared-world mythology strategy prototype: found a city, lead mortal and
+mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
+See [the game concept](docs/game-design.md).
 
-## First playable slice
+## Playable slice 0.2
 
-This repository contains a dependency-free Node.js authoritative prototype server
-and a Unity C# client scaffold. Two clients can join one map, move their armies,
-and fight a shared Forsaken enemy. All movement, health, combat, and rewards are
-calculated by the server. Graphics are temporary primitives.
+- Five civilization choices with working combat, recovery, health, gathering,
+  or movement bonuses. Each has a named mythic recruit.
+- An 80×80 shared map with cities, camera pan/zoom, object selection, health bars,
+  movement smoothing, a minimap, and a kingdom event feed.
+- Seven enemy camps across five levels, shared combat rewards, XP, retreat and
+  recovery, and 45-second camp respawns.
+- Twelve gatherable resource sites; wood, gold, and food support city upgrades,
+  troop training, and mythic recruitment.
+- Green/Common, blue/Rare, purple/Epic, and gold/Legendary commanders with stat
+  bonuses. A three-camp quest unlocks Epic Atalanta.
+- Create or join an alliance, build connected beacons, occupy shrines for buffs,
+  capture gates to unlock provinces, and claim the central sanctuary.
+- Local session resume while the server remains running; state is in memory.
 
-Requirements: Node.js 24 LTS; Unity 6.3 LTS installed through Unity Hub; Git and
-Git LFS. Unity's first import creates editor settings and packages locally.
+## Run locally
+
+Requirements: Node.js 24 LTS, Unity 6.3 LTS, Git. Use Git LFS before adding large
+binary assets. See [Windows setup](docs/windows-setup.md).
 
 ```sh
 cd server
@@ -19,23 +31,25 @@ npm test
 npm start
 ```
 
-Open `client/` in Unity Hub using a Unity 6.3 LTS editor. Use **Thrones of Myth →
-Create Prototype Scene**, save the generated scene, and press Play. Click ground
-to move; click the red enemy to approach and attack. Use the on-screen buttons
-to join and select an action. Run a second editor instance using a separate clone,
-or build and run a standalone Windows client, to test two players. Both clients
-use `http://127.0.0.1:8080` by default.
+Open `client/` in Unity. Choose **Thrones of Myth → Create Prototype Scene** once
+if you do not already have a prototype scene. Press Play and choose **Establish /
+Resume City**. Existing prototype scenes also work: the new client constructs
+its map at runtime. Restart an older server before connecting the updated client.
 
-See [Windows setup](docs/windows-setup.md), [architecture](docs/architecture.md),
-and [milestones](docs/milestones.md). Unity compilation and visual testing require
-a local licensed editor and have not been run in the cloud environment.
+**Controls:** WASD/arrows or middle-drag to pan; wheel to zoom; left-click to
+inspect; right-click to march, attack, gather or capture; H to focus home; Space
+to focus your army; R to return; Esc to cancel beacon placement. The sidebar
+provides equivalent action buttons. Keyboard camera input pauses over UI.
 
-## Layout
+For a second player, run a Windows standalone build beside the editor and use a
+**different player name**. Both clients connect to the local server. A matching
+name and saved local token resume the same city; names alone are not credentials.
 
-- `client/`: Unity assets, package manifest, and project settings.
-- `server/`: in-memory HTTP simulation and automated tests.
-- `docs/`: design, setup, architecture, and delivery milestones.
-- `tools/`: Windows prerequisite checker.
+See [the playtest guide](docs/playtest-0.2.md), [architecture](docs/architecture.md),
+and [milestones](docs/milestones.md).
 
-This is a local development prototype. Sessions and world state reset on restart.
-It has no production accounts, persistence, alliance gameplay, or deployment yet.
+Server gameplay and HTTP integration are covered by automated tests. Unity
+compilation, rendering, and Windows builds have not been run in the cloud.
+Graphics are procedural placeholders, including generic mythic escort models.
+There is no PvP army combat, destructible territory, account system, durable
+storage, production hosting, or KvK yet. Restarting the server resets all progress.

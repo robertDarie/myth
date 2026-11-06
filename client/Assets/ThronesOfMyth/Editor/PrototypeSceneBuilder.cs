@@ -18,8 +18,8 @@ namespace ThronesOfMyth.Editor
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
             ground.name = "Ground";
-            ground.transform.position = new Vector3(20, -0.25f, 20);
-            ground.transform.localScale = new Vector3(40, 0.5f, 40);
+            ground.transform.position = new Vector3(40, -0.25f, 40);
+            ground.transform.localScale = new Vector3(80, 0.5f, 80);
 
             var camera = new GameObject("Main Camera").AddComponent<Camera>();
             camera.tag = "MainCamera";
@@ -40,15 +40,19 @@ namespace ThronesOfMyth.Editor
 
             // Ensure input used by this small prototype works even if the local
             // editor defaults to the new Input System.
-            var settings = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset")[0]);
-            var inputHandling = settings.FindProperty("activeInputHandler");
-            if (inputHandling != null) { inputHandling.intValue = 0; settings.ApplyModifiedProperties(); }
+            var projectSettings = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset");
+            if (projectSettings.Length > 0)
+            {
+                var settings = new SerializedObject(projectSettings[0]);
+                var inputHandling = settings.FindProperty("activeInputHandler");
+                if (inputHandling != null) { inputHandling.intValue = 0; settings.ApplyModifiedProperties(); }
+            }
             EditorSettings.serializationMode = SerializationMode.ForceText;
             Directory.CreateDirectory("Assets/ThronesOfMyth/Scenes");
             AssetDatabase.Refresh();
             EditorSceneManager.SaveScene(scene, scenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(scenePath, true) };
-            EditorUtility.DisplayDialog("Prototype ready", "Start the server, then press Play and Join world.", "OK");
+            EditorUtility.DisplayDialog("Prototype ready", "Restart the updated server, press Play, then Establish / Resume City.", "OK");
         }
     }
 }
