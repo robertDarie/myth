@@ -23,7 +23,7 @@ export function createGameServer() {
     };
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
-      if (request.method === 'GET' && path === '/health') return send(200, { status: 'ok' });
+      if (request.method === 'GET' && path === '/health') return send(200, { status: 'ok', game: 'thrones-of-myth', version: 2 });
       if (request.method === 'POST' && path === '/join') {
         const body = await readJson(request);
         const session = world.join(body?.name, body?.civilization, body?.resumeToken);

@@ -20,6 +20,13 @@ See [the game concept](docs/game-design.md).
   capture gates to unlock provinces, and claim the central sanctuary.
 - Local session resume while the server remains running; state is in memory.
 
+## Standalone Windows package
+
+Choose **Thrones of Myth → Build Windows Playtest** in Unity to generate a
+portable ZIP with the Windows game, bundled server and double-click launcher.
+Optional Inno Setup produces an installer too. Players need neither Unity nor
+Node installed. See [Windows packaging](docs/windows-package.md).
+
 ## Run locally
 
 Requirements: Node.js 24 LTS, Unity 6.3 LTS, Git. Use Git LFS before adding large

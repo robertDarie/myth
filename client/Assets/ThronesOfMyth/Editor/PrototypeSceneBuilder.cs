@@ -11,10 +11,20 @@ namespace ThronesOfMyth.Editor
         [MenuItem("Thrones of Myth/Create Prototype Scene")]
         public static void CreateScene()
         {
+            Generate(true);
+        }
+
+        public static void EnsureBuildScene()
+        {
+            if (!File.Exists("Assets/ThronesOfMyth/Scenes/Prototype.unity")) Generate(false);
+        }
+
+        private static void Generate(bool interactive)
+        {
             const string scenePath = "Assets/ThronesOfMyth/Scenes/Prototype.unity";
-            if (File.Exists(scenePath) && !EditorUtility.DisplayDialog("Replace prototype scene?",
+            if (interactive && File.Exists(scenePath) && !EditorUtility.DisplayDialog("Replace prototype scene?",
                 "This will overwrite the existing generated prototype scene.", "Replace", "Cancel")) return;
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            if (interactive && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
             ground.name = "Ground";
@@ -52,7 +62,7 @@ namespace ThronesOfMyth.Editor
             AssetDatabase.Refresh();
             EditorSceneManager.SaveScene(scene, scenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(scenePath, true) };
-            EditorUtility.DisplayDialog("Prototype ready", "Restart the updated server, press Play, then Establish / Resume City.", "OK");
+            if (interactive) EditorUtility.DisplayDialog("Prototype ready", "Restart the updated server, press Play, then Establish / Resume City.", "OK");
         }
     }
 }
