@@ -1,4 +1,6 @@
-# Playtest 0.2
+# Playtest 0.2 (historical)
+
+For current behavior use [Playtest 0.3](playtest-0.3.md).
 
 ## Updating an existing checkout
 

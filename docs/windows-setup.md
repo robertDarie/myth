@@ -36,7 +36,7 @@ files and help diagnose errors you share.
    `Assets/ThronesOfMyth/Scenes/Prototype.unity` and adds it to Build Settings.
 8. Press Play, choose a civilization and player name, and click **Establish /
    Resume City**. Left-click to inspect, right-click to march or act. See
-   [the playtest guide](playtest-0.2.md) for the complete gameplay loop.
+   [the playtest guide](playtest-0.3.md) for the complete gameplay loop.
 9. For a second player, build a Windows standalone player from this scene and
    run it alongside the editor with a different player name. Both should see
    each other's movement and the same camp health. Two editor windows must use
@@ -46,4 +46,4 @@ files and help diagnose errors you share.
 
 The client defaults to localhost. A remote cloud server is not your PC's
 localhost. Run this server locally for the first test. The prototype polls at
-5 Hz; mobile controls, real art, and persistence come later.
+5 Hz; mobile controls and real art come later. Local world saves are enabled by default.

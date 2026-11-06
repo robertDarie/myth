@@ -109,7 +109,8 @@ namespace ThronesOfMyth
                     }
                     armyPiece.mythicCount = p.mythic;
                 }
-                Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · City " + p.cityLevel);
+                Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · City " + p.cityLevel + (p.construction != null && !string.IsNullOrEmpty(p.construction.id) ? " · Building " + Mathf.CeilToInt(p.construction.remaining) + "s" : ""));
+                pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.9f + 0.1f * p.cityLevel);
             }
             foreach (var c in world.camps) Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth);
             foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining);

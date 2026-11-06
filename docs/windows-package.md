@@ -42,13 +42,15 @@ It replaces the generated `dist/Windows` folder on each build.
   and launch from the Start menu. A desktop shortcut is optional.
 - Keep the in-game server URL at `http://127.0.0.1:8080`. The launcher starts the
   local server, waits for a compatible health response, then opens the game.
-- Closing the game stops a server this launcher started. A compatible existing
+- Closing the game requests a final save and stops a server this launcher started. A compatible existing
   development server is reused and is not stopped by the launcher.
 - Only one packaged launcher runs at a time. Use another editor client with a
   different player name for a two-player local test.
 
 This package hosts a world on the same PC. It does not connect remote PCs into
-one online kingdom. Server state is in memory; ending its server resets progress.
+one online kingdom. World state is saved under
+`%LOCALAPPDATA%\ThronesOfMyth\Saves`; closing the local server pauses simulation.
+See [the current playtest guide](playtest-0.3.md) for save and backup behavior.
 The initial package is unsigned. Signing and a shared hosted backend come later.
 
 ## Validation still required on Windows
@@ -58,7 +60,7 @@ launch, PowerShell launcher behavior or installer execution. After building:
 
 1. Start the extracted package without Unity open and without a terminal server.
 2. Join, gather, fight and return home. Close the game and confirm its owned
-   Node process exits. Check logs in `%LOCALAPPDATA%\ThronesOfMyth\Logs` if needed.
+   Node process exits. Reopen and confirm your city, resources and queues resume. Check logs in `%LOCALAPPDATA%\ThronesOfMyth\Logs` if needed.
 3. Start again with a development server already running; closing the game must
    leave that server running.
 4. Check a folder path with spaces, a second launch, and a busy port 8080.

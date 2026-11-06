@@ -11,9 +11,14 @@ namespace ThronesOfMyth
         public string id, name, civilization, commanderId, allianceId, state, targetId;
         public float x, z, homeX, homeZ, targetX, targetZ, recovery, damage, speed, heal, gather;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, xp, level, kills;
-        public bool questClaimed;
+        public bool questClaimed, hasOrder, offline;
+        public int reserveTroops, reserveMythic;
+        public QueueJob construction;
+        public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
     }
+    [Serializable] public sealed class QueueJob { public string id, type; public float remaining, duration; public int amount; }
+    [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error; }
     [Serializable] public sealed class CampData { public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
     [Serializable] public sealed class NodeData { public string id, name, resource; public float x, z; public int remaining, capacity; }
     [Serializable] public sealed class SiteData { public string id, name, kind, description, allianceId, challengerId; public float x, z, progress; }
@@ -26,6 +31,7 @@ namespace ThronesOfMyth
     {
         public int version, size;
         public float time;
+        public SaveStatus persistence;
         public ArmyData[] players;
         public CampData[] camps;
         public NodeData[] nodes;

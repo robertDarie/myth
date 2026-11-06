@@ -10,7 +10,7 @@ positions locally and never chooses damage or rewards.
 
 `content.mjs` defines five civilizations, four commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport;
-`http.mjs` provides a small versioned development protocol. Snapshot version 2
+`http.mjs` provides a small versioned development protocol. Snapshot version 3
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -22,7 +22,8 @@ prevents the new client silently connecting to the earlier server.
 
 Commands use `type` plus `targetId`, `x`/`z`, or `name` as appropriate:
 `move`, `attack`, `gather`, `return`, `stop`, `train`, `recruit`, `upgrade`,
-`commander`, `quest`, `alliance-create`, `alliance-join`, `flag`, `capture`.
+`commander`, `unlock-commander`, `reinforce`, `cancel-job`, `quest`,
+`alliance-create`, `alliance-join`, `flag`, `capture`.
 Invalid commands return HTTP 400 with `{ error }`; unknown sessions return 401.
 Bodies are limited to 4 KiB and sessions to 32. Tokens never appear in snapshots.
 
@@ -35,12 +36,18 @@ than silently dropped while another request is pending.
 
 - Cities start with 20 mortal troops and resources. Upgrade costs are 100 wood and
   75 gold times current city level; level cap is 5.
-- Train five troops for 50 food and 20 gold. Capacity is 20 + 20 × city level.
+- City upgrades run in a dedicated construction lane, taking 20 seconds times
+  current level. They do not require the army at home.
+- Train five troops in eight seconds for 50 food and 20 gold. A shared training
+  lane holds three orders. Capacity is 20 + 20 × city level, counting deployed,
+  reserved and queued troops. Canceling an unfinished job refunds its full cost.
 - Mythic recruitment requires city level 2, costs 80 food and 100 gold, and is
-  capped at city level. Base stats are currently shared across mythic types;
+  capped at city level across army, reserves and queues. Recruitment takes 20s. Base stats are currently shared across mythic types;
   unique mythic abilities and creature art are future work.
-- City and commander management require an idle army at home. Healing is
-  automatic there. Defeat returns an army home with an 8-second recovery delay.
+- City management and commander recruitment work independently of army orders.
+  Completed units enter city reserves. Reinforcing or equipping a commander
+  requires an idle army at home. Healing is automatic there. Defeat returns an
+  army home with an 8-second recovery delay. City queues continue during recovery.
 - Camps retaliate against attacking armies. Contributors split gold/food and
   each earn kill credit and XP. Camps respawn after 45 seconds.
 - Gathering transfers finite resources each second. Empty nodes refill in 30s.
@@ -58,14 +65,24 @@ than silently dropped while another request is pending.
 ## Sessions and operations
 
 Tokens are stored locally in Unity PlayerPrefs, keyed by server URL and player
-name. Resume requires possession of the token. Inactivity expires sessions after
-30 minutes. If a leader expires, leadership transfers to a remaining member;
-empty alliances release objectives and beacons. All state is in memory and a
-server restart resets it. This is not a production account system.
+name. Resume requires possession of the token. Inactive saved cities retain their
+sessions and territory; after 30 minutes they stop field orders. A city name alone
+cannot recover a lost token. This is not a production account system.
+
+The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-save
+backup, autosaves every two seconds and after accepted mutations, and a final
+save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
+`THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
+Save schema 1 stores queues, reserves, map state and sessions. A loader validates
+the save and falls back to backup; if both fail it preserves files and refuses to
+silently reset. Time does not advance while the server is closed. Restore stops
+field orders while retaining positions and all progression. The package launcher
+uses a per-launch secret for its save-and-shutdown endpoint; that capability is
+not exposed in snapshots or available to ordinary player tokens.
 
 The server binds to 127.0.0.1:8080; HOST and PORT can override this for controlled
 local testing. Do not expose this prototype publicly as-is: real accounts, TLS,
-rate limiting, storage and deployment hardening are not implemented.
+rate limiting, a production database and deployment hardening are not implemented.
 
 Unity 6.3 LTS is the intended line. Commit the exact patch and package lock after
 successful local import. Built-in render pipeline, legacy input and IMGUI keep

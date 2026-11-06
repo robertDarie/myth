@@ -4,7 +4,7 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.2
+## Playable slice 0.3
 
 - Five civilization choices with working combat, recovery, health, gathering,
   or movement bonuses. Each has a named mythic recruit.
@@ -18,7 +18,9 @@ See [the game concept](docs/game-design.md).
   bonuses. A three-camp quest unlocks Epic Atalanta.
 - Create or join an alliance, build connected beacons, occupy shrines for buffs,
   capture gates to unlock provinces, and claim the central sanctuary.
-- Local session resume while the server remains running; state is in memory.
+- Independent city upgrades and a three-order training queue while your army
+  is away; completed troops wait in city reserves until reinforced at home.
+- Automatic local world saves, backup recovery, and saved city/session resume.
 
 ## Standalone Windows package
 
@@ -52,11 +54,12 @@ For a second player, run a Windows standalone build beside the editor and use a
 **different player name**. Both clients connect to the local server. A matching
 name and saved local token resume the same city; names alone are not credentials.
 
-See [the playtest guide](docs/playtest-0.2.md), [architecture](docs/architecture.md),
+See [the current playtest guide](docs/playtest-0.3.md), [architecture](docs/architecture.md),
 and [milestones](docs/milestones.md).
 
 Server gameplay and HTTP integration are covered by automated tests. Unity
 compilation, rendering, and Windows builds have not been run in the cloud.
 Graphics are procedural placeholders, including generic mythic escort models.
-There is no PvP army combat, destructible territory, account system, durable
-storage, production hosting, or KvK yet. Restarting the server resets all progress.
+There is no PvP army combat, destructible territory, online account system,
+production database, hosted kingdom service, or KvK yet. The CLI saves locally;
+time pauses while the server is closed. See the playtest guide for save paths.

@@ -115,7 +115,7 @@ namespace ThronesOfMyth
             GUILayout.Label("The gods have fallen silent.", titleStyle);
             GUILayout.Label("Found a city. Lead mortal and mythic armies. Restore the divine realm.", noteStyle);
             GUILayout.Space(14); GUILayout.Label("Local server"); serverUrl = GUILayout.TextField(serverUrl, 160);
-            GUILayout.Label("Commander name (same name resumes your local session)"); playerName = GUILayout.TextField(playerName, 24);
+            GUILayout.Label("Commander name (same name and local profile resume your saved city)"); playerName = GUILayout.TextField(playerName, 24);
             GUILayout.Space(10); civilization = GUILayout.SelectionGrid(civilization, civilizationNames, 3);
             GUILayout.Label(specialties[civilization], noteStyle);
             GUILayout.Space(12); GUI.enabled = !joining;
@@ -131,39 +131,85 @@ namespace ThronesOfMyth
             if (GUILayout.Button("Focus army [Space]")) cameraControl?.Focus(me.x, me.z);
             if (GUILayout.Button("Return & recover [R]")) Send("return");
             if (GUILayout.Button("Stop current order")) Send("stop");
+            GUILayout.Label($"City reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", noteStyle);
+            DrawReinforce();
             GUILayout.Space(8); GUILayout.Label("Nearby threats", sectionStyle);
             foreach (var camp in world.camps)
                 if (GUILayout.Button($"Lv {camp.level} · {camp.name}")) { Select(camp.id, "camp"); cameraControl?.Focus(camp.x, camp.z); }
             GUILayout.Label("Inspect a camp before attacking. High-level camps may require stronger armies or help from another player.", noteStyle);
         }
+        private bool HasConstruction => me.construction != null && !string.IsNullOrEmpty(me.construction.id);
+        private bool CanEditArmy => me != null && Vector2.Distance(new Vector2(me.x, me.z), new Vector2(me.homeX, me.homeZ)) < 2 && !me.hasOrder && me.recovery <= 0;
+        private void DrawReinforce()
+        {
+            GUI.enabled = CanEditArmy && (me.reserveTroops > 0 || me.reserveMythic > 0);
+            if (GUILayout.Button("Add ready reserves to army (at home)")) Send("reinforce");
+            GUI.enabled = true;
+        }
         private void DrawCity()
         {
-            GUILayout.Label("City management", sectionStyle);
-            GUILayout.Label("Orders below require your army idle at home. Return home to heal automatically.", noteStyle);
-            GUILayout.Label($"City level {me.cityLevel}/5 · Troop capacity {me.cityLevel * 20 + 20}", noteStyle);
+            GUILayout.Label("City development", sectionStyle);
+            GUILayout.Label("Your city works while armies march, gather or fight. New recruits wait in city reserves until you reinforce at home.", noteStyle);
+            int queuedTroops = 0, queuedMythic = 0;
+            foreach (var job in me.trainingQueue)
+                if (job.type == "train") queuedTroops += job.amount; else queuedMythic += job.amount;
+            int cap = me.cityLevel * 20 + 20;
+            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.troops + me.reserveTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
+            GUI.enabled = !HasConstruction && me.cityLevel < 5 && me.wood >= me.cityLevel * 100 && me.gold >= me.cityLevel * 75;
             if (GUILayout.Button("Upgrade · " + me.cityLevel * 100 + " wood / " + me.cityLevel * 75 + " gold")) Send("upgrade");
-            if (GUILayout.Button("Train 5 troops · 50 food / 20 gold")) Send("train");
+            GUI.enabled = true;
+            if (HasConstruction) DrawJob(me.construction, "City level " + (me.cityLevel + 1), false);
+            else GUILayout.Label("Builder available · upgrades take 20s × current level.", noteStyle);
+            GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
+            GUI.enabled = me.trainingQueue.Length < 3 && me.troops + me.reserveTroops + queuedTroops + 5 <= cap && me.food >= 50 && me.gold >= 20;
+            if (GUILayout.Button("Train 5 troops · 8s · 50 food / 20 gold")) Send("train");
+            GUI.enabled = true;
             string mythic = "Mythic guardian";
             foreach (var civ in world.civilizations) if (civ.id == me.civilization) mythic = civ.mythic;
-            GUILayout.Space(10); GUILayout.Label(mythic, sectionStyle);
-            GUILayout.Label("Recruitment unlocks at city level 2. Each unit adds 35 base health and 12 base damage. Capacity equals city level.", noteStyle);
-            if (GUILayout.Button("Recruit · 80 food / 100 gold")) Send("recruit");
+            GUI.enabled = me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.mythic + me.reserveMythic + queuedMythic < me.cityLevel && me.food >= 80 && me.gold >= 100;
+            if (GUILayout.Button(mythic + " · 20s · 80 food / 100 gold")) Send("recruit");
+            GUI.enabled = true;
+            GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment unlocks at city level 2.", noteStyle);
+            for (int i = 0; i < me.trainingQueue.Length; i++)
+                DrawJob(me.trainingQueue[i], me.trainingQueue[i].type == "train" ? "5 mortal troops" : mythic, i > 0);
+            GUILayout.Label($"Ready reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", sectionStyle);
+            DrawReinforce();
+            if (!CanEditArmy) GUILayout.Label("Keep working here while your army is away. Return only to reinforce, change commander, or recover.", noteStyle);
             GUILayout.Space(10); GUILayout.Label("Resource sites", sectionStyle);
             foreach (var node in world.nodes)
                 if (GUILayout.Button(node.name + " · " + node.remaining)) { Select(node.id, "node"); cameraControl?.Focus(node.x, node.z); }
         }
+        private void DrawJob(QueueJob job, string label, bool waiting)
+        {
+            GUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label(label + (waiting ? " · waiting" : " · " + Mathf.CeilToInt(job.remaining) + "s"), noteStyle);
+            Rect bar = GUILayoutUtility.GetRect(20, 5, GUILayout.ExpandWidth(true));
+            GUI.color = new Color(0.18f, 0.2f, 0.23f); GUI.DrawTexture(bar, Texture2D.whiteTexture);
+            GUI.color = new Color(0.8f, 0.65f, 0.3f);
+            GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * Mathf.Clamp01(1 - job.remaining / job.duration), bar.height), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            if (GUILayout.Button("Cancel & refund resources")) Send("cancel-job", job.id);
+            GUILayout.EndVertical();
+        }
         private void DrawCommanders()
         {
             GUILayout.Label("Commander roster", sectionStyle);
-            GUILayout.Label("Recruit with earned gold and equip at home. Unlocked commanders stay in your roster for this server session.", noteStyle);
+            GUILayout.Label("Recruit from anywhere with earned gold. Equip a commander when your army is idle at home.", noteStyle);
             foreach (var hero in world.commanders)
             {
                 bool owned = Array.IndexOf(me.ownedCommanders, hero.id) >= 0;
                 GUI.color = RarityColor(hero.color); GUILayout.Label(hero.name + " · " + hero.rarity, sectionStyle); GUI.color = Color.white;
                 GUILayout.Label(hero.description, noteStyle);
-                string label = me.commanderId == hero.id ? "Equipped" : owned ? "Equip" : "Recruit & equip · " + hero.cost + " gold";
-                GUI.enabled = me.commanderId != hero.id;
-                if (GUILayout.Button(label)) Send("commander", hero.id);
+                if (!owned)
+                {
+                    GUI.enabled = me.gold >= hero.cost;
+                    if (GUILayout.Button("Recruit · " + hero.cost + " gold")) Send("unlock-commander", hero.id);
+                }
+                else
+                {
+                    GUI.enabled = CanEditArmy && me.commanderId != hero.id;
+                    if (GUILayout.Button(me.commanderId == hero.id ? "Equipped" : "Equip at home")) Send("commander", hero.id);
+                }
                 GUI.enabled = true; GUILayout.Space(10);
             }
         }
@@ -196,7 +242,9 @@ namespace ThronesOfMyth
             GUI.enabled = true;
             GUILayout.Space(10); GUILayout.Label("Kingdom chronicle", sectionStyle);
             foreach (var e in world.events) GUILayout.Label($"[{Mathf.FloorToInt(e.time)}s] {e.message}", noteStyle);
-            GUILayout.Space(10); GUILayout.Label("This prototype keeps state in server memory. Returning with the same name resumes your session for up to 30 minutes of inactivity. Restarting the server resets the world.", noteStyle);
+            if (world.persistence != null)
+                GUILayout.Label(world.persistence.enabled ? "Autosave: " + (string.IsNullOrEmpty(world.persistence.error) ? world.persistence.lastSaved : world.persistence.error) : "This server has persistence disabled.", noteStyle);
+            GUILayout.Space(10); GUILayout.Label("Your city and queues are saved locally by the server. Return with the same name and local profile. Time pauses while the server is closed; field orders stop safely on reload.", noteStyle);
         }
         private void DrawSelection()
         {
@@ -244,7 +292,7 @@ namespace ThronesOfMyth
         private void DrawStatus()
         {
             GUI.Box(new Rect(0, Screen.height - 40, Screen.width, 40), GUIContent.none);
-            GUI.Label(new Rect(14, Screen.height - 35, Screen.width - 28, 32), placeBeacon ? "BEACON PLACEMENT: left-click near your army. Esc cancels." : status, noteStyle);
+            GUI.Label(new Rect(14, Screen.height - 35, Screen.width - 28, 32), (world != null && world.persistence != null && !string.IsNullOrEmpty(world.persistence.error)) ? world.persistence.error : placeBeacon ? "BEACON PLACEMENT: left-click near your army. Esc cancels." : status, noteStyle);
         }
         private void Select(string id, string kind) { selectedId = id; selectedKind = kind; map.selectedId = id; }
         private void ActOnSelection()
@@ -300,7 +348,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 2) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; break; }
+                        if (next.version != 3) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; break; }
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
                         {

@@ -4,6 +4,7 @@ Add-Type -AssemblyName System.Windows.Forms
 $packageRoot = $PSScriptRoot
 $ownedServer = $null
 $lockTaken = $false
+$shutdownToken = [Guid]::NewGuid().ToString('N')
 $launcherMutex = New-Object System.Threading.Mutex($false, 'Local\ThronesOfMythPrototypeLauncher')
 function Show-Error([string]$message) {
     [System.Windows.Forms.MessageBox]::Show($message, 'Thrones of Myth', 'OK', 'Error') | Out-Null
@@ -13,7 +14,7 @@ function Get-LocalServer {
     catch { return $null }
 }
 function Is-Compatible($health) {
-    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 2
+    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 3
 }
 try {
     try { $lockTaken = $launcherMutex.WaitOne(0) }
@@ -32,7 +33,12 @@ try {
     if (-not (Is-Compatible $health)) {
         $logDirectory = Join-Path $env:LOCALAPPDATA 'ThronesOfMyth\Logs'
         New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
+        $previousToken = $env:THRONES_LAUNCH_TOKEN
+        try {
+            $env:THRONES_LAUNCH_TOKEN = $shutdownToken
         $ownedServer = Start-Process -FilePath $nodeExe -ArgumentList @(('"' + $serverEntry + '"'), '--local-playtest') -WorkingDirectory $packageRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $logDirectory 'server.log') -RedirectStandardError (Join-Path $logDirectory 'server-error.log')
+        } finally { $env:THRONES_LAUNCH_TOKEN = $previousToken }
+
         for ($attempt = 0; $attempt -lt 80; $attempt++) {
             if ($ownedServer.HasExited) { throw "The local server could not start. Check $logDirectory\server-error.log. Another program may be using port 8080." }
             $health = Get-LocalServer
@@ -47,7 +53,13 @@ try {
 catch { Show-Error $_.Exception.Message; exit 1 }
 finally {
     if ($null -ne $ownedServer) {
-        if (-not $ownedServer.HasExited) { $ownedServer.Kill(); $ownedServer.WaitForExit() }
+        if (-not $ownedServer.HasExited) {
+            try {
+                Invoke-RestMethod -Uri 'http://127.0.0.1:8080/launcher-shutdown' -Method Post -Headers @{ 'X-Thrones-Launcher' = $shutdownToken } -TimeoutSec 5 | Out-Null
+                $ownedServer.WaitForExit(5000) | Out-Null
+            } catch { Show-Error 'The server could not close cleanly. Progress should be available from its most recent autosave.' }
+            if (-not $ownedServer.HasExited) { $ownedServer.Kill(); $ownedServer.WaitForExit() }
+        }
         $ownedServer.Dispose()
     }
     if ($lockTaken) { $launcherMutex.ReleaseMutex() }

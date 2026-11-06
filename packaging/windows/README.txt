@@ -13,10 +13,14 @@ right-click to march/act, H for home, Space for your army, R to return.
 Use Alt+F4 to close the game. Closing it also stops a server this launcher started.
 Do not launch Game/ThronesOfMyth.exe directly unless you already have a server.
 
-This is a prototype with placeholder graphics. Progress is stored in memory and
-resets when its local server stops. It is a local hosted playtest, not an online
+This is a prototype with placeholder graphics. Progress autosaves locally and resumes with your saved
+name/profile. Time pauses while the server is stopped. It is a local hosted playtest, not an online
 MMO release. Only one packaged launcher instance runs at a time. Another player
 can use a Unity editor client with a different name against the same server.
 
 Server logs: %LOCALAPPDATA%\ThronesOfMyth\Logs
 Bundled Node.js license: Runtime\LICENSE
+
+World saves: %LOCALAPPDATA%\ThronesOfMyth\Saves
+City upgrades and training work while your army is away. New units wait in city
+reserves; bring your army home to reinforce.

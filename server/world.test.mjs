@@ -46,7 +46,8 @@ test('cooperating armies share rewards and experience', () => {
 test('defeat returns home, blocks orders during recovery and heals afterward', () => {
   const w = new World(), p = player(w), c = w.camps[3]; p.x = c.x - 1; p.z = c.z; p.health = 1;
   cmd(w, p, 'attack', { targetId: c.id }); w.tick(0.1);
-  assert.equal(p.x, p.homeX); assert.ok(p.recovery > 0); assert.throws(() => cmd(w, p, 'train'), /recover/);
+  assert.equal(p.x, p.homeX); assert.ok(p.recovery > 0); assert.throws(() => cmd(w, p, 'move', { x: 10, z: 10 }), /recover/);
+  cmd(w, p, 'train');
   advance(w, 20); assert.equal(p.recovery, 0); assert.equal(p.health, w.stats(p).maxHealth);
 });
 test('gathering depletes finite shared resources and refills later', () => {
@@ -55,15 +56,49 @@ test('gathering depletes finite shared resources and refills later', () => {
   assert.equal(n.remaining, 0); assert.equal(p.wood - before, 9);
   advance(w, 31); assert.equal(n.remaining, n.capacity);
 });
-test('city spending is atomic and checks location, capacity and mythic prerequisites', () => {
-  const w = new World(), p = player(w);
+test('city development continues while the army is gathering; recruits stay in reserves', () => {
+  const w = new World(), p = player(w); rich(p);
+  const node = w.nodes[0]; p.x = node.x; p.z = node.z;
+  cmd(w, p, 'gather', { targetId: node.id });
+  const order = structuredClone(p.target), armyHealth = p.health;
+  cmd(w, p, 'upgrade'); cmd(w, p, 'train');
+  assert.equal(p.cityLevel, 1); assert.equal(p.troops, 20);
+  advance(w, 9); assert.equal(p.reserveTroops, 5); assert.equal(p.troops, 20);
+  assert.equal(p.health, armyHealth); assert.deepEqual(p.target, order);
+  assert.throws(() => cmd(w, p, 'reinforce'), /home/);
+  advance(w, 12); assert.equal(p.cityLevel, 2);
+  cmd(w, p, 'recruit'); advance(w, 21); assert.equal(p.reserveMythic, 1); assert.equal(p.mythic, 0);
+  assert.throws(() => cmd(w, p, 'commander', { targetId: 'atalanta' }), /home/);
+  cmd(w, p, 'return'); advance(w, 20); cmd(w, p, 'reinforce');
+  assert.equal(p.troops, 25); assert.equal(p.mythic, 1); assert.equal(p.reserveTroops, 0); assert.equal(p.reserveMythic, 0);
+});
+test('training lane, troop capacity, mythic prerequisites and cancellation refunds are enforced', () => {
+  const w = new World(), p = player(w); rich(p);
   assert.throws(() => cmd(w, p, 'recruit'), /level 2/);
-  cmd(w, p, 'upgrade'); assert.equal(p.cityLevel, 2); assert.equal(p.gold, 75); assert.equal(p.wood, 50);
-  const before = [p.gold, p.food]; assert.throws(() => cmd(w, p, 'recruit'), /resources/); assert.deepEqual([p.gold, p.food], before);
-  rich(p); const damage = w.stats(p).damage; cmd(w, p, 'recruit'); assert.ok(w.stats(p).damage > damage);
-  for (let i = 0; i < 8; i++) cmd(w, p, 'train');
-  assert.equal(p.troops, 60); assert.throws(() => cmd(w, p, 'train'), /capacity/);
-  p.x = 20; assert.throws(() => cmd(w, p, 'upgrade'), /home/);
+  const resources = [p.gold, p.food];
+  cmd(w, p, 'train'); const firstId = p.trainingQueue[0].id;
+  advance(w, 3); cmd(w, p, 'cancel-job', { targetId: firstId });
+  assert.deepEqual([p.gold, p.food], resources); assert.throws(() => cmd(w, p, 'cancel-job', { targetId: firstId }));
+  for (let i = 0; i < 3; i++) cmd(w, p, 'train');
+  assert.throws(() => cmd(w, p, 'train'), /queue/);
+  advance(w, 9); assert.equal(p.reserveTroops, 5); assert.equal(p.trainingQueue.length, 2);
+  advance(w, 16); assert.equal(p.reserveTroops, 15); assert.equal(p.trainingQueue.length, 0);
+  cmd(w, p, 'train'); assert.throws(() => cmd(w, p, 'train'), /capacity/);
+  advance(w, 9); assert.equal(p.reserveTroops, 20); assert.equal(p.troops, 20);
+  cmd(w, p, 'reinforce'); assert.equal(p.troops, 40);
+  const before = [p.wood, p.gold]; cmd(w, p, 'upgrade'); const upgradeId = p.construction.id;
+  assert.throws(() => cmd(w, p, 'upgrade'), /construction/);
+  cmd(w, p, 'cancel-job', { targetId: upgradeId }); assert.deepEqual([p.wood, p.gold], before);
+  p.gold = 0; const food = p.food;
+  assert.throws(() => cmd(w, p, 'upgrade'), /resources/); assert.equal(p.food, food);
+});
+test('city management remains available while an army is recovering; remote recruitment does not equip', () => {
+  const w = new World(), p = player(w); rich(p); p.recovery = 5;
+  cmd(w, p, 'upgrade'); cmd(w, p, 'train');
+  cmd(w, p, 'unlock-commander', { targetId: 'atalanta' });
+  assert.equal(p.commanderId, 'captain'); assert.ok(p.ownedCommanders.includes('atalanta'));
+  assert.throws(() => cmd(w, p, 'commander', { targetId: 'atalanta' }), /recover/);
+  advance(w, 21); assert.equal(p.cityLevel, 2); assert.equal(p.reserveTroops, 5);
 });
 test('commanders are purchased once and a quest reward cannot be duplicated', () => {
   const w = new World(), p = player(w); rich(p); const before = p.gold;
@@ -111,13 +146,15 @@ test('gates grant access; losing access cancels orders but return home remains p
   w.sites.find(s => s.id === 'gate-east').allianceId = ''; w.tick(0.1); assert.equal(p.target, null);
   cmd(w, p, 'return'); advance(w, 25); assert.equal(p.x, p.homeX);
 });
-test('session resume preserves city; expiration transfers leadership then clears territory', () => {
-  const w = new World(), s = w.join('A'), a = w.authenticate(s.token), b = player(w, 'B');
+test('inactive saved cities retain sessions, alliances and territory', () => {
+  const w = new World(), session = w.join('A'), a = w.authenticate(session.token), b = player(w, 'B');
   const id = alliance(w, a); cmd(w, b, 'alliance-join', { targetId: id }); a.gold = 999;
-  assert.deepEqual(w.join('A', 'greek', s.token), s); assert.equal(w.players.size, 2); assert.equal(w.authenticate(s.token).gold, 999);
-  assert.ok(!JSON.stringify(w.snapshot()).includes(s.token));
-  a.lastSeen = 0; b.lastSeen = 5000; w.expire(1800001); assert.equal(w.alliances.get(id).leaderId, b.id);
-  w.expire(1900001); assert.equal(w.alliances.size, 0);
+  assert.deepEqual(w.join('A', 'greek', session.token), session);
+  assert.ok(!JSON.stringify(w.snapshot()).includes(session.token));
+  a.lastSeen = 0; b.lastSeen = 5000; w.expire(1900001);
+  assert.equal(a.offline, true); assert.equal(w.players.size, 2); assert.equal(w.alliances.get(id).leaderId, a.id);
+  assert.equal(w.authenticate(session.token).gold, 999);
+  assert.throws(() => w.join('A'), /already exists/);
 });
 test('HTTP clients share state, cannot command each other, and invalid requests fail', async t => {
   const { server } = createGameServer();
@@ -127,11 +164,12 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const post = (path, body, token = '') => fetch(base + path, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(body) });
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
-  assert.deepEqual(await (await fetch(base + '/health')).json(), { status: 'ok', game: 'thrones-of-myth', version: 2 });
+  const health = await (await fetch(base + '/health')).json();
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 3);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(b.token);
-  assert.equal(after.version, 2); assert.equal(after.players.length, 2);
+  assert.equal(after.version, 3); assert.equal(after.players.length, 2);
   assert.ok(after.players.find(p => p.id === a.playerId).x > before.players.find(p => p.id === a.playerId).x);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);
@@ -148,8 +186,9 @@ test('complete economic and territory campaign reaches the sanctuary using legal
     cmd(w, p, 'gather', { targetId: w.nodes[index].id }); advance(w, 100);
   }
   cmd(w, p, 'return'); advance(w, 30);
-  cmd(w, p, 'upgrade'); cmd(w, p, 'recruit');
-  for (let i = 0; i < 4; i++) cmd(w, p, 'train');
+  cmd(w, p, 'upgrade'); advance(w, 21); cmd(w, p, 'recruit'); advance(w, 21);
+  for (let i = 0; i < 4; i++) { cmd(w, p, 'train'); advance(w, 9); }
+  cmd(w, p, 'reinforce');
   cmd(w, p, 'commander', { targetId: 'atalanta' });
   const id = alliance(w, p);
   const build = (x, z) => { cmd(w, p, 'move', { x, z }); advance(w, 30); cmd(w, p, 'flag', { x, z }); };

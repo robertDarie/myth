@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { performance } from 'node:perf_hooks';
 import { World, GameError } from './world.mjs';
+import { WorldStore } from './storage.mjs';
 
 async function readJson(request) {
   let size = 0;
@@ -14,8 +15,15 @@ async function readJson(request) {
   catch { throw new GameError('Expected JSON.'); }
 }
 
-export function createGameServer() {
-  const world = new World();
+export function createGameServer({ savePath = null, shutdownToken = null } = {}) {
+  const store = savePath ? new WorldStore(savePath) : null;
+  const world = store ? store.load() : new World();
+  const persistence = { enabled: !!store, lastSaved: '', error: '' };
+  const saveNow = () => {
+    if (!store) return true;
+    try { store.save(world); persistence.lastSaved = new Date().toISOString(); persistence.error = ''; return true; }
+    catch (error) { persistence.error = 'Progress could not be saved. Check free disk space and save-folder access.'; console.error(persistence.error); return false; }
+  };
   const server = createServer(async (request, response) => {
     const send = (status, data) => {
       response.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
@@ -23,20 +31,27 @@ export function createGameServer() {
     };
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
-      if (request.method === 'GET' && path === '/health') return send(200, { status: 'ok', game: 'thrones-of-myth', version: 2 });
+      if (request.method === 'GET' && path === '/health') return send(200, { status: persistence.error ? 'degraded' : 'ok', game: 'thrones-of-myth', version: 3, persistence: { ...persistence } });
+      if (request.method === 'POST' && path === '/launcher-shutdown') {
+        if (!shutdownToken || request.headers['x-thrones-launcher'] !== shutdownToken) throw new GameError('Launcher authorization required.', 403);
+        if (!saveNow()) throw new GameError(persistence.error, 503);
+        send(200, { saved: true });
+        server.close(); server.closeIdleConnections(); return;
+      }
       if (request.method === 'POST' && path === '/join') {
         const body = await readJson(request);
         const session = world.join(body?.name, body?.civilization, body?.resumeToken);
-        world.authenticate(session.token).lastSeen = performance.now();
+        const player = world.authenticate(session.token);
+        player.lastSeen = performance.now(); player.offline = false; saveNow();
         return send(201, session);
       }
       if ((request.method === 'GET' && path === '/world') || (request.method === 'POST' && path === '/command')) {
         const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
         const player = world.authenticate(token);
-        player.lastSeen = performance.now();
-        if (path === '/world') return send(200, world.snapshot());
+        player.lastSeen = performance.now(); player.offline = false;
+        if (path === '/world') return send(200, { ...world.snapshot(), persistence: { ...persistence } });
         world.command(player, await readJson(request));
-        return send(200, { accepted: true });
+        return send(200, { accepted: true, saved: saveNow() });
       }
       send(404, { error: 'Route not found.' });
     } catch (error) {
@@ -54,6 +69,9 @@ export function createGameServer() {
     previous = now;
   }, 100);
   timer.unref();
-  server.on('close', () => clearInterval(timer));
-  return { server, world };
+  const autosave = setInterval(saveNow, 2000); autosave.unref();
+  server.on('listening', saveNow);
+  server.on('close', () => { clearInterval(timer); clearInterval(autosave); saveNow(); });
+  server.on('error', () => { clearInterval(timer); clearInterval(autosave); });
+  return { server, world, saveNow };
 }
