@@ -15,11 +15,10 @@ files and help diagnose errors you share.
    the initial Windows prototype. Final iOS builds require macOS and Xcode.
 5. Once the prepared changes have been committed and pushed to GitHub, clone the
    repository or pull them into your existing checkout. Unpushed cloud edits
-   will not appear in a Windows clone automatically. The command below uses the
-   published setup branch; use the default branch after it has been merged:
+   will not appear in a Windows clone automatically:
 
    ```powershell
-   git clone --branch setup/thrones-of-myth-foundation https://github.com/robertDarie/myth.git
+   git clone https://github.com/robertDarie/myth.git
    cd myth
    git lfs install
    powershell -NoProfile -File .\tools\check-windows.ps1
