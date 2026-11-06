@@ -1,0 +1,26 @@
+# Unity generated files
+client/[Ll]ibrary/
+client/[Tt]emp/
+client/[Oo]bj/
+client/[Bb]uild/
+client/[Bb]uilds/
+client/[Ll]ogs/
+client/[Uu]ser[Ss]ettings/
+client/[Mm]emoryCaptures/
+client/[Rr]ecordings/
+*.csproj
+*.sln
+*.suo
+*.user
+.vs/
+.idea/
+.DS_Store
+Thumbs.db
+# Local configuration and outputs
+.env
+.env.*
+!.env.example
+node_modules/
+coverage/
+*.log
+work/
