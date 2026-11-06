@@ -28,3 +28,6 @@ reserves; bring your army home to reinforce.
 Each new age unlocks a march, up to five. Select it in Army before issuing orders.
 At Citadel 2, build Lodge of the First Builders for a second construction crew.
 Heroes now have individual XP, stars, skills and automatic rage abilities.
+
+Interface 0.6: C opens City, K Commanders, L Alliance. Keys 1-5 select marches.
+Esc closes a menu or cancels placement. Interface size and labels are in settings.

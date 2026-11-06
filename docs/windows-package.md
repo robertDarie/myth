@@ -53,6 +53,8 @@ one online kingdom. World state is saved under
 See [the current playtest guide](playtest-0.5.md) for save and backup behavior.
 The initial package is unsigned. Signing and a shared hosted backend come later.
 
+For the new 0.6 screen layout and shortcuts, see [the interface guide](interface-0.6.md).
+
 ## Validation still required on Windows
 
 Cloud checks cover server rules and C# syntax, not Unity compilation, executable

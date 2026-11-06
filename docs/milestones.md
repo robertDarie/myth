@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.5
+## Implemented through slice 0.6
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -11,7 +11,8 @@ construction/training; reserves and reinforcement; local saves and backup recove
 fifteen institutions, research, passive economy, Temple summons and ascension,
 market exchange, relic forging and alliance job help; five age-unlocked marches,
 a permanent second builder, individual commander XP/stars, targeted skill growth
-and automatic rage abilities. The full design distinguishes
+and automatic rage abilities; a map-first themed interface with dedicated city,
+research, commander and Temple views. See the 0.6 interface guide for visual checks. The full design distinguishes
 these implemented foundations from planned advanced structures. Server tests include a
 complete legal economy-to-sanctuary campaign. New Unity client validation remains
 pending; implementation is not a claim of production readiness.

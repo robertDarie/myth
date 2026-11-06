@@ -5,6 +5,7 @@ namespace ThronesOfMyth
     public sealed class StrategyCamera : MonoBehaviour
     {
         public bool blockInput;
+        public System.Func<bool> inputBlocked;
         private Camera view;
         private Vector3 focus = new Vector3(20, 0, 20);
         private Vector3 previousMouse;
@@ -20,7 +21,7 @@ namespace ThronesOfMyth
         public void Focus(float x, float z) { focus = new Vector3(x, 0, z); Apply(); }
         private void Update()
         {
-            if (!blockInput)
+            if (!blockInput && !(inputBlocked?.Invoke() ?? false))
             {
                 var keyboard = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
                 focus += keyboard * (view.orthographicSize * 0.8f) * Time.unscaledDeltaTime;

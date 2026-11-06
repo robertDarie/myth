@@ -297,10 +297,11 @@ export class World {
   }
   armySnapshot(a) {
     const p = this.owner(a);
+    const destination = a.target?.id ? [...this.camps, ...this.nodes, ...this.sites].find(item => item.id === a.target.id) : a.target;
     return { id: a.id, ownerId: p.id, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
       commanderId: a.commanderId, equippedRelic: a.equippedRelic, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
       troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), recovery: a.recovery, rage: Math.floor(a.rage), shield: Math.ceil(a.shield), lastSkill: a.lastSkill, skillCasts: a.skillCasts,
-      state: a.state, hasOrder: !!a.target, targetId: a.target?.id ?? '', ...this.stats(a) };
+      state: a.state, hasOrder: !!a.target, targetId: a.target?.id ?? '', targetX: destination?.x ?? a.x, targetZ: destination?.z ?? a.z, ...this.stats(a) };
   }
   snapshot() {
     return { version: 5, ages: AGES, armies: this.armies().map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,

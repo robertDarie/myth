@@ -5,13 +5,15 @@ namespace ThronesOfMyth
 {
     public sealed class WorldView : MonoBehaviour
     {
-        private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public int mythicCount; }
+        private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public int mythicCount; public string kind; }
         private readonly Dictionary<string, Piece> pieces = new Dictionary<string, Piece>();
         private readonly Dictionary<Color, Material> materials = new Dictionary<Color, Material>();
         private readonly Color blue = new Color(0.2f, 0.7f, 1f), gold = new Color(0.9f, 0.7f, 0.3f), red = new Color(0.85f, 0.3f, 0.23f);
         private Transform scenery;
         public string selectedId;
         public bool labels = true;
+        public float labelScale = 1;
+        public System.Func<Vector2, bool> occluded;
         private Material MaterialFor(Color color)
         {
             if (!materials.TryGetValue(color, out var material))
@@ -78,7 +80,7 @@ namespace ThronesOfMyth
                 Shape(kind == "camp" ? PrimitiveType.Cube : PrimitiveType.Sphere, root.transform, new Vector3(0, 0.9f, 0), new Vector3(2, 1.8f, 2), color);
                 Shape(PrimitiveType.Cylinder, root.transform, new Vector3(0, 0.1f, 0), new Vector3(3.2f, 0.1f, 3.2f), color * 0.7f);
             }
-            var piece = new Piece { root = root, destination = root.transform.position, color = color, moving = kind == "army" };
+            var piece = new Piece { root = root, destination = root.transform.position, color = color, kind = kind, moving = kind == "army" };
             pieces.Add(id, piece); return piece;
         }
         private void Put(HashSet<string> seen, string id, string kind, float x, float z, Color color, string label, float health = -1)
@@ -138,10 +140,12 @@ namespace ThronesOfMyth
                 var point = camera.WorldToScreenPoint(piece.root.transform.position + Vector3.up * 3.7f);
                 if (point.z <= 0 || point.x < 0 || point.x > Screen.width || point.y < 0 || point.y > Screen.height) continue;
                 float x = point.x, y = Screen.height - point.y;
-                if (x < 320 || y < 65 || y > Screen.height - 44) continue;
-                var rect = new Rect(x - 105, y - 10, 210, 22);
+                if (occluded != null && occluded(new Vector2(x, y))) continue;
+                if (piece.kind == "node" && camera.orthographicSize > 20 && pair.Key != selectedId) continue;
+                if (piece.kind == "camp" && camera.orthographicSize > 34 && pair.Key != selectedId) continue;
+                var rect = new Rect(x - 105 * labelScale, y - 10 * labelScale, 210 * labelScale, 22 * labelScale);
                 GUI.color = pair.Key == selectedId ? Color.yellow : Color.white;
-                GUI.Label(rect, piece.label, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 11 });
+                GUI.Label(rect, piece.label, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.RoundToInt(11 * labelScale) });
                 GUI.color = Color.white;
                 if (piece.health >= 0)
                 {
