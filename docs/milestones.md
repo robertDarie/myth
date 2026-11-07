@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.14
+## Implemented through slice 0.15
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -42,6 +42,10 @@ a fresh-city legal-command playthrough. See [the campaign rules](opening-campaig
 The 0.14 coordinated PvE foundation adds five strongholds in three tiers,
 rally-only guard/wall battles, fixed shared reward pools and saved respawns.
 See [the stronghold rules](strongholds-0.14.md).
+
+The 0.15 activity foundation adds ten daily tasks, five fixed chests and three
+weekly alliance goals with personal contribution thresholds and saved claims.
+See [the activity rules](activity-and-alliance-goals-0.15.md).
 
 ## Next stages
 

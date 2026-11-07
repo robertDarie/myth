@@ -129,7 +129,7 @@ test('five-march positions, both construction jobs and commander skills survive 
   cmd(w,p,'move',{marchId:p.marches[0].id,x:20,z:20});advance(w,2);
   const position=p.marches[0].x, restored=World.fromSave(w.toSave()),q=restored.authenticate(session.token);
   assert.equal(armyList(q).length,5);assert.equal(constructionJobs(q).length,2);assert.equal(crews(q),2);
-  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,9);
+  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,10);
   advance(restored,11);assert.equal(q.buildings.oracle,1);assert.equal(q.buildings.quarry,1);
 });
 

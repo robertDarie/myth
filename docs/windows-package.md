@@ -71,7 +71,7 @@ launch, PowerShell launcher behavior or installer execution. After building:
 
 For 0.8 loading, troop selection and model previews, see [march assembly and presentation](marches-and-presentation-0.8.md). Close the old server before launching protocol 6.
 
-Build 0.14 requires protocol 11 and bundles `strongholds.mjs` alongside the
-chapter/exploration/navigation/campaign modules. Schemas 1–8 migrate with versioned
-archival backups. See [the stronghold guide](strongholds-0.14.md).
+Build 0.15 requires protocol 12 and bundles `activity.mjs` alongside the existing
+kingdom modules. Schemas 1–9 migrate with versioned archival backups. See
+[the activity guide](activity-and-alliance-goals-0.15.md).
 Rebuild to update both the Windows client and bundled server.

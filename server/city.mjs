@@ -1,3 +1,4 @@
+import { recordActivity, activityClock } from './activity.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { age, crews, constructionJobs, totalTroops, totalMythic, skillInfo } from './progression.mjs';
 import { COMMANDERS } from './content.mjs';
@@ -56,7 +57,7 @@ export function citySnapshot(world, p) {
     trainingDuration: 8 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
     troopCapacity: capacity(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
-    offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(world.now()).toISOString().slice(0, 10),
+    offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),
     offeringAmount: p.buildings.oracle >= 5 ? 3 : p.buildings.oracle >= 3 ? 2 : 1,
     sealCost: { gold: Math.ceil(75 / (1 + 0.05 * Math.max(0, p.buildings.oracle - 1))), aether: 10 } };
 }
@@ -79,7 +80,7 @@ export function cityCommand(world, p, c, fail) {
     case 'temple-offering':
       requireBuilding('oracle');
       if (!citySnapshot(world, p).offeringAvailable) fail('The free offering has already been claimed for this UTC day.');
-      p.sigils += citySnapshot(world, p).offeringAmount; p.lastOfferingDay = new Date(world.now()).toISOString().slice(0, 10); return true;
+      p.sigils += citySnapshot(world, p).offeringAmount; p.lastOfferingDay = new Date(activityClock(world).now).toISOString().slice(0, 10); return true;
     case 'buy-sigil':
       requireBuilding('oracle'); world.spend(p, citySnapshot(world, p).sealCost); p.sigils++; return true;
     case 'summon': {
@@ -166,6 +167,7 @@ export function tickCity(world, p, dt) {
     if (job.type === 'building') p.buildings[job.targetId]++;
     if (job.type === 'research') p.technologies[job.targetId]++;
     if (job.type === 'craft') p.ownedRelics.push(job.targetId);
+    if (['upgrade','building','research'].includes(job.type)) recordActivity(world,p,'development',1);
     p[lane] = null;
     const name = job.type === 'upgrade' ? 'Citadel level ' + p.cityLevel : [...BUILDINGS, ...TECHNOLOGIES, ...RELICS].find(item => item.id === job.targetId)?.name ?? job.type;
     world.event(`${p.name} completed ${name}.`);

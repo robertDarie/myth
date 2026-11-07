@@ -4,8 +4,10 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.14
+## Playable slice 0.15
 
+- Daily activity with ten optional tasks, five fixed reward chests and UTC resets;
+  weekly alliance goals with saved personal contributions and once-only claims.
 - Five repeatable Godbreaker Strongholds across three tiers: rally-only guard/wall
   battles, contribution-based shared rewards, commander XP and private PvE reports.
 - Six-chapter opening campaign with 19 objectives, individual and chapter rewards,
@@ -84,6 +86,7 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[the 0.15 daily activity and alliance goals](docs/activity-and-alliance-goals-0.15.md),
 [the 0.14 stronghold rules](docs/strongholds-0.14.md),
 [the 0.13 opening campaign](docs/opening-campaign-0.13.md),
 [the 0.12 exploration and route rules](docs/exploration-and-routes-0.12.md),
@@ -104,4 +107,4 @@ Commander portraits and sanctuary backgrounds use original generated artwork.
 World models are stylized procedural proxies, awaiting authored meshes and rigs.
 There is no city siege, field interception of rallies, online account system,
 production database, hosted kingdom service, or KvK yet. The CLI saves locally;
-time pauses while the server is closed. See the playtest guide for save paths.
+world simulation pauses while the server is closed; UTC activity periods continue. See the playtest guide for save paths.

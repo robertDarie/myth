@@ -11,7 +11,7 @@ positions locally and never chooses damage or rewards.
 `content.mjs` defines five civilizations, eleven commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 11
+`http.mjs` provides a small versioned development protocol. Snapshot version 12
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -78,9 +78,13 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 9 stores strongholds/respawn generations plus chapter achievements/claims plus discovery/scouts plus alliance campaigns/fortifications plus troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4/5/6/7/8 without resetting progression) queues, reserves, map state and sessions. A loader validates
-the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
-silently reset. Time does not advance while the server is closed. Restore stops
+Save schema 10 retains city progression, queues/reserves, armies/hospital units,
+territory/campaigns, stronghold generations, discovery/scouts, chapters, reports,
+communications and session tokens, plus activity claims and observed UTC time.
+Schemas 1–9 migrate without resetting progression. The loader validates saves,
+falls back to a valid backup and retains versioned archives. If both copies fail,
+it preserves the files and refuses to silently reset. Simulation time pauses
+while closed; UTC activity periods continue. Restore stops
 ordinary field orders and cancels rallies, sealing active group battles once as
 interrupted. Garrison assignments resume; structure health and all progression
 remain saved. The package launcher
@@ -147,3 +151,12 @@ fixed contribution-weighted resource/XP pools and respawn generations.
 commitments, withdrawals, hospital transfers and private report sealing. Schema 9
 stores encounter health/timers and victory counts; protocol 11 adds map/scouting
 data and reward receipts. See [the stronghold rules](strongholds-0.14.md).
+
+`activity.mjs` owns event counters, claimed-task activity points, deterministic
+chests and weekly alliance contributions. Clock time uses a persisted monotonic
+UTC high-water mark; the world simulation clock stays separate. Claims bind to a
+period and (for weekly goals) the current alliance ID. Per-city weekly claim IDs
+survive membership changes. Shared NPC victory IDs count once per alliance.
+Protocol 12 supplies the viewer's Activity screen; public alliance snapshots omit
+private weekly ledgers. Schema 10 stores progress/claims and the calendar mark.
+See [the activity rules](activity-and-alliance-goals-0.15.md).

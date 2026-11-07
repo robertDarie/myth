@@ -1,3 +1,4 @@
+import { recordActivity } from './activity.mjs';
 import { journeyMetric } from './chapters.mjs';
 import { randomUUID } from 'node:crypto';
 import { travel } from './navigation.mjs';
@@ -25,7 +26,7 @@ export function explorationTick(w,dt){
     strongholds:w.strongholds.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     sites:w.sites.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     garrisons:w.garrisons.filter(g=>{const t=[...w.sites,...w.flags].find(t=>t.id===g.targetId);return t&&dist(t,s)<=FOG.scoutRadius;}).map(g=>({targetId:g.targetId,marches:g.armyIds.length,troops:g.armyIds.reduce((n,id)=>n+(w.army(id)?.troops||0),0),mythic:g.armyIds.reduce((n,id)=>n+(w.army(id)?.mythic||0),0)}))};
-   journeyMetric(p,'surveys',1);p.scoutReports.unshift(report);p.scoutReports.length=Math.min(20,p.scoutReports.length);s.phase='Returning';
+   journeyMetric(p,'surveys',1);recordActivity(w,p,'scouts',1);p.scoutReports.unshift(report);p.scoutReports.length=Math.min(20,p.scoutReports.length);s.phase='Returning';
   }
  }
  for(const p of w.players.values()){

@@ -42,6 +42,7 @@ namespace ThronesOfMyth
                     if (node != null) { interfacePage = InterfacePage.World; Select(node.id, "node"); cameraControl?.Focus(node.x, node.z); }
                     else { GuidePage(InterfacePage.Exploration); status = "Scout nearby land to reveal a " + task.targetId + " gathering site."; }
                     break;
+                case "patrol": interfacePage = InterfacePage.World; cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z); status = "Right-click accessible ground to march. Scout travel and forced retreats do not count as army patrol distance."; break;
                 case "combat":
                     CampData camp = null; float distance = float.MaxValue;
                     foreach (var c in world.camps) if (c.health > 0 && c.x <= 40 && c.z <= 40)

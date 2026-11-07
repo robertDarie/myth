@@ -46,11 +46,19 @@ battles, contribution-weighted fixed reward pools, commander XP and saved
 respawns. Ordinary members can lead PvE rallies; territory attacks retain officer
 permissions. See [the stronghold rules](strongholds-0.14.md).
 
-## Next: daily activity and alliance goals
+## Delivered: daily activity and alliance goals (0.15)
 
-Develop daily/weekly objectives and alliance contribution goals, then scheduled
-kingdom milestones. Expand the opening with clearer feedback and later chapters
-after playtesting its resource flow and multiplayer pacing.
+Ten optional daily tasks, five deterministic chests and three weekly alliance
+objectives now use real event counters, explicit UTC reset periods and saved
+claims. The final daily chest has a repeatable solo path; weekly rewards require
+personal work and cannot be claimed again by switching alliances. See
+[the activity rules](activity-and-alliance-goals-0.15.md).
+
+## Next: scheduled kingdom progression
+
+Add visible kingdom stages and opening conditions for passes and the sanctuary,
+with preparation milestones, personal/alliance contribution history and campaign
+rewards. Keep it separate from later KvK matchmaking and seasons.
 
 ## Troop and commander depth
 
@@ -60,7 +68,7 @@ Keep unit transfers, capacity and healing conserved across every upgrade.
 
 ## Kingdom progression and reasons to return
 
-Interactive tutorial and chapter chain; daily/weekly objectives; richer rally bosses
+Richer tutorial/later chapters, personal weekly quests, richer rally bosses
 and events; scheduled pass/sanctuary stages; ruler/governance, personal/alliance
 power rankings and campaign rewards. Balance training, resource flow, wounded
 recovery and commander development across days, not just a short local session.

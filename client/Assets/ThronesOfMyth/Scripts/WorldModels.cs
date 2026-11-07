@@ -5,7 +5,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId; public int count, troops, mythic, skillIndex; public UnitCounts units; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId; public int count, troops, mythic, skillIndex; public UnitCounts units; }
     [Serializable] public sealed class UnitCounts { public int infantry, archers, cavalry; public int Total => infantry + archers + cavalry; public UnitCounts Copy() => new UnitCounts { infantry = infantry, archers = archers, cavalry = cavalry }; }
     [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration; public int cityLevel; public ResourceAmounts cost; }
     [Serializable] public sealed class ArmyData
@@ -79,9 +79,17 @@ namespace ThronesOfMyth
     [Serializable] public sealed class StrongholdData { public string id, name, kind; public int tier, cycle, xp; public float x, z, health, maxHealth, guardHealth, maxGuardHealth, guardDamage, respawn; public UnitCounts units; public JourneyRewards reward; }
     [Serializable] public sealed class StrongholdRules { public int minMarches, roundLimit, respawnSeconds; }
     [Serializable] public sealed class StrongholdReward { public string playerId; public float contribution; public int xp; public JourneyRewards resources; }
+    [Serializable] public sealed class ActivityTaskCard { public string id, title, description, guide, targetId; public int goal, progress, points; public bool claimed, canClaim; public JourneyRewards reward; }
+    [Serializable] public sealed class ActivityChest { public string id; public int points; public bool claimed, canClaim; public JourneyRewards reward; }
+    [Serializable] public sealed class DailyActivityState { public string period; public int resetSeconds, points, maxChestPoints; public ActivityTaskCard[] tasks; public ActivityChest[] chests; }
+    [Serializable] public sealed class AllianceGoalCard { public string id, title, description, guide, targetId; public int goal, progress, personal, personalProgress; public bool claimed, canClaim; public JourneyRewards reward; }
+    [Serializable] public sealed class ActivityMember { public string id, name; public bool current; public int gather, helps, strongholds; }
+    [Serializable] public sealed class WeeklyAllianceActivity { public string id, name, period; public int resetSeconds; public AllianceGoalCard[] goals; public ActivityMember[] members; }
+    [Serializable] public sealed class ActivityState { public DailyActivityState daily; public WeeklyAllianceActivity alliance; }
     [Serializable] public sealed class WorldSnapshot
     {
         public int version, size;
+        public ActivityState activity;
         public StrongholdData[] strongholds;
         public StrongholdRules strongholdRules;
         public ExplorationData exploration;

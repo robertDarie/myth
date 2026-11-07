@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -117,6 +117,9 @@ namespace ThronesOfMyth
                 case "promote-commander": return "Your commander has earned a new star.";
                 case "upgrade-skill": return "Your commander's skill has grown stronger.";
                 case "upgrade-commander": return "Your commander has ascended.";
+                case "daily-claim": return "Daily task reward claimed. Your activity points have increased.";
+                case "activity-chest": return "Activity chest opened. Its rewards are now in your city.";
+                case "alliance-goal-claim": return "Your weekly alliance reward has been claimed.";
                 case "journey-claim": return "Objective reward claimed. Your campaign progress is saved.";
                 case "chapter-claim": return "Chapter reward claimed. Your chronicle has advanced.";
                 case "quest": return "Chapter rewards have been claimed.";
@@ -239,7 +242,10 @@ namespace ThronesOfMyth
         }
         private void DrawQuestHud()
         {
-            if (theme.Button(new Rect(20, 132, 282, 32), compactHud ? "Show kingdom activity  +" : "KINGDOM ACTIVITY  −")) compactHud = !compactHud;
+            if (theme.Button(new Rect(20, 132, 158, 32), compactHud ? "Activity  +" : "Activity  −")) compactHud = !compactHud;
+            var daily = world.activity == null ? null : world.activity.daily;
+            bool readyDaily = daily != null && (Array.Exists(daily.chests, c => c.canClaim) || Array.Exists(daily.tasks, t => t.canClaim));
+            if (theme.Button(new Rect(186, 132, 116, 32), readyDaily ? "Daily · Claim" : "Daily · " + (daily == null ? 0 : Mathf.Min(100, daily.points)) + "/100", readyDaily)) OpenActivity();
             if (compactHud) return;
             var panel = new Rect(20, 172, 282, 164); theme.Panel(panel);
             var chapter = CurrentChapter; var task = NextTask(chapter);
@@ -367,9 +373,12 @@ namespace ThronesOfMyth
         {
             var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var navigation = new Rect(left.x + 12, left.y + 12, left.width - 24, left.height - 24);
+            activityNavScroll = GUI.BeginScrollView(navigation, activityNavScroll, new Rect(0, 0, navigation.width - 16, pages.Length * 34));
             for (int i = 0; i < pages.Length; i++)
-                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 30, left.width - 24, 27), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+                if (theme.Button(new Rect(0, i * 34, navigation.width - 16, 30), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+            GUI.EndScrollView();
             theme.Panel(main, false, true);
             GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
@@ -381,6 +390,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Warfare) DrawWarfare();
             if (interfacePage == InterfacePage.Exploration) DrawExploration();
             if (interfacePage == InterfacePage.Campaign) DrawCampaign();
+            if (interfacePage == InterfacePage.Activity) DrawActivity();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();
             if (interfacePage == InterfacePage.Alliance) DrawAlliance();

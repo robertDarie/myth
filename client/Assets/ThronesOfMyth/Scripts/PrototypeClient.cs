@@ -234,6 +234,7 @@ namespace ThronesOfMyth
         }
         private void DrawAlliance()
         {
+            if (GUILayout.Button("Alliance weekly goals", theme.Primary)) OpenActivity(true);
             if (GUILayout.Button("Kingdom and alliance chat")) OpenInterface(InterfacePage.Chat);
             if (string.IsNullOrEmpty(me.allianceId))
             {
@@ -391,7 +392,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 11) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 12) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

@@ -1,3 +1,4 @@
+import { recordStrongholdActivity } from './activity.mjs';
 import { activeSkill, ensureHero, heroLevel } from './progression.mjs';
 import { applyDamage, counterMultiplier } from './war.mjs';
 export const STRONGHOLD_RULES={minMarches:2,roundLimit:90,respawnSeconds:300};
@@ -54,6 +55,7 @@ export function rewardStronghold(w,t,report){
    const a=w.army(armyId);if(a&&a.commanderId===entry.commanderId){a.xp=hero.xp;a.level=heroLevel(hero);}
   }
  }
+ recordStrongholdActivity(w,report);
 }
 export function validateStrongholds(saved){
  const defs=createStrongholds();if(!Array.isArray(saved)||saved.length!==defs.length||new Set(saved.map(t=>t?.id)).size!==defs.length)throw new Error('Invalid saved strongholds.');
@@ -62,6 +64,7 @@ export function validateStrongholds(saved){
 }
 export function validateStrongholdReport(r){
  if(!r||r.kind!=='stronghold')return;
+ if(r.activityCredited!==undefined&&typeof r.activityCredited!=='boolean')throw new Error('Invalid saved stronghold activity receipt.');
  const tier=TIERS[r.tier];if(!tier||!Number.isSafeInteger(r.targetCycle)||r.targetCycle<1||typeof r.settled!=='boolean'||!Array.isArray(r.rewards)||r.rewards.length>5||['guardHealthBefore','guardHealthAfter','wallHealthBefore','wallHealthAfter','npcDamageDealt','npcDamageTaken'].some(k=>!Number.isFinite(r[k])||r[k]<0)||r.guardHealthBefore>tier.guardHealth||r.guardHealthAfter>r.guardHealthBefore||r.wallHealthBefore>tier.maxHealth||r.wallHealthAfter>r.wallHealthBefore||new Set(r.rewards.map(e=>e?.playerId)).size!==r.rewards.length)throw new Error('Invalid saved stronghold report.');
  for(const e of r.rewards)if(!e||typeof e.playerId!=='string'||!r.participants.some(p=>p.playerId===e.playerId)||!Number.isFinite(e.contribution)||e.contribution<=0||!Number.isSafeInteger(e.xp)||e.xp<0||!e.resources||Object.keys(e.resources).length!==Object.keys(tier.reward).length||Object.entries(e.resources).some(([key,n])=>!(key in tier.reward)||!Number.isSafeInteger(n)||n<0||n>tier.reward[key]))throw new Error('Invalid saved stronghold rewards.');
  if(r.settled!==(r.outcome==='Stronghold defeated')||(r.settled&&!r.rewards.length)||r.rounds>STRONGHOLD_RULES.roundLimit||Math.abs((r.guardHealthBefore-r.guardHealthAfter)-r.npcDamageTaken)>0.00001||Math.abs((r.wallHealthBefore-r.wallHealthAfter)-r.structureDamage)>0.00001||Math.abs(r.participants.reduce((n,e)=>n+e.damageDealt,0)-r.npcDamageTaken)>0.00001||Math.abs(r.participants.reduce((n,e)=>n+e.damageTaken,0)-r.npcDamageDealt)>0.00001)throw new Error('Invalid saved stronghold battle totals.');

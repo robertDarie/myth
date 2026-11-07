@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Audited against the repository through the 0.14 stronghold pass. **Implemented**
+Audited against the repository through the 0.15 activity pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -34,7 +34,7 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Battle reports and rankings | Partial | Private active/completed duel, group and stronghold reports with damage/healing/shield, wounds and reward receipts | Power calculation, leaderboards and extended war history |
 | Kingdom timeline | Missing | Five age-based march unlocks exist | Scheduled pass openings, objectives, ruler/kingdom governance and campaign milestones |
 | KvK / seasons | Missing | No cross-kingdom play | Multiple hosted kingdoms, eligibility/power model, matchmaking, seasonal map, rules, scoring, rewards and migration |
-| Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD and contextual Go guidance | Native pacing review, richer interactive tutorial, daily/weekly goals and later chapters |
+| Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD, contextual Go guidance, daily activity and weekly alliance goals | Native pacing review, richer tutorial, personal weekly quests and later chapters |
 | Events and rewards | Partial | Daily free Temple offering and basic battle rewards | Event calendar, event scoring, milestone rewards, seasonal content and economy tuning |
 | Visuals, animation and audio | Partial | Original portraits/loading art, procedural units/meshes, transform rigs, state-driven poses, initial synthesized cues | Final authored character/creature meshes, skinning, animation clips/blend trees, polished VFX, recorded audio and broad performance validation |
 | Persistence and accounts | Partial | Local autosaves/backups, migration, profile tokens, hospital/reports/chat state and safe battle interruption | Online accounts, hosted storage, offline-time simulation, cross-device identity and operational recovery |
@@ -84,9 +84,9 @@ an enemy beacon under explicit rules and sees the result in reports and logs.
 ### P3 — A kingdom campaign with reasons to return
 
 Scouting/fog, gate-corridor routing and a six-chapter opening campaign are
-delivered, along with repeatable rally strongholds. Add richer tutorial feedback,
-daily/alliance objectives and
-scheduled sanctuary/pass milestones. Define kingdom victory, governance, rewards
+delivered, along with repeatable rally strongholds, daily activity and weekly
+alliance goals. Add richer tutorial feedback and scheduled kingdom/pass/sanctuary
+milestones. Define kingdom victory, governance, rewards
 and protection of newer players. Balance resource income, losses, healing,
 training and commander growth over days rather than a short local test session.
 
