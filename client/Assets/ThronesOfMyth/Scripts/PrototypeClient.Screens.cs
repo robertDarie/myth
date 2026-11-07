@@ -7,6 +7,8 @@ namespace ThronesOfMyth
     public sealed partial class PrototypeClient
     {
         private int inspectedTechnology;
+        private CityDiorama cityDiorama;
+        private bool cityModelView = true;
         private CommanderPreview commanderPreview;
         private bool showCommanderModel;
         private void RenderCityWindow(Rect r)
@@ -18,23 +20,34 @@ namespace ThronesOfMyth
             var grid = new Rect(r.x, r.y + 56, r.width - 368, r.height - 56);
             var detail = new Rect(r.xMax - 348, r.y + 56, 348, r.height - 56);
             theme.Panel(grid, false, true); theme.Panel(detail, false, true);
-            int columns = grid.width < 650 ? 3 : 4;
-            float width = (grid.width - 34) / columns;
-            float contentHeight = Mathf.Ceil(me.cityBuildings.Length / (float)columns) * 132 + 14;
-            rosterScroll = GUI.BeginScrollView(new Rect(grid.x + 8, grid.y + 8, grid.width - 16, grid.height - 16), rosterScroll, new Rect(0, 0, grid.width - 30, contentHeight));
-            for (int i = 0; i < me.cityBuildings.Length; i++)
+            if(theme.Button(new Rect(grid.x+10,grid.y+8,150,28),"Living city",cityModelView))cityModelView=true;
+            if(theme.Button(new Rect(grid.x+168,grid.y+8,150,28),"District list",!cityModelView))cityModelView=false;
+            if(cityModelView)
             {
-                var building = me.cityBuildings[i];
-                var cell = new Rect(8 + (i % columns) * width, 6 + (i / columns) * 132, width - 10, 120);
-                theme.Panel(cell, selectedBuilding == i);
-                Color color = building.level > 0 ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted;
-                theme.Icon(new Rect(cell.center.x - 17, cell.y + 12, 34, 34), building.id, color);
-                var name = new GUIStyle(theme.Center) { fontSize = 14 };
-                theme.Text(new Rect(cell.x + 7, cell.y + 52, cell.width - 14, 40), building.name, name);
-                theme.Text(new Rect(cell.x + 8, cell.y + 93, cell.width - 16, 22), building.level > 0 ? "LEVEL " + building.level + " / " + building.maxLevel : "FOUNDATION", theme.Eyebrow);
-                if (GUI.Button(cell, new GUIContent("", building.description), GUIStyle.none)) { selectedBuilding = i; contentScroll = Vector2.zero; }
+                if(cityDiorama==null)cityDiorama=new CityDiorama();
+                int before=selectedBuilding;selectedBuilding=cityDiorama.Draw(new Rect(grid.x,grid.y+42,grid.width,grid.height-42),me,selectedBuilding,theme,reducedMotion);
+                if(before!=selectedBuilding)contentScroll=Vector2.zero;
             }
-            GUI.EndScrollView();
+            else
+            {
+                int columns = grid.width < 650 ? 3 : 4;
+                float width = (grid.width - 34) / columns;
+                float contentHeight = Mathf.Ceil(me.cityBuildings.Length / (float)columns) * 132 + 14;
+                rosterScroll = GUI.BeginScrollView(new Rect(grid.x + 8, grid.y + 44, grid.width - 16, grid.height - 52), rosterScroll, new Rect(0, 0, grid.width - 30, contentHeight));
+                for (int i = 0; i < me.cityBuildings.Length; i++)
+                {
+                    var building = me.cityBuildings[i];
+                    var cell = new Rect(8 + (i % columns) * width, 6 + (i / columns) * 132, width - 10, 120);
+                    theme.Panel(cell, selectedBuilding == i);
+                    Color color = building.level > 0 ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted;
+                    theme.Icon(new Rect(cell.center.x - 17, cell.y + 12, 34, 34), building.id, color);
+                    var name = new GUIStyle(theme.Center) { fontSize = 14 };
+                    theme.Text(new Rect(cell.x + 7, cell.y + 52, cell.width - 14, 40), building.name, name);
+                    theme.Text(new Rect(cell.x + 8, cell.y + 93, cell.width - 16, 22), building.level > 0 ? "LEVEL " + building.level + " / " + building.maxLevel : "FOUNDATION", theme.Eyebrow);
+                    if (GUI.Button(cell, new GUIContent("", building.description), GUIStyle.none)) { selectedBuilding = i; contentScroll = Vector2.zero; }
+                }
+                GUI.EndScrollView();
+            }
             selectedBuilding = Mathf.Clamp(selectedBuilding, 0, me.cityBuildings.Length - 1);
             var selected = me.cityBuildings[selectedBuilding];
             GUILayout.BeginArea(new Rect(detail.x + 18, detail.y + 14, detail.width - 36, detail.height - 28));
@@ -251,6 +264,8 @@ namespace ThronesOfMyth
             PlayerPrefs.SetInt("ThronesOfMyth.labels", labelsEnabled ? 1 : 0);
             reducedMotion = GUILayout.Toggle(reducedMotion, "Reduced motion · still portraits, banners and troop poses");
             PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", reducedMotion ? 1 : 0);
+            BattlefieldFeedback.Enabled=GUILayout.Toggle(BattlefieldFeedback.Enabled,"Battlefield particles · impacts, dust and skill accents");
+            bool ambient=GUILayout.Toggle(PlayerPrefs.GetInt("ThronesOfMyth.cityAmbience",1)==1,"City ambience");PlayerPrefs.SetInt("ThronesOfMyth.cityAmbience",ambient?1:0);
             GUILayout.Label("Battlefield sound effects · " + Mathf.RoundToInt(BattlefieldAudio.Volume * 100) + "%", theme.Small);
             BattlefieldAudio.Volume = GUILayout.HorizontalSlider(BattlefieldAudio.Volume, 0, 1, GUILayout.Width(400));
             GUILayout.Space(20); GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);

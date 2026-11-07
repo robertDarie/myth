@@ -27,3 +27,7 @@ work/
 
 # Distributable Windows builds
 /dist/
+
+# Reproducible art-tool caches
+__pycache__/
+*.pyc

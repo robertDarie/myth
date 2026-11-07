@@ -96,10 +96,10 @@ and autosave files are not production accounts or online infrastructure.
 
 ## Art and usability across every milestone
 
-Native Unity/Windows verification, authored skinned models and animation clips,
-VFX/audio, a dedicated city scene, accessible controls and performance profiling.
-The original city/environment pass and Greek battlefield rigs are the current
-art baseline, not final production art.
+Version 0.17 adds weighted army models for all five civilizations, eight animation
+takes, effects/audio and an interactive city view. Native Unity/Windows verification,
+accessible controls, performance profiling and production art refinement remain.
+See [the army/city guide](army-and-living-city-0.17.md).
 
 ## Later: KvK
 

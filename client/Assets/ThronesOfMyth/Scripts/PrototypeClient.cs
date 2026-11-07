@@ -469,6 +469,6 @@ namespace ThronesOfMyth
             }
             commands.Clear(); processing = false;
         }
-        private void OnDestroy() { StopAllCoroutines(); commands.Clear(); commanderPreview?.Dispose(); theme?.Dispose(); PlayerPrefs.Save(); }
+        private void OnDestroy() { StopAllCoroutines(); commands.Clear(); commanderPreview?.Dispose(); cityDiorama?.Dispose(); theme?.Dispose(); PlayerPrefs.Save(); }
     }
 }

@@ -1,0 +1,38 @@
+[
+  {
+    "asset": "Footstep.wav",
+    "seconds": 0.18,
+    "rate": 22050,
+    "peak": 0.3956
+  },
+  {
+    "asset": "HorseHoof.wav",
+    "seconds": 0.3,
+    "rate": 22050,
+    "peak": 0.319
+  },
+  {
+    "asset": "BowRelease.wav",
+    "seconds": 0.22,
+    "rate": 22050,
+    "peak": 0.2878
+  },
+  {
+    "asset": "MetalImpact.wav",
+    "seconds": 0.28,
+    "rate": 22050,
+    "peak": 0.345
+  },
+  {
+    "asset": "DivineCast.wav",
+    "seconds": 0.55,
+    "rate": 22050,
+    "peak": 0.338
+  },
+  {
+    "asset": "CityAmbience.wav",
+    "seconds": 8.0,
+    "rate": 22050,
+    "peak": 0.0604
+  }
+]

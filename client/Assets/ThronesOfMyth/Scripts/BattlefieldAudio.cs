@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ThronesOfMyth
 {
-    // Original synthesized placeholder cues, shared and rate-limited across the visible field.
+    // Original layered PCM cues with generated fallbacks, shared and rate-limited.
     public sealed class BattlefieldAudio : MonoBehaviour
     {
         private static BattlefieldAudio current;
@@ -20,7 +20,11 @@ namespace ThronesOfMyth
         {
             volume = PlayerPrefs.GetFloat("ThronesOfMyth.effectsVolume", 0.35f); current = this; source = gameObject.AddComponent<AudioSource>(); source.playOnAwake = false; source.spatialBlend = 0; source.volume = volume;
             if (Camera.main != null && FindFirstObjectByType<AudioListener>() == null) Camera.main.gameObject.AddComponent<AudioListener>();
-            foreach (var id in new[] { "step", "strike", "arrow", "skill", "retreat", "victory" }) clips.Add(id, Make(id));
+            foreach (var id in new[] { "step", "hoof", "strike", "impact", "arrow", "skill", "retreat", "victory" })
+            {
+                string name=id=="step"?"Footstep":id=="hoof"?"HorseHoof":id=="arrow"?"BowRelease":id=="strike"||id=="impact"?"MetalImpact":id=="skill"?"DivineCast":null;
+                var clip=name==null?null:Resources.Load<AudioClip>("Audio/"+name);clips.Add(id,clip!=null?clip:Make(id));
+            }
         }
         private AudioClip Make(string id)
         {
@@ -44,8 +48,8 @@ namespace ThronesOfMyth
             if (current.nextCue.TryGetValue(id, out float next) && Time.unscaledTime < next) return;
             current.nextCue[id] = Time.unscaledTime + (id == "step" ? 0.25f : 0.12f);
             current.source.panStereo = Mathf.Clamp((view.x - 0.5f) * 1.2f, -0.6f, 0.6f);
-            current.source.PlayOneShot(clip, id == "step" ? 0.3f : 1);
+            current.source.PlayOneShot(clip, id == "step" || id == "hoof" ? 0.3f : id == "impact" ? 0.5f : 1);
         }
-        private void OnDestroy() { if (current == this) current = null; foreach (var clip in clips.Values) Destroy(clip); }
+        private void OnDestroy() { if (current == this) current = null; foreach (var clip in clips.Values) if(clip.name.StartsWith("Myth ")) Destroy(clip); }
     }
 }

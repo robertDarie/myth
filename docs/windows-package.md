@@ -75,3 +75,12 @@ Build 0.16 requires protocol 13 and bundles `kingdom.mjs` alongside the existing
 kingdom modules and original FBX assets under Resources. Schemas 1–10 migrate with
 archival backups and retain previously owned-site access. See
 [the kingdom/art guide](kingdom-and-art-0.16.md). Rebuild both client and server.
+
+## Build 0.17
+
+Bundle version is 0.17.0; protocol 13 and save schema 11 remain unchanged.
+Download new army models with Git LFS (`git lfs pull`) before Unity import.
+Packaging now validates imported art and animation clips before building.
+Use the Art Review menu for native captures and Editor frame samples; these
+checks and the standalone Windows player still need a local run. See
+[the 0.17 guide](army-and-living-city-0.17.md).

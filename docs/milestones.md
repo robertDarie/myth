@@ -63,3 +63,11 @@ See [the kingdom/art guide](kingdom-and-art-0.16.md).
    operations, load testing, world scheduling and offline progression.
 5. **Seasonal campaign:** kingdom eligibility, matchmaking, separate KvK map,
    rewards, migration and season reset rules.
+
+## Army and living city 0.17
+
+36 weighted army/hero FBXs with eight takes each; five civilization sets, typed
+formations, pooled effects, original synthesized audio, interactive city and
+native review/build preflight tools. Blender validates 288 deforming takes.
+Native Unity compilation/rendering and Windows performance remain pending.
+See [the implementation and review guide](army-and-living-city-0.17.md).

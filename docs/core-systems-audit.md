@@ -117,3 +117,11 @@ and fair progression first.
 These decisions need a concrete rules proposal before implementation; they are not
 requirements for adding the current visual battlefield pass. Monetization and a
 larger commander roster should not displace the missing war/social foundations.
+
+## Presentation update 0.17
+
+Authored weighted armies, eight animation takes, five civilization model sets,
+11 named hero variants, typed field formations, pooled effects/audio and an
+interactive city are implemented as an early art baseline. Native Unity and
+Windows checks are still pending; Blender export validation does not replace
+them. See [the 0.17 guide](army-and-living-city-0.17.md).

@@ -47,11 +47,10 @@ namespace ThronesOfMyth
             theme.Panel(rect, true);
             if (Event.current.type == EventType.Repaint && (renderedAt < 0 || Time.unscaledTime - renderedAt >= 1 / 30f))
             { camera.Render(); renderedAt = Time.unscaledTime; }
-            GUI.DrawTexture(new Rect(rect.x + 4, rect.y + 3, rect.width - 8, rect.height - 38), texture, ScaleMode.ScaleToFit, true);
-            float width = (rect.width - 16) / 3;
-            if (theme.Button(new Rect(rect.x + 4, rect.yMax - 32, width, 27), "Idle")) actor.previewWalking = false;
-            if (theme.Button(new Rect(rect.x + 8 + width, rect.yMax - 32, width, 27), "March")) actor.previewWalking = true;
-            if (theme.Button(new Rect(rect.x + 12 + width * 2, rect.yMax - 32, width, 27), "Skill")) { actor.previewWalking = false; actor.PreviewSkill(hero.skillKind); }
+            GUI.DrawTexture(new Rect(rect.x + 4, rect.y + 3, rect.width - 8, rect.height - 65), texture, ScaleMode.ScaleToFit, true);
+            string[] poses={"Idle","March","Attack","Skill","Retreat","Victory"};float width=(rect.width-16)/3;
+            for(int i=0;i<poses.Length;i++)if(theme.Button(new Rect(rect.x+4+i%3*(width+4),rect.yMax-60+i/3*29,width,26),poses[i]))
+            { if(poses[i]=="Skill"){actor.previewWalking=false;actor.PreviewSkill(hero.skillKind);}else actor.PreviewPose(poses[i]); }
         }
         public void Dispose()
         {

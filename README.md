@@ -4,8 +4,13 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.16
+## Playable slice 0.17
 
+- Original weighted armies for all five civilizations, 11 named hero models and eight
+  animation takes per model; typed formations, pooled combat effects and original audio.
+- An interactive living city with selectable institutions, visible construction,
+  live job progress, cosmetic guards and a district-list alternative.
+- Native Unity art review tools and an asset preflight before Windows packaging.
 - Kingdom preparation milestones, scheduled gate/sanctuary openings, contribution
   eligibility and saved stage rewards; a short local playtest schedule.
 - Original low-poly civilization cities, forest/rock meshes, painted regional
@@ -90,6 +95,7 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[the 0.17 army and living city guide](docs/army-and-living-city-0.17.md),
 [the 0.16 kingdom and art guide](docs/kingdom-and-art-0.16.md),
 [the 0.15 daily activity and alliance goals](docs/activity-and-alliance-goals-0.15.md),
 [the 0.14 stronghold rules](docs/strongholds-0.14.md),
@@ -109,8 +115,10 @@ and [milestones](docs/milestones.md).
 Server gameplay and HTTP integration are covered by automated tests. Unity
 compilation, rendering, and Windows builds have not been run in the cloud.
 Commander portraits and sanctuary backgrounds use original generated artwork.
-Cities and scenery use original authored low-poly meshes. Troop/commander rigs
-remain procedural proxies, awaiting final meshes and skinned animation.
+Cities, scenery, troops and commanders use original authored low-poly meshes.
+Weighted army animations now have Blender round-trip checks; procedural actors
+remain a fallback. This is an early art baseline, not final production quality.
+Army FBXs use Git LFS: install Git LFS and run `git lfs pull` after updating.
 There is no city siege, field interception of rallies, online account system,
 production database, hosted kingdom service, or KvK yet. The CLI saves locally;
 world simulation pauses while the server is closed; UTC activity periods continue. See the playtest guide for save paths.

@@ -1,0 +1,3134 @@
+[
+  {
+    "asset": "GreekInfantry",
+    "culture": "Greek",
+    "role": "Infantry",
+    "hero": "",
+    "bones": 15,
+    "vertices": 718,
+    "faces": 924,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "GreekArcher",
+    "culture": "Greek",
+    "role": "Archer",
+    "hero": "",
+    "bones": 15,
+    "vertices": 660,
+    "faces": 814,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "GreekCavalry",
+    "culture": "Greek",
+    "role": "Cavalry",
+    "hero": "",
+    "bones": 21,
+    "vertices": 1100,
+    "faces": 1390,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "GreekCommander",
+    "culture": "Greek",
+    "role": "Commander",
+    "hero": "",
+    "bones": 15,
+    "vertices": 742,
+    "faces": 950,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "GreekMythic",
+    "culture": "Greek",
+    "role": "Mythic",
+    "hero": "",
+    "bones": 15,
+    "vertices": 914,
+    "faces": 1176,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "EgyptianInfantry",
+    "culture": "Egyptian",
+    "role": "Infantry",
+    "hero": "",
+    "bones": 15,
+    "vertices": 742,
+    "faces": 950,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.57,
+        0.58,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.82,
+        0.61,
+        0.23,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "EgyptianArcher",
+    "culture": "Egyptian",
+    "role": "Archer",
+    "hero": "",
+    "bones": 15,
+    "vertices": 756,
+    "faces": 918,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.57,
+        0.58,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.82,
+        0.61,
+        0.23,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "EgyptianCavalry",
+    "culture": "Egyptian",
+    "role": "Cavalry",
+    "hero": "",
+    "bones": 21,
+    "vertices": 1124,
+    "faces": 1416,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.57,
+        0.58,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.82,
+        0.61,
+        0.23,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "EgyptianCommander",
+    "culture": "Egyptian",
+    "role": "Commander",
+    "hero": "",
+    "bones": 15,
+    "vertices": 766,
+    "faces": 976,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.57,
+        0.58,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.82,
+        0.61,
+        0.23,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "EgyptianMythic",
+    "culture": "Egyptian",
+    "role": "Mythic",
+    "hero": "",
+    "bones": 21,
+    "vertices": 472,
+    "faces": 598,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.57,
+        0.58,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.82,
+        0.61,
+        0.23,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "NorseInfantry",
+    "culture": "Norse",
+    "role": "Infantry",
+    "hero": "",
+    "bones": 15,
+    "vertices": 712,
+    "faces": 952,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "NorseArcher",
+    "culture": "Norse",
+    "role": "Archer",
+    "hero": "",
+    "bones": 15,
+    "vertices": 726,
+    "faces": 920,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "NorseCavalry",
+    "culture": "Norse",
+    "role": "Cavalry",
+    "hero": "",
+    "bones": 21,
+    "vertices": 1094,
+    "faces": 1418,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "NorseCommander",
+    "culture": "Norse",
+    "role": "Commander",
+    "hero": "",
+    "bones": 15,
+    "vertices": 736,
+    "faces": 978,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "NorseMythic",
+    "culture": "Norse",
+    "role": "Mythic",
+    "hero": "",
+    "bones": 15,
+    "vertices": 802,
+    "faces": 1084,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "ChineseInfantry",
+    "culture": "Chinese",
+    "role": "Infantry",
+    "hero": "",
+    "bones": 15,
+    "vertices": 734,
+    "faces": 934,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "ChineseArcher",
+    "culture": "Chinese",
+    "role": "Archer",
+    "hero": "",
+    "bones": 15,
+    "vertices": 748,
+    "faces": 902,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "ChineseCavalry",
+    "culture": "Chinese",
+    "role": "Cavalry",
+    "hero": "",
+    "bones": 21,
+    "vertices": 1116,
+    "faces": 1400,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "ChineseCommander",
+    "culture": "Chinese",
+    "role": "Commander",
+    "hero": "",
+    "bones": 15,
+    "vertices": 758,
+    "faces": 960,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "ChineseMythic",
+    "culture": "Chinese",
+    "role": "Mythic",
+    "hero": "",
+    "bones": 21,
+    "vertices": 406,
+    "faces": 470,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "JapaneseInfantry",
+    "culture": "Japanese",
+    "role": "Infantry",
+    "hero": "",
+    "bones": 15,
+    "vertices": 798,
+    "faces": 996,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.24,
+        0.28,
+        0.53,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.22,
+        0.24,
+        0.31,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "JapaneseArcher",
+    "culture": "Japanese",
+    "role": "Archer",
+    "hero": "",
+    "bones": 15,
+    "vertices": 812,
+    "faces": 964,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.24,
+        0.28,
+        0.53,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.22,
+        0.24,
+        0.31,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "JapaneseCavalry",
+    "culture": "Japanese",
+    "role": "Cavalry",
+    "hero": "",
+    "bones": 21,
+    "vertices": 1180,
+    "faces": 1462,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.24,
+        0.28,
+        0.53,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.22,
+        0.24,
+        0.31,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "JapaneseCommander",
+    "culture": "Japanese",
+    "role": "Commander",
+    "hero": "",
+    "bones": 15,
+    "vertices": 822,
+    "faces": 1022,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.24,
+        0.28,
+        0.53,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.22,
+        0.24,
+        0.31,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "JapaneseMythic",
+    "culture": "Japanese",
+    "role": "Mythic",
+    "hero": "",
+    "bones": 15,
+    "vertices": 982,
+    "faces": 1188,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.24,
+        0.28,
+        0.53,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.22,
+        0.24,
+        0.31,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_captain",
+    "culture": "Greek",
+    "role": "Commander",
+    "hero": "captain",
+    "bones": 15,
+    "vertices": 742,
+    "faces": 950,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_warden",
+    "culture": "Greek",
+    "role": "Commander",
+    "hero": "warden",
+    "bones": 15,
+    "vertices": 742,
+    "faces": 950,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_scout",
+    "culture": "Greek",
+    "role": "Archer",
+    "hero": "scout",
+    "bones": 15,
+    "vertices": 660,
+    "faces": 814,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_rune-seer",
+    "culture": "Norse",
+    "role": "Commander",
+    "hero": "rune-seer",
+    "bones": 15,
+    "vertices": 778,
+    "faces": 1058,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_atalanta",
+    "culture": "Greek",
+    "role": "Archer",
+    "hero": "atalanta",
+    "bones": 15,
+    "vertices": 660,
+    "faces": 814,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_mulan",
+    "culture": "Chinese",
+    "role": "Commander",
+    "hero": "mulan",
+    "bones": 15,
+    "vertices": 758,
+    "faces": 960,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_tomoe",
+    "culture": "Japanese",
+    "role": "Commander",
+    "hero": "tomoe",
+    "bones": 15,
+    "vertices": 836,
+    "faces": 990,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.24,
+        0.28,
+        0.53,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.22,
+        0.24,
+        0.31,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_horus-champion",
+    "culture": "Egyptian",
+    "role": "Commander",
+    "hero": "horus-champion",
+    "bones": 15,
+    "vertices": 782,
+    "faces": 986,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.57,
+        0.58,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.82,
+        0.61,
+        0.23,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_heracles",
+    "culture": "Greek",
+    "role": "Commander",
+    "hero": "heracles",
+    "bones": 15,
+    "vertices": 736,
+    "faces": 978,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.13,
+        0.42,
+        0.65,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.7,
+        0.48,
+        0.2,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_sigurd",
+    "culture": "Norse",
+    "role": "Commander",
+    "hero": "sigurd",
+    "bones": 15,
+    "vertices": 736,
+    "faces": 978,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.29,
+        0.43,
+        0.36,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.4,
+        0.45,
+        0.46,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  },
+  {
+    "asset": "Hero_wukong",
+    "culture": "Chinese",
+    "role": "Commander",
+    "hero": "wukong",
+    "bones": 15,
+    "vertices": 864,
+    "faces": 1080,
+    "actions": [
+      "Idle",
+      "March",
+      "Attack",
+      "Skill",
+      "Retreat",
+      "Victory",
+      "Gather",
+      "Hit"
+    ],
+    "palette": {
+      "Skin": [
+        0.72,
+        0.51,
+        0.32,
+        1
+      ],
+      "Cloth": [
+        0.56,
+        0.18,
+        0.13,
+        1
+      ],
+      "Banner": [
+        0.13,
+        0.43,
+        0.72,
+        1
+      ],
+      "Armor": [
+        0.55,
+        0.39,
+        0.16,
+        1
+      ],
+      "Steel": [
+        0.65,
+        0.69,
+        0.67,
+        1
+      ],
+      "Wood": [
+        0.3,
+        0.17,
+        0.08,
+        1
+      ],
+      "Leather": [
+        0.27,
+        0.14,
+        0.07,
+        1
+      ],
+      "Crest": [
+        0.66,
+        0.17,
+        0.12,
+        1
+      ],
+      "Fur": [
+        0.38,
+        0.23,
+        0.13,
+        1
+      ],
+      "Ivory": [
+        0.92,
+        0.83,
+        0.59,
+        1
+      ],
+      "Spirit": [
+        0.29,
+        0.62,
+        0.67,
+        1
+      ]
+    }
+  }
+]

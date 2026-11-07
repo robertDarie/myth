@@ -38,7 +38,7 @@ namespace ThronesOfMyth
             }
             groundTexture.SetPixels(pixels); groundTexture.Apply(true, true); material.mainTexture = groundTexture; ground.GetComponent<Renderer>().sharedMaterial = material;
             RenderSettings.ambientLight = new Color(0.65f,0.68f,0.66f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(0.68f,0.76f,0.77f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
-            var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.color = new Color(1,0.94f,0.79f); light.intensity = 1.15f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.5f; } }
+            var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.cullingMask &= ~((1 << 30) | (1 << 31)); light.color = new Color(1,0.94f,0.79f); light.intensity = 1.15f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.5f; } }
             QualitySettings.shadowDistance = 110;
             var random = new System.Random(431);
             for (int cluster = 0; cluster < 85; cluster++)

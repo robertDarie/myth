@@ -65,18 +65,9 @@ namespace ThronesOfMyth
             if (kind == "army")
             {
                 units = units ?? new UnitCounts { infantry = 3 };
-                var types = new List<string>();
-                foreach (var type in new[] { "infantry", "archers", "cavalry" })
-                {
-                    int count = type == "infantry" ? units.infantry : type == "archers" ? units.archers : units.cavalry;
-                    if (count > 0) types.Add(type);
-                }
-                int proxies = Mathf.Min(3, units.Total);
-                for (int i = 0; i < proxies; i++) Soldier(root, new Vector3((i - (proxies - 1) / 2f) * 0.85f, 0, -0.45f), team, variant, actor, types[i % types.Count]);
-                Commander(root, commanderId, team, actor);
+                Formation(root,variant,team,units,commanderId,mythic,actor);
                 actor.projectile = Box(root, 0, 1.4f, 0, 0.06f, 0.06f, 0.5f, bronze); actor.projectile.name = "Arrow visual"; actor.projectile.gameObject.SetActive(false);
-                for (int i = 0; i < Mathf.Min(3, mythic); i++) Beast(root, new Vector3(1.7f + i * 1.45f, 0, 0), variant, team, actor);
-                actor.selection = Ring(root, 1.5f, team, 0.08f).gameObject; actor.selection.SetActive(false);
+                actor.selection = Ring(root, 2.2f, team, 0.08f).gameObject; actor.selection.SetActive(false);
                 actor.skillLine = Ring(root, 1.7f, new Color(1, 0.72f, 0.3f), 0.15f); actor.skill = actor.skillLine.gameObject; actor.skill.SetActive(false);
                 actor.damageMaterial = actor.skillLine.sharedMaterial; actor.healMaterial = MaterialFor(new Color(0.4f, 0.9f, 0.65f)); actor.shieldMaterial = MaterialFor(new Color(0.5f, 0.8f, 1));
                 actor.impact = Ring(root, 0.5f, new Color(1, 0.78f, 0.4f), 0.09f).transform; actor.impact.gameObject.SetActive(false);

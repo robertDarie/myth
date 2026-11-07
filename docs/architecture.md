@@ -169,3 +169,12 @@ private claims; protocol 13 exposes viewer-specific cards and public site seals.
 Runtime city/scenery meshes load from `Resources/Art/Models`, with procedural
 fallbacks and per-material environment batching. See
 [the kingdom/art guide](kingdom-and-art-0.16.md).
+
+## Army and city presentation 0.17
+
+Weighted Legacy FBXs load from `Resources/Art/Units`; `AuthoredUnit` drives eight
+poses from observed world state. Formation proxies and pooled effects are cosmetic.
+`CityDiorama` renders isolated layer-30 institutions using real building levels/jobs.
+Army FBXs use Git LFS. Protocol 13/schema 11 are unchanged. See
+[the army and living city guide](army-and-living-city-0.17.md) for evidence and
+pending native checks.

@@ -1,0 +1,938 @@
+[
+  {
+    "asset": "ChineseArcher",
+    "bones": 15,
+    "vertices": 748,
+    "triangles": 1364,
+    "deformation": {
+      "Idle": 0.034,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1248
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "ChineseCavalry",
+    "bones": 21,
+    "vertices": 1116,
+    "triangles": 2048,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4366,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.4366,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "ChineseCommander",
+    "bones": 15,
+    "vertices": 758,
+    "triangles": 1392,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "ChineseInfantry",
+    "bones": 15,
+    "vertices": 734,
+    "triangles": 1348,
+    "deformation": {
+      "Idle": 0.0354,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "ChineseMythic",
+    "bones": 21,
+    "vertices": 406,
+    "triangles": 740,
+    "deformation": {
+      "Idle": 0.0284,
+      "March": 0.4366,
+      "Attack": 0.5636,
+      "Skill": 0.5636,
+      "Retreat": 0.4366,
+      "Victory": 0.28,
+      "Gather": 0.5613,
+      "Hit": 0.2864
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "EgyptianArcher",
+    "bones": 15,
+    "vertices": 756,
+    "triangles": 1380,
+    "deformation": {
+      "Idle": 0.0263,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "EgyptianCavalry",
+    "bones": 21,
+    "vertices": 1124,
+    "triangles": 2064,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4366,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.4366,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "EgyptianCommander",
+    "bones": 15,
+    "vertices": 766,
+    "triangles": 1408,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "EgyptianInfantry",
+    "bones": 15,
+    "vertices": 742,
+    "triangles": 1364,
+    "deformation": {
+      "Idle": 0.0354,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "EgyptianMythic",
+    "bones": 21,
+    "vertices": 472,
+    "triangles": 868,
+    "deformation": {
+      "Idle": 0.0857,
+      "March": 0.4366,
+      "Attack": 0.4576,
+      "Skill": 0.4576,
+      "Retreat": 0.4366,
+      "Victory": 0.2208,
+      "Gather": 0.4426,
+      "Hit": 0.2353
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "GreekArcher",
+    "bones": 15,
+    "vertices": 660,
+    "triangles": 1204,
+    "deformation": {
+      "Idle": 0.0263,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "GreekCavalry",
+    "bones": 21,
+    "vertices": 1100,
+    "triangles": 2020,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4366,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.4366,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "GreekCommander",
+    "bones": 15,
+    "vertices": 742,
+    "triangles": 1364,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "GreekInfantry",
+    "bones": 15,
+    "vertices": 718,
+    "triangles": 1320,
+    "deformation": {
+      "Idle": 0.0354,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "GreekMythic",
+    "bones": 15,
+    "vertices": 914,
+    "triangles": 1680,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_atalanta",
+    "bones": 15,
+    "vertices": 660,
+    "triangles": 1204,
+    "deformation": {
+      "Idle": 0.0263,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_captain",
+    "bones": 15,
+    "vertices": 742,
+    "triangles": 1364,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_heracles",
+    "bones": 15,
+    "vertices": 736,
+    "triangles": 1356,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_horus-champion",
+    "bones": 15,
+    "vertices": 782,
+    "triangles": 1436,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_mulan",
+    "bones": 15,
+    "vertices": 758,
+    "triangles": 1392,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_rune-seer",
+    "bones": 15,
+    "vertices": 778,
+    "triangles": 1436,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4629,
+      "Attack": 1.0826,
+      "Skill": 1.3645,
+      "Retreat": 0.2814,
+      "Victory": 1.517,
+      "Gather": 0.2837,
+      "Hit": 0.2209
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_scout",
+    "bones": 15,
+    "vertices": 660,
+    "triangles": 1204,
+    "deformation": {
+      "Idle": 0.0263,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_sigurd",
+    "bones": 15,
+    "vertices": 736,
+    "triangles": 1356,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_tomoe",
+    "bones": 15,
+    "vertices": 836,
+    "triangles": 1524,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_warden",
+    "bones": 15,
+    "vertices": 742,
+    "triangles": 1364,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "Hero_wukong",
+    "bones": 15,
+    "vertices": 864,
+    "triangles": 1584,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4627,
+      "Attack": 1.0784,
+      "Skill": 1.3602,
+      "Retreat": 0.2813,
+      "Victory": 1.5115,
+      "Gather": 0.339,
+      "Hit": 0.2191
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "JapaneseArcher",
+    "bones": 15,
+    "vertices": 812,
+    "triangles": 1480,
+    "deformation": {
+      "Idle": 0.0302,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "JapaneseCavalry",
+    "bones": 21,
+    "vertices": 1180,
+    "triangles": 2164,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4366,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.4366,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "JapaneseCommander",
+    "bones": 15,
+    "vertices": 822,
+    "triangles": 1508,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "JapaneseInfantry",
+    "bones": 15,
+    "vertices": 798,
+    "triangles": 1464,
+    "deformation": {
+      "Idle": 0.0354,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "JapaneseMythic",
+    "bones": 15,
+    "vertices": 982,
+    "triangles": 1800,
+    "deformation": {
+      "Idle": 0.0694,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "NorseArcher",
+    "bones": 15,
+    "vertices": 726,
+    "triangles": 1328,
+    "deformation": {
+      "Idle": 0.0263,
+      "March": 0.4297,
+      "Attack": 0.6481,
+      "Skill": 0.8706,
+      "Retreat": 0.2612,
+      "Victory": 1.0203,
+      "Gather": 0.2776,
+      "Hit": 0.1179
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "NorseCavalry",
+    "bones": 21,
+    "vertices": 1094,
+    "triangles": 2012,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4366,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.4366,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "NorseCommander",
+    "bones": 15,
+    "vertices": 736,
+    "triangles": 1356,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "NorseInfantry",
+    "bones": 15,
+    "vertices": 712,
+    "triangles": 1312,
+    "deformation": {
+      "Idle": 0.0354,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  },
+  {
+    "asset": "NorseMythic",
+    "bones": 15,
+    "vertices": 802,
+    "triangles": 1480,
+    "deformation": {
+      "Idle": 0.0382,
+      "March": 0.4297,
+      "Attack": 0.9945,
+      "Skill": 1.2507,
+      "Retreat": 0.2612,
+      "Victory": 1.3872,
+      "Gather": 0.2776,
+      "Hit": 0.2079
+    },
+    "clips": {
+      "Idle": 1.6,
+      "March": 0.8,
+      "Attack": 0.667,
+      "Skill": 0.933,
+      "Retreat": 0.933,
+      "Victory": 1.2,
+      "Gather": 1.067,
+      "Hit": 0.333
+    }
+  }
+]

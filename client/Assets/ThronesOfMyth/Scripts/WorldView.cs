@@ -20,7 +20,7 @@ namespace ThronesOfMyth
         private Transform Shape(PrimitiveType type, Transform parent, Vector3 local, Vector3 scale, Color color) => art.Shape(parent, type, local, scale, color);
         private void Awake()
         {
-            gameObject.AddComponent<BattlefieldAudio>();
+            gameObject.AddComponent<BattlefieldAudio>(); gameObject.AddComponent<BattlefieldFeedback>();
             BuildKingdomEnvironment();
         }
         private Piece Create(string id, string kind, float x, float z, Color color)
@@ -84,6 +84,7 @@ namespace ThronesOfMyth
                 Put(seen, f.id, "flag", f.x, f.z, f.connected ? (f.allianceId == allianceId ? blue : red) : Color.gray, name + state, f.health / Mathf.Max(1, f.maxHealth), variant);
             }
             foreach (var pin in world.markers) Put(seen, pin.id, "marker", pin.x, pin.z, new Color(0.85f, 0.45f, 0.8f), pin.name);
+            ObserveCompletedBattles(world,ownId);
             var removed = new List<string>();
             foreach (var pair in pieces) if (!seen.Contains(pair.Key)) { Destroy(pair.Value.root); removed.Add(pair.Key); }
             foreach (var id in removed) pieces.Remove(id);

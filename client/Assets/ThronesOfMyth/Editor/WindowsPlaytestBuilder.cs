@@ -53,11 +53,12 @@ namespace ThronesOfMyth.Editor
                 throw new BuildFailedException("Node.js 24 or later is required on the build PC.");
             string license = ResolveNodeLicense(node, nodeVersion.ToString(), repository);
 
+            ArtReview.ValidateAssets(false);
             PrototypeSceneBuilder.EnsureBuildScene();
             if (!File.Exists(ScenePath)) throw new BuildFailedException("Prototype scene could not be created.");
             PlayerSettings.companyName = "ThronesOfMyth";
             PlayerSettings.productName = "Thrones of Myth";
-            PlayerSettings.bundleVersion = "0.16.0";
+            PlayerSettings.bundleVersion = "0.17.0";
             PlayerSettings.defaultScreenWidth = 1280;
             PlayerSettings.defaultScreenHeight = 800;
             PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
