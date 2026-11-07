@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Audited against the repository through the 0.12 exploration pass. **Implemented**
+Audited against the repository through the 0.13 opening campaign pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -24,7 +24,7 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Commander development | Partial | Individual XP, levels, stars, four skills, expertise and separate ascension | Talent trees, secondary commanders, richer skill effects and reusable loadout presets |
 | Equipment and inventory | Partial | Forge, a small relic list and march relic ownership | Full inventory, consumables, equipment sets, crafting depth and item rewards |
 | Exploration and intelligence | Partial | Persistent discovery, current allied vision, scouts, private historical reports and server filtering | Exploration rewards, watchtower alerts, scout interception and explicit report sharing |
-| PvE variety | Partial | Seven respawning camps, shared rewards, one chapter objective | Boss encounters, rallies against bosses, quests, difficulty progression, dungeons and varied objectives |
+| PvE variety | Partial | Seven respawning camps, shared rewards and chapter combat objectives | Boss encounters, rallies against bosses, quests, difficulty progression, dungeons and varied objectives |
 | Alliance membership | Partial | Create/join/leave, leader/officer/member permissions, kick, succession and disband cleanup | Invites/applications, full audit logs and recruitment/diplomacy tools |
 | Social communication | Partial | Private alliance chat, kingdom chat, shared expiring map markers and event feed | Direct messages, mail, moderation and durable large-scale chat |
 | Alliance development | Partial | Job help, beacons and site ownership | Donations, alliance technology, treasury, member contributions and alliance progression |
@@ -34,7 +34,7 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Battle reports and rankings | Partial | Private active/completed PvP reports with damage/healing/shield and wounded accounting | Group/PvE reports, power calculation, leaderboards and extended war history |
 | Kingdom timeline | Missing | Five age-based march unlocks exist | Scheduled pass openings, objectives, ruler/kingdom governance and campaign milestones |
 | KvK / seasons | Missing | No cross-kingdom play | Multiple hosted kingdoms, eligibility/power model, matchmaking, seasonal map, rules, scoring, rewards and migration |
-| Onboarding and progression | Partial | Entry choices, descriptive UI, loading tips and a small chapter reward | Interactive tutorial, chapter chain, daily/weekly goals, unlock guidance and accessible recovery from mistakes |
+| Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD and contextual Go guidance | Native pacing review, richer interactive tutorial, daily/weekly goals and later chapters |
 | Events and rewards | Partial | Daily free Temple offering and basic battle rewards | Event calendar, event scoring, milestone rewards, seasonal content and economy tuning |
 | Visuals, animation and audio | Partial | Original portraits/loading art, procedural units/meshes, transform rigs, state-driven poses, initial synthesized cues | Final authored character/creature meshes, skinning, animation clips/blend trees, polished VFX, recorded audio and broad performance validation |
 | Persistence and accounts | Partial | Local autosaves/backups, migration, profile tokens, hospital/reports/chat state and safe battle interruption | Online accounts, hosted storage, offline-time simulation, cross-device identity and operational recovery |
@@ -83,8 +83,8 @@ an enemy beacon under explicit rules and sees the result in reports and logs.
 
 ### P3 — A kingdom campaign with reasons to return
 
-Scouting/fog and gate-corridor routing are delivered. Add a tutorial and chapter
-chain, daily objectives, PvE bosses and
+Scouting/fog, gate-corridor routing and a six-chapter opening campaign are
+delivered. Add richer tutorial feedback, daily objectives, PvE bosses and
 scheduled sanctuary/pass milestones. Define kingdom victory, governance, rewards
 and protection of newer players. Balance resource income, losses, healing,
 training and commander growth over days rather than a short local test session.

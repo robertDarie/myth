@@ -270,6 +270,7 @@ namespace ThronesOfMyth
         }
         private void DrawJournal()
         {
+            if (GUILayout.Button("Open chapter campaign", theme.Primary)) GuidePage(InterfacePage.Campaign);
             if (GUILayout.Button("Open battle reports · " + (me.battleReports.Length + me.groupReports.Length))) OpenInterface(InterfacePage.Reports);
             GUILayout.Label(me.ageName + " · " + me.marchSlots + "/5 march slots · " + me.constructionSlots + " builder(s)", sectionStyle);
             GUILayout.Label("A foothold in the fallen world", sectionStyle);
@@ -389,7 +390,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 9) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 10) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

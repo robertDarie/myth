@@ -1,3 +1,4 @@
+import { journeyMetric } from './chapters.mjs';
 import { randomUUID } from 'node:crypto';
 import { travel } from './navigation.mjs';
 export const FOG={cellSize:4,width:20,cityRadius:10,armyRadius:8,scoutRadius:9,scoutSpeed:7};
@@ -23,7 +24,7 @@ export function explorationTick(w,dt){
     armies:w.armies().filter(a=>!allied(p,w.owner(a))&&dist(a,s)<=FOG.scoutRadius).map(a=>({id:a.id,ownerId:w.owner(a).id,name:w.owner(a).name,x:a.x,z:a.z,troops:a.troops,mythic:a.mythic,health:Math.ceil(a.health),commanderId:a.commanderId})),
     sites:w.sites.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     garrisons:w.garrisons.filter(g=>{const t=[...w.sites,...w.flags].find(t=>t.id===g.targetId);return t&&dist(t,s)<=FOG.scoutRadius;}).map(g=>({targetId:g.targetId,marches:g.armyIds.length,troops:g.armyIds.reduce((n,id)=>n+(w.army(id)?.troops||0),0),mythic:g.armyIds.reduce((n,id)=>n+(w.army(id)?.mythic||0),0)}))};
-   p.scoutReports.unshift(report);p.scoutReports.length=Math.min(20,p.scoutReports.length);s.phase='Returning';
+   journeyMetric(p,'surveys',1);p.scoutReports.unshift(report);p.scoutReports.length=Math.min(20,p.scoutReports.length);s.phase='Returning';
   }
  }
  for(const p of w.players.values()){

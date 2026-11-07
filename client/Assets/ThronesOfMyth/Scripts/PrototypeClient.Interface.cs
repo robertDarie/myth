@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -117,6 +117,8 @@ namespace ThronesOfMyth
                 case "promote-commander": return "Your commander has earned a new star.";
                 case "upgrade-skill": return "Your commander's skill has grown stronger.";
                 case "upgrade-commander": return "Your commander has ascended.";
+                case "journey-claim": return "Objective reward claimed. Your campaign progress is saved.";
+                case "chapter-claim": return "Chapter reward claimed. Your chronicle has advanced.";
                 case "quest": return "Chapter rewards have been claimed.";
                 case "craft": return "The Forge of Dawn has begun its work.";
                 case "equip-relic": case "unequip-relic": return "Your march's relic loadout has been updated.";
@@ -240,14 +242,19 @@ namespace ThronesOfMyth
             if (theme.Button(new Rect(20, 132, 282, 32), compactHud ? "Show kingdom activity  +" : "KINGDOM ACTIVITY  −")) compactHud = !compactHud;
             if (compactHud) return;
             var panel = new Rect(20, 172, 282, 164); theme.Panel(panel);
-            theme.Text(new Rect(36, 185, 240, 20), "CHAPTER I · A FOOTHOLD", theme.Eyebrow);
-            theme.Text(new Rect(36, 213, 240, 28), me.questClaimed ? "A hero answers your call" : "Defeat the Forsaken", theme.Heading);
-            theme.Text(new Rect(36, 246, 240, 27), me.questClaimed ? "Continue your city's restoration." : "Defeat 3 camps · " + Mathf.Min(3, me.kills) + "/3", theme.Small);
-            theme.Bar(new Rect(36, 279, 154, 8), Mathf.Min(3, me.kills) / 3f, MythInterfaceTheme.Gold);
-            if (theme.Button(new Rect(204, 274, 82, 38), me.questClaimed ? "Journal" : me.kills >= 3 ? "Claim" : "View", me.kills >= 3 && !me.questClaimed))
+            var chapter = CurrentChapter; var task = NextTask(chapter);
+            theme.Text(new Rect(36, 185, 240, 20), chapter == null ? "OPENING CAMPAIGN COMPLETE" : chapter.title, theme.Eyebrow);
+            theme.Text(new Rect(36, 213, 240, 49), task == null ? chapter == null ? "Write the next legend." : "Your chapter reward awaits." : task.title, theme.Heading);
+            theme.Text(new Rect(36, 264, 154, 23), task == null ? "Open your campaign" : task.progress + " / " + task.goal + (task.canClaim ? " · READY" : ""), theme.Small);
+            theme.Bar(new Rect(36, 302, 154, 8), task == null ? 1 : (float)task.progress / Mathf.Max(1, task.goal), MythInterfaceTheme.Gold);
+            bool ready = chapter != null && (chapter.canClaim || task != null && task.canClaim);
+            if (theme.Button(new Rect(204, 274, 82, 38), ready ? "Claim" : task == null ? "View" : "Go", ready))
             {
-                if (me.kills >= 3 && !me.questClaimed) Send("quest"); else OpenInterface(InterfacePage.Chronicle);
+                if (chapter != null && chapter.canClaim) Send("chapter-claim", chapter.id);
+                else if (task != null && task.canClaim) Send("journey-claim", task.id);
+                else if (task != null) GuideObjective(task); else GuidePage(InterfacePage.Campaign);
             }
+            if (GUI.Button(new Rect(20, 172, 282, 92), GUIContent.none, GUIStyle.none)) GuidePage(InterfacePage.Campaign);
             float y = 350;
             float jobHeight = Mathf.Min(65, Mathf.Max(46, (ViewHeight - 550) / 3));
             foreach (var job in new[] { me.construction, me.secondConstruction, me.research })
@@ -359,9 +366,9 @@ namespace ThronesOfMyth
         {
             var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             for (int i = 0; i < pages.Length; i++)
-                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 32, left.width - 24, 28), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 30, left.width - 24, 27), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
             theme.Panel(main, false, true);
             GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
@@ -372,6 +379,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Chat) DrawChat();
             if (interfacePage == InterfacePage.Warfare) DrawWarfare();
             if (interfacePage == InterfacePage.Exploration) DrawExploration();
+            if (interfacePage == InterfacePage.Campaign) DrawCampaign();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();
             if (interfacePage == InterfacePage.Alliance) DrawAlliance();

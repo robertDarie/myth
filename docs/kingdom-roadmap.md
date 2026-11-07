@@ -31,11 +31,19 @@ reports and a shared gate-corridor route graph now exist. See
 [the exploration rules](exploration-and-routes-0.12.md). Full terrain navigation,
 watchtower alerts, exploration rewards and multi-march control remain open.
 
-## Next: guided kingdom progression
+## Delivered: opening campaign foundation (0.13)
 
-Interactive tutorial/chapter objectives should connect scouting, economy,
-commander development and an alliance objective into a clear early campaign.
-Add PvE rally bosses and scheduled kingdom milestones after that loop is paced.
+Six original chapters connect gathering, training, construction, summons,
+scouting, research, commanders, multiple marches and an allied shrine/garrison.
+The map HUD and Campaign screen provide Go/Claim actions with saved early
+achievements and once-only rewards. See [the campaign rules](opening-campaign-0.13.md).
+Native pacing, layout/input and build verification remain pending.
+
+## Next: reasons to return and coordinated PvE
+
+Develop daily/weekly objectives, PvE rally bosses and scheduled kingdom milestones.
+Expand the opening with clearer feedback and later chapters after playtesting its
+resource flow and multiplayer pacing.
 
 ## Troop and commander depth
 

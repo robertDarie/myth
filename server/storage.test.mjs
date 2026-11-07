@@ -100,7 +100,7 @@ test('migration archives the original schema-1 save before autosaves rotate its 
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).stone, 150);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 7);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 8);
   assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
 });
 
@@ -112,7 +112,7 @@ test('schema-3 migration archives the untouched generic army before saving the c
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).units.infantry, 20);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 7);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 8);
   assert.equal(readFileSync(path + '.schema3.bak', 'utf8'), original);
 });
 
@@ -125,7 +125,7 @@ test('schema-4 migration preserves the original typed roster archive before the 
   const store = new WorldStore(path), restored = store.load();
   assert.equal(restored.authenticate(session.token).troops, 20); assert.equal(restored.authenticate(session.token).wounded.infantry, 0);
   store.save(restored); store.save(restored);
-  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 7);
+  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 8);
   assert.equal(readFileSync(path + '.schema4.bak','utf8'), original);
 });
 
@@ -135,6 +135,14 @@ test('schema-5 migration archives the original war save before campaign state is
   for(const p of save.world.players)delete p.groupReports;
   for(const s of save.world.sites){delete s.health;delete s.maxHealth;}
   const original=JSON.stringify(save);writeFileSync(path,original);
-  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,7);store.save(restored);
+  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,8);store.save(restored);
   assert.equal(readFileSync(path+'.schema5.bak','utf8'),original);assert.equal(store.load().players.size,1);
+});
+
+test('schema-7 migration archives discovery and resource stocks before adding chapter progress',t=>{
+ const path=fixture(t),w=new World(),session=w.join('Legacy Explorer'),p=w.authenticate(session.token);p.explored=[0,1,20];
+ const save=w.toSave();save.schema=7;delete save.world.players[0].journey;save.world.nodes[0].z=18;save.world.nodes[0].remaining=123;
+ const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
+ assert.ok(loaded.authenticate(session.token).explored.includes(20));assert.equal(loaded.nodes[0].remaining,123);assert.equal(loaded.nodes[0].z,12);assert.equal(loaded.toSave().schema,8);
+ store.save(loaded);assert.equal(readFileSync(path+'.schema7.bak','utf8'),original);assert.equal(store.load().authenticate(session.token).journey.chapters.length,0);
 });

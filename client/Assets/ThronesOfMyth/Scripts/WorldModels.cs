@@ -24,6 +24,7 @@ namespace ThronesOfMyth
         public HealingJob healing;
         public BattleReport[] battleReports;
         public GroupBattleReport[] groupReports;
+        public JourneyCampaign journeyCampaign;
         public string equippedRelic;
         public string[] ownedRelics;
         public QueueJob research, crafting;
@@ -71,6 +72,10 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ScoutGarrison { public string targetId; public int marches, troops, mythic; }
     [Serializable] public sealed class ScoutReport { public string id; public float x, z, time; public ScoutEnemy[] armies; public CampData[] camps; public SiteData[] sites; public FlagData[] flags; public ScoutGarrison[] garrisons; }
     [Serializable] public sealed class ExplorationData { public int cellSize, width; public int[] explored, visible; public ScoutData[] scouts; public ScoutReport[] reports; }
+    [Serializable] public sealed class JourneyRewards { public int wood, food, gold, stone, aether, sigils; }
+    [Serializable] public sealed class JourneyTask { public string id, title, description, guide, targetId; public int goal, progress; public bool claimed, canClaim; public JourneyRewards reward; }
+    [Serializable] public sealed class JourneyChapter { public string id, title, story, commanderReward; public bool claimed, locked, canClaim; public JourneyTask[] tasks; public JourneyRewards reward; }
+    [Serializable] public sealed class JourneyCampaign { public string activeId; public bool complete; public JourneyChapter[] chapters; }
     [Serializable] public sealed class WorldSnapshot
     {
         public int version, size;

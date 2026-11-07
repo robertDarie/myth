@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.12
+## Implemented through slice 0.13
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -34,6 +34,10 @@ reconciled group battle reports. See [the rules](alliance-warfare-0.11.md).
 The 0.12 exploration foundation adds dedicated scouts, persistent discovery,
 current allied vision, private scouting reports and shared gate-corridor routes.
 See [the exploration rules](exploration-and-routes-0.12.md).
+
+The 0.13 opening campaign adds six chapters and 19 objectives, saved achievements,
+Go guidance and individual/chapter rewards. The complete sequence is covered by
+a fresh-city legal-command playthrough. See [the campaign rules](opening-campaign-0.13.md).
 
 ## Next stages
 
