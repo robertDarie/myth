@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.9
+## Implemented through slice 0.10
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -22,6 +22,10 @@ previews, articulated field movement, Greek equipment meshes and initial sound.
 See [the core systems audit](core-systems-audit.md) for the current status of each
 core system and the ordered plan. Final character art and native visual review
 remain incomplete.
+
+The 0.10 war/social foundation adds PvP duels, hospital treatment, reports,
+alliance ranks and communications. The active [kingdom roadmap](kingdom-roadmap.md)
+puts group warfare and normal kingdom progression ahead of KvK.
 
 ## Next stages
 

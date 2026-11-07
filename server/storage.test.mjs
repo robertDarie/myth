@@ -100,11 +100,11 @@ test('migration archives the original schema-1 save before autosaves rotate its 
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).stone, 150);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 4);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 5);
   assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
 });
 
-test('schema-3 migration archives the untouched generic army before saving typed schema-4 troops', t => {
+test('schema-3 migration archives the untouched generic army before saving the current typed troop format', t => {
   const path = fixture(t), w = new World(), session = w.join('Legacy Formation');
   const legacy = structuredClone(w.toSave()); legacy.schema = 3;
   delete legacy.world.players[0].units; delete legacy.world.players[0].reserveUnits;
@@ -112,6 +112,19 @@ test('schema-3 migration archives the untouched generic army before saving typed
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).units.infantry, 20);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 4);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 5);
   assert.equal(readFileSync(path + '.schema3.bak', 'utf8'), original);
+});
+
+test('schema-4 migration preserves the original typed roster archive before the war schema saves', t => {
+  const path = fixture(t), w = new World(), session = w.join('Before War');
+  const old = structuredClone(w.toSave()); old.schema = 4;
+  delete old.world.battles; delete old.world.messages; delete old.world.markers;
+  for (const p of old.world.players) for (const key of ['wounded','woundedMythic','healing','battleReports','lastChatAt']) delete p[key];
+  const original = JSON.stringify(old); writeFileSync(path, original);
+  const store = new WorldStore(path), restored = store.load();
+  assert.equal(restored.authenticate(session.token).troops, 20); assert.equal(restored.authenticate(session.token).wounded.infantry, 0);
+  store.save(restored); store.save(restored);
+  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 5);
+  assert.equal(readFileSync(path + '.schema4.bak','utf8'), original);
 });

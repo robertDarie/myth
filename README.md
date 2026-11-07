@@ -4,8 +4,10 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.9
+## Playable slice 0.10
 
+- Field PvP duels, typed wounded troops, paid hospital treatment and private battle
+  reports; alliance ranks/succession, kingdom/alliance chat and shared map markers.
 - Greek equipment meshes, smoother formation turning and gait transitions, hit/retreat/
   victory feedback, clearer route arrows, and initial battlefield sound effects.
 - Painted loading screens with real preparation stages and connection recovery.
@@ -73,7 +75,9 @@ For a second player, run a Windows standalone build beside the editor and use a
 **different player name**. Both clients connect to the local server. A matching
 name and saved local token resume the same city; names alone are not credentials.
 
-See [the core systems audit](docs/core-systems-audit.md),
+See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[the 0.10 war and social rules](docs/early-kingdom-0.10.md),
+[the core systems audit](docs/core-systems-audit.md),
 [the Greek battlefield slice](docs/battlefield-slice-0.9.md),
 [march assembly and presentation](docs/marches-and-presentation-0.8.md),
 [the art and animation guide](docs/art-direction-0.7.md), [the interface guide](docs/interface-0.6.md),
@@ -86,6 +90,6 @@ Server gameplay and HTTP integration are covered by automated tests. Unity
 compilation, rendering, and Windows builds have not been run in the cloud.
 Commander portraits and sanctuary backgrounds use original generated artwork.
 World models are stylized procedural proxies, awaiting authored meshes and rigs.
-There is no PvP army combat, destructible territory, online account system,
+There is no group PvP, destructible territory, online account system,
 production database, hosted kingdom service, or KvK yet. The CLI saves locally;
 time pauses while the server is closed. See the playtest guide for save paths.

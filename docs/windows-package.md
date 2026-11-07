@@ -70,3 +70,6 @@ launch, PowerShell launcher behavior or installer execution. After building:
    uninstall through Windows Installed apps.
 
 For 0.8 loading, troop selection and model previews, see [march assembly and presentation](marches-and-presentation-0.8.md). Close the old server before launching protocol 6.
+
+Build 0.10 requires protocol 7 and includes war/social server modules. Old schema-4
+saves migrate automatically with an archival backup; see [the early kingdom guide](early-kingdom-0.10.md).

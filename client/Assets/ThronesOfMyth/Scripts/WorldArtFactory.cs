@@ -84,6 +84,7 @@ namespace ThronesOfMyth
             }
             else if (kind == "city") City(root, variant, team);
             else if (kind == "node") Resource(root, variant, team);
+            else if (kind == "marker") { Pillar(root, 0, 1, 0, 0.1f, 2, bronze); Ball(root, 0, 2.1f, 0, 0.5f, 0.5f, 0.5f, team); Ring(root, 0.6f, team); }
             else if (kind == "flag")
             {
                 Pillar(root, 0, 1.75f, 0, 0.13f, 3.5f, bronze);

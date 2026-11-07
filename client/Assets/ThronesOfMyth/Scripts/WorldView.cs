@@ -63,7 +63,7 @@ namespace ThronesOfMyth
             seen.Add(id);
             if (!pieces.TryGetValue(id, out var piece)) piece = Create(id, kind, x, z, color);
             piece.destination = new Vector3(x, 0, z); piece.label = label; piece.color = color; piece.health = health;
-            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : units.infantry + "," + units.archers + "," + units.cavalry);
+            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : (units.infantry > 0 ? "I" : "") + (units.archers > 0 ? "A" : "") + (units.cavalry > 0 ? "C" : "") + Mathf.Min(3, units.Total));
             if (piece.visualKey != visualKey)
             {
                 if (piece.actor != null) { piece.actor.gameObject.SetActive(false); Destroy(piece.actor.gameObject); }
@@ -96,6 +96,7 @@ namespace ThronesOfMyth
             foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining, -1, n.resource);
             foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), -1, s.kind);
             foreach (var f in world.flags) Put(seen, f.id, "flag", f.x, f.z, f.allianceId == allianceId ? blue : red, "Alliance Beacon");
+            foreach (var pin in world.markers) Put(seen, pin.id, "marker", pin.x, pin.z, new Color(0.85f, 0.45f, 0.8f), pin.name);
             var removed = new List<string>();
             foreach (var pair in pieces) if (!seen.Contains(pair.Key)) { Destroy(pair.Value.root); removed.Add(pair.Key); }
             foreach (var id in removed) pieces.Remove(id);

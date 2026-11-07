@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -83,6 +83,12 @@ namespace ThronesOfMyth
             switch (command.type)
             {
                 case "move": return "Your march is on its way.";
+                case "attack-player": return "Your march is approaching the opposing army.";
+                case "hospital-heal": return "The House of Renewal has begun treatment.";
+                case "hospital-cancel": return "Treatment canceled; wounded units and resources returned.";
+                case "chat-send": return "Message sent.";
+                case "marker-place": case "marker-remove": return "Alliance marker updated.";
+                case "alliance-leave": case "alliance-kick": case "alliance-promote": case "alliance-demote": case "alliance-transfer": return "Alliance membership updated.";
                 case "attack": return "Your march advances into battle.";
                 case "gather": return "Your march is heading to gather resources.";
                 case "return": return "Your march is returning home.";
@@ -294,10 +300,10 @@ namespace ThronesOfMyth
         }
         private void DrawBottomNavigation()
         {
-            string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "CHRONICLE" };
-            string[] icons = { "city", "heroes", "alliance", "temple", "chronicle" };
-            InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Chronicle };
-            float width = 123, start = ViewWidth / 2 - (width * 5 + 8 * 4) / 2;
+            string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "CHAT", "CHRONICLE" };
+            string[] icons = { "city", "heroes", "alliance", "temple", "chronicle", "chronicle" };
+            InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Chat, InterfacePage.Chronicle };
+            float width = 123, start = ViewWidth / 2 - (width * labels.Length + 8 * (labels.Length - 1)) / 2;
             for (int i = 0; i < labels.Length; i++)
             {
                 var r = new Rect(start + i * (width + 8), ViewHeight - 88, width, 70); theme.Panel(r, interfacePage == pages[i]);
@@ -339,14 +345,17 @@ namespace ThronesOfMyth
         {
             var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             for (int i = 0; i < pages.Length; i++)
-                if (theme.Button(new Rect(left.x + 12, left.y + 16 + i * 51, left.width - 24, 42), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 36, left.width - 24, 31), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
             theme.Panel(main, false, true);
             GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
             if (interfacePage == InterfacePage.Marches) DrawArmy();
             if (interfacePage == InterfacePage.Training) DrawTraining();
+            if (interfacePage == InterfacePage.Hospital) DrawHospital();
+            if (interfacePage == InterfacePage.Reports) DrawBattleReports();
+            if (interfacePage == InterfacePage.Chat) DrawChat();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();
             if (interfacePage == InterfacePage.Alliance) DrawAlliance();

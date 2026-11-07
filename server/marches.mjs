@@ -54,7 +54,7 @@ export function marchCommand(world, p, c, fail) {
       const commanderId = c.targetId || a.commanderId;
       if (!p.ownedCommanders.includes(commanderId) || armyList(p).some(other => other.id !== a.id && other.commanderId === commanderId)) fail('Choose a recruited commander who is not leading another march.');
       transfer(p, a, chosen); ensureHero(p, commanderId); a.commanderId = commanderId;
-      a.health = world.stats(a).maxHealth; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.cooldown = 0; a.state = 'Idle'; return true;
+      a.health = world.stats(a).maxHealth; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Idle'; return true;
     }
     case 'reinforce': {
       world.requireHome(a); if (!p.reserveTroops && !p.reserveMythic) fail('No reserves are ready.');

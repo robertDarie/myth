@@ -11,7 +11,7 @@ positions locally and never chooses damage or rewards.
 `content.mjs` defines five civilizations, eleven commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 6
+`http.mjs` provides a small versioned development protocol. Snapshot version 7
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -78,7 +78,7 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 4 stores typed troops (and migrates schemas 1/2/3 without resetting progression) queues, reserves, map state and sessions. A loader validates
+Save schema 5 stores troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4 without resetting progression) queues, reserves, map state and sessions. A loader validates
 the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
 field orders while retaining positions and all progression. The package launcher
@@ -111,3 +111,8 @@ A second construction field runs concurrently only after the Builders' Lodge is
 completed. Both jobs are validated, saved, cancellable and eligible for alliance
 help. Hero records are the XP source of truth; rage and shields belong to each
 march and are cleared on restore. See [the progression design](skills-ages-and-marches.md).
+
+`war.mjs` owns field engagements, report accounting and hospital transfers;
+`social.mjs` enforces alliance ranks, membership and communications. HTTP snapshots
+are viewer-filtered; own hospital/reports/treasury stay private. See
+[the early kingdom rules](early-kingdom-0.10.md).

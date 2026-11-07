@@ -11,9 +11,9 @@ namespace ThronesOfMyth
         private bool showCommanderModel;
         private void RenderCityWindow(Rect r)
         {
-            string[] labels = { "Training grounds", "Athenaeum", "Temple", "Forge", "Market" };
-            InterfacePage[] destinations = { InterfacePage.Training, InterfacePage.Research, InterfacePage.Temple, InterfacePage.Forge, InterfacePage.Market };
-            float shortcutWidth = (r.width - 4 * 8) / 5;
+            string[] labels = { "Training", "Hospital", "Athenaeum", "Temple", "Forge", "Market" };
+            InterfacePage[] destinations = { InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Temple, InterfacePage.Forge, InterfacePage.Market };
+            float shortcutWidth = (r.width - (labels.Length - 1) * 8) / labels.Length;
             for (int i = 0; i < labels.Length; i++) if (theme.Button(new Rect(r.x + i * (shortcutWidth + 8), r.y, shortcutWidth, 40), labels[i])) OpenInterface(destinations[i]);
             var grid = new Rect(r.x, r.y + 56, r.width - 368, r.height - 56);
             var detail = new Rect(r.xMax - 348, r.y + 56, 348, r.height - 56);
@@ -269,6 +269,7 @@ namespace ThronesOfMyth
             var node = Array.Find(world.nodes, n => n.id == selectedId);
             var site = Array.Find(world.sites, s => s.id == selectedId);
             var army = Array.Find(world.armies, a => a.id == selectedId);
+            var pin = Array.Find(world.markers, m => m.id == selectedId);
             var city = Array.Find(world.players, p => "city-" + p.id == selectedId);
             if (camp != null)
             {
@@ -292,13 +293,20 @@ namespace ThronesOfMyth
             else if (army != null)
             {
                 title = HeroName(army.commanderId); subtitle = army.name + " · " + army.state + " · " + army.troops + " TROOPS"; health = (float)army.health / Mathf.Max(1, army.maxHealth);
-                action = army.ownerId == playerId ? "Return home" : "Focus march"; perform = () => { if (army.ownerId == playerId) Send("return"); else cameraControl?.Focus(army.x, army.z); };
+                bool allied = !string.IsNullOrEmpty(me.allianceId) && army.allianceId == me.allianceId;
+                var owner = Array.Find(world.players, p => p.id == army.ownerId);
+                bool ownCity = Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2;
+                bool protectedArmy = ownCity || owner == null || owner.cityLevel < 2 || me.cityLevel < 2 || army.recovery > 0 || Vector2.Distance(new Vector2(army.x, army.z), new Vector2(army.homeX, army.homeZ)) < 2;
+                action = army.ownerId == playerId ? "Return home" : allied ? "Alliance army" : ownCity ? "Leave city first" : protectedArmy ? "Protected army" : "Attack player";
+                enabled &= army.ownerId == playerId || (!allied && !protectedArmy);
+                perform = () => { if (army.ownerId == playerId) Send("return"); else Send("attack-player", army.id); };
             }
             else if (city != null)
             {
                 title = city.name + "'s city"; subtitle = city.ageName + " · CITADEL " + city.cityLevel; emblem = "city";
                 action = city.id == playerId ? "Enter city" : "Focus city"; perform = () => { if (city.id == playerId) OpenInterface(InterfacePage.City); else cameraControl?.Focus(city.homeX, city.homeZ); };
             }
+            else if (pin != null) { title = pin.name; subtitle = "ALLIANCE MARKER · " + Mathf.CeilToInt(pin.expires - world.time) + "s"; action = "Focus marker"; perform = () => cameraControl?.Focus(pin.x, pin.z); }
             else { selectedId = ""; return; }
             theme.Panel(r); theme.Icon(new Rect(r.x + 22, r.y + 33, 40, 40), emblem, MythInterfaceTheme.Gold);
             theme.Text(new Rect(r.x + 83, r.y + 16, 490, 32), title, theme.Heading);

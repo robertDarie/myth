@@ -31,7 +31,7 @@ export function createGameServer({ savePath = null, shutdownToken = null } = {})
     };
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
-      if (request.method === 'GET' && path === '/health') return send(200, { status: persistence.error ? 'degraded' : 'ok', game: 'thrones-of-myth', version: 6, persistence: { ...persistence } });
+      if (request.method === 'GET' && path === '/health') return send(200, { status: persistence.error ? 'degraded' : 'ok', game: 'thrones-of-myth', version: 7, persistence: { ...persistence } });
       if (request.method === 'POST' && path === '/launcher-shutdown') {
         if (!shutdownToken || request.headers['x-thrones-launcher'] !== shutdownToken) throw new GameError('Launcher authorization required.', 403);
         if (!saveNow()) throw new GameError(persistence.error, 503);
@@ -49,7 +49,7 @@ export function createGameServer({ savePath = null, shutdownToken = null } = {})
         const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
         const player = world.authenticate(token);
         player.lastSeen = performance.now(); player.offline = false;
-        if (path === '/world') return send(200, { ...world.snapshot(), persistence: { ...persistence } });
+        if (path === '/world') return send(200, { ...world.snapshot(player.id), persistence: { ...persistence } });
         world.command(player, await readJson(request));
         return send(200, { accepted: true, saved: saveNow() });
       }

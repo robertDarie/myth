@@ -71,7 +71,7 @@ test('troop statistics give archers higher damage and pure cavalry its advertise
   config(w, p, { cavalry: 20 }, 1); assert.equal(w.stats(p).speed, infantry.speed);
 });
 
-test('schema-4 preserves typed formations and pending orders, while schema-3 migrates all generic troops once', () => {
+test('current schema preserves typed formations and pending orders, while schema-3 migrates all generic troops once', () => {
   const { w, p, session } = setup(); grant(p, { archers: 7, cavalry: 5 });
   w.command(p, { type: 'deploy-march', targetId: 'warden', units: { infantry: 0, archers: 3, cavalry: 2 } });
   w.command(p, { type: 'train', targetId: 'archers' });
@@ -84,10 +84,10 @@ test('schema-4 preserves typed formations and pending orders, while schema-3 mig
   const migrated = World.fromSave(old), m = migrated.authenticate(session.token);
   assert.deepEqual(m.units, { infantry: 20, archers: 0, cavalry: 0 }); assert.equal(m.reserveUnits.infantry, 7);
   assert.equal(m.marches[0].units.infantry, 5); assert.equal(m.trainingQueue[0].targetId, 'infantry');
-  assert.equal(migrated.toSave().schema, 4); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
+  assert.equal(migrated.toSave().schema, 5); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
 });
 
-test('schema-4 rejects forged or mismatched composition data instead of silently repairing it', () => {
+test('current schema rejects forged or mismatched composition data instead of silently repairing it', () => {
   const { w } = setup();
   for (const mutate of [p => p.units.infantry++, p => p.reserveUnits.archers = -1, p => delete p.units, p => p.units.cavalry = 0.5, p => p.reserveMythic = 0.5, p => p.mythic = 0.5]) {
     const bad = structuredClone(w.toSave()); mutate(bad.world.players[0]); assert.throws(() => World.fromSave(bad), /troop|composition/);
@@ -108,7 +108,7 @@ test('HTTP accepts the Unity-style exact-count payload and exposes typed reserve
   await command({ type: 'unlock-commander', targetId: 'warden', units: null });
   assert.equal((await command({ type: 'deploy-march', targetId: 'warden', troops: 0, mythic: 0, units: { infantry: 0, archers: 3, cavalry: 0 } })).status, 200);
   const snapshot = await (await fetch(base + '/world', { headers: { Authorization: 'Bearer ' + session.token } })).json();
-  assert.equal(snapshot.version, 6); assert.equal(snapshot.troopTypes.length, 3);
+  assert.equal(snapshot.version, 7); assert.equal(snapshot.troopTypes.length, 3);
   assert.equal(snapshot.players[0].reserveUnits.archers, 2); assert.equal(snapshot.armies[1].units.archers, 3);
   assert.equal(snapshot.armies[1].skillKind, 'shield'); assert.equal(snapshot.commanders.find(c => c.id === 'rune-seer').skillKind, 'heal');
 });

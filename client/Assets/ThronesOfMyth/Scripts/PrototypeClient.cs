@@ -113,13 +113,14 @@ namespace ThronesOfMyth
         }
         private void DrawTraining()
         {
+            if (GUILayout.Button("House of Renewal · " + me.hospitalTroops + " mortal / " + me.hospitalMythic + " mythic awaiting recovery")) OpenInterface(InterfacePage.Hospital);
             GUILayout.Label("City development", sectionStyle);
             GUILayout.Label("Your city works while armies march, gather or fight. New recruits wait in city reserves until you reinforce at home.", noteStyle);
             int queuedTroops = 0, queuedMythic = 0;
             foreach (var job in me.trainingQueue)
                 if (job.type == "train") queuedTroops += job.amount; else queuedMythic += job.amount;
             int cap = me.troopCapacity;
-            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.deployedTroops + me.reserveTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
+            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
             DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
             foreach (var troop in world.troopTypes)
@@ -127,7 +128,7 @@ namespace ThronesOfMyth
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(troop.name + " · " + troop.role, sectionStyle);
                 GUILayout.Label(troop.description + "  Base health " + troop.health + " · Damage " + troop.damage.ToString("F2") + " per troop", noteStyle);
-                GUI.enabled = me.trainingQueue.Length < 3 && me.deployedTroops + me.reserveTroops + queuedTroops + 5 <= cap && me.cityLevel >= troop.cityLevel && Afford(troop.cost) && !processing;
+                GUI.enabled = me.trainingQueue.Length < 3 && me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops + 5 <= cap && me.cityLevel >= troop.cityLevel && Afford(troop.cost) && !processing;
                 float duration = me.trainingDuration * troop.duration / 8;
                 if (GUILayout.Button("Train 5 · " + Mathf.CeilToInt(duration) + "s · " + Cost(troop.cost))) Send("train", troop.id);
                 GUI.enabled = true;
@@ -136,7 +137,7 @@ namespace ThronesOfMyth
             }
             string mythic = "Mythic guardian";
             foreach (var civ in world.civilizations) if (civ.id == me.civilization) mythic = civ.mythic;
-            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.deployedMythic + me.reserveMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
+            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.deployedMythic + me.reserveMythic + me.hospitalMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
             if (GUILayout.Button(mythic + " · " + Mathf.CeilToInt(me.recruitDuration) + "s · 80 food / 100 gold")) Send("recruit");
             GUI.enabled = true;
             GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment needs Citadel 2 and Sanctuary of Beasts.", noteStyle);
@@ -230,6 +231,7 @@ namespace ThronesOfMyth
         }
         private void DrawAlliance()
         {
+            if (GUILayout.Button("Kingdom and alliance chat")) OpenInterface(InterfacePage.Chat);
             if (string.IsNullOrEmpty(me.allianceId))
             {
                 GUILayout.Label("Found an alliance", sectionStyle); allianceName = GUILayout.TextField(allianceName, 24);
@@ -238,7 +240,8 @@ namespace ThronesOfMyth
                 foreach (var a in world.alliances) if (GUILayout.Button(a.name + " · " + a.members + " members")) Send("alliance-join", a.id);
                 return;
             }
-            GUILayout.Label(AllianceName(me.allianceId), sectionStyle);
+            GUILayout.Label(AllianceName(me.allianceId) + " · " + me.allianceRole, sectionStyle);
+            DrawAllianceMembers();
             GUILayout.Label("The leader places the first beacon within 6 units of their city. Further beacons connect within 12 units. Your army must be within 4 units of placement.", noteStyle);
             if (GUILayout.Button(placeBeacon ? "Cancel beacon placement" : "Place beacon · 60 wood / 20 gold")) placeBeacon = !placeBeacon;
             GUILayout.Label("Bring territory within 12 units of a site, then send your army to capture it. Uncontested occupation takes 15 seconds.", noteStyle);
@@ -260,6 +263,7 @@ namespace ThronesOfMyth
         }
         private void DrawJournal()
         {
+            if (GUILayout.Button("Open battle reports · " + me.battleReports.Length)) OpenInterface(InterfacePage.Reports);
             GUILayout.Label(me.ageName + " · " + me.marchSlots + "/5 march slots · " + me.constructionSlots + " builder(s)", sectionStyle);
             GUILayout.Label("A foothold in the fallen world", sectionStyle);
             GUILayout.Label($"Defeat three camps: {Mathf.Min(3, me.kills)}/3\nReward: Epic Atalanta, 200 gold, 150 wood, 150 food.", noteStyle);
@@ -325,6 +329,7 @@ namespace ThronesOfMyth
         private void Select(string id, string kind) { selectedId = id; selectedKind = kind; map.selectedId = id; }
         private void ActOnSelection()
         {
+            if (selectedKind == "army") { var enemy = Array.Find(world.armies, a => a.id == selectedId); if (enemy != null && enemy.ownerId != playerId) Send("attack-player", selectedId); }
             if (selectedKind == "camp") Send("attack", selectedId);
             if (selectedKind == "node") Send("gather", selectedId);
             if (selectedKind == "site") Send("capture", selectedId);
@@ -377,7 +382,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 6) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 7) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
@@ -447,6 +452,7 @@ namespace ThronesOfMyth
                     status = request.result == UnityWebRequest.Result.Success ? OrderFeedback(command) : DescribeError(request);
                     if (request.result == UnityWebRequest.Result.Success && (command.type == "deploy-march" || command.type == "configure-march"))
                     { pendingFormationHero = command.targetId; interfacePage = InterfacePage.World; }
+                    if (request.result == UnityWebRequest.Result.Success && command.type == "chat-send" && chatDraft == command.name) chatDraft = "";
                     toastUntil = Time.unscaledTime + 5;
                 }
             }
