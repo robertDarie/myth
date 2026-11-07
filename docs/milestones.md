@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.15
+## Implemented through slice 0.16
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -46,6 +46,10 @@ See [the stronghold rules](strongholds-0.14.md).
 The 0.15 activity foundation adds ten daily tasks, five fixed chests and three
 weekly alliance goals with personal contribution thresholds and saved claims.
 See [the activity rules](activity-and-alliance-goals-0.15.md).
+
+The 0.16 kingdom/art pass adds staged openings, contribution rewards and eight
+original city/environment FBXs, plus terrain/lighting/interface improvements.
+See [the kingdom/art guide](kingdom-and-art-0.16.md).
 
 ## Next stages
 

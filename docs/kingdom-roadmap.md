@@ -54,11 +54,19 @@ claims. The final daily chest has a repeatable solo path; weekly rewards require
 personal work and cannot be claimed again by switching alliances. See
 [the activity rules](activity-and-alliance-goals-0.15.md).
 
-## Next: scheduled kingdom progression
+## Delivered: kingdom openings and first map art pass (0.16)
 
-Add visible kingdom stages and opening conditions for passes and the sanctuary,
-with preparation milestones, personal/alliance contribution history and campaign
-rewards. Keep it separate from later KvK matchmaking and seasons.
+Preparation goals and short playtest timers now open gates and sanctuary, with
+continuous sanctuary hold tracking and completion-time reward eligibility.
+Original city/environment FBXs, regional terrain and interface refinements start
+the next art baseline. See [the kingdom/art guide](kingdom-and-art-0.16.md).
+
+## Next: native visual review and tactical depth
+
+Verify Unity import, shaders, frame time, navigation and UI at desktop play scale.
+Then refine authored troop/commander meshes, skinned animations, ability effects
+and kingdom pacing. Governance and production-length scheduling remain future
+work, ahead of later KvK.
 
 ## Troop and commander depth
 
@@ -90,7 +98,8 @@ and autosave files are not production accounts or online infrastructure.
 
 Native Unity/Windows verification, authored skinned models and animation clips,
 VFX/audio, a dedicated city scene, accessible controls and performance profiling.
-The Greek battlefield slice is the current art baseline, not final production art.
+The original city/environment pass and Greek battlefield rigs are the current
+art baseline, not final production art.
 
 ## Later: KvK
 

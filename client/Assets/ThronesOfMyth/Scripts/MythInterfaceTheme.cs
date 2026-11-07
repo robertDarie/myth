@@ -7,7 +7,7 @@ namespace ThronesOfMyth
     // Original painted artwork with procedural interface frames and ornaments.
     public sealed class MythInterfaceTheme : IDisposable
     {
-        public static readonly Color Gold = new Color(0.85f, 0.69f, 0.37f);
+        public static readonly Color Gold = new Color(0.90f, 0.74f, 0.43f);
         public static readonly Color Cream = new Color(0.95f, 0.91f, 0.8f);
         public static readonly Color Muted = new Color(0.64f, 0.73f, 0.75f);
         public static readonly Color Teal = new Color(0.24f, 0.7f, 0.65f);
@@ -38,7 +38,7 @@ namespace ThronesOfMyth
         public MythInterfaceTheme(GUISkin original)
         {
             Skin = UnityEngine.Object.Instantiate(original);
-            var normal = Rounded(new Color(0.09f, 0.15f, 0.18f), new Color(0.3f, 0.37f, 0.36f));
+            var normal = Rounded(new Color(0.12f, 0.23f, 0.29f), new Color(0.3f, 0.37f, 0.36f));
             var hover = Rounded(new Color(0.15f, 0.25f, 0.27f), Gold);
             var active = Rounded(new Color(0.27f, 0.29f, 0.21f), Gold);
             Skin.button = new GUIStyle(original.button) { fontSize = 15, fixedHeight = 0, padding = new RectOffset(12, 12, 9, 9), margin = new RectOffset(2, 2, 4, 4), border = new RectOffset(10, 10, 10, 10), wordWrap = true };
@@ -46,7 +46,7 @@ namespace ThronesOfMyth
             Set(Skin.button.onNormal, active, Cream); Set(Skin.button.onHover, hover, Color.white); Set(Skin.button.onActive, active, Cream);
             Skin.label = new GUIStyle(original.label) { fontSize = 15, wordWrap = true, padding = new RectOffset(0, 0, 3, 3) };
             Skin.label.normal.textColor = Cream;
-            Skin.box = BoxStyle(Rounded(new Color(0.055f, 0.10f, 0.13f, 0.98f), new Color(0.33f, 0.34f, 0.27f)));
+            Skin.box = BoxStyle(Rounded(new Color(0.075f, 0.15f, 0.21f, 0.98f), new Color(0.33f, 0.34f, 0.27f)));
             Skin.textField = new GUIStyle(original.textField) { fontSize = 17, padding = new RectOffset(12, 12, 10, 10), border = new RectOffset(10, 10, 10, 10) };
             Set(Skin.textField.normal, normal, Cream); Set(Skin.textField.focused, hover, Color.white);
             Skin.settings.cursorColor = Cream;
@@ -61,8 +61,8 @@ namespace ThronesOfMyth
             Body = Label(15, Cream); Small = Label(13, Muted); Eyebrow = Label(12, Gold, FontStyle.Bold);
             Number = Label(20, Cream, FontStyle.Bold); Center = Label(15, Cream, FontStyle.Bold); Center.alignment = TextAnchor.MiddleCenter;
             Primary = new GUIStyle(Skin.button) { fontStyle = FontStyle.Bold, fontSize = 16, padding = new RectOffset(10, 10, 5, 5) };
-            Set(Primary.normal, Rounded(new Color(0.50f, 0.35f, 0.13f), new Color(0.95f, 0.8f, 0.43f)), new Color(1, 0.97f, 0.85f));
-            Set(Primary.hover, Rounded(new Color(0.58f, 0.41f, 0.16f), Cream), Color.white);
+            Set(Primary.normal, Rounded(new Color(0.13f, 0.39f, 0.52f), new Color(0.95f, 0.8f, 0.43f)), new Color(1, 0.97f, 0.85f));
+            Set(Primary.hover, Rounded(new Color(0.20f, 0.49f, 0.61f), Cream), Color.white);
             Danger = new GUIStyle(Primary); Set(Danger.normal, Rounded(new Color(0.46f, 0.19f, 0.16f), Red), Cream);
             Tab = new GUIStyle(Skin.button) { fontSize = 12, padding = new RectOffset(3, 3, 4, 4) };
             Card = new GUIStyle(Skin.button) { alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 14, 12, 12) };
@@ -86,13 +86,26 @@ namespace ThronesOfMyth
                 float dx = Mathf.Max(8 - x, x - 39), dy = Mathf.Max(8 - y, y - 39);
                 float edge = 8 - Mathf.Sqrt(Mathf.Max(0, dx) * Mathf.Max(0, dx) + Mathf.Max(0, dy) * Mathf.Max(0, dy));
                 float alpha = Mathf.Clamp01(edge + 0.5f);
-                var shade = Color.Lerp(fill * 0.9f, fill, y / 47f); shade.a = fill.a;
+                float grain = Mathf.PerlinNoise(x * 0.6f, y * 0.6f) * 0.025f;
+                var shade = Color.Lerp(fill * 0.78f, fill * 1.12f, y / 47f) + new Color(grain, grain, grain, 0); shade.a = fill.a;
+                if (y > 43) shade = Color.Lerp(shade, border, 0.16f);
+                if (y < 3) shade *= 0.72f;
                 bool line = x == 0 || y == 0 || x == 47 || y == 47 || edge < 1.5f;
                 var color = line ? border : shade; color.a *= alpha; colors[y * 48 + x] = color;
             }
             tex.SetPixels(colors); tex.Apply(); textures.Add(tex); return tex;
         }
-        public void Panel(Rect rect, bool chosen = false, bool recessed = false) => GUI.Box(rect, GUIContent.none, chosen ? selected : recessed ? inset : panel);
+        public void Panel(Rect rect, bool chosen = false, bool recessed = false)
+        {
+            Fill(new Rect(rect.x + 2, rect.y + 3, rect.width, rect.height), new Color(0.02f,0.04f,0.06f,0.22f));
+            GUI.Box(rect, GUIContent.none, chosen ? selected : recessed ? inset : panel);
+            if (!recessed && rect.width >= 180 && rect.height >= 100)
+            {
+                var trim = new Color(Gold.r,Gold.g,Gold.b,0.42f);
+                Line(new Vector2(rect.x+14,rect.y+5),new Vector2(rect.xMax-14,rect.y+5),1,trim);
+                Diamond(new Rect(rect.x+5,rect.y+3,5,5),trim); Diamond(new Rect(rect.xMax-10,rect.y+3,5,5),trim);
+            }
+        }
         public void Text(Rect rect, string text, GUIStyle style = null) => GUI.Label(rect, text, style ?? Body);
         public bool Button(Rect rect, string text, bool primary = false, bool enabled = true)
         {

@@ -71,7 +71,7 @@ launch, PowerShell launcher behavior or installer execution. After building:
 
 For 0.8 loading, troop selection and model previews, see [march assembly and presentation](marches-and-presentation-0.8.md). Close the old server before launching protocol 6.
 
-Build 0.15 requires protocol 12 and bundles `activity.mjs` alongside the existing
-kingdom modules. Schemas 1–9 migrate with versioned archival backups. See
-[the activity guide](activity-and-alliance-goals-0.15.md).
-Rebuild to update both the Windows client and bundled server.
+Build 0.16 requires protocol 13 and bundles `kingdom.mjs` alongside the existing
+kingdom modules and original FBX assets under Resources. Schemas 1–10 migrate with
+archival backups and retain previously owned-site access. See
+[the kingdom/art guide](kingdom-and-art-0.16.md). Rebuild both client and server.

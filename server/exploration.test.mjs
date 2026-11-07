@@ -1,9 +1,10 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { route, travel, CORRIDORS } from './navigation.mjs';
 import { visible, explorationTick } from './exploration.mjs';
-const setup=()=>{const w=new World(),sessions=['Explorer','Ally','Enemy'].map(n=>w.join(n));return {w,sessions,players:sessions.map(s=>w.authenticate(s.token))};};
+const setup=()=>{const w=testWorld(),sessions=['Explorer','Ally','Enemy'].map(n=>w.join(n));return {w,sessions,players:sessions.map(s=>w.authenticate(s.token))};};
 const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
 const advance=(w,seconds)=>{for(let i=0;i<seconds*10;i++)w.tick(0.1);};
 const gates=(w,p)=>{cmd(w,p,'alliance-create',{name:'Pathfinders'});for(const s of w.sites.filter(s=>s.kind==='gate'))s.allianceId=p.allianceId;};
@@ -69,7 +70,7 @@ test('recall, gate loss and restart retain scouts safely without replaying rewar
  for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scout.phase,'Returning');advance(restored,10);assert.equal(q.scout,null);assert.equal(q.scoutReports.length,0);
  cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scout.id});advance(restored,0.1);assert.equal(q.scout,null);
  for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scout={id:'bad'},p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
- const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,10);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
+ const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,11);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
 });
 
 test('garrisons and rally centers obey the same gate corridors as ordinary marches',()=>{

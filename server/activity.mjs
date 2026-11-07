@@ -1,3 +1,4 @@
+import { recordKingdomContribution } from './kingdom.mjs';
 const DAY=86400000,MAX_COUNTER=1000000000;
 export const ACTIVITY_KEYS=['gather','food','trained','scouts','camps','distance','offering','helps','development','strongholds'];
 const task=(id,title,description,key,goal,points,guide,targetId='')=>({id,title,description,key,goal,points,guide,targetId,reward:{gold:10}});
@@ -40,6 +41,7 @@ function allianceWeek(w,a){const {week}=activityClock(w);if(!a.weekly||a.weekly.
 const emptyContribution=()=>({gather:0,helps:0,strongholds:0});
 export function recordActivity(w,p,key,amount){
  if(!ACTIVITY_KEYS.includes(key)||!Number.isFinite(amount)||amount<=0||(key!=='distance'&&!Number.isSafeInteger(amount)))return;ensureActivity(w,p);
+ recordKingdomContribution(w,p,key,amount);
  p.daily.counters[key]=Math.min(MAX_COUNTER,p.daily.counters[key]+amount);
  if(['gather','helps'].includes(key)&&w.alliances.has(p.allianceId)){
   const data=allianceWeek(w,w.alliances.get(p.allianceId));data.contributions[p.id]??=emptyContribution();data.contributions[p.id][key]=Math.min(MAX_COUNTER,data.contributions[p.id][key]+amount);

@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Audited against the repository through the 0.15 activity pass. **Implemented**
+Audited against the repository through the 0.16 kingdom/art pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -28,13 +28,13 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Alliance membership | Partial | Create/join/leave, leader/officer/member permissions, kick, succession and disband cleanup | Invites/applications, full audit logs and recruitment/diplomacy tools |
 | Social communication | Partial | Private alliance chat, kingdom chat, shared expiring map markers and event feed | Direct messages, mail, moderation and durable large-scale chat |
 | Alliance development | Partial | Job help, beacons and site ownership | Donations, alliance technology, treasury, member contributions and alliance progression |
-| Territory and sacred sites | Partial | Constructed connected forts/beacons, destructible territory, defended shrines/gates, sanctuary buffs and supply checks | Full terrain navigation, opening schedules and durable ownership history |
+| Territory and sacred sites | Partial | Constructed connected forts/beacons, destructible territory, defended shrines/gates, sanctuary buffs and supply checks | Full terrain navigation, production pacing and durable ownership history |
 | Rallies and garrisons | Partial | Timed assembly, actual march contributions, leadership/recall, capacity, late reinforcements and defended structure battles | Field interception, richer boss mechanics, progression/balance and native playtest |
 | City warfare and protection | Missing | Cities are visible and own reserves | Walls, garrison, siege, burning, looting caps, protection shields, beginner safety and teleport rules |
 | Battle reports and rankings | Partial | Private active/completed duel, group and stronghold reports with damage/healing/shield, wounds and reward receipts | Power calculation, leaderboards and extended war history |
 | Kingdom timeline | Missing | Five age-based march unlocks exist | Scheduled pass openings, objectives, ruler/kingdom governance and campaign milestones |
 | KvK / seasons | Missing | No cross-kingdom play | Multiple hosted kingdoms, eligibility/power model, matchmaking, seasonal map, rules, scoring, rewards and migration |
-| Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD, contextual Go guidance, daily activity and weekly alliance goals | Native pacing review, richer tutorial, personal weekly quests and later chapters |
+| Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD, contextual Go guidance, daily activity, weekly alliance goals and kingdom opening stages | Native pacing review, richer tutorial, personal weekly quests and later chapters |
 | Events and rewards | Partial | Daily free Temple offering and basic battle rewards | Event calendar, event scoring, milestone rewards, seasonal content and economy tuning |
 | Visuals, animation and audio | Partial | Original portraits/loading art, procedural units/meshes, transform rigs, state-driven poses, initial synthesized cues | Final authored character/creature meshes, skinning, animation clips/blend trees, polished VFX, recorded audio and broad performance validation |
 | Persistence and accounts | Partial | Local autosaves/backups, migration, profile tokens, hospital/reports/chat state and safe battle interruption | Online accounts, hosted storage, offline-time simulation, cross-device identity and operational recovery |

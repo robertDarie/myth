@@ -1,10 +1,11 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { BUILDINGS, TECHNOLOGIES, resourceNodes, SUMMON_RULES } from './city-content.mjs';
 import { buildingCard, technologyCard, capacity, passiveCap } from './city.mjs';
 const advance = (w, seconds) => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
-const setup = options => { const w = new World(options), s = w.join('A'), p = w.authenticate(s.token); for (const id of ['wood', 'food', 'gold', 'stone', 'aether']) p[id] = 10000; return { w, p, s }; };
+const setup = options => { const w = testWorld(options), s = w.join('A'), p = w.authenticate(s.token); for (const id of ['wood', 'food', 'gold', 'stone', 'aether']) p[id] = 10000; return { w, p, s }; };
 const cmd = (w, p, type, targetId, extra = {}) => w.command(p, { type, targetId, ...extra });
 const build = (w, p, id) => { cmd(w, p, 'building-upgrade', id); advance(w, 80); };
 const prepareAcademy = (w, p) => { build(w, p, 'oracle'); build(w, p, 'citadel'); build(w, p, 'academy'); };
@@ -177,7 +178,7 @@ test('schema-1 saves migrate once without losing queues, resources, commanders o
   const migrated = World.fromSave(old), city = migrated.authenticate(s.token);
   assert.equal(city.gold, 1234); assert.equal(city.trainingQueue.length, 1); assert.equal(city.mythic, 1);
   assert.equal(city.buildings.menagerie, 1); assert.equal(city.stone, 150); assert.equal(city.sigils, 3);
-  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema, 10);
+  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema, 11);
   city.sigils = 0; const again = World.fromSave(migrated.toSave()); assert.equal(again.authenticate(s.token).sigils, 0);
 });
 

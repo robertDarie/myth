@@ -15,7 +15,7 @@ namespace ThronesOfMyth
             view.orthographic = true;
             view.orthographicSize = 24;
             view.farClipPlane = 250;
-            view.backgroundColor = new Color(0.1f, 0.15f, 0.19f);
+            view.backgroundColor = new Color(0.68f, 0.76f, 0.77f);
             view.clearFlags = CameraClearFlags.SolidColor;
         }
         public void Focus(float x, float z) { focus = new Vector3(x, 0, z); Apply(); }

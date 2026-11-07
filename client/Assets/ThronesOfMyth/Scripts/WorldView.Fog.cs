@@ -30,7 +30,7 @@ namespace ThronesOfMyth
             var known = new HashSet<int>(data.explored); var visible = new HashSet<int>(data.visible); var colors = new Color[1600];
             for (int i = 0; i < 400; i++)
             {
-                var color = new Color(0.035f, 0.055f, 0.085f, visible.Contains(i) ? 0 : known.Contains(i) ? 0.55f : 0.97f);
+                var color = new Color(0.36f, 0.45f, 0.49f, visible.Contains(i) ? 0 : known.Contains(i) ? 0.40f : 0.98f);
                 for (int v = 0; v < 4; v++) colors[i * 4 + v] = color;
             }
             fogMesh.colors = colors;

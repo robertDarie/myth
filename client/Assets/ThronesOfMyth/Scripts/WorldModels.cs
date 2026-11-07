@@ -50,7 +50,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error; }
     [Serializable] public sealed class CampData { public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
     [Serializable] public sealed class NodeData { public string id, name, resource; public float x, z; public int remaining, capacity; }
-    [Serializable] public sealed class SiteData { public bool unknown; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
+    [Serializable] public sealed class SiteData { public bool unknown, locked; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
     [Serializable] public sealed class FlagData { public string id, allianceId; public float x, z, health, maxHealth, buildRemaining; public bool isRoot, connected; }
     [Serializable] public sealed class AllianceData { public string id, name, leaderId; public int members; public string[] officers; }
     [Serializable] public sealed class CommanderData { public string id, name, rarity, color, description, skillKind; public int cost; }
@@ -86,9 +86,13 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ActivityMember { public string id, name; public bool current; public int gather, helps, strongholds; }
     [Serializable] public sealed class WeeklyAllianceActivity { public string id, name, period; public int resetSeconds; public AllianceGoalCard[] goals; public ActivityMember[] members; }
     [Serializable] public sealed class ActivityState { public DailyActivityState daily; public WeeklyAllianceActivity alliance; }
+    [Serializable] public sealed class KingdomGoal { public string name; public int progress, goal; }
+    [Serializable] public sealed class KingdomStage { public string id, name, description; public int afterSeconds, minScore, openInSeconds; public bool completed, legacy, previousComplete, eligible, claimed, canClaim; public KingdomGoal[] goals; public JourneyRewards reward; }
+    [Serializable] public sealed class KingdomChronicle { public string preset; public int score; public KingdomStage[] stages; }
     [Serializable] public sealed class WorldSnapshot
     {
         public int version, size;
+        public KingdomChronicle kingdom;
         public ActivityState activity;
         public StrongholdData[] strongholds;
         public StrongholdRules strongholdRules;

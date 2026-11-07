@@ -1,3 +1,4 @@
+import { siteIsOpen } from './kingdom.mjs';
 // Province walls have four corridors; each axis is controlled by its Divine Gate.
 export const CORRIDORS = [
  {id:'east-low',gateId:'gate-east',a:{x:39,z:20},b:{x:41,z:20}},
@@ -10,7 +11,7 @@ const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 export function route(w,actor,destination,returning=false){
  const p=w.owner(actor);if(!returning&&!w.canEnter(p,destination))return null;
  const points=[{x:actor.x,z:actor.z},{x:destination.x,z:destination.z}],links=[];
- for(const c of CORRIDORS){const i=points.length;points.push(c.a,c.b);if(returning||(p.allianceId&&w.sites.some(s=>s.id===c.gateId&&s.allianceId===p.allianceId)))links.push([i,i+1]);}
+ for(const c of CORRIDORS){const i=points.length;points.push(c.a,c.b);if(returning||(p.allianceId&&w.sites.some(s=>s.id===c.gateId&&s.allianceId===p.allianceId&&siteIsOpen(w,c.gateId))))links.push([i,i+1]);}
  const corridorEdge=(u,v)=>links.some(([a,b])=>{
   if((a===u&&b===v)||(a===v&&b===u))return true;
   const on=i=>Math.abs(dist(points[a],points[i])+dist(points[i],points[b])-dist(points[a],points[b]))<0.00001;

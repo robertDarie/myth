@@ -21,38 +21,7 @@ namespace ThronesOfMyth
         private void Awake()
         {
             gameObject.AddComponent<BattlefieldAudio>();
-            scenery = new GameObject("World Scenery").transform;
-            var ground = GameObject.Find("Ground");
-            if (ground == null) { ground = GameObject.CreatePrimitive(PrimitiveType.Cube); ground.name = "Ground"; }
-            ground.transform.position = new Vector3(40, -0.3f, 40); ground.transform.localScale = new Vector3(80, 0.6f, 80);
-            var groundMaterial = MaterialFor(new Color(0.78f, 0.8f, 0.7f));
-            groundTexture = new Texture2D(256, 256, TextureFormat.RGB24, false) { name = "Kingdom grass and earth", wrapMode = TextureWrapMode.Repeat };
-            var terrain = new Color[256 * 256];
-            for (int y = 0; y < 256; y++) for (int x = 0; x < 256; x++)
-            {
-                float broad = Mathf.PerlinNoise(x * 0.025f + 43, y * 0.025f + 17);
-                float grain = Mathf.PerlinNoise(x * 0.3f, y * 0.3f) * 0.12f;
-                terrain[y * 256 + x] = Color.Lerp(new Color(0.28f, 0.35f, 0.24f), new Color(0.54f, 0.53f, 0.36f), Mathf.Clamp01(broad * 0.8f + grain));
-            }
-            groundTexture.SetPixels(terrain); groundTexture.Apply(false, true); groundMaterial.mainTexture = groundTexture;
-            ground.GetComponent<Renderer>().sharedMaterial = groundMaterial;
-            RenderSettings.ambientLight = new Color(0.58f, 0.62f, 0.65f);
-            // Low border ridges leave physical openings at the four server corridors.
-            foreach (var segment in new[] { new Vector2(0, 18), new Vector2(22, 58), new Vector2(62, 80) })
-            {
-                float center = (segment.x + segment.y) / 2, length = segment.y - segment.x;
-                Shape(PrimitiveType.Cube, scenery, new Vector3(40, 0.5f, center), new Vector3(0.8f, 1, length), new Color(0.39f, 0.40f, 0.33f));
-                Shape(PrimitiveType.Cube, scenery, new Vector3(center, 0.5f, 40), new Vector3(length, 1, 0.8f), new Color(0.39f, 0.40f, 0.33f));
-            }
-            var random = new System.Random(431);
-            for (int i = 0; i < 90; i++)
-            {
-                float x = 2 + (float)random.NextDouble() * 76, z = 43 + (float)random.NextDouble() * 34;
-                if (Mathf.Abs(x - 65) < 7 && Mathf.Abs(z - 65) < 7) continue;
-                Shape(PrimitiveType.Cylinder, scenery, new Vector3(x, 0.8f, z), new Vector3(0.25f, 0.8f, 0.25f), new Color(0.28f, 0.2f, 0.13f));
-                Shape(PrimitiveType.Sphere, scenery, new Vector3(x, 2.1f, z), new Vector3(1.6f, 2.5f, 1.6f), new Color(0.18f + i % 3 * 0.025f, 0.29f + i % 3 * 0.02f, 0.18f));
-                if (i % 4 == 0) Shape(PrimitiveType.Sphere, scenery, new Vector3(x + 0.7f, 0.3f, z + 1), new Vector3(0.9f, 0.6f, 0.8f), new Color(0.4f, 0.43f, 0.38f));
-            }
+            BuildKingdomEnvironment();
         }
         private Piece Create(string id, string kind, float x, float z, Color color)
         {
@@ -91,7 +60,7 @@ namespace ThronesOfMyth
             {
                 var color = p.id == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
                 Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · " + p.ageName + " · City " + p.cityLevel, -1, p.civilization);
-                pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.9f + 0.1f * p.cityLevel);
+                pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.82f + 0.035f * p.cityLevel);
             }
             foreach (var boss in world.strongholds)
             {
@@ -106,7 +75,7 @@ namespace ThronesOfMyth
                 pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
             }
             foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining, -1, n.resource);
-            foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.unknown ? " · Unsurveyed" : "") + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), s.health / Mathf.Max(1, s.maxHealth), s.kind);
+            foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.locked ? " · Sealed" : "") + (s.unknown ? " · Unsurveyed" : "") + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), s.health / Mathf.Max(1, s.maxHealth), s.kind);
             foreach (var f in world.flags)
             {
                 string name = f.isRoot ? "Alliance Fort" : "Alliance Beacon";
@@ -147,6 +116,7 @@ namespace ThronesOfMyth
                 if (piece.kind == "camp" && camera.orthographicSize > 34 && pair.Key != selectedId) continue;
                 var rect = new Rect(x - 105 * labelScale, y - 10 * labelScale, 210 * labelScale, 22 * labelScale);
                 GUI.color = pair.Key == selectedId ? Color.yellow : Color.white;
+                var oldColor = GUI.color; GUI.color = new Color(0.04f,0.09f,0.12f,0.68f); GUI.DrawTexture(new Rect(rect.x-4,rect.y,rect.width+8,rect.height),Texture2D.whiteTexture); GUI.color = oldColor;
                 GUI.Label(rect, piece.label, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.RoundToInt(11 * labelScale) });
                 GUI.color = Color.white;
                 if (piece.health >= 0)
@@ -163,7 +133,7 @@ namespace ThronesOfMyth
         private void OnDestroy()
         {
             Clear(); DisposeFog(); if (scenery != null) Destroy(scenery.gameObject);
-            art.Dispose(); if (groundTexture != null) Destroy(groundTexture);
+            art.Dispose(); if (terrainMaterial != null) Destroy(terrainMaterial); if (groundTexture != null) Destroy(groundTexture);
         }
     }
 }

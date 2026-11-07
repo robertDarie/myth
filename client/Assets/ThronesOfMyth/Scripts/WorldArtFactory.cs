@@ -14,7 +14,7 @@ namespace ThronesOfMyth
             if (!materials.TryGetValue(color, out var material))
             {
                 material = new Material(Shader.Find("Standard")) { color = color };
-                material.SetFloat("_Glossiness", 0.16f); materials.Add(color, material);
+                material.SetFloat("_Glossiness", 0.06f); materials.Add(color, material);
             }
             return material;
         }
@@ -152,6 +152,8 @@ namespace ThronesOfMyth
         }
         private void City(Transform root, string culture, Color team)
         {
+            string title = string.IsNullOrEmpty(culture) ? "Greek" : char.ToUpperInvariant(culture[0]) + culture.Substring(1);
+            if (Imported(root, "City" + title, team, culture)) return;
             if (culture == "greek" || string.IsNullOrEmpty(culture)) { Temple(root, team, false); return; }
             Box(root, 0, 0.12f, 0, 4, 0.24f, 3.5f, darkStone);
             if (culture == "egyptian")

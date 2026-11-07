@@ -1,3 +1,4 @@
+import { recordKingdomVictory } from './kingdom.mjs';
 import { recordStrongholdActivity } from './activity.mjs';
 import { activeSkill, ensureHero, heroLevel } from './progression.mjs';
 import { applyDamage, counterMultiplier } from './war.mjs';
@@ -55,7 +56,7 @@ export function rewardStronghold(w,t,report){
    const a=w.army(armyId);if(a&&a.commanderId===entry.commanderId){a.xp=hero.xp;a.level=heroLevel(hero);}
   }
  }
- recordStrongholdActivity(w,report);
+ recordStrongholdActivity(w,report);recordKingdomVictory(w,'strongholds');
 }
 export function validateStrongholds(saved){
  const defs=createStrongholds();if(!Array.isArray(saved)||saved.length!==defs.length||new Set(saved.map(t=>t?.id)).size!==defs.length)throw new Error('Invalid saved strongholds.');

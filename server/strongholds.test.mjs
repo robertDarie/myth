@@ -1,3 +1,4 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -9,7 +10,7 @@ const until=(w,test,seconds=150)=>{for(let i=0;i<seconds*10&&!test();i++)w.tick(
 const cmd=(w,p,type,targetId='',extra={})=>w.command(p,{type,targetId,...extra});
 const census=p=>p.troops+p.marches.reduce((n,a)=>n+a.troops,0)+p.reserveTroops+wardTroops(p);
 function setup(){
- const w=new World(),sessions=['Leader','Ally','Outsider'].map(n=>w.join(n)),[a,b,c]=sessions.map(s=>w.authenticate(s.token));
+ const w=testWorld(),sessions=['Leader','Ally','Outsider'].map(n=>w.join(n)),[a,b,c]=sessions.map(s=>w.authenticate(s.token));
  for(const p of[a,b,c]){p.cityLevel=2;p.buildings.oathhall=1;p.food=p.gold=10000;}
  cmd(w,a,'alliance-create','',{name:'Dawn'});cmd(w,b,'alliance-join',a.allianceId);
  return {w,a,b,c,sessions,t:w.strongholds[0]};
@@ -25,7 +26,7 @@ test('strongholds are rally-only, require allied commitments and cancel underfil
 test('two allied marches defeat guards then walls with reconciled reports, conserved units and one fixed pool',()=>{
  const {w,a,b,c,t}=setup(),counts=[a,b].map(census),xp=[a.heroRecords.captain.xp,b.heroRecords.captain.xp],pool={...t.reward};rally(w,a,b,t);
  until(w,()=>w.sieges.length>0);const active=w.sieges[0].report;assert.equal(active.kind,'stronghold');assert.equal(active.structureDamage,0);
- until(w,()=>t.respawn>0);assert.equal(w.rallies.length,0);assert.equal(w.sieges.length,0);assert.deepEqual([a,b].map(census),counts);assert.equal(a.strongholdVictories,1);assert.equal(b.strongholdVictories,1);assert.equal(c.strongholdVictories,0);
+ until(w,()=>t.respawn>0);assert.equal(w.rallies.length,0);assert.equal(w.sieges.length,0);assert.deepEqual([a,b].map(census),counts);assert.equal(a.strongholdVictories,1);assert.equal(b.strongholdVictories,1);assert.equal(c.strongholdVictories,0);assert.equal(w.kingdom.metrics.strongholds,1);assert.equal(w.kingdom.contributions[a.id].strongholds,1);assert.equal(w.kingdom.contributions[b.id].strongholds,1);
  const report=a.groupReports[0];assert.equal(report.outcome,'Stronghold defeated');assert.equal(report.guardHealthAfter,0);assert.equal(report.wallHealthAfter,0);assert.equal(report.npcDamageTaken,t.maxGuardHealth);assert.equal(report.structureDamage,t.maxHealth);assert.equal(report.settled,true);assert.equal(report.rewards.length,2);
  for(const [key,total]of Object.entries(pool))assert.equal(report.rewards.reduce((n,e)=>n+e.resources[key],0),total);
  assert.equal(report.participants.reduce((n,e)=>n+e.damageDealt,0),report.npcDamageTaken);assert.equal(report.participants.reduce((n,e)=>n+e.damageTaken,0),report.npcDamageDealt);
@@ -85,7 +86,7 @@ test('malformed stronghold state, generations and reward ledgers are rejected ra
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad),/stronghold/);
  }
  until(w,()=>t.respawn>0);for(const mutate of[r=>r.rewards[0].resources.gold++,r=>r.rewards[0].xp++,r=>r.guardHealthAfter=1]){const bad=structuredClone(w.toSave());mutate(bad.world.players[0].groupReports[0]);assert.throws(()=>World.fromSave(bad),/stronghold/);}
- const old=structuredClone(w.toSave());old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,5);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,10);
+ const old=structuredClone(w.toSave());old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,5);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,11);
 });
 
 test('ordinary members can lead PvE rallies, while higher tiers enforce gate access and stronger armies',()=>{
@@ -113,7 +114,7 @@ test('HTTP stronghold rallies reward only authenticated contributors and keep pr
  assert.equal((await get(2)).strongholds.length,0);assert.equal((await post(0,{type:'scout-send',x:t.x,z:t.z})).status,200);advance(w,4.5);const scouted=await get(0);assert.ok(scouted.strongholds.some(s=>s.id===t.id));assert.ok(scouted.exploration.reports[0].strongholds.some(s=>s.id===t.id));
  assert.equal((await post(1,{type:'rally-create',targetId:t.id,count:10})).status,200);const id=w.rallies[0].id;
  assert.equal((await post(0,{type:'rally-join',targetId:id})).status,200);assert.equal((await post(2,{type:'rally-join',targetId:id})).status,400);
- until(w,()=>t.respawn>0);let own=await get(0),outside=await get(2);assert.equal(own.version,12);assert.equal(own.players.find(p=>p.id===a.id).groupReports[0].rewards.length,2);assert.equal(outside.players.find(p=>p.id===a.id).groupReports,undefined);assert.equal(outside.players.find(p=>p.id===a.id).strongholdVictories,undefined);assert.equal(c.strongholdVictories,0);
+ until(w,()=>t.respawn>0);let own=await get(0),outside=await get(2);assert.equal(own.version,13);assert.equal(own.players.find(p=>p.id===a.id).groupReports[0].rewards.length,2);assert.equal(outside.players.find(p=>p.id===a.id).groupReports,undefined);assert.equal(outside.players.find(p=>p.id===a.id).strongholdVictories,undefined);assert.equal(c.strongholdVictories,0);
  assert.equal((await post(0,{type:'rally-join',targetId:id})).status,400);assert.equal(a.strongholdVictories,1);assert.equal(b.strongholdVictories,1);
 });
 

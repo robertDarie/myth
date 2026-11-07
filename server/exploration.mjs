@@ -63,7 +63,7 @@ export function filterFog(w,snapshot,p){
  snapshot.camps=snapshot.camps.filter(seen);snapshot.nodes=snapshot.nodes.filter(seen);
  snapshot.flags=snapshot.flags.filter(f=>f.allianceId===p.allianceId||seen(f));
  // Sacred sites are public landmarks, but hidden ownership and live state are not public intelligence.
- snapshot.sites=snapshot.sites.map(s=>(!!p.allianceId&&s.allianceId===p.allianceId)||seen(s)?s:{id:s.id,name:s.name,kind:s.kind,x:s.x,z:s.z,description:s.description,allianceId:'',challengerId:'',progress:0,health:0,maxHealth:s.maxHealth,unknown:true});
+ snapshot.sites=snapshot.sites.map(s=>(!!p.allianceId&&s.allianceId===p.allianceId)||seen(s)?s:{id:s.id,name:s.name,kind:s.kind,x:s.x,z:s.z,description:s.description,allianceId:'',challengerId:'',progress:0,health:0,maxHealth:s.maxHealth,locked:s.locked,unknown:true});
  snapshot.garrisons=snapshot.garrisons.filter(g=>g.allianceId===p.allianceId);snapshot.sieges=snapshot.sieges.filter(s=>{const t=[...w.sites,...w.flags,...w.strongholds].find(t=>t.id===s.targetId);return t&&seen(t);});
  snapshot.events=[];return snapshot;
 }

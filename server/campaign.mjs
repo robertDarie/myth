@@ -1,3 +1,4 @@
+import { siteIsOpen } from './kingdom.mjs';
 import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, rewardStronghold, resetStronghold, validateStrongholdReport } from './strongholds.mjs';
 import { route, travel } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
@@ -83,6 +84,7 @@ function readyMarch(w,p,a,fail,full=true) {
 }
 function targetReason(w,rally) {
   const t=fortification(w,rally.targetId);
+  if(t&&!siteIsOpen(w,t.id))return 'This sacred site is sealed by its kingdom milestone';
   if(!t||t.health<=0)return 'Target unavailable or ownership changed';
   const p=w.players.get(rally.leaderId);
   if(!p||p.allianceId!==rally.allianceId||!w.canEnter(p,t))return 'Leader unavailable or route locked';
@@ -133,7 +135,7 @@ export function campaignCommand(w,p,c,fail) {
   }
   if(c.type==='garrison-join') {
     const t=fortification(w,c.targetId);
-    if(!t||!p.allianceId||t.allianceId!==p.allianceId||t.health<=0||(t.buildRemaining||0)>0)fail('Choose a completed structure held by your alliance.');
+    if(!t||!siteIsOpen(w,t.id)||!p.allianceId||t.allianceId!==p.allianceId||t.health<=0||(t.buildRemaining||0)>0)fail('Choose a completed structure held by your alliance.');
     if(!w.canEnter(p,t))fail('The garrison is behind a locked gate.');
     const a=ownMarch(w,p,c,fail);readyMarch(w,p,a,fail,false);
     if(!route(w,a,t))fail('No open gate route from this march to the garrison. Return home first.');

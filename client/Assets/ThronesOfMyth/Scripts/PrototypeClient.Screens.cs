@@ -300,6 +300,7 @@ namespace ThronesOfMyth
                 action = string.IsNullOrEmpty(me.allianceId) ? "Join an alliance" : hostile ? "Plan rally" : own ? "Garrison / defend" : !routeOpen ? "Plan a route" : !connected ? "Extend territory" : "March & capture";
                 perform = () => { if (string.IsNullOrEmpty(me.allianceId) || (!hostile && !own && (!connected || !routeOpen))) OpenInterface(InterfacePage.Alliance); else if (hostile || own) OpenWarfare(site.id); else Send("capture", site.id); };
                 if (site.unknown) { subtitle = "UNSURVEYED LANDMARK · SEND A SCOUT"; action = "Scout this area"; perform = () => ScoutAt(site.x, site.z); health = -1; }
+                if (site.locked) { subtitle = "SEALED BY THE KINGDOM CHRONICLE"; action = "View opening milestone"; perform = () => GuidePage(InterfacePage.Kingdom); health = -1; }
             }
             else if (beacon != null)
             {

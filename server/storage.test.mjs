@@ -1,3 +1,4 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -9,7 +10,7 @@ import { createGameServer } from './http.mjs';
 const fixture = t => { const dir = mkdtempSync(join(tmpdir(), 'tom-save-')); t.after(() => rmSync(dir, { recursive: true, force: true })); return join(dir, 'world.json'); };
 
 test('save/load retains cities, sessions, queues and alliances and pauses field orders', t => {
-  const path = fixture(t), store = new WorldStore(path), w = new World();
+  const path = fixture(t), store = new WorldStore(path), w = testWorld();
   const session = w.join('Saved Queen'), p = w.authenticate(session.token);
   w.command(p, { type: 'upgrade' }); w.command(p, { type: 'train' });
   w.command(p, { type: 'alliance-create', name: 'Persistent Dawn' });
@@ -28,7 +29,7 @@ test('save/load retains cities, sessions, queues and alliances and pauses field 
 });
 
 test('backup recovers a damaged save and is not overwritten with corrupted content', t => {
-  const path = fixture(t), messages = [], store = new WorldStore(path, message => messages.push(message)), w = new World();
+  const path = fixture(t), messages = [], store = new WorldStore(path, message => messages.push(message)), w = testWorld();
   const s = w.join('A'); const p = w.authenticate(s.token);
   store.save(w); p.gold = 300; store.save(w);
   assert.ok(existsSync(path + '.bak'));
@@ -43,13 +44,13 @@ test('unrecoverable and unsupported saves are preserved instead of silently star
   writeFileSync(path, '{broken'); assert.throws(() => store.load(), /preserved/);
   assert.equal(readFileSync(path, 'utf8'), '{broken');
   assert.throws(() => World.fromSave({ schema: 99 }), /save format/);
-  const w = new World(), session = w.join('A');
+  const w = testWorld(), session = w.join('A');
   const bad = w.toSave(); bad.world.players[0].gold = -1;
   assert.throws(() => World.fromSave(bad), /values/);
 });
 
 test('queue data is independent after deserialization and cannot duplicate refunds', () => {
-  const w = new World(), session = w.join('A'), p = w.authenticate(session.token);
+  const w = testWorld(), session = w.join('A'), p = w.authenticate(session.token);
   w.command(p, { type: 'train' }); const job = p.trainingQueue[0];
   const restored = World.fromSave(w.toSave()), q = restored.authenticate(session.token);
   restored.command(q, { type: 'cancel-job', targetId: job.id });
@@ -79,19 +80,19 @@ test('HTTP autosaves mutations; authenticated launcher shutdown flushes and rest
 });
 
 test('failed save writes leave the last valid world readable', t => {
-  const path = fixture(t), store = new WorldStore(path), w = new World();
+  const path = fixture(t), store = new WorldStore(path), w = testWorld();
   const session = w.join('A'); store.save(w);
   // A directory at the temporary-file path simulates a denied/failed write.
   const temporary = path + '.' + process.pid + '.tmp';
   const { gold } = w.authenticate(session.token); w.authenticate(session.token).gold = 999;
   const blocker = new WorldStore(join(temporary, 'nested.json'));
-  blocker.save(new World());
+  blocker.save(testWorld());
   assert.throws(() => store.save(w));
   assert.equal(new WorldStore(path).load().authenticate(session.token).gold, gold);
 });
 
 test('migration archives the original schema-1 save before autosaves rotate its ordinary backup', t => {
-  const path = fixture(t), w = new World(), session = w.join('Legacy');
+  const path = fixture(t), w = testWorld(), session = w.join('Legacy');
   const legacy = structuredClone(w.toSave()); legacy.schema = 1;
   const p = legacy.world.players[0];
   for (const field of ['buildings', 'technologies', 'stone', 'aether', 'sigils', 'research', 'crafting', 'economyClock', 'productionCarry', 'commanderShards', 'commanderRanks', 'summonHistory', 'summonCount', 'epicPity', 'legendaryPity', 'lastOfferingDay', 'ownedRelics', 'equippedRelic']) delete p[field];
@@ -100,24 +101,24 @@ test('migration archives the original schema-1 save before autosaves rotate its 
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).stone, 150);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 10);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 11);
   assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
 });
 
 test('schema-3 migration archives the untouched generic army before saving the current typed troop format', t => {
-  const path = fixture(t), w = new World(), session = w.join('Legacy Formation');
+  const path = fixture(t), w = testWorld(), session = w.join('Legacy Formation');
   const legacy = structuredClone(w.toSave()); legacy.schema = 3;
   delete legacy.world.players[0].units; delete legacy.world.players[0].reserveUnits;
   const original = JSON.stringify(legacy); writeFileSync(path, original);
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).units.infantry, 20);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 10);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 11);
   assert.equal(readFileSync(path + '.schema3.bak', 'utf8'), original);
 });
 
 test('schema-4 migration preserves the original typed roster archive before the war schema saves', t => {
-  const path = fixture(t), w = new World(), session = w.join('Before War');
+  const path = fixture(t), w = testWorld(), session = w.join('Before War');
   const old = structuredClone(w.toSave()); old.schema = 4;
   delete old.world.battles; delete old.world.messages; delete old.world.markers;
   for (const p of old.world.players) for (const key of ['wounded','woundedMythic','healing','battleReports','lastChatAt']) delete p[key];
@@ -125,35 +126,41 @@ test('schema-4 migration preserves the original typed roster archive before the 
   const store = new WorldStore(path), restored = store.load();
   assert.equal(restored.authenticate(session.token).troops, 20); assert.equal(restored.authenticate(session.token).wounded.infantry, 0);
   store.save(restored); store.save(restored);
-  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 10);
+  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 11);
   assert.equal(readFileSync(path + '.schema4.bak','utf8'), original);
 });
 
 test('schema-5 migration archives the original war save before campaign state is added', t => {
-  const path=fixture(t),w=new World();w.join('Legacy War City');const save=w.toSave();save.schema=5;
+  const path=fixture(t),w=testWorld();w.join('Legacy War City');const save=w.toSave();save.schema=5;
   delete save.world.rallies;delete save.world.garrisons;delete save.world.sieges;
   for(const p of save.world.players)delete p.groupReports;
   for(const s of save.world.sites){delete s.health;delete s.maxHealth;}
   const original=JSON.stringify(save);writeFileSync(path,original);
-  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,10);store.save(restored);
+  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,11);store.save(restored);
   assert.equal(readFileSync(path+'.schema5.bak','utf8'),original);assert.equal(store.load().players.size,1);
 });
 
 test('schema-7 migration archives discovery and resource stocks before adding chapter progress',t=>{
- const path=fixture(t),w=new World(),session=w.join('Legacy Explorer'),p=w.authenticate(session.token);p.explored=[0,1,20];
+ const path=fixture(t),w=testWorld(),session=w.join('Legacy Explorer'),p=w.authenticate(session.token);p.explored=[0,1,20];
  const save=w.toSave();save.schema=7;delete save.world.players[0].journey;save.world.nodes[0].z=18;save.world.nodes[0].remaining=123;
  const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
- assert.ok(loaded.authenticate(session.token).explored.includes(20));assert.equal(loaded.nodes[0].remaining,123);assert.equal(loaded.nodes[0].z,12);assert.equal(loaded.toSave().schema,10);
+ assert.ok(loaded.authenticate(session.token).explored.includes(20));assert.equal(loaded.nodes[0].remaining,123);assert.equal(loaded.nodes[0].z,12);assert.equal(loaded.toSave().schema,11);
  store.save(loaded);assert.equal(readFileSync(path+'.schema7.bak','utf8'),original);assert.equal(store.load().authenticate(session.token).journey.chapters.length,0);
 });
 
 test('schema-8 migration archives the original campaign before adding PvE strongholds',t=>{
- const path=fixture(t),w=new World(),session=w.join('Legacy Campaign');const save=w.toSave();save.schema=8;delete save.world.strongholds;delete save.world.players[0].strongholdVictories;
- const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.strongholds.length,5);assert.equal(loaded.authenticate(session.token).strongholdVictories,0);assert.equal(loaded.toSave().schema,10);store.save(loaded);assert.equal(readFileSync(path+'.schema8.bak','utf8'),original);assert.equal(store.load().strongholds.length,5);
+ const path=fixture(t),w=testWorld(),session=w.join('Legacy Campaign');const save=w.toSave();save.schema=8;delete save.world.strongholds;delete save.world.players[0].strongholdVictories;
+ const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.strongholds.length,5);assert.equal(loaded.authenticate(session.token).strongholdVictories,0);assert.equal(loaded.toSave().schema,11);store.save(loaded);assert.equal(readFileSync(path+'.schema8.bak','utf8'),original);assert.equal(store.load().strongholds.length,5);
 });
 
 test('schema-9 migration archives the original kingdom before adding fresh daily and weekly ledgers',t=>{
- const path=fixture(t),w=new World(),session=w.join('Legacy Daily City'),p=w.authenticate(session.token);w.command(p,{type:'alliance-create',name:'Legacy Guild'});
+ const path=fixture(t),w=testWorld(),session=w.join('Legacy Daily City'),p=w.authenticate(session.token);w.command(p,{type:'alliance-create',name:'Legacy Guild'});
  const save=w.toSave();save.schema=9;delete save.world.activityClockMs;for(const p of save.world.players){delete p.daily;delete p.weeklyClaims;}
- const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.toSave().schema,10);assert.equal(loaded.authenticate(session.token).daily.claimed.length,0);assert.equal(loaded.authenticate(session.token).weeklyClaims.claimed.length,0);store.save(loaded);assert.equal(readFileSync(path+'.schema9.bak','utf8'),original);assert.equal(store.load().alliances.size,1);
+ const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.toSave().schema,11);assert.equal(loaded.authenticate(session.token).daily.claimed.length,0);assert.equal(loaded.authenticate(session.token).weeklyClaims.claimed.length,0);store.save(loaded);assert.equal(readFileSync(path+'.schema9.bak','utf8'),original);assert.equal(store.load().alliances.size,1);
+});
+
+test('schema-10 migration archives the original world and preserves captured gate access',t=>{
+ const path=fixture(t),w=testWorld(),session=w.join('Legacy Realm'),p=w.authenticate(session.token);w.command(p,{type:'alliance-create',name:'Legacy Keep'});w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;
+ const save=w.toSave();save.schema=10;delete save.world.kingdom;for(const p of save.world.players)delete p.kingdomClaims;const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
+ assert.equal(loaded.toSave().schema,11);assert.equal(loaded.kingdom.completed[1].id,'gates');assert.equal(loaded.kingdom.completed[1].legacy,true);store.save(loaded);assert.equal(readFileSync(path+'.schema10.bak','utf8'),original);assert.equal(store.load().kingdom.completed.length,2);
 });

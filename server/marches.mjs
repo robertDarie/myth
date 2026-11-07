@@ -1,3 +1,4 @@
+import { siteIsOpen } from './kingdom.mjs';
 import { initializeFortification, territoryNear } from './campaign.mjs';
 import { allianceRole } from './social.mjs';
 import { TROOP_TYPES, selection, readyFor, transfer, unitTotal } from './troops.mjs';
@@ -94,6 +95,7 @@ export function marchCommand(world, p, c, fail) {
     case 'capture': {
       const site = world.sites.find(s => s.id === c.targetId);
       if (!site || !p.allianceId) fail('Join an alliance to capture a site.');
+      if (!siteIsOpen(world,site.id)) fail('This sacred site is sealed until its kingdom milestone opens.');
       if (site.allianceId && site.allianceId !== p.allianceId) fail('An enemy-held site must be defeated with a rally.');
       if (!world.canEnter(p, site)) fail('Capture the necessary gates first.');
       if (!territoryNear(world, p.allianceId, site)) fail('Extend alliance beacons to within 12 units of this site.');

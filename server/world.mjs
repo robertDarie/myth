@@ -1,3 +1,4 @@
+import { initializeKingdom, tickKingdom, siteIsOpen, recordKingdomVictory, kingdomCommand, kingdomSnapshot, validateKingdom } from './kingdom.mjs';
 import { activityClock, initializeActivity, ensureActivity, recordActivity, activityCommand, activitySnapshot, validateActivity } from './activity.mjs';
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
@@ -33,7 +34,7 @@ export class World {
     this.nodes[2].x = 12; this.nodes[2].z = 10;
     this.nodes.push(...resourceNodes.map(n => ({ ...n })));
     this.sites = siteDefinitions.map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
-    this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind);
+    this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind); initializeKingdom(this);
   }
   event(message) { this.events.unshift({ time: Math.round(this.time), message }); this.events.length = Math.min(this.events.length, 12); }
   join(name, civilization = 'greek', resumeToken = '') {
@@ -51,7 +52,7 @@ export class World {
       health: 0, gold: 150, wood: 150, food: 200, troops: 20, mythic: 0, cityLevel: 1,
       commanderId: 'captain', ownedCommanders: ['captain'], xp: 0, level: 1, kills: 0, questClaimed: false,
       allianceId: '', target: null, cooldown: 0, gatherClock: 0, lastSeen: 0, state: 'Idle', recovery: 0, reserveTroops: 0, reserveMythic: 0, construction: null, trainingQueue: [], offline: false };
-    initializeCity(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player);
+    initializeCity(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player); player.kingdomClaims = [];
     player.health = this.stats(player).maxHealth;
     this.players.set(id, player); this.sessions.set(token, id); refreshJourney(this, player);
     this.event(`${player.name} founded a ${civilization} city.`);
@@ -87,19 +88,19 @@ export class World {
   }
   canEnter(p, destination) {
     p = this.owner(p);
-    const owns = id => !!p.allianceId && this.sites.find(s => s.id === id).allianceId === p.allianceId;
+    const owns = id => !!p.allianceId && this.sites.find(s => s.id === id).allianceId === p.allianceId && siteIsOpen(this,id);
     return (destination.x <= 40 || owns('gate-east')) && (destination.z <= 40 || owns('gate-north'));
   }
   command(p, c) {
-    ensureActivity(this, p);const result = this.applyCommand(p, c);
+    ensureActivity(this, p);tickKingdom(this);const result = this.applyCommand(p, c);
     if(c.type==='alliance-help')recordActivity(this,p,'helps',1);
     if(c.type==='temple-offering')recordActivity(this,p,'offering',1);
-    refreshJourney(this, p); return result;
+    refreshJourney(this, p);tickKingdom(this); return result;
   }
   applyCommand(p, c) {
     if (!c || typeof c !== 'object') throw new GameError('Invalid command.');
     const fail = message => { throw new GameError(message); };
-    if (activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
+    if (kingdomCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
     switch (c.type) {
       case 'train': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
@@ -196,7 +197,7 @@ export class World {
     for (const site of this.sites) this.captureTick(site, dt);
     for(const a of this.armies()){const previous=beforeMovement.get(a.id);if(previous&&a.recovery<=0){const moved=distance(a,previous);if(moved<=this.stats(a).speed*dt+0.001)recordActivity(this,this.owner(a),'distance',moved);}}
     explorationTick(this, dt);
-    for (const p of this.players.values()) refreshJourney(this, p);
+    for (const p of this.players.values()) refreshJourney(this, p); tickKingdom(this);
   }
   battle(a, camp, stats) {
     const p = this.owner(a);
@@ -210,6 +211,7 @@ export class World {
     }
     camp.contributors[a.id] = (camp.contributors[a.id] ?? 0) + damage;
     if (camp.health === 0) {
+      recordKingdomVictory(this,'camps');
       camp.respawn = 45;
       const participants = Object.keys(camp.contributors).map(id => this.army(id)).filter(Boolean);
       const owners = [...new Set(participants.map(actor => this.owner(actor).id))].map(id => this.players.get(id));
@@ -233,6 +235,7 @@ export class World {
     }
   }
   captureTick(site, dt) {
+    if (!siteIsOpen(this, site.id)) { for (const a of this.armies()) if (a.target?.type==='capture'&&a.target.id===site.id) { a.target=null;a.state='Kingdom stage locked'; } return; }
     const contenders = new Set(this.armies().filter(p => p.target?.type === 'capture' && p.target.id === site.id && p.health > 0 && p.recovery === 0 && distance(p, site) <= 2.001 && this.owner(p).allianceId && this.canEnter(p, site) && (!site.allianceId || site.allianceId === this.owner(p).allianceId) && territoryNear(this, this.owner(p).allianceId, site)).map(p => this.owner(p).allianceId));
     if (contenders.size !== 1) { if (contenders.size === 0) site.progress = Math.max(0, site.progress - dt); return; }
     const allianceId = [...contenders][0];
@@ -269,13 +272,13 @@ export class World {
     }
   }
   toSave() {
-    return { schema: 10, world: { activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 11, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) world.activityClockMs = w.activityClockMs;
@@ -339,6 +342,7 @@ export class World {
     if (data.schema >= 9) world.strongholds = validateStrongholds(w.strongholds);
     if (data.schema < 6) initializeCampaign(world); else restoreCampaign(world, w);
     if (data.schema >= 10) validateActivity(world); else for (const p of world.players.values()) initializeActivity(world, p);
+    if (data.schema < 11) initializeKingdom(world, true); else { world.kingdom = w.kingdom; validateKingdom(world); }
     explorationTick(world, 0);
     for (const p of world.players.values()) refreshJourney(world, p);
     return world;
@@ -355,7 +359,8 @@ export class World {
   }
   snapshot(viewerId = null) {
     const activity = viewerId && this.players.has(viewerId) ? activitySnapshot(this, this.players.get(viewerId)) : null;
-    const snapshot = { version: 12, activity, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
+    const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
+    const snapshot = { version: 13, activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
       players: [...this.players.values()].map(p => {
         const { lastSeen, target, cooldown, gatherClock, slot, marches, ...visible } = p;
         if (viewerId && viewerId !== p.id) {
@@ -365,7 +370,7 @@ export class World {
         }
         return { ...visible, journeyCampaign: journeySnapshot(this, p), ...warSnapshot(this, p), groupReports: groupReports(this, p), allianceRole: allianceRole(this, p), ...citySnapshot(this, p), ...this.stats(p), health: Math.ceil(p.health), hasOrder: !!target, targetId: target?.id ?? '', targetX: target?.x ?? p.x, targetZ: target?.z ?? p.z };
       }), camps: this.camps.map(({ contributors, ...camp }) => ({ ...camp, respawn: Math.ceil(camp.respawn) })),
-      nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s })), flags: this.flags.map(f => ({ ...f })),
+      nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s, locked: !siteIsOpen(this,s.id) })), flags: this.flags.map(f => ({ ...f })),
       alliances: [...this.alliances.values()].map(({weekly,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
       commanders: COMMANDERS.map(c => ({ ...c, skillKind: activeKind(c.id) })), civilizations: CIVILIZATIONS, events: this.events.map(e => ({ ...e })) };
     return viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId)) : snapshot;

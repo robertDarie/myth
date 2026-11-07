@@ -271,6 +271,7 @@ namespace ThronesOfMyth
         }
         private void DrawJournal()
         {
+            if (GUILayout.Button("Kingdom milestones & opening times", theme.Primary)) GuidePage(InterfacePage.Kingdom);
             if (GUILayout.Button("Open chapter campaign", theme.Primary)) GuidePage(InterfacePage.Campaign);
             if (GUILayout.Button("Open battle reports · " + (me.battleReports.Length + me.groupReports.Length))) OpenInterface(InterfacePage.Reports);
             GUILayout.Label(me.ageName + " · " + me.marchSlots + "/5 march slots · " + me.constructionSlots + " builder(s)", sectionStyle);
@@ -342,7 +343,7 @@ namespace ThronesOfMyth
             if (selectedKind == "stronghold") OpenWarfare(selectedId);
             if (selectedKind == "camp") Send("attack", selectedId);
             if (selectedKind == "node") Send("gather", selectedId);
-            if (selectedKind == "site") { var site = Array.Find(world.sites, s => s.id == selectedId); if (site != null && site.unknown) ScoutAt(site.x, site.z); else Send("capture", selectedId); }
+            if (selectedKind == "site") { var site = Array.Find(world.sites, s => s.id == selectedId); if (site != null && site.locked) GuidePage(InterfacePage.Kingdom); else if (site != null && site.unknown) ScoutAt(site.x, site.z); else Send("capture", selectedId); }
             if (selectedId == "city-" + playerId) Send("return");
         }
         private string AllianceName(string id)
@@ -392,7 +393,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 12) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 13) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

@@ -1,9 +1,10 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { CHAPTERS, TASKS, refreshJourney, journeySnapshot } from './chapters.mjs';
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
-const setup=()=>{const w=new World({random:()=>0}),session=w.join('Founder');return {w,p:w.authenticate(session.token),session};};
+const setup=()=>{const w=testWorld({random:()=>0}),session=w.join('Founder');return {w,p:w.authenticate(session.token),session};};
 const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
 const claimReady=(w,p)=>{
  for(let i=0;i<100;i++){
@@ -107,5 +108,5 @@ test('authenticated claims expose only the owner campaign and reject repeated or
  assert.equal((await post(0,{type:'train'})).status,200);assert.equal((await post(0,{type:'train'})).status,200);advance(w,17);
  const gold=p.gold;assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,200);assert.equal(p.gold,gold+40);
  assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,400);assert.equal(p.gold,gold+40);
- const own=await get(0),outside=await get(1);assert.equal(own.version,12);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
+ const own=await get(0),outside=await get(1);assert.equal(own.version,13);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
 });

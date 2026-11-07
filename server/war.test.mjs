@@ -1,3 +1,4 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -5,7 +6,7 @@ import { emptyUnits, unitTotal } from './troops.mjs';
 import { wardTroops, wardMythic, counterMultiplier } from './war.mjs';
 const advance = (w, seconds) => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
 const setup = () => {
-  const w = new World(), sessions = ['A','B','C'].map(name => w.join(name)), players = sessions.map(s => w.authenticate(s.token));
+  const w = testWorld(), sessions = ['A','B','C'].map(name => w.join(name)), players = sessions.map(s => w.authenticate(s.token));
   for (const p of players) { p.cityLevel = 2; p.food = p.gold = 10000; }
   const [a,b,c] = players; a.x = 20; a.z = 15; b.x = 21.5; b.z = 15; c.x = 19; c.z = 15;
   return { w, a,b,c,sessions };
@@ -88,7 +89,7 @@ test('active combats are sealed on restore, treatment persists and malformed hos
 test('schema-4 migrates an empty hospital and troop counters are a bounded mixed-composition modifier', () => {
   const {w,a}=setup(),old=structuredClone(w.toSave());old.schema=4;delete old.world.battles;
   for(const p of old.world.players)for(const k of['wounded','woundedMythic','healing','battleReports'])delete p[k];
-  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,10);
+  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,11);
   const infantry={troops:10,units:{infantry:10,archers:0,cavalry:0}},cavalry={troops:10,units:{infantry:0,archers:0,cavalry:10}};
   assert.equal(counterMultiplier(infantry,cavalry),1.15);assert.equal(counterMultiplier(cavalry,infantry),0.85);
 });

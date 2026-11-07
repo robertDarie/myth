@@ -11,7 +11,7 @@ positions locally and never chooses damage or rewards.
 `content.mjs` defines five civilizations, eleven commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 12
+`http.mjs` provides a small versioned development protocol. Snapshot version 13
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -78,10 +78,10 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 10 retains city progression, queues/reserves, armies/hospital units,
+Save schema 11 retains city progression, queues/reserves, armies/hospital units,
 territory/campaigns, stronghold generations, discovery/scouts, chapters, reports,
 communications and session tokens, plus activity claims and observed UTC time.
-Schemas 1–9 migrate without resetting progression. The loader validates saves,
+Schemas 1–10 migrate without resetting progression. The loader validates saves,
 falls back to a valid backup and retains versioned archives. If both copies fail,
 it preserves the files and refuses to silently reset. Simulation time pauses
 while closed; UTC activity periods continue. Restore stops
@@ -160,3 +160,12 @@ survive membership changes. Shared NPC victory IDs count once per alliance.
 Protocol 12 supplies the viewer's Activity screen; public alliance snapshots omit
 private weekly ledgers. Schema 10 stores progress/claims and the calendar mark.
 See [the activity rules](activity-and-alliance-goals-0.15.md).
+
+`kingdom.mjs` owns sequential preparation milestones, public opening state,
+sanctuary hold timing and completion-time reward eligibility. It shares the
+persisted calendar high-water mark with activity. Capture, rally, garrison and
+route access enforce seals on the server. Schema 11 stores the chronicle and
+private claims; protocol 13 exposes viewer-specific cards and public site seals.
+Runtime city/scenery meshes load from `Resources/Art/Models`, with procedural
+fallbacks and per-material environment batching. See
+[the kingdom/art guide](kingdom-and-art-0.16.md).

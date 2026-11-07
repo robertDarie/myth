@@ -1,3 +1,4 @@
+import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -5,7 +6,7 @@ import { activitySnapshot, recordActivity, recordStrongholdActivity, DAILY_TASKS
 const DAY=86400000;
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
 const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
-function setup(){let date=Date.UTC(2026,10,2,12);const w=new World({now:()=>date}),sessions=['Founder','Member','Rival'].map(name=>w.join(name)),[a,b,c]=sessions.map(s=>w.authenticate(s.token));return {w,a,b,c,sessions,setDate:value=>{date=value;},getDate:()=>date};}
+function setup(){let date=Date.UTC(2026,10,2,12);const w=testWorld({now:()=>date}),sessions=['Founder','Member','Rival'].map(name=>w.join(name)),[a,b,c]=sessions.map(s=>w.authenticate(s.token));return {w,a,b,c,sessions,setDate:value=>{date=value;},getDate:()=>date};}
 const claim=(w,p,id)=>cmd(w,p,'daily-claim',{targetId:id,period:activitySnapshot(w,p).daily.period});
 const goalClaim=(w,p,id,extra={})=>{const a=activitySnapshot(w,p).alliance;cmd(w,p,'alliance-goal-claim',{targetId:id,period:a.period,allianceId:a.id,...extra});};
 const join=(w,a,b)=>{cmd(w,a,'alliance-create',{name:'Dawn'});cmd(w,b,'alliance-join',{targetId:a.allianceId});};
@@ -91,7 +92,7 @@ test('malformed daily counters, chest claims, alliance contribution rows and clo
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad,{now:()=>Date.UTC(2026,10,2,12)}),/activity|claims/);
  }
  const old=structuredClone(w.toSave());old.schema=9;delete old.world.activityClockMs;for(const p of old.world.players){delete p.daily;delete p.weeklyClaims;}for(const a of old.world.alliances)delete a.weekly;
- const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,10);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
+ const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,11);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
 });
 
 test('all three weekly goals unlock individual rewards only for members who earned the required contributions',()=>{
@@ -113,7 +114,7 @@ test('authenticated activity claims preserve daily privacy, alliance-only ledger
  const sessions=await Promise.all(['HTTP Active','HTTP Member','HTTP Outsider'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));
  const [a,b,c]=sessions.map(s=>w.authenticate(s.token));join(w,a,b);
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();
- assert.equal((await post(0,{type:'gather',targetId:w.nodes[0].id})).status,200);advance(w,30);const own=await get(0),period=own.activity.daily.period;assert.equal(own.version,12);
+ assert.equal((await post(0,{type:'gather',targetId:w.nodes[0].id})).status,200);advance(w,30);const own=await get(0),period=own.activity.daily.period;assert.equal(own.version,13);
  assert.equal((await post(2,{type:'daily-claim',targetId:'gather',period,playerId:a.id,count:200})).status,400);
  assert.equal((await post(0,{type:'daily-claim',targetId:'gather',period})).status,200);const gold=a.gold;
  assert.equal((await post(0,{type:'daily-claim',targetId:'gather',period})).status,400);assert.equal(a.gold,gold);

@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Kingdom, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -117,6 +117,7 @@ namespace ThronesOfMyth
                 case "promote-commander": return "Your commander has earned a new star.";
                 case "upgrade-skill": return "Your commander's skill has grown stronger.";
                 case "upgrade-commander": return "Your commander has ascended.";
+                case "kingdom-claim": return "Kingdom milestone reward claimed.";
                 case "daily-claim": return "Daily task reward claimed. Your activity points have increased.";
                 case "activity-chest": return "Activity chest opened. Its rewards are now in your city.";
                 case "alliance-goal-claim": return "Your weekly alliance reward has been claimed.";
@@ -307,7 +308,7 @@ namespace ThronesOfMyth
         private void DrawKingdomMinimap()
         {
             var r = MinimapRect; theme.Panel(r);
-            theme.Text(new Rect(r.x + 14, r.y + 8, 184, 22), "THE MORTAL REALM", theme.Eyebrow);
+            if (theme.Button(new Rect(r.x + 10, r.y + 5, r.width - 20, 25), "KINGDOM CHRONICLE")) GuidePage(InterfacePage.Kingdom);
             var mapArea = new Rect(r.x + 12, r.y + 35, r.width - 24, r.height - 49);
             MythInterfaceTheme.Fill(mapArea, new Color(0.23f, 0.33f, 0.29f));
             MythInterfaceTheme.Line(new Vector2(mapArea.center.x, mapArea.y), new Vector2(mapArea.center.x, mapArea.yMax), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
@@ -335,6 +336,8 @@ namespace ThronesOfMyth
             for (int i = 0; i < labels.Length; i++)
             {
                 var r = new Rect(start + i * (width + 8), ViewHeight - 88, width, 70); theme.Panel(r, interfacePage == pages[i]);
+                theme.Circle(new Rect(r.center.x - 19, r.y + 4, 38, 38), MythInterfaceTheme.Gold);
+                theme.Circle(new Rect(r.center.x - 17, r.y + 6, 34, 34), new Color(0.13f,0.27f,0.34f));
                 theme.Icon(new Rect(r.center.x - 12, r.y + 10, 24, 24), icons[i], interfacePage == pages[i] ? MythInterfaceTheme.Cream : MythInterfaceTheme.Gold);
                 theme.Text(new Rect(r.x + 2, r.y + 41, width - 4, 23), labels[i], theme.Center);
                 if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
@@ -373,7 +376,7 @@ namespace ThronesOfMyth
         {
             var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Kingdom, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             var navigation = new Rect(left.x + 12, left.y + 12, left.width - 24, left.height - 24);
             activityNavScroll = GUI.BeginScrollView(navigation, activityNavScroll, new Rect(0, 0, navigation.width - 16, pages.Length * 34));
             for (int i = 0; i < pages.Length; i++)
@@ -391,6 +394,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Exploration) DrawExploration();
             if (interfacePage == InterfacePage.Campaign) DrawCampaign();
             if (interfacePage == InterfacePage.Activity) DrawActivity();
+            if (interfacePage == InterfacePage.Kingdom) DrawKingdomStages();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();
             if (interfacePage == InterfacePage.Alliance) DrawAlliance();
