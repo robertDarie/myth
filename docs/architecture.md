@@ -178,3 +178,12 @@ poses from observed world state. Formation proxies and pooled effects are cosmet
 Army FBXs use Git LFS. Protocol 13/schema 11 are unchanged. See
 [the army and living city guide](army-and-living-city-0.17.md) for evidence and
 pending native checks.
+
+## Hosted persistence 0.18
+
+An opt-in SQLite WAL store commits a complete kingdom document and keyed command
+receipts in a FULL-synchronous transaction. HTTP mutations roll back on failed
+saves; a renewable writer lease fences concurrent simulations. Startup performs
+bounded economic catch-up and explicit field interruption instead of offline
+combat replay. Local JSON remains available. See
+[the hosting guide](hosting-and-persistence-0.18.md) for guarantees and limitations.

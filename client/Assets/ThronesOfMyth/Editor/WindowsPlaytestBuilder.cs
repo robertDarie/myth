@@ -58,7 +58,7 @@ namespace ThronesOfMyth.Editor
             if (!File.Exists(ScenePath)) throw new BuildFailedException("Prototype scene could not be created.");
             PlayerSettings.companyName = "ThronesOfMyth";
             PlayerSettings.productName = "Thrones of Myth";
-            PlayerSettings.bundleVersion = "0.17.0";
+            PlayerSettings.bundleVersion = "0.18.0";
             PlayerSettings.defaultScreenWidth = 1280;
             PlayerSettings.defaultScreenHeight = 800;
             PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
@@ -90,7 +90,7 @@ namespace ThronesOfMyth.Editor
             File.Copy(node, Path.Combine(runtime, "node.exe"), true);
             File.Copy(license, Path.Combine(runtime, "LICENSE"), true);
             string server = Path.Combine(package, "Server"); Directory.CreateDirectory(server);
-            foreach (string file in new[] { "index.mjs", "http.mjs", "world.mjs", "content.mjs", "storage.mjs", "city.mjs", "city-content.mjs", "progression.mjs", "marches.mjs", "troops.mjs", "war.mjs", "social.mjs", "campaign.mjs", "navigation.mjs", "exploration.mjs", "chapters.mjs", "strongholds.mjs", "activity.mjs", "kingdom.mjs" })
+            foreach (string file in new[] { "index.mjs", "http.mjs", "world.mjs", "content.mjs", "storage.mjs", "database.mjs", "downtime.mjs", "city.mjs", "city-content.mjs", "progression.mjs", "marches.mjs", "troops.mjs", "war.mjs", "social.mjs", "campaign.mjs", "navigation.mjs", "exploration.mjs", "chapters.mjs", "strongholds.mjs", "activity.mjs", "kingdom.mjs" })
                 File.Copy(Path.Combine(repository, "server", file), Path.Combine(server, file), true);
             foreach (string file in new[] { "Launcher.ps1", "Start Thrones of Myth.cmd", "README.txt" })
                 File.Copy(Path.Combine(packaging, file), Path.Combine(package, file), true);

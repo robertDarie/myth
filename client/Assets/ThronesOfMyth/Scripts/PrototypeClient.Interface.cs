@@ -197,17 +197,20 @@ namespace ThronesOfMyth
             playerName = GUILayout.TextField(playerName, 24, GUILayout.Height(44));
             GUILayout.Space(16); GUILayout.Label("CHOOSE YOUR CIVILIZATION", theme.Eyebrow);
             civilization = GUILayout.SelectionGrid(civilization, civilizationNames, 3, GUILayout.Height(90));
-            GUILayout.Space(10); GUILayout.Label(specialties[civilization], theme.Heading);
-            GUILayout.Label("Civilizations share the same world and can join the same alliance.", theme.Body);
+            if (!advancedConnection)
+            {
+                GUILayout.Space(10); GUILayout.Label(specialties[civilization], theme.Heading);
+                GUILayout.Label("Civilizations share the same world and can join the same alliance.", theme.Body);
+            }
             GUILayout.Space(20); GUI.enabled = !joining && !string.IsNullOrWhiteSpace(playerName);
             if (GUILayout.Button(joining ? "Opening the gates…" : "Enter your kingdom", theme.Primary, GUILayout.Height(54))) StartCoroutine(Join());
             GUI.enabled = true;
-            GUILayout.Label("Your saved local profile resumes your existing city.", theme.Small);
+            GUILayout.Label("This device resumes your city using its saved session.", theme.Small);
             GUILayout.Space(18); advancedConnection = GUILayout.Toggle(advancedConnection, "Connection settings");
-            if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(38)); }
+            if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.6  ·  LOCAL KINGDOM SAVES", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.18  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()

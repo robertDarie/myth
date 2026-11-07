@@ -12,3 +12,18 @@ jobs:
           node-version: '24'
       - run: npm test
         working-directory: server
+
+  hosted-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate deployment configuration
+        run: docker compose -f ops/kingdom/compose.yaml config --quiet
+        env:
+          KINGDOM_DOMAIN: kingdom1.example.com
+          ACME_EMAIL: test@example.com
+          THRONES_JOIN_CODE: ci-validation-only
+      - name: Build kingdom image
+        run: docker build -f ops/kingdom/Dockerfile -t thrones-kingdom:0.18-test .
+      - name: Check container restart and backup restore
+        run: sh tools/test_hosted_kingdom.sh

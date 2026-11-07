@@ -84,3 +84,11 @@ Packaging now validates imported art and animation clips before building.
 Use the Art Review menu for native captures and Editor frame samples; these
 checks and the standalone Windows player still need a local run. See
 [the 0.17 guide](army-and-living-city-0.17.md).
+
+## Build 0.18
+
+Bundle version is 0.18.0; protocol 13/schema 11 remain unchanged. The builder
+also bundles `database.mjs` and `downtime.mjs` because HTTP imports them. Local
+playtests still use JSON and loopback. Connection settings now accept a private
+kingdom invitation code for hosted HTTPS play. Native Unity compilation remains
+pending. See [the hosted-server guide](hosting-and-persistence-0.18.md).

@@ -1,0 +1,10 @@
+{
+  email {$ACME_EMAIL}
+}
+{$KINGDOM_DOMAIN} {
+  encode gzip
+  request_body {
+    max_size 4KB
+  }
+  reverse_proxy kingdom:8080
+}

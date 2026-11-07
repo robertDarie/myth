@@ -144,8 +144,8 @@ function summon(world, p) {
   p.summonHistory.unshift({ id: world.job('summon', 1, {}, 1).id, commanderId: hero.id, rarity, duplicate, shards, number: p.summonCount });
   p.summonHistory.length = Math.min(20, p.summonHistory.length);
 }
-export function tickCity(world, p, dt) {
-  p.economyClock += dt;
+export function tickCity(world, p, dt, { production = true } = {}) {
+  p.economyClock += production ? dt : 0;
   while (p.economyClock >= 5) {
     p.economyClock -= 5;
     for (const b of BUILDINGS.filter(b => b.resource)) {

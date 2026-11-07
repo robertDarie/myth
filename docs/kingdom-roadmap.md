@@ -89,10 +89,12 @@ Extend the current roles/chat/markers rather than adding disconnected UI labels.
 
 ## Online foundation
 
-Hosted accounts, cross-device identity, durable database and kingdom services,
-idempotent economic commands, reconnect recovery, offline-time simulation,
-monitoring, backups, operator tooling and load/security tests. Local profile tokens
-and autosave files are not production accounts or online infrastructure.
+Version 0.18 provides transactional single-kingdom SQLite, keyed commands, bounded
+downtime progression, backup/restore checks and Docker/HTTPS operations files.
+Next: deploy the first private kingdom, real accounts/cross-device recovery,
+retained command retry keys in the client, off-site backups/alerts, load/security
+tests and later service scaling. Device-held tokens are not production accounts.
+See [the hosting guide](hosting-and-persistence-0.18.md).
 
 ## Art and usability across every milestone
 

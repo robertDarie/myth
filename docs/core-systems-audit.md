@@ -125,3 +125,11 @@ Authored weighted armies, eight animation takes, five civilization model sets,
 interactive city are implemented as an early art baseline. Native Unity and
 Windows checks are still pending; Blender export validation does not replace
 them. See [the 0.17 guide](army-and-living-city-0.17.md).
+
+## Persistence update 0.18
+
+A first single-writer SQLite kingdom store, restart catch-up, atomic command
+receipts, backup/restore checks and deployment files now exist. Local accounts
+remain device-held tokens; hosted account recovery, large populations, cross-device
+login and high availability remain missing. No public kingdom is deployed yet.
+See [the hosting guide](hosting-and-persistence-0.18.md).

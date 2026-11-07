@@ -1,0 +1,5 @@
+**
+!server/
+!server/*.mjs
+!server/package.json
+server/*.test.mjs

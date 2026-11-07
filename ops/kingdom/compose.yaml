@@ -1,0 +1,45 @@
+name: thrones-kingdom
+services:
+  kingdom:
+    build:
+      context: ../..
+      dockerfile: ops/kingdom/Dockerfile
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      THRONES_KINGDOM_ID: ${THRONES_KINGDOM_ID:-kingdom-001}
+      THRONES_JOIN_CODE: ${THRONES_JOIN_CODE:?Set an invitation code in .env}
+      THRONES_TRUST_PROXY: '1'
+    volumes:
+      - kingdom-data:/data
+    networks: [kingdom]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+  gateway:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ['80:80', '443:443']
+    environment:
+      KINGDOM_DOMAIN: ${KINGDOM_DOMAIN:?Set your DNS hostname in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set a certificate contact email in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - gateway-data:/data
+      - gateway-config:/config
+    networks: [kingdom]
+    depends_on:
+      kingdom: {condition: service_healthy}
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+networks:
+  kingdom:
+volumes:
+  kingdom-data:
+  gateway-data:
+  gateway-config:

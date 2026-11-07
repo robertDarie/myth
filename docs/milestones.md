@@ -71,3 +71,10 @@ formations, pooled effects, original synthesized audio, interactive city and
 native review/build preflight tools. Blender validates 288 deforming takes.
 Native Unity compilation/rendering and Windows performance remain pending.
 See [the implementation and review guide](army-and-living-city-0.17.md).
+
+## Hosted foundation 0.18
+
+Transactional SQLite, durable keyed receipts, failed-save rollback, downtime job
+completion, capped passive production, online backups, invitations and Docker/HTTPS
+operations files. Disconnects no longer cancel live orders. Hosting infrastructure
+and real accounts are not provisioned. See [the deployment guide](hosting-and-persistence-0.18.md).

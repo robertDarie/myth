@@ -1,0 +1,10 @@
+[Unit]
+Description=Thrones of Myth consistent kingdom backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/thrones-of-myth/ops/kingdom
+ExecStart=/bin/sh /opt/thrones-of-myth/ops/kingdom/backup.sh
+UMask=0077

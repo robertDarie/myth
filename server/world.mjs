@@ -251,8 +251,8 @@ export class World {
   job(type, duration, cost, amount) {
     return { id: randomUUID(), type, duration, remaining: duration, cost, amount };
   }
-  cityTick(p, dt) {
-    tickCity(this, p, dt); tickHospital(this, p, dt);
+  cityTick(p, dt, options = {}) {
+    tickCity(this, p, dt, options); tickHospital(this, p, dt);
     // One training lane: excess time carries into the next paid order.
     let remaining = dt;
     while (remaining > 0 && p.trainingQueue.length) {
@@ -268,7 +268,7 @@ export class World {
   expire(now) {
     // Saved cities and their alliance territory are never deleted for inactivity.
     for (const p of this.players.values()) if (!p.offline && now - p.lastSeen > 30 * 60_000) {
-      p.offline = true; for (const a of armyList(p)) if (!campaignFor(this, a.id)) { a.target = null; a.state = 'Offline'; }
+      p.offline = true; // Connection presence does not cancel accepted field orders.
     }
   }
   toSave() {

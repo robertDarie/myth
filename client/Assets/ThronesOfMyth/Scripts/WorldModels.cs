@@ -2,7 +2,7 @@ using System;
 
 namespace ThronesOfMyth
 {
-    [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; }
+    [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; public string joinCode; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
     [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId; public int count, troops, mythic, skillIndex; public UnitCounts units; }

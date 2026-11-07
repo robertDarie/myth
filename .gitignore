@@ -31,3 +31,9 @@ work/
 # Reproducible art-tool caches
 __pycache__/
 *.pyc
+
+# Local kingdom databases and private backups
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+ops/kingdom/backups/

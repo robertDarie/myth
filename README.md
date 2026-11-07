@@ -4,8 +4,12 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.17
+## Playable slice 0.18
 
+- Hosted-kingdom foundation: transactional SQLite, rollback on failed saves, keyed
+  command receipts, downtime progression, online backups and Docker/HTTPS deployment.
+- Disconnected players keep their accepted field orders in a running kingdom.
+- Private-alpha invitation codes and readiness checks; existing local saves still work.
 - Original weighted armies for all five civilizations, 11 named hero models and eight
   animation takes per model; typed formations, pooled combat effects and original audio.
 - An interactive living city with selectable institutions, visible construction,
@@ -95,6 +99,7 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[the hosting and persistence guide](docs/hosting-and-persistence-0.18.md),
 [the 0.17 army and living city guide](docs/army-and-living-city-0.17.md),
 [the 0.16 kingdom and art guide](docs/kingdom-and-art-0.16.md),
 [the 0.15 daily activity and alliance goals](docs/activity-and-alliance-goals-0.15.md),
@@ -120,5 +125,6 @@ Weighted army animations now have Blender round-trip checks; procedural actors
 remain a fallback. This is an early art baseline, not final production quality.
 Army FBXs use Git LFS: install Git LFS and run `git lfs pull` after updating.
 There is no city siege, field interception of rallies, online account system,
-production database, hosted kingdom service, or KvK yet. The CLI saves locally;
-world simulation pauses while the server is closed; UTC activity periods continue. See the playtest guide for save paths.
+production account service, large-scale hosted kingdom deployment, or KvK yet.
+The default CLI saves locally; hosted SQLite mode adds bounded downtime progress.
+Field simulation pauses while the server is closed; UTC activity periods continue. See the playtest guide for save paths.

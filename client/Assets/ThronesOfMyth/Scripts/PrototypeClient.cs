@@ -10,6 +10,7 @@ namespace ThronesOfMyth
     public sealed partial class PrototypeClient : MonoBehaviour
     {
         public string serverUrl = "http://127.0.0.1:8080";
+        private string kingdomJoinCode = "";
         private readonly string[] civilizationIds = { "greek", "egyptian", "norse", "chinese", "japanese" };
         private readonly string[] civilizationNames = { "Greek", "Egyptian", "Norse", "Chinese", "Japanese" };
         private readonly string[] specialties = { "+12% army damage · Minotaur", "+35% recovery · Sphinx Guardian", "+15% health · Frost Giant", "+25% gathering · Qilin Guardian", "+15% march speed · Tengu" };
@@ -366,7 +367,7 @@ namespace ThronesOfMyth
         private IEnumerator Join()
         {
             joining = true; worldReady = false; loadingError = ""; loadingStage = "Opening the kingdom gates";
-            var body = new JoinRequest { name = playerName, civilization = civilizationIds[civilization], resumeToken = PlayerPrefs.GetString(SessionKey, "") };
+            var body = new JoinRequest { name = playerName, civilization = civilizationIds[civilization], resumeToken = PlayerPrefs.GetString(SessionKey, ""), joinCode = kingdomJoinCode };
             using (var request = Request("/join", "POST", JsonUtility.ToJson(body)))
             {
                 yield return request.SendWebRequest();
