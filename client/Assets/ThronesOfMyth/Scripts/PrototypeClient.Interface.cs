@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -51,7 +51,7 @@ namespace ThronesOfMyth
         }
         private bool InterfaceBlocksPoint(Vector3 screenPoint)
         {
-            if (string.IsNullOrEmpty(token) || interfacePage != InterfacePage.World) return true;
+            if (LoadingActive || string.IsNullOrEmpty(token) || interfacePage != InterfacePage.World) return true;
             var p = new Vector2(screenPoint.x / InterfaceScale, (Screen.height - screenPoint.y) / InterfaceScale);
             if (p.y < 112 || p.y > ViewHeight - 94) return true;
             if (new Rect(20, 132, 282, 32).Contains(p)) return true;
@@ -91,6 +91,7 @@ namespace ThronesOfMyth
                 case "train": case "recruit": return "Recruitment has begun. New units will await you in city reserves.";
                 case "cancel-job": return "Work canceled. Resources returned to your treasury.";
                 case "reinforce": return "Your march has received its reinforcements.";
+                case "configure-march": return "Your formation is ready. Select a destination on the map.";
                 case "deploy-march": return "A new march awaits your command.";
                 case "disband-march": return "Your troops have returned to city reserves.";
                 case "research": return "The Athenaeum has begun its studies.";
@@ -124,11 +125,13 @@ namespace ThronesOfMyth
             var skinBefore = GUI.skin; var matrixBefore = GUI.matrix; var colorBefore = GUI.color;
             GUI.skin = theme.Skin;
             theme.ReducedMotion = reducedMotion;
+            commanderPreview?.SetVisible(interfacePage == InterfacePage.Heroes && !LoadingActive && showCommanderModel);
             if (map != null) map.reducedMotion = reducedMotion;
-            if (world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main); }
+            if (!LoadingActive && world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main); }
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(InterfaceScale, InterfaceScale, 1));
             GUI.color = Color.white;
-            if (string.IsNullOrEmpty(token)) RenderKingdomEntry();
+            if (LoadingActive) RenderLoadingScreen();
+            else if (string.IsNullOrEmpty(token)) RenderKingdomEntry();
             else
             {
                 DrawTopHud();
@@ -271,7 +274,7 @@ namespace ThronesOfMyth
                     bool unlocked = i < me.marchSlots; theme.Panel(r, false, true);
                     theme.Icon(new Rect(x + 15, r.y + (r.height - 25) / 2, 25, 25), unlocked ? "army" : "lock", unlocked ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted);
                     theme.Text(new Rect(x + 57, r.y + 5, 115, r.height - 10), unlocked ? "+ Deploy march\nReady reserves" : "March " + (i + 1) + "\nUnlock in Age " + (i + 1), theme.Small);
-                    if (GUI.Button(r, GUIContent.none, GUIStyle.none)) OpenInterface(unlocked ? InterfacePage.Marches : InterfacePage.City);
+                    if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { if (unlocked) BeginFormation(false); else OpenInterface(InterfacePage.City); }
                 }
             }
         }
@@ -318,12 +321,13 @@ namespace ThronesOfMyth
         {
             MythInterfaceTheme.Fill(new Rect(0, 112, ViewWidth, ViewHeight - 212), new Color(0.015f, 0.03f, 0.045f, 0.72f));
             var r = WindowRect; theme.Panel(r);
-            string title = interfacePage == InterfacePage.City ? "Your civilization" : interfacePage == InterfacePage.Heroes ? "Hall of Commanders" : interfacePage == InterfacePage.Temple ? "Temple of Echoes" : interfacePage == InterfacePage.Marches ? "March command" : interfacePage.ToString();
+            string title = interfacePage == InterfacePage.City ? "Your civilization" : interfacePage == InterfacePage.Heroes ? "Hall of Commanders" : interfacePage == InterfacePage.Temple ? "Temple of Echoes" : interfacePage == InterfacePage.Formation ? "Assemble your march" : interfacePage == InterfacePage.Marches ? "March command" : interfacePage.ToString();
             theme.Text(new Rect(r.x + 25, r.y + 16, 650, 38), title, theme.Title);
             theme.Text(new Rect(r.xMax - 300, r.y + 26, 220, 22), "Your kingdom continues in real time", theme.Small);
             if (theme.Button(new Rect(r.xMax - 57, r.y + 14, 38, 38), "×")) { CloseInterface(); return; }
             var inner = new Rect(r.x + 20, r.y + 70, r.width - 40, r.height - 90);
-            if (interfacePage == InterfacePage.City) RenderCityWindow(inner);
+            if (interfacePage == InterfacePage.Formation) RenderFormationWindow(inner);
+            else if (interfacePage == InterfacePage.City) RenderCityWindow(inner);
             else if (interfacePage == InterfacePage.Heroes) RenderHeroesWindow(inner);
             else if (interfacePage == InterfacePage.Temple) RenderTempleWindow(inner);
             else if (interfacePage == InterfacePage.Research) RenderResearchWindow(inner);

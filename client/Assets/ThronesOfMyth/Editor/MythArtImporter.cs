@@ -22,6 +22,7 @@ namespace ThronesOfMyth.Editor
         {
             AssetDatabase.ImportAsset("Assets/ThronesOfMyth/Resources/Art/CommanderAtlas.png", ImportAssetOptions.ForceUpdate);
             AssetDatabase.ImportAsset("Assets/ThronesOfMyth/Resources/Art/SanctuaryDawn.png", ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset("Assets/ThronesOfMyth/Resources/Art/LoadingMarch.png", ImportAssetOptions.ForceUpdate);
         }
     }
 }

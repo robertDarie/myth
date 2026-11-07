@@ -7,13 +7,14 @@ namespace ThronesOfMyth
     // Original painted atlas; cell order is independent of the server roster order.
     public sealed class MythArtwork : IDisposable
     {
-        private readonly Texture2D atlas = Resources.Load<Texture2D>("Art/CommanderAtlas");
-        private readonly Texture2D sanctuary = Resources.Load<Texture2D>("Art/SanctuaryDawn");
+        private Texture2D atlas;
+        private Texture2D sanctuary, march;
         private readonly Dictionary<string, Texture2D> medallions = new Dictionary<string, Texture2D>();
         private static readonly string[] cells = { "captain", "warden", "scout", "rune-seer", "atalanta", "mulan", "tomoe", "horus-champion", "heracles", "sigurd", "wukong" };
         private Color32[] source;
         private bool UV(string id, out Rect rect)
         {
+            if (atlas == null) atlas = Resources.Load<Texture2D>("Art/CommanderAtlas");
             int index = Array.IndexOf(cells, id);
             rect = index < 0 ? Rect.zero : new Rect(index % 3 / 3f + 0.002f, 1 - (index / 3 + 1) / 4f + 0.002f, 1 / 3f - 0.004f, 0.25f - 0.004f);
             return index >= 0 && atlas != null;
@@ -48,11 +49,14 @@ namespace ThronesOfMyth
             }
             GUI.DrawTexture(rect, texture); return true;
         }
-        public void Backdrop(Rect rect, float opacity = 1)
+        public void Backdrop(Rect rect, float opacity = 1, bool marching = false)
         {
-            if (sanctuary == null) return;
+            if (sanctuary == null) sanctuary = Resources.Load<Texture2D>("Art/SanctuaryDawn");
+            if (marching && march == null) march = Resources.Load<Texture2D>("Art/LoadingMarch");
+            var artwork = marching && march != null ? march : sanctuary;
+            if (artwork == null) return;
             var color = GUI.color; GUI.color = new Color(1, 1, 1, opacity);
-            GUI.DrawTexture(rect, sanctuary, ScaleMode.ScaleAndCrop); GUI.color = color;
+            GUI.DrawTexture(rect, artwork, ScaleMode.ScaleAndCrop); GUI.color = color;
         }
         public void Dispose() { foreach (var texture in medallions.Values) UnityEngine.Object.Destroy(texture); medallions.Clear(); source = null; }
     }

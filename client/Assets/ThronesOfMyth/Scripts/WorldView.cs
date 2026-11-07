@@ -57,16 +57,16 @@ namespace ThronesOfMyth
             var piece = new Piece { root = root, destination = root.transform.position, color = color, kind = kind, moving = kind == "army" };
             pieces.Add(id, piece); return piece;
         }
-        private void Put(HashSet<string> seen, string id, string kind, float x, float z, Color color, string label, float health = -1, string variant = "", int mythic = 0)
+        private void Put(HashSet<string> seen, string id, string kind, float x, float z, Color color, string label, float health = -1, string variant = "", int mythic = 0, UnitCounts units = null, string commanderId = "")
         {
             seen.Add(id);
             if (!pieces.TryGetValue(id, out var piece)) piece = Create(id, kind, x, z, color);
             piece.destination = new Vector3(x, 0, z); piece.label = label; piece.color = color; piece.health = health;
-            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic);
+            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : units.infantry + "," + units.archers + "," + units.cavalry);
             if (piece.visualKey != visualKey)
             {
                 if (piece.actor != null) { piece.actor.gameObject.SetActive(false); Destroy(piece.actor.gameObject); }
-                piece.actor = art.Build(piece.root.transform, kind, variant, color, mythic); piece.visualKey = visualKey;
+                piece.actor = art.Build(piece.root.transform, kind, variant, color, mythic, units, commanderId); piece.visualKey = visualKey;
             }
             if (piece.actor.fire != null) piece.actor.fire.gameObject.SetActive(health != 0);
         }
@@ -76,7 +76,7 @@ namespace ThronesOfMyth
             foreach (var p in world.armies)
             {
                 var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
-                Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic);
+                Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic, p.units, p.commanderId);
                 pieces[p.id].actor.Observe(p);
             }
             foreach (var p in world.players)
@@ -100,6 +100,8 @@ namespace ThronesOfMyth
             foreach (var pair in pieces)
             {
                 var piece = pair.Value;
+                if (piece.moving && (piece.root.transform.position - piece.destination).sqrMagnitude > 144)
+                { piece.root.transform.position = piece.destination; piece.actor.RebaseMotion(); }
                 piece.root.transform.position = piece.moving ? Vector3.Lerp(piece.root.transform.position, piece.destination, 1 - Mathf.Exp(-14 * Time.deltaTime)) : piece.destination;
                 if (piece.actor != null) { piece.actor.reducedMotion = reducedMotion; piece.actor.SetSelected(pair.Key == selectedId); piece.actor.SetWideView(wide); }
             }

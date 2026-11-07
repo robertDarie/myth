@@ -7,6 +7,8 @@ namespace ThronesOfMyth
     public sealed partial class PrototypeClient
     {
         private int inspectedTechnology;
+        private CommanderPreview commanderPreview;
+        private bool showCommanderModel;
         private void RenderCityWindow(Rect r)
         {
             string[] labels = { "Training grounds", "Athenaeum", "Temple", "Forge", "Market" };
@@ -90,7 +92,14 @@ namespace ThronesOfMyth
             var selected = Array.Find(world.commanders, h => h.id == inspectedHeroId) ?? world.commanders[0];
             var progress = Array.Find(me.heroProgress, h => h.id == selected.id);
             bool recruited = Array.IndexOf(me.ownedCommanders, selected.id) >= 0;
-            theme.PortraitCard(new Rect(detail.x + 24, detail.y + 22, 156, 208), selected.id, RarityColor(selected.color));
+            var portrait = new Rect(detail.x + 24, detail.y + 22, 156, 208);
+            if (showCommanderModel)
+            {
+                if (commanderPreview == null) commanderPreview = new CommanderPreview();
+                commanderPreview.Draw(portrait, selected, theme, reducedMotion);
+            }
+            else theme.PortraitCard(portrait, selected.id, RarityColor(selected.color));
+            if (theme.Button(new Rect(detail.x + 24, detail.y + 237, 156, 27), showCommanderModel ? "Painted portrait" : "Animation preview")) showCommanderModel = !showCommanderModel;
             theme.Text(new Rect(detail.x + 205, detail.y + 20, detail.width - 229, 22), selected.rarity.ToUpperInvariant() + " COMMANDER", theme.Eyebrow);
             theme.Text(new Rect(detail.x + 205, detail.y + 50, detail.width - 229, 42), selected.name, theme.Title);
             theme.Text(new Rect(detail.x + 205, detail.y + 98, detail.width - 229, 54), selected.description, theme.Body);
@@ -108,7 +117,7 @@ namespace ThronesOfMyth
                 string action = ActiveArmy.commanderId == selected.id ? "Leading selected march" : AssignedElsewhere(selected.id) ? "Assigned to another march" : CanEditArmy ? "Assign to selected march" : "Return selected march home to assign";
                 if (theme.Button(actions, action, true, CanEditArmy && ActiveArmy.commanderId != selected.id && !AssignedElsewhere(selected.id) && !processing)) Send("commander", selected.id);
             }
-            GUILayout.BeginArea(new Rect(detail.x + 24, detail.y + 251, detail.width - 48, detail.height - 266));
+            GUILayout.BeginArea(new Rect(detail.x + 24, detail.y + 278, detail.width - 48, detail.height - 293));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
             if (recruited && progress != null)
             {
@@ -292,8 +301,12 @@ namespace ThronesOfMyth
             theme.Text(new Rect(r.x + 83, r.y + 16, 490, 32), title, theme.Heading);
             theme.Text(new Rect(r.x + 83, r.y + 55, 450, 27), subtitle, theme.Small);
             if (health >= 0) theme.Bar(new Rect(r.x + 83, r.y + 89, 290, 8), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
-            theme.Text(new Rect(r.x + 83, r.y + 113, 320, 37), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
+            if (city == null || city.id != playerId) theme.Text(new Rect(r.x + 83, r.y + 113, 320, 37), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
             if (theme.Button(new Rect(r.xMax - 38, r.y + 7, 28, 27), "×")) { selectedId = ""; map.selectedId = ""; }
+            if (city != null && city.id == playerId)
+            {
+                if (theme.Button(new Rect(r.x + 18, r.y + 112, 140, 36), "Prepare march")) PrepareCityMarch();
+            }
             if (theme.Button(new Rect(r.xMax - 208, r.y + 102, 190, 46), action, true, enabled)) perform?.Invoke();
         }
     }

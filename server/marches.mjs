@@ -1,3 +1,4 @@
+import { TROOP_TYPES, selection, readyFor, transfer, unitTotal } from './troops.mjs';
 import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
 import { age, armyList, ensureHero } from './progression.mjs';
@@ -6,18 +7,17 @@ const point = c => [c.x, c.z].every(n => Number.isFinite(n) && n >= 1 && n <= 79
 export function marchCommand(world, p, c, fail) {
   if (c.type === 'deploy-march') {
     if (armyList(p).length >= age(p).marches) fail('Reach the next age to unlock another march (maximum five).');
-    const troops = c.troops ?? 5, mythic = c.mythic ?? 0;
-    if (!Number.isInteger(troops) || troops < 0 || troops % 5 !== 0 || !Number.isInteger(mythic) || mythic < 0 || (troops < 5 && mythic < 1)) fail('Choose multiples of five troops and whole mythic units.');
-    if (p.reserveTroops < troops || p.reserveMythic < mythic) fail('Not enough ready reserves. Train units first.');
+    const chosen = selection(c, fail), { troops, mythic, units } = chosen;
+    if (!readyFor(p, null, chosen)) fail('Not enough ready reserves of that troop type. Train units first.');
     if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
     const a = { id: randomUUID(), ownerId: p.id, name: p.name + ' · March ' + (p.nextMarchNumber++),
       commanderId: c.targetId, equippedRelic: '', x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ,
-      troops, mythic, health: 1, xp: 0, level: 1, rage: 0, shield: 0, shieldTime: 0, lastSkill: '', skillCasts: 0,
+      troops, mythic, units, health: 1, xp: 0, level: 1, rage: 0, shield: 0, shieldTime: 0, lastSkill: '', skillCasts: 0,
       target: null, state: 'Idle', cooldown: 0, gatherClock: 0, recovery: 0 };
-    p.reserveTroops -= troops; p.reserveMythic -= mythic;
+    transfer(p, null, chosen);
     ensureHero(p, c.targetId); p.marches.push(a); a.health = world.stats(a).maxHealth; return true;
   }
-  const types = ['move', 'attack', 'gather', 'return', 'stop', 'commander', 'reinforce', 'flag', 'capture', 'equip-relic', 'unequip-relic', 'disband-march'];
+  const types = ['move', 'attack', 'gather', 'return', 'stop', 'commander', 'reinforce', 'flag', 'capture', 'equip-relic', 'unequip-relic', 'disband-march', 'configure-march'];
   if (!types.includes(c.type)) return false;
   const a = armyList(p).find(a => a.id === (c.marchId || p.id));
   if (!a) fail('That march does not belong to your city.');
@@ -46,17 +46,29 @@ export function marchCommand(world, p, c, fail) {
       if (!p.ownedCommanders.includes(hero.id)) { world.spend(p, { gold: hero.cost }); p.ownedCommanders.push(hero.id); }
       ensureHero(p, hero.id); a.commanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); a.rage = 0; return true;
     }
+    case 'configure-march': {
+      world.requireHome(a);
+      if (a.health + 0.001 < world.stats(a).maxHealth) fail('Recover fully at home before assembling a different formation.');
+      const chosen = selection(c, fail);
+      if (!readyFor(p, a, chosen)) fail('Not enough ready reserves of that troop type.');
+      const commanderId = c.targetId || a.commanderId;
+      if (!p.ownedCommanders.includes(commanderId) || armyList(p).some(other => other.id !== a.id && other.commanderId === commanderId)) fail('Choose a recruited commander who is not leading another march.');
+      transfer(p, a, chosen); ensureHero(p, commanderId); a.commanderId = commanderId;
+      a.health = world.stats(a).maxHealth; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.cooldown = 0; a.state = 'Idle'; return true;
+    }
     case 'reinforce': {
       world.requireHome(a); if (!p.reserveTroops && !p.reserveMythic) fail('No reserves are ready.');
       const oldMax = world.stats(a).maxHealth;
-      a.troops += p.reserveTroops; a.mythic += p.reserveMythic; p.reserveTroops = 0; p.reserveMythic = 0;
+      for (const t of TROOP_TYPES) { a.units[t.id] += p.reserveUnits[t.id]; p.reserveUnits[t.id] = 0; }
+      a.troops = unitTotal(a.units); a.mythic += p.reserveMythic; p.reserveTroops = 0; p.reserveMythic = 0;
       a.health = Math.min(world.stats(a).maxHealth, a.health + world.stats(a).maxHealth - oldMax); return true;
     }
     case 'disband-march':
       world.requireHome(a);
       if (a.id === p.id) fail('The founding march stays assigned.');
       if (a.health + 0.001 < world.stats(a).maxHealth) fail('Recover fully at home before returning this march to reserves.');
-      p.reserveTroops += a.troops; p.reserveMythic += a.mythic; p.marches = p.marches.filter(other => other.id !== a.id); return true;
+      for (const t of TROOP_TYPES) p.reserveUnits[t.id] += a.units[t.id];
+      p.reserveTroops = unitTotal(p.reserveUnits); p.reserveMythic += a.mythic; p.marches = p.marches.filter(other => other.id !== a.id); return true;
     case 'unequip-relic':
       world.requireHome(a); a.equippedRelic = ''; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
     case 'equip-relic':

@@ -8,10 +8,10 @@ connections, capture progress and gate access. Clients submit intent over HTTP
 and render snapshots at 5 Hz; the server simulates at 10 Hz. Unity smooths army
 positions locally and never chooses damage or rewards.
 
-`content.mjs` defines five civilizations, four commanders, seven camps, and five
+`content.mjs` defines five civilizations, eleven commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 5
+`http.mjs` provides a small versioned development protocol. Snapshot version 6
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -26,7 +26,9 @@ Commands use `type` plus `targetId`, `x`/`z`, or `name` as appropriate:
 `commander`, `unlock-commander`, `reinforce`, `cancel-job`, `quest`,
 `alliance-create`, `alliance-join`, `flag`, `capture`, `building-upgrade`,
 `research`, `summon`, `temple-offering`, `buy-sigil`, `upgrade-commander`, `trade`,
-`craft`, `equip-relic`, `alliance-help`.
+`craft`, `equip-relic`, `alliance-help`, `deploy-march`, `configure-march`, `disband-march`.
+`troops.mjs` defines typed rosters, exact selection and validated unit transfers;
+`marches.mjs` applies home, recovery and unique commander requirements.
 Invalid commands return HTTP 400 with `{ error }`; unknown sessions return 401.
 Bodies are limited to 4 KiB and sessions to 32. Tokens never appear in snapshots.
 
@@ -76,7 +78,7 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 3 stores (and migrates schemas 1/2 without resetting progression) queues, reserves, map state and sessions. A loader validates
+Save schema 4 stores typed troops (and migrates schemas 1/2/3 without resetting progression) queues, reserves, map state and sessions. A loader validates
 the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
 field orders while retaining positions and all progression. The package launcher

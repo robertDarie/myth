@@ -5,17 +5,20 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId; public int count, troops, mythic, skillIndex; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId; public int count, troops, mythic, skillIndex; public UnitCounts units; }
+    [Serializable] public sealed class UnitCounts { public int infantry, archers, cavalry; public int Total => infantry + archers + cavalry; public UnitCounts Copy() => new UnitCounts { infantry = infantry, archers = archers, cavalry = cavalry }; }
+    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration; public int cityLevel; public ResourceAmounts cost; }
     [Serializable] public sealed class ArmyData
     {
-        public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill;
-        public float x, z, homeX, homeZ, targetX, targetZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
+        public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind;
+        public float x, z, homeX, homeZ, targetX, targetZ, attackX, attackZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
         public float xp;
         public int rage, shield, skillCasts, attackSequence, marchSlots, constructionSlots, deployedTroops, deployedMythic;
         public bool questClaimed, hasOrder, offline;
         public int reserveTroops, reserveMythic, stone, aether, sigils, troopCapacity, mythicCapacity, passiveLimit, epicPity, legendaryPity, offeringAmount;
         public bool offeringAvailable;
+        public UnitCounts units, reserveUnits;
         public string equippedRelic;
         public string[] ownedRelics;
         public QueueJob research, crafting;
@@ -44,12 +47,13 @@ namespace ThronesOfMyth
     [Serializable] public sealed class SiteData { public string id, name, kind, description, allianceId, challengerId; public float x, z, progress; }
     [Serializable] public sealed class FlagData { public string id, allianceId; public float x, z; }
     [Serializable] public sealed class AllianceData { public string id, name, leaderId; public int members; }
-    [Serializable] public sealed class CommanderData { public string id, name, rarity, color, description; public int cost; }
+    [Serializable] public sealed class CommanderData { public string id, name, rarity, color, description, skillKind; public int cost; }
     [Serializable] public sealed class CivilizationData { public string id, name, specialty, mythic; }
     [Serializable] public sealed class EventData { public float time; public string message; }
     [Serializable] public sealed class WorldSnapshot
     {
         public int version, size;
+        public TroopTypeData[] troopTypes;
         public float time;
         public SaveStatus persistence;
         public RelicData[] relics;

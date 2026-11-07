@@ -12,7 +12,7 @@ function deploy(w,p,id,troops=5) {
 
 test('five ages unlock exactly one through five real march slots', () => {
   const {w,p} = setup(); assert.equal(AGES.length,5);
-  p.reserveTroops = 25; unlock(w,p,'warden');
+  p.reserveTroops = 25;p.reserveUnits.infantry=25; unlock(w,p,'warden');
   assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'warden',troops:5}),/next age/);
   const ids=['warden','scout','atalanta','mulan'];
   for (let level=2;level<=5;level++) {
@@ -30,7 +30,7 @@ test('march deployment consumes real reserves and rejects duplicate commanders, 
   assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'warden',troops:5}),/reserves/);
   cmd(w,p,'train'); advance(w,9); assert.equal(p.reserveTroops,5);
   cmd(w,p,'deploy-march',{targetId:'warden',troops:5}); assert.equal(p.reserveTroops,0); assert.equal(p.marches[0].troops,5);
-  p.reserveTroops=20;
+  p.reserveTroops=20;p.reserveUnits.infantry=20;
   assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'warden',troops:5}),/another march/);
   for (const troops of [-1,1,2.5,'5']) assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'scout',troops}));
   assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'heracles',troops:5}),/recruited/);
@@ -38,7 +38,7 @@ test('march deployment consumes real reserves and rejects duplicate commanders, 
 });
 
 test('independent gathering marches contribute to one treasury; player tokens cannot command another city march', () => {
-  const {w,p} = setup(); p.cityLevel=2;p.reserveTroops=5;const a=deploy(w,p,'scout');
+  const {w,p} = setup(); p.cityLevel=2;p.reserveTroops=5;p.reserveUnits.infantry=5;const a=deploy(w,p,'scout');
   const wood=w.nodes[0], gold=w.nodes[1];p.x=wood.x;p.z=wood.z;a.x=gold.x;a.z=gold.z;
   cmd(w,p,'gather',{targetId:wood.id});cmd(w,p,'gather',{targetId:gold.id,marchId:a.id});
   const before={wood:p.wood,gold:p.gold};advance(w,3);
@@ -49,7 +49,7 @@ test('independent gathering marches contribute to one treasury; player tokens ca
 });
 
 test('global training capacity counts all marches and commander/relic assignments are unique', () => {
-  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=40;const a=deploy(w,p,'scout',40);
+  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=40;p.reserveUnits.infantry=40;const a=deploy(w,p,'scout',40);
   assert.throws(()=>cmd(w,p,'train'),/capacity/);
   assert.throws(()=>cmd(w,p,'commander',{targetId:'scout'}),/already leads/);
   p.ownedRelics.push('aegis');cmd(w,p,'equip-relic',{targetId:'aegis'});
@@ -57,7 +57,7 @@ test('global training capacity counts all marches and commander/relic assignment
 });
 
 test('multiple marches cannot multiply a city kill reward or duplicate commander experience', () => {
-  const {w,p}=setup();p.cityLevel=3;p.reserveTroops=10;
+  const {w,p}=setup();p.cityLevel=3;p.reserveTroops=10;p.reserveUnits.infantry=10;
   deploy(w,p,'warden');deploy(w,p,'scout');const camp=w.camps[0];
   for(const a of armyList(p)){a.x=camp.x-1;a.z=camp.z;cmd(w,p,'attack',{targetId:camp.id,marchId:a.id});}
   const gold=p.gold;advance(w,15);assert.equal(camp.health,0);assert.equal(p.gold-gold,50);assert.equal(p.kills,1);
@@ -66,7 +66,7 @@ test('multiple marches cannot multiply a city kill reward or duplicate commander
 });
 
 test('returning a secondary march to reserves requires full recovery and never duplicates units', () => {
-  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=5;const a=deploy(w,p,'warden');
+  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=5;p.reserveUnits.infantry=5;const a=deploy(w,p,'warden');
   a.health=1;assert.throws(()=>cmd(w,p,'disband-march',{marchId:a.id}),/Recover fully/);
   advance(w,10);cmd(w,p,'disband-march',{marchId:a.id});assert.equal(p.reserveTroops,5);assert.equal(p.marches.length,0);
   assert.throws(()=>cmd(w,p,'disband-march',{marchId:a.id}));assert.equal(p.reserveTroops,5);
@@ -122,14 +122,14 @@ test('rage triggers an automatic shield, damage, or bounded healing and expertis
   assert.ok(expertDamage>activeSkill(p,p,{damage:10,maxHealth:100}));
 });
 
-test('five-march positions, both construction jobs and commander skills survive schema-3 reload', () => {
-  const {w,p,session}=setup();p.cityLevel=5;p.buildings.builders=1;p.reserveTroops=20;
+test('five-march positions, both construction jobs and commander skills survive schema-4 reload', () => {
+  const {w,p,session}=setup();p.cityLevel=5;p.buildings.builders=1;p.reserveTroops=20;p.reserveUnits.infantry=20;
   for(const id of['warden','scout','atalanta','mulan'])deploy(w,p,id);
   cmd(w,p,'building-upgrade',{targetId:'oracle'});cmd(w,p,'building-upgrade',{targetId:'quarry'});
   cmd(w,p,'move',{marchId:p.marches[0].id,x:20,z:20});advance(w,2);
   const position=p.marches[0].x, restored=World.fromSave(w.toSave()),q=restored.authenticate(session.token);
   assert.equal(armyList(q).length,5);assert.equal(constructionJobs(q).length,2);assert.equal(crews(q),2);
-  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,3);
+  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,4);
   advance(restored,11);assert.equal(q.buildings.oracle,1);assert.equal(q.buildings.quarry,1);
 });
 
@@ -144,7 +144,7 @@ test('schema-2 migration preserves the founding army, paid job and legacy comman
 });
 
 test('a secondary march can capture for its owner while the founding march gathers', () => {
-  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=5;const a=deploy(w,p,'scout');
+  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=5;p.reserveUnits.infantry=5;const a=deploy(w,p,'scout');
   cmd(w,p,'alliance-create',{name:'Marching Oath'});
   w.flags.push({id:'territory',allianceId:p.allianceId,x:20,z:20});
   a.x=20;a.z=23;cmd(w,p,'capture',{marchId:a.id,targetId:'shrine-dawn'});
@@ -157,7 +157,7 @@ test('six stars cap a commander at level 60, and a relic can be unequipped befor
   cmd(w,p,'promote-commander',{targetId:'captain'});assert.equal(r.stars,6);assert.equal(r.skills.length,4);
   r.xp=5900;assert.equal(heroLevel(r),60);assert.throws(()=>cmd(w,p,'promote-commander',{targetId:'captain'}));
   assert.throws(()=>cmd(w,p,'mentor-commander',{targetId:'captain'}));
-  p.cityLevel=2;p.reserveTroops=5;const a=deploy(w,p,'scout');p.ownedRelics.push('aegis');
+  p.cityLevel=2;p.reserveTroops=5;p.reserveUnits.infantry=5;const a=deploy(w,p,'scout');p.ownedRelics.push('aegis');
   cmd(w,p,'equip-relic',{targetId:'aegis'});cmd(w,p,'unequip-relic');
   cmd(w,p,'equip-relic',{targetId:'aegis',marchId:a.id});assert.equal(a.equippedRelic,'aegis');assert.equal(p.equippedRelic,'');
 });

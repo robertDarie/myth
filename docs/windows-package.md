@@ -68,3 +68,5 @@ launch, PowerShell launcher behavior or installer execution. After building:
 4. Check a folder path with spaces, a second launch, and a busy port 8080.
 5. If generated, install the Setup executable, launch via its shortcut, then
    uninstall through Windows Installed apps.
+
+For 0.8 loading, troop selection and model previews, see [march assembly and presentation](marches-and-presentation-0.8.md). Close the old server before launching protocol 6.

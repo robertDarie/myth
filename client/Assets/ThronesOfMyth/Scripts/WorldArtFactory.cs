@@ -58,16 +58,27 @@ namespace ThronesOfMyth
             Roof(p, 2.9f, 3.6f, 3.4f, bronze);
             if (grand) { Pillar(p, 0, 3.6f, 0, 0.5f, 0.8f, bronze); Ball(p, 0, 4.1f, 0, 0.7f, 0.7f, 0.7f, team); }
         }
-        public WorldActorAnimation Build(Transform parent, string kind, string variant, Color team, int mythic = 0)
+        public WorldActorAnimation Build(Transform parent, string kind, string variant, Color team, int mythic = 0, UnitCounts units = null, string commanderId = "")
         {
             var root = new GameObject("Artwork · " + variant).transform; root.SetParent(parent, false);
             var actor = root.gameObject.AddComponent<WorldActorAnimation>(); actor.artwork = root;
             if (kind == "army")
             {
-                for (int i = 0; i < 3; i++) Soldier(root, new Vector3((i - 1) * 0.65f, 0, i == 1 ? 0.45f : 0), team, variant, actor, i);
-                for (int i = 0; i < Mathf.Min(3, mythic); i++) Beast(root, new Vector3(1.7f + i * 1.45f, 0, 0), variant, team);
+                units = units ?? new UnitCounts { infantry = 3 };
+                var types = new List<string>();
+                foreach (var type in new[] { "infantry", "archers", "cavalry" })
+                {
+                    int count = type == "infantry" ? units.infantry : type == "archers" ? units.archers : units.cavalry;
+                    if (count > 0) types.Add(type);
+                }
+                int proxies = Mathf.Min(3, units.Total);
+                for (int i = 0; i < proxies; i++) Soldier(root, new Vector3((i - (proxies - 1) / 2f) * 0.85f, 0, -0.45f), team, variant, actor, types[i % types.Count]);
+                Commander(root, commanderId, team, actor);
+                actor.projectile = Box(root, 0, 1.4f, 0, 0.06f, 0.06f, 0.5f, bronze); actor.projectile.name = "Arrow visual"; actor.projectile.gameObject.SetActive(false);
+                for (int i = 0; i < Mathf.Min(3, mythic); i++) Beast(root, new Vector3(1.7f + i * 1.45f, 0, 0), variant, team, actor);
                 actor.selection = Ring(root, 1.5f, team, 0.08f).gameObject; actor.selection.SetActive(false);
-                actor.skill = Ring(root, 1.7f, new Color(0.54f, 0.86f, 0.96f), 0.15f).gameObject; actor.skill.SetActive(false);
+                actor.skillLine = Ring(root, 1.7f, new Color(1, 0.72f, 0.3f), 0.15f); actor.skill = actor.skillLine.gameObject; actor.skill.SetActive(false);
+                actor.damageMaterial = actor.skillLine.sharedMaterial; actor.healMaterial = MaterialFor(new Color(0.4f, 0.9f, 0.65f)); actor.shieldMaterial = MaterialFor(new Color(0.5f, 0.8f, 1));
                 actor.shield = Ring(root, 1.9f, new Color(0.45f, 0.72f, 0.93f), 0.10f).gameObject; actor.shield.SetActive(false);
             }
             else if (kind == "city") City(root, variant, team);
@@ -138,38 +149,112 @@ namespace ThronesOfMyth
                 }
             }
         }
-        private void Soldier(Transform root, Vector3 offset, Color team, string culture, WorldActorAnimation actor, int index)
+        private Transform Pivot(Transform parent, string name, Vector3 at)
         {
-            var soldier = new GameObject("Formation soldier").transform; soldier.SetParent(root, false); soldier.localPosition = offset; actor.soldiers.Add(soldier.gameObject);
-            Box(soldier, 0, 0.88f, 0, 0.42f, 0.55f, 0.32f, team);
-            Ball(soldier, 0, 1.38f, 0, 0.39f, 0.42f, 0.38f, stone);
-            Ball(soldier, 0, 1.55f, 0, 0.43f, 0.22f, 0.42f, culture == "norse" ? darkStone : bronze);
-            Box(soldier, 0, 1.33f, 0.18f, 0.22f, 0.07f, 0.05f, timber);
-            var left = Box(soldier, -0.13f, 0.34f, 0, 0.15f, 0.6f, 0.17f, darkStone);
-            var right = Box(soldier, 0.13f, 0.34f, 0, 0.15f, 0.6f, 0.17f, darkStone);
-            var weapon = new GameObject("Weapon arm").transform; weapon.SetParent(soldier, false); weapon.localPosition = new Vector3(0.30f, 1.05f, 0);
-            Box(weapon, 0, -0.12f, 0, 0.15f, 0.45f, 0.17f, bronze);
-            Box(weapon, 0, 0.25f, 0.16f, 0.06f, 1.5f, 0.06f, timber);
-            Box(weapon, 0, 1.04f, 0.16f, 0.11f, 0.27f, 0.08f, stone);
-            var shield = Pillar(soldier, -0.30f, 0.98f, 0.1f, 0.51f, 0.12f, bronze); shield.localRotation = Quaternion.Euler(90, 0, 0);
-            actor.legs.Add(left); actor.legs.Add(right); actor.weapons.Add(weapon);
+            var pivot = new GameObject(name).transform; pivot.SetParent(parent, false); pivot.localPosition = at; return pivot;
         }
-        private void Beast(Transform root, Vector3 offset, string culture, Color team)
+        private WorldActorAnimation.Rig Soldier(Transform root, Vector3 offset, Color team, string culture, WorldActorAnimation actor, string type, bool commander = false)
+        {
+            var unit = Pivot(root, commander ? "Commander" : type + " formation proxy", offset);
+            var rig = new WorldActorAnimation.Rig { root = unit, ranged = type == "archers", mounted = type == "cavalry", commander = commander };
+            actor.rigs.Add(rig); if (!commander) actor.soldiers.Add(unit.gameObject);
+            rig.bodyRest = Vector3.up * (rig.mounted ? 0.65f : 0);
+            rig.body = Pivot(unit, "Breathing torso", rig.bodyRest);
+            Box(rig.body, 0, 0.88f, 0, 0.42f, 0.55f, 0.32f, team);
+            Ball(rig.body, 0, 1.38f, 0, 0.39f, 0.42f, 0.38f, stone);
+            Ball(rig.body, 0, 1.55f, 0, 0.43f, 0.22f, 0.42f, type == "archers" ? team * 0.5f : culture == "norse" ? darkStone : bronze);
+            Box(rig.body, 0, 1.33f, 0.18f, 0.22f, 0.07f, 0.05f, timber);
+            rig.leftLeg = Pivot(rig.body, "Left hip", new Vector3(-0.13f, 0.62f, 0));
+            rig.rightLeg = Pivot(rig.body, "Right hip", new Vector3(0.13f, 0.62f, 0));
+            Box(rig.leftLeg, 0, -0.29f, 0, 0.15f, 0.58f, 0.17f, darkStone);
+            Box(rig.rightLeg, 0, -0.29f, 0, 0.15f, 0.58f, 0.17f, darkStone);
+            rig.weapon = Pivot(rig.body, "Weapon shoulder", new Vector3(0.3f, 1.08f, 0));
+            rig.offhand = Pivot(rig.body, "Offhand shoulder", new Vector3(-0.3f, 1.08f, 0));
+            Box(rig.weapon, 0, -0.22f, 0, 0.15f, 0.45f, 0.17f, bronze);
+            Box(rig.offhand, 0, -0.22f, 0, 0.15f, 0.45f, 0.17f, bronze);
+            if (rig.ranged)
+            {
+                var bow = Pivot(rig.offhand, "Bow", new Vector3(0, -0.3f, 0.24f));
+                for (int i = -1; i <= 1; i += 2)
+                { var limb = Box(bow, 0, i * 0.24f, 0, 0.06f, 0.55f, 0.06f, timber); limb.localRotation = Quaternion.Euler(i * 25, 0, 0); }
+                Box(bow, 0, 0, -0.11f, 0.025f, 0.95f, 0.025f, stone);
+                Box(rig.body, 0.15f, 0.95f, -0.23f, 0.22f, 0.6f, 0.2f, timber);
+            }
+            else
+            {
+                Box(rig.weapon, 0, 0.15f, 0.16f, 0.06f, 1.5f, 0.06f, timber);
+                Box(rig.weapon, 0, 0.94f, 0.16f, 0.11f, 0.27f, 0.08f, stone);
+                var shield = Pillar(rig.offhand, 0, -0.13f, 0.11f, 0.51f, 0.12f, bronze); shield.localRotation = Quaternion.Euler(90, 0, 0);
+            }
+            if (commander)
+            {
+                unit.localScale = Vector3.one * 1.25f;
+                rig.cloak = Pivot(rig.body, "Commander's cloak", new Vector3(0, 1.14f, -0.2f));
+                Box(rig.cloak, 0, -0.38f, -0.05f, 0.66f, 0.8f, 0.07f, team * 0.6f);
+            }
+            if (rig.mounted)
+            {
+                Ball(unit, 0, 0.8f, 0, 0.6f, 0.65f, 1.3f, timber);
+                Ball(unit, 0, 1.18f, 0.55f, 0.35f, 0.7f, 0.45f, timber);
+                Ball(unit, 0, 1.5f, 0.75f, 0.38f, 0.34f, 0.7f, timber);
+                for (int i = 0; i < 4; i++)
+                {
+                    var hip = Pivot(unit, "Horse hip", new Vector3(i % 2 == 0 ? -0.23f : 0.23f, 0.65f, i < 2 ? -0.42f : 0.42f));
+                    Box(hip, 0, -0.32f, 0, 0.13f, 0.65f, 0.14f, timber); rig.horseLegs.Add(hip);
+                }
+            }
+            return rig;
+        }
+        private void Commander(Transform root, string id, Color team, WorldActorAnimation actor)
+        {
+            bool bow = id == "scout" || id == "atalanta";
+            Color cloth = id == "rune-seer" ? new Color(0.4f, 0.63f, 0.78f) : id == "warden" || bow ? new Color(0.25f, 0.42f, 0.25f) : id == "mulan" || id == "tomoe" || id == "wukong" ? new Color(0.6f, 0.16f, 0.12f) : team;
+            var rig = Soldier(root, new Vector3(0, 0, 0.9f), cloth, "greek", actor, bow ? "archers" : "infantry", true);
+            rig.root.name = "Commander · " + id;
+            if (id == "rune-seer" || id == "horus-champion")
+                Ball(rig.weapon, 0, 1.18f, 0.16f, 0.26f, 0.26f, 0.26f, new Color(0.5f, 0.85f, 1));
+            if (id == "heracles" || id == "sigurd")
+            {
+                Ball(rig.body, -0.27f, 1.14f, 0, 0.42f, 0.35f, 0.45f, id == "heracles" ? bronze : stone);
+                Ball(rig.body, 0.27f, 1.14f, 0, 0.42f, 0.35f, 0.45f, id == "heracles" ? bronze : stone);
+                Box(rig.weapon, 0, 0.8f, 0.16f, id == "heracles" ? 0.3f : 0.17f, 0.55f, 0.15f, id == "heracles" ? timber : stone);
+            }
+            if (id == "horus-champion")
+                for (int side = -1; side <= 1; side += 2) Box(rig.body, side * 0.26f, 1.49f, -0.02f, 0.16f, 0.6f, 0.2f, bronze);
+            if (id == "wukong")
+            {
+                Ball(rig.body, -0.24f, 1.4f, 0, 0.16f, 0.2f, 0.16f, bronze); Ball(rig.body, 0.24f, 1.4f, 0, 0.16f, 0.2f, 0.16f, bronze);
+                var tail = Box(rig.body, 0.23f, 0.55f, -0.5f, 0.1f, 0.1f, 0.7f, bronze); tail.localRotation = Quaternion.Euler(-25, 25, 0);
+                Box(rig.weapon, 0, 0.3f, 0.16f, 0.09f, 2.1f, 0.09f, bronze);
+            }
+            if (id == "captain" || id == "mulan" || id == "tomoe") Box(rig.body, 0, 1.77f, -0.04f, 0.14f, 0.34f, 0.4f, cloth);
+        }
+        private void Beast(Transform root, Vector3 offset, string culture, Color team, WorldActorAnimation actor = null)
         {
             var beast = new GameObject("Mythic · " + culture).transform; beast.SetParent(root, false); beast.localPosition = offset;
+            var bodyRoot = Pivot(beast, "Creature torso", Vector3.zero);
+            var rig = new WorldActorAnimation.Rig { root = beast, body = bodyRoot, bodyRest = Vector3.zero };
+            if (actor != null) actor.rigs.Add(rig);
             bool quadruped = culture == "egyptian" || culture == "chinese";
             Color body = culture == "norse" ? new Color(0.52f, 0.73f, 0.79f) : culture == "chinese" ? new Color(0.26f, 0.59f, 0.49f) : culture == "japanese" ? new Color(0.28f, 0.29f, 0.37f) : new Color(0.52f, 0.35f, 0.22f);
-            Ball(beast, 0, 1, 0, 0.95f, quadruped ? 0.85f : 1.5f, quadruped ? 1.65f : 0.85f, body);
-            Ball(beast, 0, quadruped ? 1.55f : 2, quadruped ? 0.65f : 0, 0.7f, 0.7f, 0.7f, body);
+            Ball(bodyRoot, 0, 1, 0, 0.95f, quadruped ? 0.85f : 1.5f, quadruped ? 1.65f : 0.85f, body);
+            Ball(bodyRoot, 0, quadruped ? 1.55f : 2, quadruped ? 0.65f : 0, 0.7f, 0.7f, 0.7f, body);
             for (int i = -1; i <= 1; i += 2)
             {
-                Box(beast, i * 0.32f, 0.35f, quadruped ? 0.5f : 0, 0.25f, 0.7f, 0.28f, body);
-                if (quadruped) Box(beast, i * 0.32f, 0.35f, -0.5f, 0.25f, 0.7f, 0.28f, body);
-                if (culture == "greek" || culture == "chinese") { var horn = Box(beast, i * 0.42f, quadruped ? 2 : 2.4f, quadruped ? 0.65f : 0, 0.15f, 0.65f, 0.15f, bronze); horn.localRotation = Quaternion.Euler(0, 0, -i * 28); }
-                if (culture == "japanese" || culture == "egyptian") { var wing = Box(beast, i * 0.75f, 1.55f, -0.15f, 1.15f, 0.14f, 0.85f, team); wing.localRotation = Quaternion.Euler(0, i * 18, i * 30); }
+                var hip = Pivot(beast, "Creature hip", new Vector3(i * 0.32f, 0.7f, quadruped ? 0.5f : 0));
+                Box(hip, 0, -0.35f, 0, 0.25f, 0.7f, 0.28f, body);
+                if (quadruped)
+                {
+                    rig.horseLegs.Add(hip);
+                    var back = Pivot(beast, "Creature rear hip", new Vector3(i * 0.32f, 0.7f, -0.5f));
+                    Box(back, 0, -0.35f, 0, 0.25f, 0.7f, 0.28f, body); rig.horseLegs.Add(back);
+                }
+                else if (i < 0) rig.leftLeg = hip; else rig.rightLeg = hip;
+                if (culture == "greek" || culture == "chinese") { var horn = Box(bodyRoot, i * 0.42f, quadruped ? 2 : 2.4f, quadruped ? 0.65f : 0, 0.15f, 0.65f, 0.15f, bronze); horn.localRotation = Quaternion.Euler(0, 0, -i * 28); }
+                if (culture == "japanese" || culture == "egyptian") { var wing = Box(bodyRoot, i * 0.75f, 1.55f, -0.15f, 1.15f, 0.14f, 0.85f, team); wing.localRotation = Quaternion.Euler(0, i * 18, i * 30); rig.wings.Add(wing); rig.wingRest.Add(wing.localRotation); }
             }
-            if (culture == "norse") { Box(beast, 0.72f, 1.2f, 0, 0.2f, 2, 0.2f, timber); Ball(beast, 0.72f, 2.1f, 0, 0.7f, 0.7f, 0.7f, darkStone); }
-            if (culture == "egyptian") Box(beast, 0, 1.95f, 0.65f, 0.85f, 0.25f, 0.65f, bronze);
+            if (culture == "norse") { rig.weapon = Pivot(bodyRoot, "Giant club shoulder", new Vector3(0.72f, 1.4f, 0)); Box(rig.weapon, 0, -0.2f, 0, 0.2f, 2, 0.2f, timber); Ball(rig.weapon, 0, 0.7f, 0, 0.7f, 0.7f, 0.7f, darkStone); }
+            if (culture == "egyptian") Box(bodyRoot, 0, 1.95f, 0.65f, 0.85f, 0.25f, 0.65f, bronze);
         }
         private void Resource(Transform root, string resource, Color color)
         {

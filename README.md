@@ -4,8 +4,13 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.7
+## Playable slice 0.8
 
+- Painted loading screens with real preparation stages and connection recovery.
+- Exact march assembly with commander selection, troop sliders and infantry, archer,
+  cavalry and mythic reserves; typed training and automatic old-save migration.
+- Articulated troop/horse/mythic movement, visible commanders and an interactive
+  commander model preview with idle, march and skill poses.
 - Original painted commander portraits, ornate rarity frames, sanctuary key art,
   civilization city silhouettes, recognizable resources and mythic escorts.
 - March, attack, gathering, banner and skill animations, observed health-change
@@ -66,7 +71,8 @@ For a second player, run a Windows standalone build beside the editor and use a
 **different player name**. Both clients connect to the local server. A matching
 name and saved local token resume the same city; names alone are not credentials.
 
-See [the art and animation guide](docs/art-direction-0.7.md), [the interface guide](docs/interface-0.6.md),
+See [march assembly and presentation](docs/marches-and-presentation-0.8.md),
+[the art and animation guide](docs/art-direction-0.7.md), [the interface guide](docs/interface-0.6.md),
 [the gameplay playtest guide](docs/playtest-0.5.md), [architecture](docs/architecture.md),
 [the full city/economy design](docs/city-and-economy-design.md),
 [skills, ages and marches](docs/skills-ages-and-marches.md),

@@ -20,6 +20,7 @@ const PROFILES = {
   heracles: ['Lionbreaker', 'damage', 'offense'], sigurd: ['Dragonbane', 'damage', 'offense'],
   wukong: ['Heavenward Staff', 'damage', 'offense'],
 };
+export const activeKind = id => PROFILES[id][1];
 export function ensureHero(p, id) {
   p.heroRecords[id] ??= { xp: 0, stars: 1, skills: [1, 0, 0, 0] };
   return p.heroRecords[id];

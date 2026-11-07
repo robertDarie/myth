@@ -18,7 +18,7 @@ namespace ThronesOfMyth
         private Texture2D disk;
         private readonly MythArtwork artwork = new MythArtwork();
         public bool ReducedMotion;
-        public void Backdrop(Rect rect, float opacity = 1) => artwork.Backdrop(rect, opacity);
+        public void Backdrop(Rect rect, float opacity = 1, bool marching = false) => artwork.Backdrop(rect, opacity, marching);
         public void PortraitCard(Rect rect, string id, Color rarity)
         {
             Fill(rect, rarity);
@@ -128,6 +128,21 @@ namespace ThronesOfMyth
             var c = r.center; float u = r.width / 24;
             switch (id)
             {
+                case "infantry":
+                    Line(new Vector2(r.x + 3 * u, r.y + 4 * u), new Vector2(r.xMax - 3 * u, r.y + 4 * u), 2 * u, color);
+                    Line(new Vector2(r.x + 3 * u, r.y + 4 * u), new Vector2(r.x + 5 * u, r.y + 17 * u), 2 * u, color);
+                    Line(new Vector2(r.xMax - 3 * u, r.y + 4 * u), new Vector2(r.xMax - 5 * u, r.y + 17 * u), 2 * u, color);
+                    Line(new Vector2(r.x + 5 * u, r.y + 17 * u), new Vector2(c.x, r.yMax), 2 * u, color);
+                    Line(new Vector2(r.xMax - 5 * u, r.y + 17 * u), new Vector2(c.x, r.yMax), 2 * u, color); break;
+                case "archers":
+                    Line(new Vector2(r.x + 5 * u, r.y + 2 * u), new Vector2(r.xMax - 3 * u, c.y), 2 * u, color);
+                    Line(new Vector2(r.xMax - 3 * u, c.y), new Vector2(r.x + 5 * u, r.yMax - 2 * u), 2 * u, color);
+                    Line(new Vector2(r.x + 5 * u, r.y + 2 * u), new Vector2(r.x + 5 * u, r.yMax - 2 * u), u, color);
+                    Line(new Vector2(r.x, c.y), new Vector2(r.xMax, c.y), 2 * u, color); break;
+                case "cavalry":
+                    Line(new Vector2(r.x + 4 * u, r.yMax), new Vector2(r.x + 8 * u, r.y + 4 * u), 5 * u, color);
+                    Line(new Vector2(r.x + 8 * u, r.y + 4 * u), new Vector2(r.xMax - 2 * u, r.y + 11 * u), 6 * u, color);
+                    Diamond(new Rect(r.x + 5 * u, r.y, 8 * u, 9 * u), color); break;
                 case "food":
                     Line(new Vector2(c.x, r.yMax), new Vector2(c.x, r.y + 3 * u), 2 * u, color);
                     for (int i = 0; i < 3; i++) { Circle(new Rect(c.x - 7 * u, r.y + (5 + i * 5) * u, 6 * u, 4 * u), color); Circle(new Rect(c.x + u, r.y + (3 + i * 5) * u, 6 * u, 4 * u), color); } break;

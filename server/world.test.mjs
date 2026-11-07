@@ -166,11 +166,11 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 5);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 6);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(b.token);
-  assert.equal(after.version, 5); assert.equal(after.players.length, 2);
+  assert.equal(after.version, 6); assert.equal(after.players.length, 2);
   assert.ok(after.players.find(p => p.id === a.playerId).x > before.players.find(p => p.id === a.playerId).x);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);
@@ -214,11 +214,12 @@ test('visual snapshots identify civilization and count real attacks without repl
   p.x = c.x - 1; p.z = c.z;
   cmd(w, p, 'attack', { targetId: c.id }); w.tick(0.1);
   assert.equal(w.armySnapshot(p).attackSequence, 1);
+  assert.equal(w.armySnapshot(p).attackX, c.x); assert.equal(w.armySnapshot(p).attackZ, c.z);
   w.tick(0.1); assert.equal(w.armySnapshot(p).attackSequence, 1);
   advance(w, 1.1); assert.equal(w.armySnapshot(p).attackSequence, 2);
   const saved = w.toSave(), restored = World.fromSave(saved);
   assert.equal(restored.armySnapshot(restored.players.get(p.id)).attackSequence, 2);
-  delete saved.world.players[0].attackSequence; // Existing schema-3 worlds remain compatible.
+  delete saved.world.players[0].attackSequence; // Saves without the optional visual event counter remain compatible.
   const legacy = World.fromSave(saved);
   assert.equal(legacy.armySnapshot(legacy.players.get(p.id)).attackSequence, 0);
 });
