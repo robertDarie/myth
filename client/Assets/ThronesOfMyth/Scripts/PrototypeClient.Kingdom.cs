@@ -58,9 +58,11 @@ namespace ThronesOfMyth
         }
         private void DrawBattleReports()
         {
-            GUILayout.Label("WAR ARCHIVE", theme.Eyebrow); GUILayout.Label("Your field battles", sectionStyle);
+            GUILayout.Label("WAR ARCHIVE", theme.Eyebrow); GUILayout.Label("Your battles", sectionStyle);
+            DrawGroupReports();
+            GUILayout.Space(14); GUILayout.Label("FIELD DUELS", theme.Eyebrow);
             GUILayout.Label("Reports include live engagements and your latest 30 completed battles. Damage totals count actual health removed; shield absorption is separate. This field-war version has no permanent troop deaths or plunder rewards.", noteStyle);
-            if (me.battleReports.Length == 0) GUILayout.Label("No field engagements yet. First-age cities and armies at their own city are protected.", noteStyle);
+            if (me.battleReports.Length == 0) GUILayout.Label("No field duels yet. First-age cities and armies at their own city are protected.", noteStyle);
             foreach (var report in me.battleReports)
             {
                 GUILayout.BeginVertical(GUI.skin.box);

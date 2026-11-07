@@ -100,7 +100,7 @@ test('migration archives the original schema-1 save before autosaves rotate its 
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).stone, 150);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 5);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 6);
   assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
 });
 
@@ -112,7 +112,7 @@ test('schema-3 migration archives the untouched generic army before saving the c
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).units.infantry, 20);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 5);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema, 6);
   assert.equal(readFileSync(path + '.schema3.bak', 'utf8'), original);
 });
 
@@ -125,6 +125,16 @@ test('schema-4 migration preserves the original typed roster archive before the 
   const store = new WorldStore(path), restored = store.load();
   assert.equal(restored.authenticate(session.token).troops, 20); assert.equal(restored.authenticate(session.token).wounded.infantry, 0);
   store.save(restored); store.save(restored);
-  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 5);
+  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema, 6);
   assert.equal(readFileSync(path + '.schema4.bak','utf8'), original);
+});
+
+test('schema-5 migration archives the original war save before campaign state is added', t => {
+  const path=fixture(t),w=new World();w.join('Legacy War City');const save=w.toSave();save.schema=5;
+  delete save.world.rallies;delete save.world.garrisons;delete save.world.sieges;
+  for(const p of save.world.players)delete p.groupReports;
+  for(const s of save.world.sites){delete s.health;delete s.maxHealth;}
+  const original=JSON.stringify(save);writeFileSync(path,original);
+  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,6);store.save(restored);
+  assert.equal(readFileSync(path+'.schema5.bak','utf8'),original);assert.equal(store.load().players.size,1);
 });

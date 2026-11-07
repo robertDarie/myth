@@ -78,10 +78,12 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 5 stores troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4 without resetting progression) queues, reserves, map state and sessions. A loader validates
+Save schema 6 stores alliance campaigns/fortifications plus troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4/5 without resetting progression) queues, reserves, map state and sessions. A loader validates
 the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
-field orders while retaining positions and all progression. The package launcher
+ordinary field orders and cancels rallies, sealing active group battles once as
+interrupted. Garrison assignments resume; structure health and all progression
+remain saved. The package launcher
 uses a per-launch secret for its save-and-shutdown endpoint; that capability is
 not exposed in snapshots or available to ordinary player tokens.
 
@@ -116,3 +118,9 @@ march and are cleared on restore. See [the progression design](skills-ages-and-m
 `social.mjs` enforces alliance ranks, membership and communications. HTTP snapshots
 are viewer-filtered; own hospital/reports/treasury stay private. See
 [the early kingdom rules](early-kingdom-0.10.md).
+
+`campaign.mjs` owns rally assembly/movement, garrisons, simultaneous group combat,
+fortification health, supply connectivity and private group reports. It references
+actual army IDs rather than transferring troops into a pooled army. Protocol 8
+adds campaign snapshots and per-army assignment/animation destinations. See
+[the alliance warfare rules](alliance-warfare-0.11.md).

@@ -87,6 +87,7 @@ namespace ThronesOfMyth
                 if (march.ownerId != playerId) continue;
                 if (GUILayout.Button((march.id == ActiveArmy.id ? "▶ " : "") + HeroName(march.commanderId) + " · " + march.state)) activeMarchId = march.id;
             }
+            if (GUILayout.Button("Alliance warfare · rallies and garrisons")) OpenInterface(InterfacePage.Warfare);
             GUILayout.Label("Selected march", sectionStyle);
             GUILayout.Label($"{ActiveArmy.troops} mortal troops · {ActiveArmy.mythic} mythic units\nDamage {ActiveArmy.damage:F1} · March {ActiveArmy.speed:F1}\nRage {ActiveArmy.rage}/1000 · Shield {ActiveArmy.shield}\nLast skill: {ActiveArmy.lastSkill}", noteStyle);
             if (GUILayout.Button("Focus army [Space]")) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
@@ -240,10 +241,14 @@ namespace ThronesOfMyth
                 foreach (var a in world.alliances) if (GUILayout.Button(a.name + " · " + a.members + " members")) Send("alliance-join", a.id);
                 return;
             }
+            if (GUILayout.Button("Alliance warfare · rallies, garrisons and structures", theme.Primary)) OpenInterface(InterfacePage.Warfare);
             GUILayout.Label(AllianceName(me.allianceId) + " · " + me.allianceRole, sectionStyle);
             DrawAllianceMembers();
             GUILayout.Label("The leader places the first beacon within 6 units of their city. Further beacons connect within 12 units. Your army must be within 4 units of placement.", noteStyle);
-            if (GUILayout.Button(placeBeacon ? "Cancel beacon placement" : "Place beacon · 60 wood / 20 gold")) placeBeacon = !placeBeacon;
+            GUI.enabled = me.allianceRole == "Leader" || me.allianceRole == "Officer";
+            if (GUILayout.Button(placeBeacon ? "Cancel beacon placement" : "Place fort / beacon · 60 wood / 20 gold")) placeBeacon = !placeBeacon;
+            GUI.enabled = true;
+            GUILayout.Label("The root fort builds in 30 seconds; connected beacons take 10 seconds. Only completed, connected territory supplies captures and rallies.", noteStyle);
             GUILayout.Label("Bring territory within 12 units of a site, then send your army to capture it. Uncontested occupation takes 15 seconds.", noteStyle);
             foreach (var site in world.sites)
             {
@@ -263,7 +268,7 @@ namespace ThronesOfMyth
         }
         private void DrawJournal()
         {
-            if (GUILayout.Button("Open battle reports · " + me.battleReports.Length)) OpenInterface(InterfacePage.Reports);
+            if (GUILayout.Button("Open battle reports · " + (me.battleReports.Length + me.groupReports.Length))) OpenInterface(InterfacePage.Reports);
             GUILayout.Label(me.ageName + " · " + me.marchSlots + "/5 march slots · " + me.constructionSlots + " builder(s)", sectionStyle);
             GUILayout.Label("A foothold in the fallen world", sectionStyle);
             GUILayout.Label($"Defeat three camps: {Mathf.Min(3, me.kills)}/3\nReward: Epic Atalanta, 200 gold, 150 wood, 150 food.", noteStyle);
@@ -382,7 +387,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 7) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 8) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

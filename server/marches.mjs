@@ -1,3 +1,5 @@
+import { initializeFortification, territoryNear } from './campaign.mjs';
+import { allianceRole } from './social.mjs';
 import { TROOP_TYPES, selection, readyFor, transfer, unitTotal } from './troops.mjs';
 import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
@@ -77,21 +79,24 @@ export function marchCommand(world, p, c, fail) {
       a.equippedRelic = c.targetId; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
     case 'flag': {
       if (!p.allianceId) fail('Join an alliance first.');
+      if (!['Leader','Officer'].includes(allianceRole(world,p))) fail('Only alliance leaders and officers can build beacons.');
       if (!point(c) || !world.canEnter(p, c) || dist(a, c) > 4) fail('Place a beacon within 4 units of the selected march in an accessible province.');
       const flags = world.flags.filter(f => f.allianceId === p.allianceId);
       if (flags.length >= 20) fail('Alliance beacon limit reached.');
       if (world.flags.some(f => dist(f, c) < 4)) fail('Too close to another beacon.');
-      if (!flags.length) {
+      const hasRoot = flags.some(f=>f.isRoot);
+      if (!hasRoot) {
         if (world.alliances.get(p.allianceId).leaderId !== p.id || dist({ x: p.homeX, z: p.homeZ }, c) > 6) fail('The leader must place the first beacon near their city.');
-      } else if (!flags.some(f => dist(f, c) <= 12)) fail('Beacons must connect within 12 units of alliance territory.');
+      } else if (!flags.some(f => f.connected && f.buildRemaining <= 0 && dist(f, c) <= 12)) fail('Beacons must connect within 12 units of alliance territory.');
       if (world.flags.some(f => f.allianceId !== p.allianceId && dist(f, c) < 10)) fail('Enemy territory blocks this location.');
-      world.spend(p, { wood: 60, gold: 20 }); world.flags.push({ id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z }); return true;
+      world.spend(p, { wood: 60, gold: 20 }); const beacon = { id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z }; initializeFortification(beacon, hasRoot ? 'flag' : 'fort'); beacon.buildRemaining = hasRoot ? 10 : 30; beacon.isRoot = !hasRoot; world.flags.push(beacon); return true;
     }
     case 'capture': {
       const site = world.sites.find(s => s.id === c.targetId);
       if (!site || !p.allianceId) fail('Join an alliance to capture a site.');
+      if (site.allianceId && site.allianceId !== p.allianceId) fail('An enemy-held site must be defeated with a rally.');
       if (!world.canEnter(p, site)) fail('Capture the necessary gates first.');
-      if (!world.flags.some(f => f.allianceId === p.allianceId && dist(f, site) <= 12)) fail('Extend alliance beacons to within 12 units of this site.');
+      if (!territoryNear(world, p.allianceId, site)) fail('Extend alliance beacons to within 12 units of this site.');
       a.target = { type: 'capture', id: site.id }; break;
     }
   }

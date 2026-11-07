@@ -22,7 +22,7 @@ export function counterMultiplier(a, b) {
   const x = a.units, y = b.units;
   return 1 + 0.15 * (x.infantry * y.cavalry + x.cavalry * y.archers + x.archers * y.infantry - x.infantry * y.archers - x.cavalry * y.infantry - x.archers * y.cavalry) / (a.troops * b.troops);
 }
-function side(w, a) {
+export function side(w, a) {
   const p = w.owner(a);
   return { playerId: p.id, playerName: p.name, armyId: a.id, commanderId: a.commanderId, unitsBefore: { ...a.units }, mythicBefore: a.mythic,
     unitsAfter: { ...a.units }, mythicAfter: a.mythic, wounded: emptyUnits(), woundedMythic: 0, damageDealt: 0, damageTaken: 0, healed: 0, absorbed: 0, shieldCreated: 0 };
@@ -39,7 +39,7 @@ export function finishBattle(w, battle, outcome) {
   }
   w.battles.delete(battle.id);
 }
-function retreat(w, a, result) {
+export function retreat(w, a, result) {
   const p = w.owner(a); let remaining = a.troops + a.mythic;
   // Severe wounds are removed from the march exactly once. At least one unit stays with its commander.
   for (const type of TROOP_TYPES) {
@@ -49,7 +49,7 @@ function retreat(w, a, result) {
   if (a.mythic > 0 && remaining > 1) { a.mythic--; p.woundedMythic++; result.woundedMythic++; }
   a.troops = unitTotal(a.units); a.health = 1; a.recovery = 8; a.x = p.homeX; a.z = p.homeZ; a.target = null; a.state = 'Recovering'; a.rage = 0; a.shield = 0; a.shieldTime = 0;
 }
-function applyDamage(a, incoming, result) {
+export function applyDamage(a, incoming, result) {
   const absorbed = Math.min(a.shield, incoming); a.shield -= absorbed; result.absorbed += absorbed;
   const actual = Math.min(a.health, Math.max(0, incoming - absorbed)); a.health -= actual; result.damageTaken += actual; return actual;
 }

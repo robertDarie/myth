@@ -94,8 +94,14 @@ namespace ThronesOfMyth
                 pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
             }
             foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining, -1, n.resource);
-            foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), -1, s.kind);
-            foreach (var f in world.flags) Put(seen, f.id, "flag", f.x, f.z, f.allianceId == allianceId ? blue : red, "Alliance Beacon");
+            foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), s.health / Mathf.Max(1, s.maxHealth), s.kind);
+            foreach (var f in world.flags)
+            {
+                string name = f.isRoot ? "Alliance Fort" : "Alliance Beacon";
+                string state = f.buildRemaining > 0 ? " · Building " + Mathf.CeilToInt(f.buildRemaining) + "s" : f.connected ? "" : " · Disconnected";
+                string variant = (f.isRoot ? "fort-" : "") + (f.connected ? "connected" : "inactive");
+                Put(seen, f.id, "flag", f.x, f.z, f.connected ? (f.allianceId == allianceId ? blue : red) : Color.gray, name + state, f.health / Mathf.Max(1, f.maxHealth), variant);
+            }
             foreach (var pin in world.markers) Put(seen, pin.id, "marker", pin.x, pin.z, new Color(0.85f, 0.45f, 0.8f), pin.name);
             var removed = new List<string>();
             foreach (var pair in pieces) if (!seen.Contains(pair.Key)) { Destroy(pair.Value.root); removed.Add(pair.Key); }

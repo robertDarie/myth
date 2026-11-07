@@ -90,7 +90,12 @@ namespace ThronesOfMyth
                 Pillar(root, 0, 1.75f, 0, 0.13f, 3.5f, bronze);
                 actor.banner = Box(root, 0.65f, 2.9f, 0, 1.3f, 0.9f, 0.07f, team);
                 Ball(root, 0, 3.65f, 0, 0.23f, 0.23f, 0.23f, bronze);
-                Ring(root, 5, team, 0.10f);
+                if (variant.StartsWith("fort-"))
+                {
+                    Box(root, 0, 0.35f, 0, 3.2f, 0.7f, 3, darkStone);
+                    for (int i = 0; i < 4; i++) { float x = i % 2 == 0 ? -1.3f : 1.3f, z = i < 2 ? -1.2f : 1.2f; Box(root, x, 1.15f, z, 0.6f, 1.6f, 0.6f, stone); }
+                }
+                if (variant == "connected" || variant == "fort-connected") Ring(root, 5, team, 0.10f);
             }
             else if (kind == "site")
             {

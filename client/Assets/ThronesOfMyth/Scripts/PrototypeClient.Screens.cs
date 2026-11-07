@@ -269,6 +269,7 @@ namespace ThronesOfMyth
             var node = Array.Find(world.nodes, n => n.id == selectedId);
             var site = Array.Find(world.sites, s => s.id == selectedId);
             var army = Array.Find(world.armies, a => a.id == selectedId);
+            var beacon = Array.Find(world.flags, f => f.id == selectedId);
             var pin = Array.Find(world.markers, m => m.id == selectedId);
             var city = Array.Find(world.players, p => "city-" + p.id == selectedId);
             if (camp != null)
@@ -286,9 +287,18 @@ namespace ThronesOfMyth
             {
                 title = site.name; subtitle = "HELD BY · " + AllianceName(site.allianceId); emblem = "temple";
                 bool routeOpen = (site.x <= 40 || Array.Exists(world.sites, s => s.id == "gate-east" && !string.IsNullOrEmpty(me.allianceId) && s.allianceId == me.allianceId)) && (site.z <= 40 || Array.Exists(world.sites, s => s.id == "gate-north" && !string.IsNullOrEmpty(me.allianceId) && s.allianceId == me.allianceId));
-                bool connected = Array.Exists(world.flags, f => f.allianceId == me.allianceId && Vector2.Distance(new Vector2(f.x, f.z), new Vector2(site.x, site.z)) <= 12);
-                action = string.IsNullOrEmpty(me.allianceId) ? "Join an alliance" : !routeOpen ? "Plan a route" : !connected ? "Extend territory" : site.allianceId == me.allianceId ? "March & defend" : "March & capture";
-                perform = () => { if (string.IsNullOrEmpty(me.allianceId) || !connected || !routeOpen) OpenInterface(InterfacePage.Alliance); else Send("capture", site.id); };
+                bool connected = Array.Exists(world.flags, f => f.allianceId == me.allianceId && f.connected && f.buildRemaining <= 0 && Vector2.Distance(new Vector2(f.x, f.z), new Vector2(site.x, site.z)) <= 12);
+                health = site.health / Mathf.Max(1, site.maxHealth);
+                bool own = !string.IsNullOrEmpty(me.allianceId) && site.allianceId == me.allianceId;
+                bool hostile = !string.IsNullOrEmpty(site.allianceId) && !own;
+                action = string.IsNullOrEmpty(me.allianceId) ? "Join an alliance" : hostile ? "Plan rally" : own ? "Garrison / defend" : !routeOpen ? "Plan a route" : !connected ? "Extend territory" : "March & capture";
+                perform = () => { if (string.IsNullOrEmpty(me.allianceId) || (!hostile && !own && (!connected || !routeOpen))) OpenInterface(InterfacePage.Alliance); else if (hostile || own) OpenWarfare(site.id); else Send("capture", site.id); };
+            }
+            else if (beacon != null)
+            {
+                title = beacon.isRoot ? "Alliance Fort" : "Alliance Beacon"; emblem = "alliance"; health = beacon.health / Mathf.Max(1, beacon.maxHealth);
+                subtitle = AllianceName(beacon.allianceId) + (beacon.buildRemaining > 0 ? " · BUILDING " + Mathf.CeilToInt(beacon.buildRemaining) + "s" : beacon.connected ? " · CONNECTED" : " · DISCONNECTED");
+                action = beacon.allianceId == me.allianceId ? "Garrison / manage" : "Plan rally"; perform = () => OpenWarfare(beacon.id);
             }
             else if (army != null)
             {

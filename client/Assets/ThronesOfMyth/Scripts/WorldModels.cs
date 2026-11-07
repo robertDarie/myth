@@ -10,7 +10,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration; public int cityLevel; public ResourceAmounts cost; }
     [Serializable] public sealed class ArmyData
     {
-        public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole;
+        public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
         public float x, z, homeX, homeZ, targetX, targetZ, attackX, attackZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
         public float xp;
@@ -22,6 +22,7 @@ namespace ThronesOfMyth
         public int woundedMythic, hospitalCapacity, hospitalTroops, hospitalMythic;
         public HealingJob healing;
         public BattleReport[] battleReports;
+        public GroupBattleReport[] groupReports;
         public string equippedRelic;
         public string[] ownedRelics;
         public QueueJob research, crafting;
@@ -47,20 +48,29 @@ namespace ThronesOfMyth
     [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error; }
     [Serializable] public sealed class CampData { public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
     [Serializable] public sealed class NodeData { public string id, name, resource; public float x, z; public int remaining, capacity; }
-    [Serializable] public sealed class SiteData { public string id, name, kind, description, allianceId, challengerId; public float x, z, progress; }
-    [Serializable] public sealed class FlagData { public string id, allianceId; public float x, z; }
+    [Serializable] public sealed class SiteData { public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
+    [Serializable] public sealed class FlagData { public string id, allianceId; public float x, z, health, maxHealth, buildRemaining; public bool isRoot, connected; }
     [Serializable] public sealed class AllianceData { public string id, name, leaderId; public int members; public string[] officers; }
     [Serializable] public sealed class CommanderData { public string id, name, rarity, color, description, skillKind; public int cost; }
     [Serializable] public sealed class CivilizationData { public string id, name, specialty, mythic; }
     [Serializable] public sealed class EventData { public float time; public string message; }
     [Serializable] public sealed class HealingJob { public string id; public UnitCounts units; public int mythic; public float remaining, duration; public ResourceAmounts cost; }
-    [Serializable] public sealed class BattleSide { public string playerId, playerName, armyId, commanderId; public UnitCounts unitsBefore, unitsAfter, wounded; public int mythicBefore, mythicAfter, woundedMythic; public float damageDealt, damageTaken, healed, absorbed, shieldCreated; }
+    [Serializable] public sealed class BattleSide { public string playerId, playerName, armyId, commanderId, team, result; public UnitCounts unitsBefore, unitsAfter, wounded; public int mythicBefore, mythicAfter, woundedMythic; public float damageDealt, damageTaken, healed, absorbed, shieldCreated, structureDamage; }
     [Serializable] public sealed class BattleReport { public string id, outcome; public float started, ended; public int rounds; public BattleSide[] sides; }
     [Serializable] public sealed class ChatMessage { public string id, channel, allianceId, authorId, author, text; public float time; }
     [Serializable] public sealed class AllianceMarker { public string id, allianceId, authorId, name; public float x, z, expires; }
+    [Serializable] public sealed class RallyData { public string id, allianceId, defendingAllianceId, leaderId, leaderArmyId, targetId, phase; public string[] armyIds; public float assemblyEnds, meetX, meetZ, x, z; public int troopLoad; }
+    [Serializable] public sealed class GarrisonData { public string targetId, allianceId; public string[] armyIds; public int troopLoad; }
+    [Serializable] public sealed class SiegeData { public string id, targetId; public int rounds; public float started; }
+    [Serializable] public sealed class CampaignLimits { public int rallyMarches, rallyLoad, garrisonMarches, garrisonLoad, reportEntries; }
+    [Serializable] public sealed class GroupBattleReport { public string id, targetId, targetName, attackingAllianceId, defendingAllianceId, outcome; public float started, ended, structureDamage; public int rounds; public BattleSide[] participants; }
     [Serializable] public sealed class WorldSnapshot
     {
         public int version, size;
+        public CampaignLimits campaignLimits;
+        public RallyData[] rallies;
+        public GarrisonData[] garrisons;
+        public SiegeData[] sieges;
         public ChatMessage[] chatMessages;
         public AllianceMarker[] markers;
         public TroopTypeData[] troopTypes;

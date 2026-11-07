@@ -16,14 +16,15 @@ campaign and developed alliances, rather than being required for early play.
 See [rules and playtest](early-kingdom-0.10.md). These are prototype foundations:
 this delivery does not finish the whole roadmap.
 
-## Next: group warfare and territory
+## Delivered: alliance warfare foundation (0.11)
 
-Rally assembly/join timers, pooled participation, garrisons, reinforcements,
-attackable flags/forts, permissioned destruction and reconciled group reports.
-Design casualty distribution before adding group loss accounting. Keep cities
-protected until city attack, shield, burning and plunder rules are specified.
+Timed rallies with separate owned march contributions, garrisons, late
+reinforcements, destructible forts/beacons, construction timers, connected
+supply and per-contribution reports. See [rules and playtest](alliance-warfare-0.11.md).
+Cities remain protected. Group combat does not yet support field interception,
+area effects or physical pass pathfinding.
 
-## Exploration and meaningful routes
+## Next: exploration and meaningful routes
 
 Fog of war, scouts, exploration rewards, information permissions, scouting
 reports and watchtower warnings. Replace province destination checks with a real

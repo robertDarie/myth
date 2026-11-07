@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Audited against the repository through the 0.10 early-kingdom pass. **Implemented**
+Audited against the repository through the 0.11 alliance-warfare pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -18,7 +18,7 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Economy | Partial | Five resources, passive production, shared finite nodes, resource sinks and exchanges | Gathering load/return delivery, caravans, plunder rules and sustained economy balance |
 | Troop training and dispatch | Partial | Infantry/archer/cavalry training, civilization mythics, exact counts, reserves, five marches | Troop tiers/upgrades, siege, richer role effects and formations with tactical consequences |
 | March control | Partial | Select, move, stop, return, attack camps, gather, capture; server-owned orders | Obstacle-aware pathfinding, true pass corridors, multi-select and group orders |
-| Open-field combat | Partial | Server-owned PvE and one-versus-one PvP, retaliation, rage/shields/heals, counters and protection | Group battles, rallies, ranged spacing, area effects, reinforcement and richer disengagement rules |
+| Open-field combat | Partial | Server-owned PvE and one-versus-one PvP, retaliation, rage/shields/heals, counters and protection | Rally field interception, ranged spacing, area effects and richer disengagement rules |
 | Casualties and hospital | Partial | Typed PvP wounded troops, paid timed treatment, exact reserve transfers and independent ward | Permanent-loss modes, PvE severe wounds, traditional overflow rules and alliance healing help |
 | Commander collection | Partial | Eleven commanders, four rarities, earned-sigil summons, published odds, pity and duplicate shards | Larger roster, distinct tactical identities, recruitment pacing and content events |
 | Commander development | Partial | Individual XP, levels, stars, four skills, expertise and separate ascension | Talent trees, secondary commanders, richer skill effects and reusable loadout presets |
@@ -28,8 +28,8 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Alliance membership | Partial | Create/join/leave, leader/officer/member permissions, kick, succession and disband cleanup | Invites/applications, full audit logs and recruitment/diplomacy tools |
 | Social communication | Partial | Private alliance chat, kingdom chat, shared expiring map markers and event feed | Direct messages, mail, moderation and durable large-scale chat |
 | Alliance development | Partial | Job help, beacons and site ownership | Donations, alliance technology, treasury, member contributions and alliance progression |
-| Territory and sacred sites | Partial | Connected beacon placement, contested shrines, gate access and sanctuary ownership buffs | Attackable flags/forts, build timers, territory supply, garrisons, destruction and ownership history |
-| Rallies and garrisons | Missing | Several marches can independently hit one camp | Rally assembly/join timers, leader rules, pooled units, reinforcement capacity and garrison battles |
+| Territory and sacred sites | Partial | Constructed connected forts/beacons, destructible territory, defended shrines/gates, sanctuary buffs and supply checks | Physical pass routes, opening schedules and durable ownership history |
+| Rallies and garrisons | Partial | Timed assembly, actual march contributions, leadership/recall, capacity, late reinforcements and defended structure battles | Field interception, rally bosses, progression/balance and native playtest |
 | City warfare and protection | Missing | Cities are visible and own reserves | Walls, garrison, siege, burning, looting caps, protection shields, beginner safety and teleport rules |
 | Battle reports and rankings | Partial | Private active/completed PvP reports with damage/healing/shield and wounded accounting | Group/PvE reports, power calculation, leaderboards and extended war history |
 | Kingdom timeline | Missing | Five age-based march unlocks exist | Scheduled pass openings, objectives, ruler/kingdom governance and campaign milestones |
@@ -73,9 +73,9 @@ survivors, and send a new formation without unit/resource duplication.
 
 ### P2 — Cooperation that makes an alliance useful
 
-Roles, membership management and chat/map markers now exist. Next add rally assembly,
-garrison reinforcement and attackable territory. Permissions and contribution
-tracking must accompany destructive actions. Make the gate network actual map
+Roles, membership management, chat/map markers, rally assembly, garrison
+reinforcement and attackable territory now exist with permission and contribution
+tracking. See [the 0.11 rules](alliance-warfare-0.11.md). Make the gate network actual map
 corridors with route planning rather than destination permission checks alone.
 
 **Exit criteria:** an alliance organizes a rally, holds a defended pass, destroys

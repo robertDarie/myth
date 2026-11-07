@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.10
+## Implemented through slice 0.11
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -25,7 +25,11 @@ remain incomplete.
 
 The 0.10 war/social foundation adds PvP duels, hospital treatment, reports,
 alliance ranks and communications. The active [kingdom roadmap](kingdom-roadmap.md)
-puts group warfare and normal kingdom progression ahead of KvK.
+puts normal kingdom progression ahead of KvK.
+
+The 0.11 alliance warfare foundation adds timed rallies, actual march
+contributions, garrisons/reinforcements, destructible connected territory and
+reconciled group battle reports. See [the rules](alliance-warfare-0.11.md).
 
 ## Next stages
 
@@ -33,8 +37,8 @@ puts group warfare and normal kingdom progression ahead of KvK.
    feedback, pacing, civilization balance, and multiplayer usability.
 2. **Tactical identity:** distinct mythic skills and counters, commander skills,
    multiple army types, ability feedback and real character assets.
-3. **Alliance warfare:** PvP combat, destructible flags, garrisons, rallies,
-   permissions, membership management, pass pathfinding and opening schedules.
+3. **Alliance campaign depth:** field interception, physical pass pathfinding,
+   opening schedules and richer siege rules beyond the delivered group battles.
 4. **Persistent kingdom:** real accounts, durable state, reconnect security,
    operations, load testing, world scheduling and offline progression.
 5. **Seasonal campaign:** kingdom eligibility, matchmaking, separate KvK map,

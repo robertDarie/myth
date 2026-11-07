@@ -8,7 +8,7 @@ const player = (w, name = 'A', civ = 'greek') => w.authenticate(w.join(name, civ
 const cmd = (w, p, type, args = {}) => w.command(p, { type, ...args });
 const rich = p => { p.gold = 10000; p.wood = 10000; p.food = 10000; };
 const alliance = (w, p, name = 'Dawn') => { cmd(w, p, 'alliance-create', { name }); return p.allianceId; };
-const flag = (w, p, x, z) => { p.x = x; p.z = z; cmd(w, p, 'flag', { x, z }); };
+const flag = (w, p, x, z) => { p.x = x; p.z = z; cmd(w, p, 'flag', { x, z }); advance(w, w.flags.at(-1).buildRemaining + 0.1); };
 
 test('movement enforces speed, finite bounds and locked provinces', () => {
   const w = new World(), p = player(w), start = p.x;
@@ -115,6 +115,7 @@ test('alliance flags require a leader root, connection and resources', () => {
   flag(w, a, a.homeX, a.homeZ); assert.throws(() => flag(w, a, 30, 30), /connect/);
   flag(w, a, 15, 8); assert.equal(w.flags.length, 2); assert.equal(w.snapshot().alliances[0].members, 2);
   assert.throws(() => cmd(w, a, 'alliance-create', { name: 'Again' }));
+  cmd(w, a, 'alliance-promote', { targetId: b.id });
   assert.throws(() => flag(w, b, 16, 8), /close/);
 });
 test('capturing a connected shrine grants alliance-wide buffs', () => {
@@ -128,18 +129,19 @@ test('opposing occupiers contest captures and defenders reverse progress', () =>
   const w = new World(), a = player(w), b = player(w, 'B'); rich(a); rich(b);
   alliance(w, a, 'Dawn'); alliance(w, b, 'Dusk');
   assert.throws(() => cmd(w, a, 'capture', { targetId: 'shrine-dawn' }), /beacons/);
-  w.flags.push({ id: 'a', allianceId: a.allianceId, x: 12, z: 23 }, { id: 'b', allianceId: b.allianceId, x: 28, z: 23 });
+  w.flags.push({ health: 250, maxHealth: 250, buildRemaining: 0, isRoot: true, connected: true, id: 'a', allianceId: a.allianceId, x: 12, z: 23 }, { health: 250, maxHealth: 250, buildRemaining: 0, isRoot: true, connected: true, id: 'b', allianceId: b.allianceId, x: 28, z: 23 });
   a.x = b.x = 20; a.z = b.z = 23;
   cmd(w, a, 'capture', { targetId: 'shrine-dawn' }); advance(w, 5); const progress = w.sites[0].progress;
   cmd(w, b, 'capture', { targetId: 'shrine-dawn' }); advance(w, 5); assert.equal(w.sites[0].progress, progress);
   cmd(w, b, 'stop'); advance(w, 11); assert.equal(w.sites[0].allianceId, a.allianceId);
-  cmd(w, b, 'capture', { targetId: 'shrine-dawn' }); advance(w, 5);
+  assert.throws(() => cmd(w, b, 'capture', { targetId: 'shrine-dawn' }), /rally/);
+  w.sites[0].progress = 5; w.sites[0].challengerId = b.allianceId;
   cmd(w, a, 'capture', { targetId: 'shrine-dawn' }); advance(w, 3); assert.equal(w.sites[0].allianceId, a.allianceId);
   cmd(w, b, 'stop'); advance(w, 6); assert.equal(w.sites[0].progress, 0);
 });
 test('gates grant access; losing access cancels orders but return home remains possible', () => {
   const w = new World(), p = player(w); rich(p); const id = alliance(w, p);
-  w.flags.push({ id: 'near-gate', allianceId: id, x: 33, z: 20 }); p.x = 37; p.z = 20;
+  w.flags.push({ health: 250, maxHealth: 250, buildRemaining: 0, isRoot: true, connected: true, id: 'near-gate', allianceId: id, x: 33, z: 20 }); p.x = 37; p.z = 20;
   cmd(w, p, 'capture', { targetId: 'gate-east' }); advance(w, 16);
   assert.equal(w.sites.find(s => s.id === 'gate-east').allianceId, id);
   cmd(w, p, 'move', { x: 55, z: 20 }); advance(w, 2); assert.ok(p.x > 40);
@@ -166,11 +168,11 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 7);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 8);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(b.token);
-  assert.equal(after.version, 7); assert.equal(after.players.length, 2);
+  assert.equal(after.version, 8); assert.equal(after.players.length, 2);
   assert.ok(after.players.find(p => p.id === a.playerId).x > before.players.find(p => p.id === a.playerId).x);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);
@@ -194,7 +196,7 @@ test('complete economic and territory campaign reaches the sanctuary using legal
   cmd(w, p, 'reinforce');
   cmd(w, p, 'commander', { targetId: 'atalanta' });
   const id = alliance(w, p);
-  const build = (x, z) => { cmd(w, p, 'move', { x, z }); advance(w, 30); cmd(w, p, 'flag', { x, z }); };
+  const build = (x, z) => { cmd(w, p, 'move', { x, z }); advance(w, 30); cmd(w, p, 'flag', { x, z }); advance(w, w.flags.at(-1).buildRemaining + 0.1); };
   const capture = targetId => { cmd(w, p, 'capture', { targetId }); advance(w, 30); assert.equal(w.sites.find(s => s.id === targetId).allianceId, id); };
   build(5, 5); build(13, 12); build(20, 20); capture('shrine-dawn');
   build(30, 20); capture('gate-east'); build(40, 20);

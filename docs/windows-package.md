@@ -71,5 +71,7 @@ launch, PowerShell launcher behavior or installer execution. After building:
 
 For 0.8 loading, troop selection and model previews, see [march assembly and presentation](marches-and-presentation-0.8.md). Close the old server before launching protocol 6.
 
-Build 0.10 requires protocol 7 and includes war/social server modules. Old schema-4
-saves migrate automatically with an archival backup; see [the early kingdom guide](early-kingdom-0.10.md).
+Build 0.11 requires protocol 8 and bundles `campaign.mjs` alongside the war/social
+modules. Schemas 1–5 migrate automatically with an untouched archival backup;
+see [the alliance warfare guide](alliance-warfare-0.11.md). Rebuild the Windows
+package to get both the updated client and server.

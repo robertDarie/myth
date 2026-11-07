@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -83,6 +83,11 @@ namespace ThronesOfMyth
             switch (command.type)
             {
                 case "move": return "Your march is on its way.";
+                case "rally-create": return "Rally assembly has begun. Allies can contribute a prepared march.";
+                case "rally-join": return "Your march is moving to the rally assembly point.";
+                case "rally-leave": case "garrison-leave": case "campaign-recall": return "Alliance assignment ended; surviving troops return in their own march.";
+                case "garrison-join": return "Your march is on its way to reinforce the structure.";
+                case "beacon-dismantle": return "The structure was dismantled. Check your territory connections.";
                 case "attack-player": return "Your march is approaching the opposing army.";
                 case "hospital-heal": return "The House of Renewal has begun treatment.";
                 case "hospital-cancel": return "Treatment canceled; wounded units and resources returned.";
@@ -345,9 +350,9 @@ namespace ThronesOfMyth
         {
             var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Warfare, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             for (int i = 0; i < pages.Length; i++)
-                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 36, left.width - 24, 31), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 34, left.width - 24, 29), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
             theme.Panel(main, false, true);
             GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
@@ -356,6 +361,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Hospital) DrawHospital();
             if (interfacePage == InterfacePage.Reports) DrawBattleReports();
             if (interfacePage == InterfacePage.Chat) DrawChat();
+            if (interfacePage == InterfacePage.Warfare) DrawWarfare();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();
             if (interfacePage == InterfacePage.Alliance) DrawAlliance();
@@ -370,7 +376,7 @@ namespace ThronesOfMyth
             if (from.z <= 0 || to.z <= 0 || Vector2.Distance(new Vector2(from.x, from.y), new Vector2(to.x, to.y)) < 4) return;
             var start = new Vector2(from.x, Screen.height - from.y); var end = new Vector2(to.x, Screen.height - to.y);
             var direction = (end - start).normalized; float distance = Vector2.Distance(start, end);
-            Color color = ActiveArmy.state == "Attacking" ? MythInterfaceTheme.Red : ActiveArmy.state == "Gathering" ? MythInterfaceTheme.Teal : ActiveArmy.state == "Returning" ? new Color(0.5f, 0.8f, 1) : MythInterfaceTheme.Gold;
+            Color color = (ActiveArmy.state == "Attacking" || ActiveArmy.state == "Siege fighting") ? MythInterfaceTheme.Red : ActiveArmy.state == "Gathering" ? MythInterfaceTheme.Teal : ActiveArmy.state == "Returning" ? new Color(0.5f, 0.8f, 1) : MythInterfaceTheme.Gold;
             float offset = reducedMotion ? 0 : Time.unscaledTime * 16 % 18;
             for (float d = offset; d < distance; d += 18)
             {

@@ -129,7 +129,7 @@ test('five-march positions, both construction jobs and commander skills survive 
   cmd(w,p,'move',{marchId:p.marches[0].id,x:20,z:20});advance(w,2);
   const position=p.marches[0].x, restored=World.fromSave(w.toSave()),q=restored.authenticate(session.token);
   assert.equal(armyList(q).length,5);assert.equal(constructionJobs(q).length,2);assert.equal(crews(q),2);
-  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,5);
+  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,6);
   advance(restored,11);assert.equal(q.buildings.oracle,1);assert.equal(q.buildings.quarry,1);
 });
 
@@ -146,7 +146,7 @@ test('schema-2 migration preserves the founding army, paid job and legacy comman
 test('a secondary march can capture for its owner while the founding march gathers', () => {
   const {w,p}=setup();p.cityLevel=2;p.reserveTroops=5;p.reserveUnits.infantry=5;const a=deploy(w,p,'scout');
   cmd(w,p,'alliance-create',{name:'Marching Oath'});
-  w.flags.push({id:'territory',allianceId:p.allianceId,x:20,z:20});
+  w.flags.push({health:250,maxHealth:250,buildRemaining:0,isRoot:true,connected:true,id:'territory',allianceId:p.allianceId,x:20,z:20});
   a.x=20;a.z=23;cmd(w,p,'capture',{marchId:a.id,targetId:'shrine-dawn'});
   cmd(w,p,'gather',{targetId:w.nodes[0].id});advance(w,16);
   assert.equal(w.sites[0].allianceId,p.allianceId);assert.equal(p.target.type,'gather');

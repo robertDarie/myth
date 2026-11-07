@@ -14,7 +14,7 @@ test('leaders manage ranks and succession; officers cannot remove peers or trans
 test('closing an empty alliance neutralizes its territory and markers rather than leaving orphan ownership',()=>{
  const {w,p:[leader,officer,member]}=setup();const id=leader.allianceId;
  cmd(w,officer,'alliance-leave');cmd(w,member,'alliance-leave');
- w.flags.push({id:'flag',allianceId:id,x:5,z:5});w.sites[0].allianceId=id;w.sites[0].challengerId=id;w.sites[0].progress=5;
+ w.flags.push({health:250,maxHealth:250,buildRemaining:0,isRoot:true,connected:true,id:'flag',allianceId:id,x:5,z:5});w.sites[0].allianceId=id;w.sites[0].challengerId=id;w.sites[0].progress=5;
  cmd(w,leader,'marker-place','',{name:'Meet',x:10,z:10});cmd(w,leader,'alliance-leave');
  assert.equal(w.alliances.has(id),false);assert.equal(w.flags.length,0);assert.equal(w.markers.length,0);assert.equal(w.sites[0].allianceId,'');assert.equal(w.sites[0].progress,0);
  assert.doesNotThrow(()=>World.fromSave(w.toSave()));
