@@ -177,7 +177,7 @@ test('schema-1 saves migrate once without losing queues, resources, commanders o
   const migrated = World.fromSave(old), city = migrated.authenticate(s.token);
   assert.equal(city.gold, 1234); assert.equal(city.trainingQueue.length, 1); assert.equal(city.mythic, 1);
   assert.equal(city.buildings.menagerie, 1); assert.equal(city.stone, 150); assert.equal(city.sigils, 3);
-  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema, 8);
+  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema, 9);
   city.sigils = 0; const again = World.fromSave(migrated.toSave()); assert.equal(again.authenticate(s.token).sigils, 0);
 });
 

@@ -4,8 +4,10 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.13
+## Playable slice 0.14
 
+- Five repeatable Godbreaker Strongholds across three tiers: rally-only guard/wall
+  battles, contribution-based shared rewards, commander XP and private PvE reports.
 - Six-chapter opening campaign with 19 objectives, individual and chapter rewards,
   a persistent next-goal HUD, contextual Go actions and saved early achievements.
 - Persistent discovery, allied fog of war, dedicated scouts and private scouting
@@ -82,6 +84,7 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[the 0.14 stronghold rules](docs/strongholds-0.14.md),
 [the 0.13 opening campaign](docs/opening-campaign-0.13.md),
 [the 0.12 exploration and route rules](docs/exploration-and-routes-0.12.md),
 [the 0.11 alliance warfare rules](docs/alliance-warfare-0.11.md),

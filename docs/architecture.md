@@ -11,7 +11,7 @@ positions locally and never chooses damage or rewards.
 `content.mjs` defines five civilizations, eleven commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 10
+`http.mjs` provides a small versioned development protocol. Snapshot version 11
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -78,7 +78,7 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 8 stores chapter achievements/claims plus discovery/scouts plus alliance campaigns/fortifications plus troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4/5/6/7 without resetting progression) queues, reserves, map state and sessions. A loader validates
+Save schema 9 stores strongholds/respawn generations plus chapter achievements/claims plus discovery/scouts plus alliance campaigns/fortifications plus troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4/5/6/7/8 without resetting progression) queues, reserves, map state and sessions. A loader validates
 the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
 ordinary field orders and cancels rallies, sealing active group battles once as
@@ -140,3 +140,10 @@ completed training and scout arrival increment distinct counters. Chapter III
 shares the legacy hero reward flag. Private campaign cards include contextual
 guide targets; schema 8 stores progress/claims, protocol 10 exposes the cards.
 See [the opening campaign](opening-campaign-0.13.md).
+
+`strongholds.mjs` defines PvE defender tiers, simultaneous guard/wall rounds,
+fixed contribution-weighted resource/XP pools and respawn generations.
+`campaign.mjs` uses those encounters as rally targets, retaining existing army
+commitments, withdrawals, hospital transfers and private report sealing. Schema 9
+stores encounter health/timers and victory counts; protocol 11 adds map/scouting
+data and reward receipts. See [the stronghold rules](strongholds-0.14.md).

@@ -13,8 +13,16 @@ namespace ThronesOfMyth
         private bool ContributionReady => MarchAvailable && ActiveArmy.health >= ActiveArmy.maxHealth;
         private string WarTargetName(string id)
         {
+            var stronghold = KnownStronghold(id); if (stronghold != null) return stronghold.name + " · Tier " + stronghold.tier + " PvE";
             var site = Array.Find(world.sites, s => s.id == id); if (site != null) return site.name;
             var beacon = Array.Find(world.flags, f => f.id == id); return beacon == null ? "Scouted alliance structure" : beacon.isRoot ? "Alliance Fort" : "Alliance Beacon";
+        }
+        private StrongholdData KnownStronghold(string id)
+        {
+            var known = Array.Find(world.strongholds, t => t.id == id); if (known != null) return known;
+            if (world.exploration != null) foreach (var report in world.exploration.reports)
+                if (report.strongholds != null) { known = Array.Find(report.strongholds, t => t.id == id); if (known != null) return known; }
+            return null;
         }
         private void OpenWarfare(string id)
         {
@@ -54,26 +62,39 @@ namespace ThronesOfMyth
             }
             GUILayout.Space(12); GUILayout.Label("Start a rally", sectionStyle);
             var targets = new List<string>();
+            foreach (var stronghold in world.strongholds) if (stronghold.respawn <= 0) targets.Add(stronghold.id);
             foreach (var site in world.sites) if (!string.IsNullOrEmpty(site.allianceId) && site.allianceId != me.allianceId) targets.Add(site.id);
             foreach (var flag in world.flags) if (flag.allianceId != me.allianceId) targets.Add(flag.id);
             if (world.exploration != null) foreach (var report in world.exploration.reports)
             {
                 foreach (var site in report.sites)
                     if (!string.IsNullOrEmpty(site.allianceId) && site.allianceId != me.allianceId && !targets.Contains(site.id) && !Array.Exists(world.sites, s => s.id == site.id && s.allianceId == me.allianceId)) targets.Add(site.id);
+                if (report.strongholds != null) foreach (var t in report.strongholds) if (t.respawn <= 0 && !targets.Contains(t.id) && !Array.Exists(world.strongholds, current => current.id == t.id && current.respawn > 0)) targets.Add(t.id);
                 foreach (var flag in report.flags) if (flag.allianceId != me.allianceId && !targets.Contains(flag.id)) targets.Add(flag.id);
             }
             if (!targets.Contains(warfareTargetId)) warfareTargetId = targets.Count > 0 ? targets[0] : null;
             GUILayout.Label("Scouted objectives may have changed since the report. The server rechecks ownership, supply and access when assembling.", theme.Small);
             foreach (var id in targets) if (GUILayout.Toggle(warfareTargetId == id, WarTargetName(id), theme.Tab)) warfareTargetId = id;
-            if (targets.Count == 0) GUILayout.Label("No enemy-held structures yet. Neutral sacred sites use the normal capture action.", noteStyle);
+            if (targets.Count == 0) GUILayout.Label("No known enemy structures or ready strongholds yet. Scout the frontier. Neutral sacred sites use the normal capture action.", noteStyle);
+            var boss = KnownStronghold(warfareTargetId);
+            if (boss != null)
+            {
+                GUILayout.Label("GODBREAKER STRONGHOLD · TIER " + boss.tier, theme.Eyebrow);
+                GUILayout.Label(Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth) + " defender HP · " + Mathf.CeilToInt(boss.health) + "/" + Mathf.CeilToInt(boss.maxHealth) + " wall HP", noteStyle);
+                GUILayout.Label("Defenders · " + UnitSummary(boss.units) + " · Base retaliation " + boss.guardDamage.ToString("F0"), theme.Small);
+                GUILayout.Label("At least " + world.strongholdRules.minMarches + " assembled marches. Defeat the guards, then the walls. " + world.strongholdRules.roundLimit + " combat-round limit; no beacon supply required.", noteStyle);
+                GUILayout.Label("TOTAL SHARED REWARD POOL · " + JourneyRewardText(boss.reward) + " · " + boss.xp + " commander XP", theme.Small);
+                GUILayout.Label("The pool is divided by actual guard/wall damage, aggregated per city. Additional marches do not multiply rewards. Survivors return home automatically.", theme.Small);
+            }
+            foreach (var fallen in world.strongholds) if (fallen.respawn > 0) GUILayout.Label(fallen.name + " · Reforms in " + Mathf.CeilToInt(fallen.respawn) + "s", theme.Small);
             rallyAssemblyIndex = GUILayout.Toolbar(rallyAssemblyIndex, new[] { "10s assembly", "30s assembly", "60s assembly" });
             GUILayout.Label("Up to " + world.campaignLimits.rallyMarches + " marches / " + world.campaignLimits.rallyLoad + " load. A mortal uses one load; a mythic uses five. Contributions must reach the leader's city before assembly ends.", theme.Small);
-            bool createReady = WarOfficer && BuildingLevel("oathhall") > 0 && ContributionReady && CanEditArmy && warfareTargetId != null;
+            bool createReady = (WarOfficer || boss != null) && BuildingLevel("oathhall") > 0 && ContributionReady && CanEditArmy && warfareTargetId != null;
             GUI.enabled = createReady && !processing;
             if (GUILayout.Button("ASSEMBLE RALLY · " + (warfareTargetId == null ? "Choose a target" : WarTargetName(warfareTargetId)), theme.Primary, GUILayout.Height(44)))
                 Send(new GameCommand { type = "rally-create", targetId = warfareTargetId, count = new[] { 10, 30, 60 }[rallyAssemblyIndex] });
             GUI.enabled = true;
-            if (!createReady) GUILayout.Label("Leading requires leader/officer rank, Citadel 2, an Oathbound Hall and an idle, fully recovered march at home. A completed, connected beacon must supply the target within 12 map units.", noteStyle);
+            if (!createReady) GUILayout.Label("Leading requires Citadel 2, an Oathbound Hall and an idle, fully recovered march at home. PvE rallies accept any alliance member; PvP leadership needs leader/officer rank. PvP targets need connected beacon supply within 12 units; Godbreaker strongholds do not.", noteStyle);
             GUILayout.Space(16); GUILayout.Label("Alliance rallies", sectionStyle);
             if (world.rallies.Length == 0) GUILayout.Label("No rally is currently assembling or marching.", theme.Small);
             foreach (var rally in world.rallies)
@@ -124,6 +145,13 @@ namespace ThronesOfMyth
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(report.targetName + " · " + report.outcome, sectionStyle);
                 GUILayout.Label(report.rounds + " rounds · Structure damage " + report.structureDamage.ToString("F1"), noteStyle);
+                if (report.kind == "stronghold")
+                {
+                    GUILayout.Label("Tier " + report.tier + " · Guards " + report.guardHealthBefore.ToString("F0") + " → " + report.guardHealthAfter.ToString("F0") + " HP · Walls " + report.wallHealthBefore.ToString("F0") + " → " + report.wallHealthAfter.ToString("F0") + " HP", theme.Small);
+                    GUILayout.Label("Defender damage taken " + report.npcDamageTaken.ToString("F1") + " · Defender damage dealt " + report.npcDamageDealt.ToString("F1"), theme.Small);
+                    if (report.rewards != null) foreach (var reward in report.rewards) if (reward.playerId == playerId)
+                        GUILayout.Label("YOUR REWARD · " + JourneyRewardText(reward.resources) + " · " + reward.xp + " commander XP", noteStyle);
+                }
                 foreach (var team in new[] { "Attackers", "Defenders" })
                 {
                     GUILayout.Label(team.ToUpperInvariant(), theme.Eyebrow);

@@ -1,3 +1,4 @@
+import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, rewardStronghold, resetStronghold, validateStrongholdReport } from './strongholds.mjs';
 import { route, travel } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { allianceRole } from './social.mjs';
@@ -9,7 +10,7 @@ export const CAMPAIGN_LIMITS = { rallyMarches: 5, rallyLoad: 200, garrisonMarche
 const distance = (a,b) => Math.hypot(a.x-b.x,a.z-b.z);
 const load = a => a.troops+a.mythic*5;
 const managed = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
-export const fortification = (w,id) => w.sites.find(s=>s.id===id) || w.flags.find(f=>f.id===id);
+export const fortification = (w,id) => w.sites.find(s=>s.id===id) || w.flags.find(f=>f.id===id) || w.strongholds.find(t=>t.id===id);
 export function initializeFortification(t,kind='flag') {
   t.maxHealth = kind==='fort'?600:kind==='gate'?450:kind==='sanctuary'?650:kind==='shrine'?300:250;
   t.health=t.maxHealth;
@@ -61,6 +62,7 @@ function sealSiege(w,siege,outcome) {
 }
 function removeRally(w,rally,outcome,paused=false) {
   const siege=rallySiege(w,rally.id);if(siege)sealSiege(w,siege,outcome);
+  const target=fortification(w,rally.targetId);if(isStronghold(target))resetStronghold(target);
   for(const id of rally.armyIds)release(w,id,paused?'Paused':'Returning');
   w.rallies=w.rallies.filter(r=>r.id!==rally.id);
 }
@@ -81,9 +83,11 @@ function readyMarch(w,p,a,fail,full=true) {
 }
 function targetReason(w,rally) {
   const t=fortification(w,rally.targetId);
-  if(!t||t.health<=0||t.allianceId!==rally.defendingAllianceId||!t.allianceId||t.allianceId===rally.allianceId)return 'Target unavailable or ownership changed';
+  if(!t||t.health<=0)return 'Target unavailable or ownership changed';
   const p=w.players.get(rally.leaderId);
   if(!p||p.allianceId!==rally.allianceId||!w.canEnter(p,t))return 'Leader unavailable or route locked';
+  if(isStronghold(t))return t.respawn>0||rally.targetCycle!==t.cycle?'Stronghold is unavailable or has respawned':'';
+  if(t.allianceId!==rally.defendingAllianceId||!t.allianceId||t.allianceId===rally.allianceId)return 'Target unavailable or ownership changed';
   if(!territoryNear(w,rally.allianceId,t))return 'Alliance territory disconnected';
   return '';
 }
@@ -107,12 +111,13 @@ export function campaignCommand(w,p,c,fail) {
     w.flags=w.flags.filter(x=>x.id!==f.id);refreshBeacons(w);w.event(`${p.name} dismantled an alliance beacon.`);return true;
   }
   if(c.type==='rally-create') {
-    if(!managed(w,p))fail('Only alliance leaders and officers can lead a rally.');
+    const t=fortification(w,c.targetId);
+    if(!p.allianceId)fail('Join an alliance before leading a rally.');
+    if(!isStronghold(t)&&!managed(w,p))fail('Only alliance leaders and officers can lead a rally.');
     if(!p.buildings.oathhall)fail('Build the Oathbound Hall to lead a rally.');
     const a=ownMarch(w,p,c,fail);readyMarch(w,p,a,fail);w.requireHome(a);
     const seconds=c.count||10;if(![10,30,60].includes(seconds))fail('Choose a 10, 30 or 60 second assembly timer.');
-    const t=fortification(w,c.targetId);
-    const r={id:randomUUID(),allianceId:p.allianceId,defendingAllianceId:t?.allianceId||'',leaderId:p.id,leaderArmyId:a.id,targetId:c.targetId,armyIds:[a.id],phase:'Assembling',assemblyEnds:w.time+seconds,meetX:p.homeX,meetZ:p.homeZ,x:p.homeX,z:p.homeZ};
+    const r={id:randomUUID(),allianceId:p.allianceId,defendingAllianceId:t?.allianceId||'',leaderId:p.id,leaderArmyId:a.id,targetId:c.targetId,armyIds:[a.id],targetCycle:isStronghold(t)?t.cycle:0,phase:'Assembling',assemblyEnds:w.time+seconds,meetX:p.homeX,meetZ:p.homeZ,x:p.homeX,z:p.homeZ};
     const reason=targetReason(w,r);if(reason)fail(reason);
     if(w.rallies.some(r=>r.targetId===t.id))fail('That structure already has a rally approaching or fighting.');
     if(load(a)>CAMPAIGN_LIMITS.rallyLoad)fail('This march exceeds rally troop capacity.');
@@ -155,13 +160,23 @@ export function campaignCommand(w,p,c,fail) {
 function newSiege(w,r,t) {
   const report={id:randomUUID(),targetId:t.id,targetName:t.name||(t.isRoot?'Alliance Fort':'Alliance Beacon'),attackingAllianceId:r.allianceId,defendingAllianceId:t.allianceId,started:w.time,ended:0,rounds:0,outcome:'Fighting',structureDamage:0,participants:[]};
   for(const a of actors(w,r.armyIds))report.participants.push(contribution(w,a,'Attackers'));
-  const s={id:report.id,rallyId:r.id,targetId:t.id,nextAt:w.time+Math.max(0,...actors(w,r.armyIds).map(a=>a.cooldown)),report};w.sieges.push(s);return s;
+  if(isStronghold(t))initStrongholdReport(report,t);
+  const s={id:report.id,rallyId:r.id,targetId:t.id,nextAt:w.time+(isStronghold(t)?0:Math.max(0,...actors(w,r.armyIds).map(a=>a.cooldown))),report};w.sieges.push(s);return s;
 }
 function distribute(total,hits,field) {
   const requested=hits.reduce((n,h)=>n+h.amount,0);let remaining=total;
   hits.forEach((h,i)=>{const amount=i===hits.length-1?remaining:total*h.amount/requested;h.entry[field]+=amount;remaining-=amount;});
 }
 function siegeRound(w,r,t,s) {
+  if(isStronghold(t)){
+    const result=strongholdRound(w,r,t,s);
+    for(const a of actors(w,r.armyIds))if(a.health<=0){const entry=s.report.participants.find(e=>e.armyId===a.id);retreat(w,a,entry);recordExit(w,s,a.id,'Retreated');r.armyIds=r.armyIds.filter(id=>id!==a.id);}
+    if(r.armyIds.length&&!r.armyIds.includes(r.leaderArmyId)){r.leaderArmyId=r.armyIds[0];r.leaderId=w.owner(w.army(r.leaderArmyId)).id;}
+    if(!r.armyIds.length){removeRally(w,r,'Stronghold defenders held');return;}
+    if(result==='victory'){rewardStronghold(w,t,s.report);t.respawn=STRONGHOLD_RULES.respawnSeconds;removeRally(w,r,'Stronghold defeated');w.event(`Alliance forces defeated ${t.name}.`);}
+    else if(result==='timeout')removeRally(w,r,'Stronghold siege timed out');
+    return;
+  }
   const attackers=actors(w,r.armyIds),g=w.garrisons.find(g=>g.targetId===t.id);
   const defenders=actors(w,g?.armyIds||[]).filter(a=>distance(a,t)<=2.01&&a.state==='Garrisoned');
   for(const a of defenders)if(!s.report.participants.some(e=>e.armyId===a.id)) {
@@ -219,8 +234,10 @@ export function tickCampaign(w,dt) {
       if(w.time<r.assemblyEnds)continue;
       for(const id of [...r.armyIds])if(distance(w.army(id),meeting)>1)removeMember(w,{kind:'rally',group:r},id,'Missed assembly');
       if(!r.armyIds.includes(r.leaderArmyId)){removeRally(w,r,'Leader missed assembly');continue;}
+      if(isStronghold(t)&&r.armyIds.length<STRONGHOLD_RULES.minMarches){removeRally(w,r,'Strongholds require at least two assembled marches');continue;}
       r.phase='Marching';
     }
+    if(r.phase==='Marching'&&isStronghold(t)&&r.armyIds.length<STRONGHOLD_RULES.minMarches){removeRally(w,r,'Stronghold rally fell below two marches');continue;}
     if(r.phase==='Marching') {
       const before={x:r.x,z:r.z},speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));r.ownerId=r.leaderId;const arrived=travel(w,r,t,speed,dt,1.2);
       for(const a of actors(w,r.armyIds)){a.x=Math.max(1,Math.min(79,a.x+r.x-before.x));a.z=Math.max(1,Math.min(79,a.z+r.z-before.z));setOrder(a,'rally',r.id,t,'Rally marching');}
@@ -246,6 +263,7 @@ export function initializeCampaign(w) {
 export function validateGroupReport(r) {
   if(!r||typeof r.id!=='string'||typeof r.targetId!=='string'||typeof r.targetName!=='string'||typeof r.outcome!=='string'||![r.started,r.ended,r.structureDamage].every(n=>Number.isFinite(n)&&n>=0)||!Number.isSafeInteger(r.rounds)||r.rounds<0||!Array.isArray(r.participants)||r.participants.length<1||r.participants.length>CAMPAIGN_LIMITS.reportEntries||new Set(r.participants.map(e=>e.armyId)).size!==r.participants.length)throw new Error('Invalid saved group report.');
   for(const e of r.participants)if(!e||!['Attackers','Defenders'].includes(e.team)||!['Fighting','Survived','Withdrawn','Retreated','Recalled'].includes(e.result)||['armyId','playerId','playerName','commanderId'].some(k=>typeof e[k]!=='string')||![e.unitsBefore,e.unitsAfter,e.wounded].every(validUnits)||['mythicBefore','mythicAfter','woundedMythic','damageDealt','damageTaken','healed','absorbed','shieldCreated','structureDamage'].some(k=>!Number.isFinite(e[k])||e[k]<0))throw new Error('Invalid saved group contribution.');
+  validateStrongholdReport(r);
 }
 export function restoreCampaign(w,saved) {
   if(!['rallies','garrisons','sieges'].every(k=>Array.isArray(saved[k]))||saved.rallies.length>160||saved.garrisons.length>645||saved.sieges.length>160)throw new Error('Invalid saved campaign.');
@@ -261,6 +279,7 @@ export function restoreCampaign(w,saved) {
   if(new Set(saved.garrisons.map(g=>g.targetId)).size!==saved.garrisons.length||new Set(saved.rallies.map(r=>r.id)).size!==saved.rallies.length)throw new Error('Invalid saved campaign IDs.');
   for(const group of [...saved.rallies,...saved.garrisons])if(totalLoad(w,group.armyIds)>(group.id?CAMPAIGN_LIMITS.rallyLoad:CAMPAIGN_LIMITS.garrisonLoad))throw new Error('Invalid saved campaign capacity.');
   for(const r of saved.rallies)if(typeof r.id!=='string'||!r.armyIds.includes(r.leaderArmyId)||w.owner(w.army(r.leaderArmyId)).id!==r.leaderId||!['Assembling','Marching','Fighting'].includes(r.phase)||![r.x,r.z,r.meetX,r.meetZ].every(n=>Number.isFinite(n)&&n>=1&&n<=79)||!Number.isFinite(r.assemblyEnds))throw new Error('Invalid saved rally.');
+  for(const r of saved.rallies)if(isStronghold(fortification(w,r.targetId))&&r.targetCycle!==fortification(w,r.targetId).cycle)throw new Error('Invalid saved stronghold generation.');
   w.garrisons=saved.garrisons;
   for(const g of w.garrisons){const t=fortification(w,g.targetId);if(t.allianceId!==g.allianceId)throw new Error('Invalid saved garrison ownership.');for(const a of actors(w,g.armyIds))setOrder(a,'garrison',t.id,t,distance(a,t)<=2?'Garrisoned':'Garrison approaching');}
   w.rallies=saved.rallies;w.sieges=[];
@@ -269,7 +288,8 @@ export function restoreCampaign(w,saved) {
     validateGroupReport(s.report);
     const rally=w.rallies.find(r=>r.id===s.rallyId&&r.targetId===s.targetId&&r.phase==='Fighting');
     if(s.id!==s.report.id||s.targetId!==s.report.targetId||!rally||!Number.isFinite(s.nextAt))throw new Error('Invalid saved siege.');
-    for(const entry of s.report.participants){const a=w.army(entry.armyId);if(!a||w.owner(a).id!==entry.playerId)throw new Error('Invalid saved siege contributor.');}
+    if(isStronghold(fortification(w,s.targetId))&&(s.report.kind!=='stronghold'||s.report.settled||s.report.rewards.length||s.report.targetCycle!==fortification(w,s.targetId).cycle))throw new Error('Invalid saved active stronghold battle.');
+    for(const entry of s.report.participants){const a=w.army(entry.armyId);if(!w.players.has(entry.playerId)||(a&&w.owner(a).id!==entry.playerId)||(entry.result==='Fighting'&&(!a||(entry.team==='Attackers'?!rally.armyIds.includes(a.id):!w.garrisons.some(g=>g.targetId===s.targetId&&g.armyIds.includes(a.id))))))throw new Error('Invalid saved siege contributor.');}
     w.sieges.push(s);
   }
   if(w.rallies.some(r=>r.phase==='Fighting'&&!w.sieges.some(s=>s.rallyId===r.id)))throw new Error('Missing saved siege.');

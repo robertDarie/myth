@@ -93,6 +93,12 @@ namespace ThronesOfMyth
                 Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · " + p.ageName + " · City " + p.cityLevel, -1, p.civilization);
                 pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.9f + 0.1f * p.cityLevel);
             }
+            foreach (var boss in world.strongholds)
+            {
+                bool wasAlive = pieces.TryGetValue(boss.id, out var previousBoss) && previousBoss.health > 0;
+                Put(seen, boss.id, "stronghold", boss.x, boss.z, boss.respawn > 0 ? Color.gray : red, boss.name + " · Tier " + boss.tier + (boss.respawn > 0 ? " · Reforms " + Mathf.CeilToInt(boss.respawn) + "s" : " · Guards " + Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth)), boss.health / Mathf.Max(1, boss.maxHealth), boss.tier.ToString());
+                pieces[boss.id].actor.ObserveCamp(new CampData { health = Mathf.CeilToInt(boss.guardHealth + boss.health) }, wasAlive && boss.respawn > 0);
+            }
             foreach (var c in world.camps)
             {
                 bool wasAlive = pieces.TryGetValue(c.id, out var previous) && previous.health > 0;

@@ -43,6 +43,7 @@ namespace ThronesOfMyth
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label("Survey " + report.x.ToString("F0") + ", " + report.z.ToString("F0") + " · " + Mathf.Max(0, Mathf.FloorToInt(world.time - report.time)) + "s ago", sectionStyle);
                 GUILayout.Label(report.armies.Length + " enemy marches · " + report.camps.Length + " camps · " + report.sites.Length + " sacred sites · " + report.flags.Length + " beacons/forts", noteStyle);
+                if (report.strongholds != null) foreach (var fort in report.strongholds) GUILayout.Label(fort.name + " · Tier " + fort.tier + " · " + Mathf.CeilToInt(fort.guardHealth) + " defender HP · " + Mathf.CeilToInt(fort.health) + " wall HP" + (fort.respawn > 0 ? " · Defeated when surveyed" : ""), theme.Small);
                 foreach (var enemy in report.armies) GUILayout.Label(enemy.name + " · " + enemy.troops + " mortals / " + enemy.mythic + " mythic · " + enemy.health + " HP", new GUIStyle(noteStyle) { richText = false });
                 foreach (var site in report.sites) GUILayout.Label(site.name + " · " + AllianceName(site.allianceId) + " · " + Mathf.CeilToInt(site.health) + " structure HP", theme.Small);
                 foreach (var g in report.garrisons) GUILayout.Label(WarTargetName(g.targetId) + " garrison · " + g.marches + " marches / " + g.troops + " mortals / " + g.mythic + " mythic", theme.Small);

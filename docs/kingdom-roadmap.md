@@ -39,11 +39,18 @@ The map HUD and Campaign screen provide Go/Claim actions with saved early
 achievements and once-only rewards. See [the campaign rules](opening-campaign-0.13.md).
 Native pacing, layout/input and build verification remain pending.
 
-## Next: reasons to return and coordinated PvE
+## Delivered: repeatable alliance PvE foundation (0.14)
 
-Develop daily/weekly objectives, PvE rally bosses and scheduled kingdom milestones.
-Expand the opening with clearer feedback and later chapters after playtesting its
-resource flow and multiplayer pacing.
+Five Godbreaker Strongholds across three tiers now support rally-only guard/wall
+battles, contribution-weighted fixed reward pools, commander XP and saved
+respawns. Ordinary members can lead PvE rallies; territory attacks retain officer
+permissions. See [the stronghold rules](strongholds-0.14.md).
+
+## Next: daily activity and alliance goals
+
+Develop daily/weekly objectives and alliance contribution goals, then scheduled
+kingdom milestones. Expand the opening with clearer feedback and later chapters
+after playtesting its resource flow and multiplayer pacing.
 
 ## Troop and commander depth
 
@@ -53,7 +60,7 @@ Keep unit transfers, capacity and healing conserved across every upgrade.
 
 ## Kingdom progression and reasons to return
 
-Interactive tutorial and chapter chain; daily/weekly objectives; rally bosses
+Interactive tutorial and chapter chain; daily/weekly objectives; richer rally bosses
 and events; scheduled pass/sanctuary stages; ruler/governance, personal/alliance
 power rankings and campaign rewards. Balance training, resource flow, wounded
 recovery and commander development across days, not just a short local session.

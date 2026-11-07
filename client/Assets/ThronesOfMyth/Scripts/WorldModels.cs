@@ -57,7 +57,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class CivilizationData { public string id, name, specialty, mythic; }
     [Serializable] public sealed class EventData { public float time; public string message; }
     [Serializable] public sealed class HealingJob { public string id; public UnitCounts units; public int mythic; public float remaining, duration; public ResourceAmounts cost; }
-    [Serializable] public sealed class BattleSide { public string playerId, playerName, armyId, commanderId, team, result; public UnitCounts unitsBefore, unitsAfter, wounded; public int mythicBefore, mythicAfter, woundedMythic; public float damageDealt, damageTaken, healed, absorbed, shieldCreated, structureDamage; }
+    [Serializable] public sealed class BattleSide { public string playerId, playerName, armyId, commanderId, team, result; public UnitCounts unitsBefore, unitsAfter, wounded; public int mythicBefore, mythicAfter, woundedMythic; public int experience; public float damageDealt, damageTaken, healed, absorbed, shieldCreated, structureDamage; }
     [Serializable] public sealed class BattleReport { public string id, outcome; public float started, ended; public int rounds; public BattleSide[] sides; }
     [Serializable] public sealed class ChatMessage { public string id, channel, allianceId, authorId, author, text; public float time; }
     [Serializable] public sealed class AllianceMarker { public string id, allianceId, authorId, name; public float x, z, expires; }
@@ -65,20 +65,25 @@ namespace ThronesOfMyth
     [Serializable] public sealed class GarrisonData { public string targetId, allianceId; public string[] armyIds; public int troopLoad; }
     [Serializable] public sealed class SiegeData { public string id, targetId; public int rounds; public float started; }
     [Serializable] public sealed class CampaignLimits { public int rallyMarches, rallyLoad, garrisonMarches, garrisonLoad, reportEntries; }
-    [Serializable] public sealed class GroupBattleReport { public string id, targetId, targetName, attackingAllianceId, defendingAllianceId, outcome; public float started, ended, structureDamage; public int rounds; public BattleSide[] participants; }
+    [Serializable] public sealed class GroupBattleReport { public string kind; public int tier, targetCycle; public bool settled; public float guardHealthBefore, guardHealthAfter, wallHealthBefore, wallHealthAfter, npcDamageDealt, npcDamageTaken; public StrongholdReward[] rewards; public string id, targetId, targetName, attackingAllianceId, defendingAllianceId, outcome; public float started, ended, structureDamage; public int rounds; public BattleSide[] participants; }
     [Serializable] public sealed class RoutePoint { public float x, z; }
     [Serializable] public sealed class ScoutData { public string id, ownerId, phase; public float x, z, targetX, targetZ; }
     [Serializable] public sealed class ScoutEnemy { public string id, ownerId, name, commanderId; public int troops, mythic, health; public float x, z; }
     [Serializable] public sealed class ScoutGarrison { public string targetId; public int marches, troops, mythic; }
-    [Serializable] public sealed class ScoutReport { public string id; public float x, z, time; public ScoutEnemy[] armies; public CampData[] camps; public SiteData[] sites; public FlagData[] flags; public ScoutGarrison[] garrisons; }
+    [Serializable] public sealed class ScoutReport { public StrongholdData[] strongholds; public string id; public float x, z, time; public ScoutEnemy[] armies; public CampData[] camps; public SiteData[] sites; public FlagData[] flags; public ScoutGarrison[] garrisons; }
     [Serializable] public sealed class ExplorationData { public int cellSize, width; public int[] explored, visible; public ScoutData[] scouts; public ScoutReport[] reports; }
     [Serializable] public sealed class JourneyRewards { public int wood, food, gold, stone, aether, sigils; }
     [Serializable] public sealed class JourneyTask { public string id, title, description, guide, targetId; public int goal, progress; public bool claimed, canClaim; public JourneyRewards reward; }
     [Serializable] public sealed class JourneyChapter { public string id, title, story, commanderReward; public bool claimed, locked, canClaim; public JourneyTask[] tasks; public JourneyRewards reward; }
     [Serializable] public sealed class JourneyCampaign { public string activeId; public bool complete; public JourneyChapter[] chapters; }
+    [Serializable] public sealed class StrongholdData { public string id, name, kind; public int tier, cycle, xp; public float x, z, health, maxHealth, guardHealth, maxGuardHealth, guardDamage, respawn; public UnitCounts units; public JourneyRewards reward; }
+    [Serializable] public sealed class StrongholdRules { public int minMarches, roundLimit, respawnSeconds; }
+    [Serializable] public sealed class StrongholdReward { public string playerId; public float contribution; public int xp; public JourneyRewards resources; }
     [Serializable] public sealed class WorldSnapshot
     {
         public int version, size;
+        public StrongholdData[] strongholds;
+        public StrongholdRules strongholdRules;
         public ExplorationData exploration;
         public CampaignLimits campaignLimits;
         public RallyData[] rallies;

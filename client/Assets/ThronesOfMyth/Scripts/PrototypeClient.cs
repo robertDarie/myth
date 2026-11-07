@@ -338,6 +338,7 @@ namespace ThronesOfMyth
         private void ActOnSelection()
         {
             if (selectedKind == "army") { var enemy = Array.Find(world.armies, a => a.id == selectedId); if (enemy != null && enemy.ownerId != playerId) Send("attack-player", selectedId); }
+            if (selectedKind == "stronghold") OpenWarfare(selectedId);
             if (selectedKind == "camp") Send("attack", selectedId);
             if (selectedKind == "node") Send("gather", selectedId);
             if (selectedKind == "site") { var site = Array.Find(world.sites, s => s.id == selectedId); if (site != null && site.unknown) ScoutAt(site.x, site.z); else Send("capture", selectedId); }
@@ -390,7 +391,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 10) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 11) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

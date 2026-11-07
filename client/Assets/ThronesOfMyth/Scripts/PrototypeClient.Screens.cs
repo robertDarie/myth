@@ -265,6 +265,7 @@ namespace ThronesOfMyth
             if (string.IsNullOrEmpty(selectedId)) return;
             var r = ContextRect; string title = "", subtitle = "", action = "", emblem = "army"; float health = -1;
             Action perform = null; bool enabled = !processing;
+            var boss = Array.Find(world.strongholds, t => t.id == selectedId);
             var camp = Array.Find(world.camps, c => c.id == selectedId);
             var node = Array.Find(world.nodes, n => n.id == selectedId);
             var site = Array.Find(world.sites, s => s.id == selectedId);
@@ -272,7 +273,12 @@ namespace ThronesOfMyth
             var beacon = Array.Find(world.flags, f => f.id == selectedId);
             var pin = Array.Find(world.markers, m => m.id == selectedId);
             var city = Array.Find(world.players, p => "city-" + p.id == selectedId);
-            if (camp != null)
+            if (boss != null)
+            {
+                title = boss.name + " · Tier " + boss.tier; subtitle = boss.respawn > 0 ? "REFORMS IN " + Mathf.CeilToInt(boss.respawn) + "s" : "RALLY ONLY · " + Mathf.CeilToInt(boss.guardHealth) + " DEFENDER HP · " + Mathf.CeilToInt(boss.health) + " WALL HP";
+                health = boss.health / Mathf.Max(1, boss.maxHealth); action = boss.respawn > 0 ? "Reforming" : "Plan alliance rally"; enabled &= boss.respawn <= 0; perform = () => OpenWarfare(boss.id);
+            }
+            else if (camp != null)
             {
                 title = camp.name; subtitle = "LEVEL " + camp.level + " · " + camp.health + " / " + camp.maxHealth + " HEALTH"; health = (float)camp.health / camp.maxHealth;
                 action = camp.health > 0 ? "March & attack" : "Returns in " + camp.respawn + "s"; enabled &= camp.health > 0;

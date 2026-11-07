@@ -313,6 +313,7 @@ namespace ThronesOfMyth
                 { int cell = z * 20 + x; if (!sight.Contains(cell)) MythInterfaceTheme.Fill(new Rect(mapArea.x + x * mapArea.width / 20, mapArea.y + (19 - z) * mapArea.height / 20, mapArea.width / 20 + 1, mapArea.height / 20 + 1), known.Contains(cell) ? new Color(0.08f, 0.12f, 0.14f, 0.6f) : new Color(0.03f, 0.05f, 0.08f)); }
                 foreach (var scout in world.exploration.scouts) Dot(mapArea, scout.x, scout.z, Color.cyan, 4);
             }
+            foreach (var boss in world.strongholds) Dot(mapArea, boss.x, boss.z, MythInterfaceTheme.Red, 6);
             foreach (var site in world.sites) Dot(mapArea, site.x, site.z, new Color(0.85f, 0.72f, 0.95f), 5);
             foreach (var army in world.armies) Dot(mapArea, army.x, army.z, army.ownerId == playerId ? MythInterfaceTheme.Teal : MythInterfaceTheme.Gold, army.id == ActiveArmy.id ? 6 : 3);
             Dot(mapArea, me.homeX, me.homeZ, Color.white, 5);

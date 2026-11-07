@@ -109,6 +109,25 @@ namespace ThronesOfMyth
                 }
                 else Temple(root, team, variant != "shrine");
             }
+            else if (kind == "stronghold")
+            {
+                Box(root, 0, 0.3f, 0, 5.8f, 0.6f, 5, darkStone);
+                for (int i = 0; i < 4; i++)
+                {
+                    float x = i % 2 == 0 ? -2.3f : 2.3f, z = i < 2 ? -1.8f : 1.8f;
+                    Box(root, x, 1.8f, z, 1.1f, 3.6f, 1.1f, darkStone);
+                    Box(root, x, 3.7f, z, 1.4f, 0.35f, 1.4f, bronze);
+                    Ball(root, x, 4, z, 0.35f, 0.5f, 0.35f, team);
+                }
+                Box(root, 0, 1.4f, 1.8f, 3.8f, 2.5f, 0.55f, darkStone);
+                Box(root, -1.3f, 1.4f, -1.8f, 1.4f, 2.5f, 0.55f, darkStone);
+                Box(root, 1.3f, 1.4f, -1.8f, 1.4f, 2.5f, 0.55f, darkStone);
+                Box(root, 0, 2.8f, -1.8f, 3.8f, 0.45f, 0.65f, bronze);
+                Pillar(root, 0, 2, 0.5f, 0.14f, 4, bronze);
+                actor.banner = Box(root, 0.55f, 3.3f, 0.5f, 1.1f, 0.9f, 0.08f, team);
+                for (int i = -1; i <= 1; i += 2) Soldier(root, new Vector3(i * 1.2f, 0, -2.9f), team, "greek", actor, "infantry");
+                Ring(root, 3.3f, team, 0.12f);
+            }
             else if (kind == "camp")
             {
                 if (variant == "forsaken-4" || variant == "forsaken-6") Beast(root, Vector3.zero, variant == "forsaken-6" ? "norse" : "greek", team);

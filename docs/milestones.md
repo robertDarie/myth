@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.13
+## Implemented through slice 0.14
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -38,6 +38,10 @@ See [the exploration rules](exploration-and-routes-0.12.md).
 The 0.13 opening campaign adds six chapters and 19 objectives, saved achievements,
 Go guidance and individual/chapter rewards. The complete sequence is covered by
 a fresh-city legal-command playthrough. See [the campaign rules](opening-campaign-0.13.md).
+
+The 0.14 coordinated PvE foundation adds five strongholds in three tiers,
+rally-only guard/wall battles, fixed shared reward pools and saved respawns.
+See [the stronghold rules](strongholds-0.14.md).
 
 ## Next stages
 

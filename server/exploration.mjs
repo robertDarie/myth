@@ -22,6 +22,7 @@ export function explorationTick(w,dt){
    const report={id:randomUUID(),x:s.x,z:s.z,time:w.time,camps:w.camps.filter(c=>dist(c,s)<=FOG.scoutRadius).map(({contributors,...c})=>({...c})),
     flags:w.flags.filter(f=>dist(f,s)<=FOG.scoutRadius).map(f=>({...f})),
     armies:w.armies().filter(a=>!allied(p,w.owner(a))&&dist(a,s)<=FOG.scoutRadius).map(a=>({id:a.id,ownerId:w.owner(a).id,name:w.owner(a).name,x:a.x,z:a.z,troops:a.troops,mythic:a.mythic,health:Math.ceil(a.health),commanderId:a.commanderId})),
+    strongholds:w.strongholds.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     sites:w.sites.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     garrisons:w.garrisons.filter(g=>{const t=[...w.sites,...w.flags].find(t=>t.id===g.targetId);return t&&dist(t,s)<=FOG.scoutRadius;}).map(g=>({targetId:g.targetId,marches:g.armyIds.length,troops:g.armyIds.reduce((n,id)=>n+(w.army(id)?.troops||0),0),mythic:g.armyIds.reduce((n,id)=>n+(w.army(id)?.mythic||0),0)}))};
    journeyMetric(p,'surveys',1);p.scoutReports.unshift(report);p.scoutReports.length=Math.min(20,p.scoutReports.length);s.phase='Returning';
@@ -57,11 +58,12 @@ export function filterFog(w,snapshot,p){
  snapshot.exploration=fogSnapshot(w,p);
  snapshot.armies=snapshot.armies.filter(a=>friendly(a)||seen(a)).map(a=>friendly(a)?a:{...a,hasOrder:false,targetId:'',targetX:a.x,targetZ:a.z,route:[]});
  for(const q of snapshot.players)if(q.id!==p.id){q.x=q.homeX;q.z=q.homeZ;delete q.explored;delete q.scout;delete q.scoutReports;}
+ snapshot.strongholds=snapshot.strongholds.filter(seen);
  snapshot.camps=snapshot.camps.filter(seen);snapshot.nodes=snapshot.nodes.filter(seen);
  snapshot.flags=snapshot.flags.filter(f=>f.allianceId===p.allianceId||seen(f));
  // Sacred sites are public landmarks, but hidden ownership and live state are not public intelligence.
  snapshot.sites=snapshot.sites.map(s=>(!!p.allianceId&&s.allianceId===p.allianceId)||seen(s)?s:{id:s.id,name:s.name,kind:s.kind,x:s.x,z:s.z,description:s.description,allianceId:'',challengerId:'',progress:0,health:0,maxHealth:s.maxHealth,unknown:true});
- snapshot.garrisons=snapshot.garrisons.filter(g=>g.allianceId===p.allianceId);snapshot.sieges=snapshot.sieges.filter(s=>{const t=[...w.sites,...w.flags].find(t=>t.id===s.targetId);return t&&seen(t);});
+ snapshot.garrisons=snapshot.garrisons.filter(g=>g.allianceId===p.allianceId);snapshot.sieges=snapshot.sieges.filter(s=>{const t=[...w.sites,...w.flags,...w.strongholds].find(t=>t.id===s.targetId);return t&&seen(t);});
  snapshot.events=[];return snapshot;
 }
 export function validateExploration(p){
@@ -69,6 +71,7 @@ export function validateExploration(p){
  if(p.scout&&(!point(p.scout)||!point({x:p.scout.targetX,z:p.scout.targetZ})||typeof p.scout.id!=='string'||p.scout.ownerId!==p.id||!['Outbound','Returning'].includes(p.scout.phase)))throw new Error('Invalid saved scout.');
  for(const r of p.scoutReports){
   if(!r||typeof r.id!=='string'||!point(r)||!Number.isFinite(r.time)||r.time<0||!['camps','flags','armies','sites','garrisons'].every(k=>Array.isArray(r[k])&&r[k].length<=645))throw new Error('Invalid saved scout report.');
+  if(r.strongholds!==undefined&&(!Array.isArray(r.strongholds)||r.strongholds.length>5||r.strongholds.some(t=>!t||typeof t.id!=='string'||!point(t)||!Number.isFinite(t.health)||t.health<0||!Number.isFinite(t.guardHealth)||t.guardHealth<0)))throw new Error('Invalid saved stronghold scouting.');
   const count=n=>Number.isSafeInteger(n)&&n>=0;
   if([...r.camps,...r.flags,...r.armies,...r.sites].some(t=>!t||typeof t.id!=='string'||!point(t)||!Number.isFinite(t.health)||t.health<0)||r.armies.some(a=>typeof a.name!=='string'||typeof a.commanderId!=='string'||!count(a.troops)||!count(a.mythic))||r.garrisons.some(g=>!g||typeof g.targetId!=='string'||![g.marches,g.troops,g.mythic].every(count)))throw new Error('Invalid saved scout intelligence.');
  }

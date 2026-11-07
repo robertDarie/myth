@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Audited against the repository through the 0.13 opening campaign pass. **Implemented**
+Audited against the repository through the 0.14 stronghold pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -19,19 +19,19 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Troop training and dispatch | Partial | Infantry/archer/cavalry training, civilization mythics, exact counts, reserves, five marches | Troop tiers/upgrades, siege, richer role effects and formations with tactical consequences |
 | March control | Partial | Select, move, stop, return, attack camps, gather, capture; server-owned orders | Obstacle-aware pathfinding, true pass corridors, multi-select and group orders |
 | Open-field combat | Partial | Server-owned PvE and one-versus-one PvP, retaliation, rage/shields/heals, counters and protection | Rally field interception, ranged spacing, area effects and richer disengagement rules |
-| Casualties and hospital | Partial | Typed PvP wounded troops, paid timed treatment, exact reserve transfers and independent ward | Permanent-loss modes, PvE severe wounds, traditional overflow rules and alliance healing help |
+| Casualties and hospital | Partial | Typed PvP/stronghold wounded troops, paid timed treatment, exact reserve transfers and independent ward | Permanent-loss modes, solo-camp severe wounds, traditional overflow rules and alliance healing help |
 | Commander collection | Partial | Eleven commanders, four rarities, earned-sigil summons, published odds, pity and duplicate shards | Larger roster, distinct tactical identities, recruitment pacing and content events |
 | Commander development | Partial | Individual XP, levels, stars, four skills, expertise and separate ascension | Talent trees, secondary commanders, richer skill effects and reusable loadout presets |
 | Equipment and inventory | Partial | Forge, a small relic list and march relic ownership | Full inventory, consumables, equipment sets, crafting depth and item rewards |
 | Exploration and intelligence | Partial | Persistent discovery, current allied vision, scouts, private historical reports and server filtering | Exploration rewards, watchtower alerts, scout interception and explicit report sharing |
-| PvE variety | Partial | Seven respawning camps, shared rewards and chapter combat objectives | Boss encounters, rallies against bosses, quests, difficulty progression, dungeons and varied objectives |
+| PvE variety | Partial | Seven respawning camps, chapter objectives and five three-tier rally strongholds with fixed shared rewards | Richer boss mechanics, events, dungeons and varied objectives |
 | Alliance membership | Partial | Create/join/leave, leader/officer/member permissions, kick, succession and disband cleanup | Invites/applications, full audit logs and recruitment/diplomacy tools |
 | Social communication | Partial | Private alliance chat, kingdom chat, shared expiring map markers and event feed | Direct messages, mail, moderation and durable large-scale chat |
 | Alliance development | Partial | Job help, beacons and site ownership | Donations, alliance technology, treasury, member contributions and alliance progression |
 | Territory and sacred sites | Partial | Constructed connected forts/beacons, destructible territory, defended shrines/gates, sanctuary buffs and supply checks | Full terrain navigation, opening schedules and durable ownership history |
-| Rallies and garrisons | Partial | Timed assembly, actual march contributions, leadership/recall, capacity, late reinforcements and defended structure battles | Field interception, rally bosses, progression/balance and native playtest |
+| Rallies and garrisons | Partial | Timed assembly, actual march contributions, leadership/recall, capacity, late reinforcements and defended structure battles | Field interception, richer boss mechanics, progression/balance and native playtest |
 | City warfare and protection | Missing | Cities are visible and own reserves | Walls, garrison, siege, burning, looting caps, protection shields, beginner safety and teleport rules |
-| Battle reports and rankings | Partial | Private active/completed PvP reports with damage/healing/shield and wounded accounting | Group/PvE reports, power calculation, leaderboards and extended war history |
+| Battle reports and rankings | Partial | Private active/completed duel, group and stronghold reports with damage/healing/shield, wounds and reward receipts | Power calculation, leaderboards and extended war history |
 | Kingdom timeline | Missing | Five age-based march unlocks exist | Scheduled pass openings, objectives, ruler/kingdom governance and campaign milestones |
 | KvK / seasons | Missing | No cross-kingdom play | Multiple hosted kingdoms, eligibility/power model, matchmaking, seasonal map, rules, scoring, rewards and migration |
 | Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD and contextual Go guidance | Native pacing review, richer interactive tutorial, daily/weekly goals and later chapters |
@@ -84,7 +84,8 @@ an enemy beacon under explicit rules and sees the result in reports and logs.
 ### P3 — A kingdom campaign with reasons to return
 
 Scouting/fog, gate-corridor routing and a six-chapter opening campaign are
-delivered. Add richer tutorial feedback, daily objectives, PvE bosses and
+delivered, along with repeatable rally strongholds. Add richer tutorial feedback,
+daily/alliance objectives and
 scheduled sanctuary/pass milestones. Define kingdom victory, governance, rewards
 and protection of newer players. Balance resource income, losses, healing,
 training and commander growth over days rather than a short local test session.
