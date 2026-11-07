@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.6
+## Implemented through slice 0.9
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -16,6 +16,12 @@ research, commander and Temple views. See the 0.6 interface guide for visual che
 these implemented foundations from planned advanced structures. Server tests include a
 complete legal economy-to-sanctuary campaign. New Unity client validation remains
 pending; implementation is not a claim of production readiness.
+
+The 0.8/0.9 additions include typed troop selection, loading artwork, commander
+previews, articulated field movement, Greek equipment meshes and initial sound.
+See [the core systems audit](core-systems-audit.md) for the current status of each
+core system and the ordered plan. Final character art and native visual review
+remain incomplete.
 
 ## Next stages
 

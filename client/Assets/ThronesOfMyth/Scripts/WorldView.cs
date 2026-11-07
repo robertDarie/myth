@@ -20,6 +20,7 @@ namespace ThronesOfMyth
         private Transform Shape(PrimitiveType type, Transform parent, Vector3 local, Vector3 scale, Color color) => art.Shape(parent, type, local, scale, color);
         private void Awake()
         {
+            gameObject.AddComponent<BattlefieldAudio>();
             scenery = new GameObject("World Scenery").transform;
             var ground = GameObject.Find("Ground");
             if (ground == null) { ground = GameObject.CreatePrimitive(PrimitiveType.Cube); ground.name = "Ground"; }
@@ -77,6 +78,7 @@ namespace ThronesOfMyth
             {
                 var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
                 Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic, p.units, p.commanderId);
+                pieces[p.id].actor.allowAudio = p.ownerId == ownId;
                 pieces[p.id].actor.Observe(p);
             }
             foreach (var p in world.players)
@@ -85,7 +87,12 @@ namespace ThronesOfMyth
                 Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · " + p.ageName + " · City " + p.cityLevel, -1, p.civilization);
                 pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.9f + 0.1f * p.cityLevel);
             }
-            foreach (var c in world.camps) Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth, c.id);
+            foreach (var c in world.camps)
+            {
+                bool wasAlive = pieces.TryGetValue(c.id, out var previous) && previous.health > 0;
+                Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth, c.id);
+                pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
+            }
             foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining, -1, n.resource);
             foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), -1, s.kind);
             foreach (var f in world.flags) Put(seen, f.id, "flag", f.x, f.z, f.allianceId == allianceId ? blue : red, "Alliance Beacon");

@@ -5,7 +5,7 @@ namespace ThronesOfMyth
 {
     // Shared materials and inexpensive, original strategy-scale silhouettes.
     // Models are deliberately stylized proxies, ready to be replaced by rigged art.
-    public sealed class WorldArtFactory
+    public sealed partial class WorldArtFactory
     {
         private readonly Dictionary<Color, Material> materials = new Dictionary<Color, Material>();
         private readonly Color stone = new Color(0.72f, 0.69f, 0.57f), darkStone = new Color(0.35f, 0.39f, 0.36f), bronze = new Color(0.64f, 0.43f, 0.19f), timber = new Color(0.29f, 0.18f, 0.10f);
@@ -79,6 +79,7 @@ namespace ThronesOfMyth
                 actor.selection = Ring(root, 1.5f, team, 0.08f).gameObject; actor.selection.SetActive(false);
                 actor.skillLine = Ring(root, 1.7f, new Color(1, 0.72f, 0.3f), 0.15f); actor.skill = actor.skillLine.gameObject; actor.skill.SetActive(false);
                 actor.damageMaterial = actor.skillLine.sharedMaterial; actor.healMaterial = MaterialFor(new Color(0.4f, 0.9f, 0.65f)); actor.shieldMaterial = MaterialFor(new Color(0.5f, 0.8f, 1));
+                actor.impact = Ring(root, 0.5f, new Color(1, 0.78f, 0.4f), 0.09f).transform; actor.impact.gameObject.SetActive(false);
                 actor.shield = Ring(root, 1.9f, new Color(0.45f, 0.72f, 0.93f), 0.10f).gameObject; actor.shield.SetActive(false);
             }
             else if (kind == "city") City(root, variant, team);
@@ -184,8 +185,10 @@ namespace ThronesOfMyth
             {
                 Box(rig.weapon, 0, 0.15f, 0.16f, 0.06f, 1.5f, 0.06f, timber);
                 Box(rig.weapon, 0, 0.94f, 0.16f, 0.11f, 0.27f, 0.08f, stone);
-                var shield = Pillar(rig.offhand, 0, -0.13f, 0.11f, 0.51f, 0.12f, bronze); shield.localRotation = Quaternion.Euler(90, 0, 0);
+                if (culture == "greek") GreekShield(rig.offhand);
+                else { var shield = Pillar(rig.offhand, 0, -0.13f, 0.11f, 0.51f, 0.12f, bronze); shield.localRotation = Quaternion.Euler(90, 0, 0); }
             }
+            if (culture == "greek") GreekKit(rig, type);
             if (commander)
             {
                 unit.localScale = Vector3.one * 1.25f;
@@ -209,7 +212,8 @@ namespace ThronesOfMyth
         {
             bool bow = id == "scout" || id == "atalanta";
             Color cloth = id == "rune-seer" ? new Color(0.4f, 0.63f, 0.78f) : id == "warden" || bow ? new Color(0.25f, 0.42f, 0.25f) : id == "mulan" || id == "tomoe" || id == "wukong" ? new Color(0.6f, 0.16f, 0.12f) : team;
-            var rig = Soldier(root, new Vector3(0, 0, 0.9f), cloth, "greek", actor, bow ? "archers" : "infantry", true);
+            string culture = id == "mulan" || id == "wukong" ? "chinese" : id == "tomoe" ? "japanese" : id == "rune-seer" || id == "sigurd" ? "norse" : id == "horus-champion" ? "egyptian" : "greek";
+            var rig = Soldier(root, new Vector3(0, 0, 0.9f), cloth, culture, actor, bow ? "archers" : "infantry", true);
             rig.root.name = "Commander · " + id;
             if (id == "rune-seer" || id == "horus-champion")
                 Ball(rig.weapon, 0, 1.18f, 0.16f, 0.26f, 0.26f, 0.26f, new Color(0.5f, 0.85f, 1));
@@ -250,10 +254,11 @@ namespace ThronesOfMyth
                     Box(back, 0, -0.35f, 0, 0.25f, 0.7f, 0.28f, body); rig.horseLegs.Add(back);
                 }
                 else if (i < 0) rig.leftLeg = hip; else rig.rightLeg = hip;
-                if (culture == "greek" || culture == "chinese") { var horn = Box(bodyRoot, i * 0.42f, quadruped ? 2 : 2.4f, quadruped ? 0.65f : 0, 0.15f, 0.65f, 0.15f, bronze); horn.localRotation = Quaternion.Euler(0, 0, -i * 28); }
+                if (culture == "chinese") { var horn = Box(bodyRoot, i * 0.42f, quadruped ? 2 : 2.4f, quadruped ? 0.65f : 0, 0.15f, 0.65f, 0.15f, bronze); horn.localRotation = Quaternion.Euler(0, 0, -i * 28); }
                 if (culture == "japanese" || culture == "egyptian") { var wing = Box(bodyRoot, i * 0.75f, 1.55f, -0.15f, 1.15f, 0.14f, 0.85f, team); wing.localRotation = Quaternion.Euler(0, i * 18, i * 30); rig.wings.Add(wing); rig.wingRest.Add(wing.localRotation); }
             }
             if (culture == "norse") { rig.weapon = Pivot(bodyRoot, "Giant club shoulder", new Vector3(0.72f, 1.4f, 0)); Box(rig.weapon, 0, -0.2f, 0, 0.2f, 2, 0.2f, timber); Ball(rig.weapon, 0, 0.7f, 0, 0.7f, 0.7f, 0.7f, darkStone); }
+            if (culture == "greek") MinotaurKit(bodyRoot, rig);
             if (culture == "egyptian") Box(bodyRoot, 0, 1.95f, 0.65f, 0.85f, 0.25f, 0.65f, bronze);
         }
         private void Resource(Transform root, string resource, Color color)
@@ -276,6 +281,6 @@ namespace ThronesOfMyth
                 }
             }
         }
-        public void Dispose() { foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
+        public void Dispose() { foreach (var mesh in authoredMeshes) Object.Destroy(mesh); authoredMeshes.Clear(); equipmentMeshes.Clear(); foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
     }
 }

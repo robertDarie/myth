@@ -8,7 +8,7 @@
 [Setup]
 AppId=ThronesOfMythLocalPlaytest
 AppName=Thrones of Myth Playtest
-AppVersion=0.8.0
+AppVersion=0.9.0
 DefaultDirName={localappdata}\Programs\ThronesOfMythPlaytest
 DefaultGroupName=Thrones of Myth Playtest
 PrivilegesRequired=lowest

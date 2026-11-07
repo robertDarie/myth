@@ -242,6 +242,7 @@ namespace ThronesOfMyth
         private void RenderSettingsWindow(Rect r)
         {
             GUILayout.BeginArea(new Rect(r.x + 34, r.y + 20, Mathf.Min(720, r.width - 68), r.height - 40));
+            contentScroll = GUILayout.BeginScrollView(contentScroll);
             GUILayout.Label("INTERFACE", theme.Eyebrow); GUILayout.Label("Make the realm yours", theme.Title);
             GUILayout.Space(18); GUILayout.Label("Interface size · " + Mathf.RoundToInt(interfaceScalePreference * 100) + "%", theme.Heading);
             float scale = GUILayout.HorizontalSlider(interfaceScalePreference, 0.85f, 1.15f, GUILayout.Width(400));
@@ -250,12 +251,14 @@ namespace ThronesOfMyth
             PlayerPrefs.SetInt("ThronesOfMyth.labels", labelsEnabled ? 1 : 0);
             reducedMotion = GUILayout.Toggle(reducedMotion, "Reduced motion · still portraits, banners and troop poses");
             PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", reducedMotion ? 1 : 0);
+            GUILayout.Label("Battlefield sound effects · " + Mathf.RoundToInt(BattlefieldAudio.Volume * 100) + "%", theme.Small);
+            BattlefieldAudio.Volume = GUILayout.HorizontalSlider(BattlefieldAudio.Volume, 0, 1, GUILayout.Width(400));
             GUILayout.Space(20); GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
             GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
             GUILayout.Space(18); GUILayout.Label("Connected to " + serverUrl, theme.Small);
             GUILayout.Label(world.persistence != null && world.persistence.enabled ? "Your local kingdom autosaves. Time pauses while its server is closed." : "This server is not saving world progress.", theme.Small);
             if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
-            GUILayout.EndArea();
+            GUILayout.EndScrollView(); GUILayout.EndArea();
         }
         private void DrawContextActions()
         {

@@ -1,0 +1,114 @@
+# Thrones of Myth: core systems audit
+
+Audited against the repository through the 0.9 battlefield pass. **Implemented**
+means working prototype code, not production-ready quality. **Partial** means the
+foundation works but significant gameplay is absent. **Missing** means no working
+system yet. A design document, label or building name does not count as gameplay.
+
+The game has an economic/PvE/territory prototype. It does **not** yet have the
+player-versus-player and social systems that drive a kingdom strategy game.
+
+## What we have and what is missing
+
+| Core system | Status | Working now | Missing or incomplete |
+| --- | --- | --- | --- |
+| City development | Partial | 16 institutions, paid timers, prerequisites, two earnable build queues, five ages | A real city scene, building placement, deeper age progression and long-term balance |
+| Economy | Partial | Five resources, passive production, shared finite nodes, resource sinks and exchanges | Gathering load/return delivery, caravans, plunder rules and sustained economy balance |
+| Troop training and dispatch | Partial | Infantry/archer/cavalry training, civilization mythics, exact counts, reserves, five marches | Troop tiers/upgrades, siege, role counters and formations with tactical consequences |
+| March control | Partial | Select, move, stop, return, attack camps, gather, capture; server-owned orders | Obstacle-aware pathfinding, true pass corridors, multi-select and group orders |
+| Open-field combat | Partial | Server-owned PvE damage, retaliation, rage, shields, heals and shared camp rewards | PvP targeting, battle participation rules, ranged spacing, area effects, reinforcement and disengagement rules |
+| Casualties and hospital | Missing | Army HP and automatic home recovery exist | Per-unit wounded/dead counts, hospital capacity, paid healing queues and overflow rules; the Infirmary currently improves HP recovery only |
+| Commander collection | Partial | Eleven commanders, four rarities, earned-sigil summons, published odds, pity and duplicate shards | Larger roster, distinct tactical identities, recruitment pacing and content events |
+| Commander development | Partial | Individual XP, levels, stars, four skills, expertise and separate ascension | Talent trees, secondary commanders, richer skill effects and reusable loadout presets |
+| Equipment and inventory | Partial | Forge, a small relic list and march relic ownership | Full inventory, consumables, equipment sets, crafting depth and item rewards |
+| Exploration and intelligence | Missing | A fully visible unified map exists | Fog of war, scouts, exploration rewards, watchtower alerts, scouting reports and information permissions |
+| PvE variety | Partial | Seven respawning camps, shared rewards, one chapter objective | Boss encounters, rallies against bosses, quests, difficulty progression, dungeons and varied objectives |
+| Alliance membership | Partial | Create/join alliances and help eligible construction jobs | Officer ranks, invites/applications, leave/kick/transfer leadership, audit logs and recruitment tools |
+| Social communication | Missing | A kingdom event feed exists | Alliance/kingdom chat, direct messages, mail, map markers and coordinated orders |
+| Alliance development | Partial | Job help, beacons and site ownership | Donations, alliance technology, treasury, member contributions and alliance progression |
+| Territory and sacred sites | Partial | Connected beacon placement, contested shrines, gate access and sanctuary ownership buffs | Attackable flags/forts, build timers, territory supply, garrisons, destruction and ownership history |
+| Rallies and garrisons | Missing | Several marches can independently hit one camp | Rally assembly/join timers, leader rules, pooled units, reinforcement capacity and garrison battles |
+| City warfare and protection | Missing | Cities are visible and own reserves | Walls, garrison, siege, burning, looting caps, protection shields, beginner safety and teleport rules |
+| Battle reports and rankings | Missing | Basic event messages and camp kill counts | Damage/healing/casualty reports, power calculation, personal/alliance leaderboards and war history |
+| Kingdom timeline | Missing | Five age-based march unlocks exist | Scheduled pass openings, objectives, ruler/kingdom governance and campaign milestones |
+| KvK / seasons | Missing | No cross-kingdom play | Multiple hosted kingdoms, eligibility/power model, matchmaking, seasonal map, rules, scoring, rewards and migration |
+| Onboarding and progression | Partial | Entry choices, descriptive UI, loading tips and a small chapter reward | Interactive tutorial, chapter chain, daily/weekly goals, unlock guidance and accessible recovery from mistakes |
+| Events and rewards | Partial | Daily free Temple offering and basic battle rewards | Event calendar, event scoring, milestone rewards, seasonal content and economy tuning |
+| Visuals, animation and audio | Partial | Original portraits/loading art, procedural units/meshes, transform rigs, state-driven poses, initial synthesized cues | Final authored character/creature meshes, skinning, animation clips/blend trees, polished VFX, recorded audio and broad performance validation |
+| Persistence and accounts | Partial | Local autosaves, backups, migration and local profile tokens | Online accounts, durable hosted storage, server recovery, offline-time simulation and secure cross-device access |
+| Operations and integrity | Partial | Authoritative local rules and automated gameplay/HTTP tests | Hosted deployment, monitoring, load tests, observability, abuse controls, moderation and operational tooling |
+| Monetization | Missing; later | Summons use earned resources only | Purchases, receipts and entitlements; design these only after the gameplay and economy work |
+
+## What to build next, in order
+
+### P0 — A readable, testable battlefield slice
+
+Finish and validate one Greek army: Captain, infantry, archers, cavalry and Minotaur.
+The 0.9 pass improves equipment silhouettes, formation turning, movement blends,
+wind-up/strike/recovery poses, hit reactions, route indicators and initial sound.
+It does not finish production character art. Native Unity import, shader, motion,
+audio and Windows performance checks are still required. Replace prototype models
+with authored skinned meshes and reusable clips after this movement standard is
+reviewed. Add an acceptance scene and profile several armies before expanding art.
+
+**Exit criteria:** troop roles are readable at play zoom; movement and stopping
+look coherent; a player can tell attacking, taking damage, casting, victory and
+retreat apart; the selected route and counts are clear; reduced motion and sound
+controls work; no fake hits, duplicate units or save regressions.
+
+### P1 — The minimum real war loop
+
+Build **PvP + casualties/hospital + battle reports** together. Before any city
+looting, define target eligibility, retreat, wounded/dead ratios, hospital overflow,
+recovery costs and beginner protection. Reports must reconcile with server damage,
+healing and unit transfers. Add distinct troop interactions and an actual ranged
+rule. Do not bolt permanent losses onto the current HP-only retreat without this
+specification and tests.
+
+**Exit criteria:** two players fight, retreat, inspect an accurate report, heal
+survivors, and send a new formation without unit/resource duplication.
+
+### P2 — Cooperation that makes an alliance useful
+
+Add alliance roles and membership management, chat/map markers, rally assembly,
+garrison reinforcement and attackable territory. Permissions and contribution
+tracking must accompany destructive actions. Make the gate network actual map
+corridors with route planning rather than destination permission checks alone.
+
+**Exit criteria:** an alliance organizes a rally, holds a defended pass, destroys
+an enemy beacon under explicit rules and sees the result in reports and logs.
+
+### P3 — A kingdom campaign with reasons to return
+
+Add scouting/fog, a tutorial and chapter chain, daily objectives, PvE bosses and
+scheduled sanctuary/pass milestones. Define kingdom victory, governance, rewards
+and protection of newer players. Balance resource income, losses, healing,
+training and commander growth over days rather than a short local test session.
+
+### P4 — Persistent online play
+
+Replace local-only identity/storage with accounts and a hosted durable kingdom.
+Add reconnect behavior, idempotent economic commands, offline-time rules, metrics,
+backup restoration drills and multi-player load tests. Architecture work begins
+alongside P1/P2; public hosting waits until recovery and security are proven.
+
+### P5 — KvK and live operations
+
+Only after a kingdom campaign works: define power/eligibility, group kingdoms,
+match them, run a separate season map, track scoring, distribute rewards and
+handle return/migration. Add tools for operators and a content cadence. KvK is
+central to the eventual product, but it depends on warfare, alliances, persistence
+and fair progression first.
+
+## Decisions we must make before warfare
+
+1. Does defeat produce light wounds, severe wounds and deaths, and in which modes?
+2. What can attackers take from cities, and what is always protected?
+3. Which troop classes counter others, and how do mixed marches behave?
+4. What can a rally leader control, and how are losses/rewards distributed?
+5. How do kingdoms protect new players and match similarly developed opponents?
+6. What advances while a player is offline, and what advances while a server is down?
+
+These decisions need a concrete rules proposal before implementation; they are not
+requirements for adding the current visual battlefield pass. Monetization and a
+larger commander roster should not displace the missing war/social foundations.

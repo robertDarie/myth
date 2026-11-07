@@ -359,7 +359,21 @@ namespace ThronesOfMyth
             var from = Camera.main.WorldToScreenPoint(new Vector3(ActiveArmy.x, 0.3f, ActiveArmy.z));
             var to = Camera.main.WorldToScreenPoint(new Vector3(ActiveArmy.targetX, 0.3f, ActiveArmy.targetZ));
             if (from.z <= 0 || to.z <= 0 || Vector2.Distance(new Vector2(from.x, from.y), new Vector2(to.x, to.y)) < 4) return;
-            MythInterfaceTheme.Line(new Vector2(from.x, Screen.height - from.y), new Vector2(to.x, Screen.height - to.y), 2, new Color(0.92f, 0.78f, 0.39f, 0.7f));
+            var start = new Vector2(from.x, Screen.height - from.y); var end = new Vector2(to.x, Screen.height - to.y);
+            var direction = (end - start).normalized; float distance = Vector2.Distance(start, end);
+            Color color = ActiveArmy.state == "Attacking" ? MythInterfaceTheme.Red : ActiveArmy.state == "Gathering" ? MythInterfaceTheme.Teal : ActiveArmy.state == "Returning" ? new Color(0.5f, 0.8f, 1) : MythInterfaceTheme.Gold;
+            float offset = reducedMotion ? 0 : Time.unscaledTime * 16 % 18;
+            for (float d = offset; d < distance; d += 18)
+            {
+                var a = start + direction * d; var b = start + direction * Mathf.Min(distance, d + 10); var middle = (a + b) / 2;
+                if (!InterfaceBlocksPoint(new Vector3(middle.x, Screen.height - middle.y, 0))) MythInterfaceTheme.Line(a, b, 2, color);
+            }
+            if (!InterfaceBlocksPoint(new Vector3(end.x, Screen.height - end.y, 0)))
+            {
+                var across = new Vector2(-direction.y, direction.x);
+                MythInterfaceTheme.Line(end, end - direction * 12 + across * 6, 2, color);
+                MythInterfaceTheme.Line(end, end - direction * 12 - across * 6, 2, color);
+            }
         }
     }
 }

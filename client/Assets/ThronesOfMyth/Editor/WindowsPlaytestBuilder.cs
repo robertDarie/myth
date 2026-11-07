@@ -57,7 +57,7 @@ namespace ThronesOfMyth.Editor
             if (!File.Exists(ScenePath)) throw new BuildFailedException("Prototype scene could not be created.");
             PlayerSettings.companyName = "ThronesOfMyth";
             PlayerSettings.productName = "Thrones of Myth";
-            PlayerSettings.bundleVersion = "0.8.0";
+            PlayerSettings.bundleVersion = "0.9.0";
             PlayerSettings.defaultScreenWidth = 1280;
             PlayerSettings.defaultScreenHeight = 800;
             PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
