@@ -11,7 +11,7 @@ positions locally and never chooses damage or rewards.
 `content.mjs` defines five civilizations, eleven commanders, seven camps, and five
 strategic sites. `world.mjs` implements game rules independently of transport; `city-content.mjs`
 and `city.mjs` define institutions, resource sinks, research, summons and relics;
-`http.mjs` provides a small versioned development protocol. Snapshot version 7
+`http.mjs` provides a small versioned development protocol. Snapshot version 9
 prevents the new client silently connecting to the earlier server.
 
 ## HTTP
@@ -63,8 +63,8 @@ than silently dropped while another request is pending.
   for 15 uncontested seconds. Opposing occupiers pause capture; sole defenders
   reverse progress. Beacons cannot yet be attacked or removed.
 - The eastern gate controls destinations x > 40; the northern gate controls
-  z > 40. Both are required for the sanctuary. This is a province permission
-  model, not physical pass pathfinding. Armies can always return home.
+  z > 40. Both are required for the sanctuary. Movement follows a province graph with two corridors per axis, controlled
+  by the corresponding gate. Armies can always return home.
 - Dawn shrine grants +10% damage, Renewal +25% healing, sanctuary +20% gathering.
 
 ## Sessions and operations
@@ -78,7 +78,7 @@ The CLI enables `WorldStore`: atomic temporary-file writes, a previous-valid-sav
 backup, autosaves every two seconds and after accepted mutations, and a final
 save on graceful shutdown. Windows uses LocalAppData/ThronesOfMyth/Saves/world.json;
 `THRONES_SAVE_PATH` overrides it. Tests use an in-memory world unless given a path.
-Save schema 6 stores alliance campaigns/fortifications plus troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4/5 without resetting progression) queues, reserves, map state and sessions. A loader validates
+Save schema 7 stores discovery/scouts plus alliance campaigns/fortifications plus troops, wounded/treatment, reports and communication (and migrates schemas 1/2/3/4/5/6 without resetting progression) queues, reserves, map state and sessions. A loader validates
 the save and falls back to backup, retaining versioned migration archives; if both fail it preserves files and refuses to
 silently reset. Time does not advance while the server is closed. Restore stops
 ordinary field orders and cancels rallies, sealing active group battles once as
@@ -124,3 +124,11 @@ fortification health, supply connectivity and private group reports. It referenc
 actual army IDs rather than transferring troops into a pooled army. Protocol 8
 adds campaign snapshots and per-army assignment/animation destinations. See
 [the alliance warfare rules](alliance-warfare-0.11.md).
+
+`navigation.mjs` computes shortest routes through controlled portal pairs and
+applies the same speed budget to armies, garrisons, rally centers and scouts.
+`exploration.mjs` owns scout missions, discovery, historical intelligence and
+viewer-filtered snapshots. The transport never returns an unfiltered world to a
+player session. Protocol 9 includes waypoint previews and exploration metadata;
+schema 7 retains private reports and active scouts. See
+[exploration rules and limits](exploration-and-routes-0.12.md).

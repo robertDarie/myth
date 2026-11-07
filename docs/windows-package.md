@@ -71,7 +71,7 @@ launch, PowerShell launcher behavior or installer execution. After building:
 
 For 0.8 loading, troop selection and model previews, see [march assembly and presentation](marches-and-presentation-0.8.md). Close the old server before launching protocol 6.
 
-Build 0.11 requires protocol 8 and bundles `campaign.mjs` alongside the war/social
-modules. Schemas 1–5 migrate automatically with an untouched archival backup;
-see [the alliance warfare guide](alliance-warfare-0.11.md). Rebuild the Windows
-package to get both the updated client and server.
+Build 0.12 requires protocol 9 and bundles `navigation.mjs` and `exploration.mjs`
+alongside the campaign/war/social modules. Schemas 1–6 migrate with versioned
+archival backups. See [the exploration guide](exploration-and-routes-0.12.md).
+Rebuild to update both the Windows client and bundled server.

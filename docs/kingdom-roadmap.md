@@ -24,11 +24,18 @@ supply and per-contribution reports. See [rules and playtest](alliance-warfare-0
 Cities remain protected. Group combat does not yet support field interception,
 area effects or physical pass pathfinding.
 
-## Next: exploration and meaningful routes
+## Delivered: exploration and gate routes (0.12)
 
-Fog of war, scouts, exploration rewards, information permissions, scouting
-reports and watchtower warnings. Replace province destination checks with a real
-gate/terrain navigation graph and route preview; add multi-march control.
+Persistent discovery, current allied vision, dedicated scouts, private historical
+reports and a shared gate-corridor route graph now exist. See
+[the exploration rules](exploration-and-routes-0.12.md). Full terrain navigation,
+watchtower alerts, exploration rewards and multi-march control remain open.
+
+## Next: guided kingdom progression
+
+Interactive tutorial/chapter objectives should connect scouting, economy,
+commander development and an alliance objective into a clear early campaign.
+Add PvE rally bosses and scheduled kingdom milestones after that loop is paced.
 
 ## Troop and commander depth
 

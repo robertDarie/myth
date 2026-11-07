@@ -14,7 +14,7 @@ namespace ThronesOfMyth
         private string WarTargetName(string id)
         {
             var site = Array.Find(world.sites, s => s.id == id); if (site != null) return site.name;
-            var beacon = Array.Find(world.flags, f => f.id == id); return beacon == null ? "Unavailable objective" : beacon.isRoot ? "Alliance Fort" : "Alliance Beacon";
+            var beacon = Array.Find(world.flags, f => f.id == id); return beacon == null ? "Scouted alliance structure" : beacon.isRoot ? "Alliance Fort" : "Alliance Beacon";
         }
         private void OpenWarfare(string id)
         {
@@ -56,9 +56,15 @@ namespace ThronesOfMyth
             var targets = new List<string>();
             foreach (var site in world.sites) if (!string.IsNullOrEmpty(site.allianceId) && site.allianceId != me.allianceId) targets.Add(site.id);
             foreach (var flag in world.flags) if (flag.allianceId != me.allianceId) targets.Add(flag.id);
+            if (world.exploration != null) foreach (var report in world.exploration.reports)
+            {
+                foreach (var site in report.sites)
+                    if (!string.IsNullOrEmpty(site.allianceId) && site.allianceId != me.allianceId && !targets.Contains(site.id) && !Array.Exists(world.sites, s => s.id == site.id && s.allianceId == me.allianceId)) targets.Add(site.id);
+                foreach (var flag in report.flags) if (flag.allianceId != me.allianceId && !targets.Contains(flag.id)) targets.Add(flag.id);
+            }
             if (!targets.Contains(warfareTargetId)) warfareTargetId = targets.Count > 0 ? targets[0] : null;
-            foreach (var id in targets)
-                if (GUILayout.Toggle(warfareTargetId == id, WarTargetName(id), theme.Tab)) warfareTargetId = id;
+            GUILayout.Label("Scouted objectives may have changed since the report. The server rechecks ownership, supply and access when assembling.", theme.Small);
+            foreach (var id in targets) if (GUILayout.Toggle(warfareTargetId == id, WarTargetName(id), theme.Tab)) warfareTargetId = id;
             if (targets.Count == 0) GUILayout.Label("No enemy-held structures yet. Neutral sacred sites use the normal capture action.", noteStyle);
             rallyAssemblyIndex = GUILayout.Toolbar(rallyAssemblyIndex, new[] { "10s assembly", "30s assembly", "60s assembly" });
             GUILayout.Label("Up to " + world.campaignLimits.rallyMarches + " marches / " + world.campaignLimits.rallyLoad + " load. A mortal uses one load; a mythic uses five. Contributions must reach the leader's city before assembly ends.", theme.Small);

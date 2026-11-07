@@ -82,6 +82,7 @@ namespace ThronesOfMyth
                 actor.impact = Ring(root, 0.5f, new Color(1, 0.78f, 0.4f), 0.09f).transform; actor.impact.gameObject.SetActive(false);
                 actor.shield = Ring(root, 1.9f, new Color(0.45f, 0.72f, 0.93f), 0.10f).gameObject; actor.shield.SetActive(false);
             }
+            else if (kind == "scout") { Soldier(root, Vector3.zero, team, "greek", actor, "cavalry"); actor.selection = Ring(root, 1.1f, team).gameObject; actor.selection.SetActive(false); }
             else if (kind == "city") City(root, variant, team);
             else if (kind == "node") Resource(root, variant, team);
             else if (kind == "marker") { Pillar(root, 0, 1, 0, 0.1f, 2, bronze); Ball(root, 0, 2.1f, 0, 0.5f, 0.5f, 0.5f, team); Ring(root, 0.6f, team); }

@@ -1,3 +1,4 @@
+import { route, travel } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { allianceRole } from './social.mjs';
 import { combatFor, side, retreat, applyDamage, counterMultiplier } from './war.mjs';
@@ -130,6 +131,7 @@ export function campaignCommand(w,p,c,fail) {
     if(!t||!p.allianceId||t.allianceId!==p.allianceId||t.health<=0||(t.buildRemaining||0)>0)fail('Choose a completed structure held by your alliance.');
     if(!w.canEnter(p,t))fail('The garrison is behind a locked gate.');
     const a=ownMarch(w,p,c,fail);readyMarch(w,p,a,fail,false);
+    if(!route(w,a,t))fail('No open gate route from this march to the garrison. Return home first.');
     let g=w.garrisons.find(g=>g.targetId===t.id);
     const ids=g?.armyIds||[], siege=siegeFor(w,t.id);
     if(ids.length>=CAMPAIGN_LIMITS.garrisonMarches||totalLoad(w,ids)+load(a)>CAMPAIGN_LIMITS.garrisonLoad)fail('Garrison march or troop capacity reached.');
@@ -149,10 +151,6 @@ export function campaignCommand(w,p,c,fail) {
     if(c.type==='attack-player'&&campaignFor(w,c.targetId))fail('That army is committed to alliance warfare. Attack its structure with a rally.');
   }
   return false;
-}
-function move(a,target,speed,dt,stop=0) {
-  const d=distance(a,target);if(d<=stop+0.001)return true;
-  const step=Math.min(speed*dt,d-stop);a.x+=((target.x-a.x)/d)*step;a.z+=((target.z-a.z)/d)*step;return distance(a,target)<=stop+0.001;
 }
 function newSiege(w,r,t) {
   const report={id:randomUUID(),targetId:t.id,targetName:t.name||(t.isRoot?'Alliance Fort':'Alliance Beacon'),attackingAllianceId:r.allianceId,defendingAllianceId:t.allianceId,started:w.time,ended:0,rounds:0,outcome:'Fighting',structureDamage:0,participants:[]};
@@ -207,8 +205,8 @@ export function tickCampaign(w,dt) {
   for(const g of [...w.garrisons]) {
     const t=fortification(w,g.targetId);
     for(const id of [...g.armyIds]) {
-      const a=w.army(id);if(!a||!t||w.owner(a).allianceId!==g.allianceId||t.allianceId!==g.allianceId){removeMember(w,{kind:'garrison',group:g},id,'Withdrawn');continue;}
-      if(move(a,t,w.stats(a).speed,dt,1.6)){a.state='Garrisoned';if(!siegeFor(w,t.id))setOrder(a,'garrison',t.id,t,'Garrisoned');}else a.state='Garrison approaching';
+      const a=w.army(id);if(!a||!t||w.owner(a).allianceId!==g.allianceId||t.allianceId!==g.allianceId||!route(w,a,t)){removeMember(w,{kind:'garrison',group:g},id,'Withdrawn');continue;}
+      if(travel(w,a,t,w.stats(a).speed,dt,1.6)){a.state='Garrisoned';if(!siegeFor(w,t.id))setOrder(a,'garrison',t.id,t,'Garrisoned');}else a.state='Garrison approaching';
     }
   }
   for(const r of [...w.rallies]) {
@@ -217,14 +215,14 @@ export function tickCampaign(w,dt) {
     if(!r.armyIds.includes(r.leaderArmyId)){removeRally(w,r,'Rally leader unavailable');continue;}
     const t=fortification(w,r.targetId),meeting={x:r.meetX,z:r.meetZ};
     if(r.phase==='Assembling') {
-      for(const a of actors(w,r.armyIds))move(a,meeting,w.stats(a).speed,dt,0.6);
+      for(const a of actors(w,r.armyIds))travel(w,a,meeting,w.stats(a).speed,dt,0.6);
       if(w.time<r.assemblyEnds)continue;
       for(const id of [...r.armyIds])if(distance(w.army(id),meeting)>1)removeMember(w,{kind:'rally',group:r},id,'Missed assembly');
       if(!r.armyIds.includes(r.leaderArmyId)){removeRally(w,r,'Leader missed assembly');continue;}
       r.phase='Marching';
     }
     if(r.phase==='Marching') {
-      const before={x:r.x,z:r.z},speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));const arrived=move(r,t,speed,dt,1.2);
+      const before={x:r.x,z:r.z},speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));r.ownerId=r.leaderId;const arrived=travel(w,r,t,speed,dt,1.2);
       for(const a of actors(w,r.armyIds)){a.x=Math.max(1,Math.min(79,a.x+r.x-before.x));a.z=Math.max(1,Math.min(79,a.z+r.z-before.z));setOrder(a,'rally',r.id,t,'Rally marching');}
       if(!arrived)continue;r.phase='Fighting';newSiege(w,r,t);
     }

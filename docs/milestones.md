@@ -1,6 +1,6 @@
 # Delivery milestones
 
-## Implemented through slice 0.11
+## Implemented through slice 0.12
 
 Server-authoritative shared map; five civilizations with bonuses; cities,
 resources, training and mythic recruitment; four commander rarities; PvE combat
@@ -31,13 +31,17 @@ The 0.11 alliance warfare foundation adds timed rallies, actual march
 contributions, garrisons/reinforcements, destructible connected territory and
 reconciled group battle reports. See [the rules](alliance-warfare-0.11.md).
 
+The 0.12 exploration foundation adds dedicated scouts, persistent discovery,
+current allied vision, private scouting reports and shared gate-corridor routes.
+See [the exploration rules](exploration-and-routes-0.12.md).
+
 ## Next stages
 
 1. **Visual playtest and refinement:** validate Unity import and build, controls,
    feedback, pacing, civilization balance, and multiplayer usability.
 2. **Tactical identity:** distinct mythic skills and counters, commander skills,
    multiple army types, ability feedback and real character assets.
-3. **Alliance campaign depth:** field interception, physical pass pathfinding,
+3. **Alliance campaign depth:** field interception, full terrain navigation,
    opening schedules and richer siege rules beyond the delivered group battles.
 4. **Persistent kingdom:** real accounts, durable state, reconnect security,
    operations, load testing, world scheduling and offline progression.

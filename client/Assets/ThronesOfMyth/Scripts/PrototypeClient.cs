@@ -61,6 +61,8 @@ namespace ThronesOfMyth
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 300)) return;
             GUIUtility.keyboardControl = 0;
             var marker = hit.collider.GetComponentInParent<MapMarker>();
+            if (chooseScoutDestination && Input.GetMouseButtonDown(0))
+            { ScoutAt(hit.point.x, hit.point.z); chooseScoutDestination = false; return; }
             if (placeBeacon && Input.GetMouseButtonDown(0))
             {
                 Send(new GameCommand { type = "flag", x = hit.point.x, z = hit.point.z }); placeBeacon = false; return;
@@ -337,7 +339,7 @@ namespace ThronesOfMyth
             if (selectedKind == "army") { var enemy = Array.Find(world.armies, a => a.id == selectedId); if (enemy != null && enemy.ownerId != playerId) Send("attack-player", selectedId); }
             if (selectedKind == "camp") Send("attack", selectedId);
             if (selectedKind == "node") Send("gather", selectedId);
-            if (selectedKind == "site") Send("capture", selectedId);
+            if (selectedKind == "site") { var site = Array.Find(world.sites, s => s.id == selectedId); if (site != null && site.unknown) ScoutAt(site.x, site.z); else Send("capture", selectedId); }
             if (selectedId == "city-" + playerId) Send("return");
         }
         private string AllianceName(string id)
@@ -387,7 +389,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 8) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 9) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

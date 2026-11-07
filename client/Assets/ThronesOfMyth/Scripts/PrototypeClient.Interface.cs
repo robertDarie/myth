@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Settings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -36,7 +36,7 @@ namespace ThronesOfMyth
         }
         private void OpenInterface(InterfacePage page)
         {
-            placeBeacon = false;
+            placeBeacon = false; chooseScoutDestination = false;
             interfacePage = interfacePage == page ? InterfacePage.World : page;
             contentScroll = Vector2.zero; rosterScroll = Vector2.zero;
             GUIUtility.keyboardControl = 0;
@@ -44,7 +44,7 @@ namespace ThronesOfMyth
         }
         private void CloseInterface()
         {
-            GUIUtility.keyboardControl = 0;
+            GUIUtility.keyboardControl = 0; chooseScoutDestination = false;
             if (interfacePage != InterfacePage.World) { interfacePage = InterfacePage.World; PlayerPrefs.Save(); }
             else if (placeBeacon) placeBeacon = false;
             else { selectedId = ""; map.selectedId = ""; }
@@ -82,6 +82,8 @@ namespace ThronesOfMyth
         {
             switch (command.type)
             {
+                case "scout-send": return "Your scout is surveying the route. A report will arrive when it reaches the destination.";
+                case "scout-recall": return "Scout recalled. It will return through the gate corridors.";
                 case "move": return "Your march is on its way.";
                 case "rally-create": return "Rally assembly has begun. Allies can contribute a prepared march.";
                 case "rally-join": return "Your march is moving to the rally assembly point.";
@@ -297,6 +299,13 @@ namespace ThronesOfMyth
             MythInterfaceTheme.Fill(mapArea, new Color(0.23f, 0.33f, 0.29f));
             MythInterfaceTheme.Line(new Vector2(mapArea.center.x, mapArea.y), new Vector2(mapArea.center.x, mapArea.yMax), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
             MythInterfaceTheme.Line(new Vector2(mapArea.x, mapArea.center.y), new Vector2(mapArea.xMax, mapArea.center.y), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
+            if (world.exploration != null)
+            {
+                var known = new HashSet<int>(world.exploration.explored); var sight = new HashSet<int>(world.exploration.visible);
+                for (int z = 0; z < 20; z++) for (int x = 0; x < 20; x++)
+                { int cell = z * 20 + x; if (!sight.Contains(cell)) MythInterfaceTheme.Fill(new Rect(mapArea.x + x * mapArea.width / 20, mapArea.y + (19 - z) * mapArea.height / 20, mapArea.width / 20 + 1, mapArea.height / 20 + 1), known.Contains(cell) ? new Color(0.08f, 0.12f, 0.14f, 0.6f) : new Color(0.03f, 0.05f, 0.08f)); }
+                foreach (var scout in world.exploration.scouts) Dot(mapArea, scout.x, scout.z, Color.cyan, 4);
+            }
             foreach (var site in world.sites) Dot(mapArea, site.x, site.z, new Color(0.85f, 0.72f, 0.95f), 5);
             foreach (var army in world.armies) Dot(mapArea, army.x, army.z, army.ownerId == playerId ? MythInterfaceTheme.Teal : MythInterfaceTheme.Gold, army.id == ActiveArmy.id ? 6 : 3);
             Dot(mapArea, me.homeX, me.homeZ, Color.white, 5);
@@ -350,9 +359,9 @@ namespace ThronesOfMyth
         {
             var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Warfare, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             for (int i = 0; i < pages.Length; i++)
-                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 34, left.width - 24, 29), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+                if (theme.Button(new Rect(left.x + 12, left.y + 12 + i * 32, left.width - 24, 28), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
             theme.Panel(main, false, true);
             GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
@@ -362,6 +371,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Reports) DrawBattleReports();
             if (interfacePage == InterfacePage.Chat) DrawChat();
             if (interfacePage == InterfacePage.Warfare) DrawWarfare();
+            if (interfacePage == InterfacePage.Exploration) DrawExploration();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();
             if (interfacePage == InterfacePage.Alliance) DrawAlliance();
@@ -371,8 +381,18 @@ namespace ThronesOfMyth
         private void DrawMarchRoute()
         {
             if (ActiveArmy == null || !ActiveArmy.hasOrder || Camera.main == null) return;
-            var from = Camera.main.WorldToScreenPoint(new Vector3(ActiveArmy.x, 0.3f, ActiveArmy.z));
-            var to = Camera.main.WorldToScreenPoint(new Vector3(ActiveArmy.targetX, 0.3f, ActiveArmy.targetZ));
+            var points = ActiveArmy.route;
+            var start = new Vector3(ActiveArmy.x, 0.3f, ActiveArmy.z);
+            if (points != null && points.Length > 0) foreach (var point in points)
+            {
+                var end = new Vector3(point.x, 0.3f, point.z); DrawRouteSegment(start, end); start = end;
+            }
+            else DrawRouteSegment(start, new Vector3(ActiveArmy.targetX, 0.3f, ActiveArmy.targetZ));
+        }
+        private void DrawRouteSegment(Vector3 origin, Vector3 destination)
+        {
+            var from = Camera.main.WorldToScreenPoint(origin);
+            var to = Camera.main.WorldToScreenPoint(destination);
             if (from.z <= 0 || to.z <= 0 || Vector2.Distance(new Vector2(from.x, from.y), new Vector2(to.x, to.y)) < 4) return;
             var start = new Vector2(from.x, Screen.height - from.y); var end = new Vector2(to.x, Screen.height - to.y);
             var direction = (end - start).normalized; float distance = Vector2.Distance(start, end);

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ThronesOfMyth
 {
-    public sealed class WorldView : MonoBehaviour
+    public sealed partial class WorldView : MonoBehaviour
     {
         private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public string kind, visualKey; public WorldActorAnimation actor; }
         private readonly Dictionary<string, Piece> pieces = new Dictionary<string, Piece>();
@@ -37,9 +37,13 @@ namespace ThronesOfMyth
             groundTexture.SetPixels(terrain); groundTexture.Apply(false, true); groundMaterial.mainTexture = groundTexture;
             ground.GetComponent<Renderer>().sharedMaterial = groundMaterial;
             RenderSettings.ambientLight = new Color(0.58f, 0.62f, 0.65f);
-            // Province boundaries communicate server-side access rules; gates are strategic objectives.
-            Shape(PrimitiveType.Cube, scenery, new Vector3(40, 0.03f, 40), new Vector3(0.16f, 0.06f, 80), new Color(0.59f, 0.55f, 0.39f));
-            Shape(PrimitiveType.Cube, scenery, new Vector3(40, 0.03f, 40), new Vector3(80, 0.06f, 0.16f), new Color(0.59f, 0.55f, 0.39f));
+            // Low border ridges leave physical openings at the four server corridors.
+            foreach (var segment in new[] { new Vector2(0, 18), new Vector2(22, 58), new Vector2(62, 80) })
+            {
+                float center = (segment.x + segment.y) / 2, length = segment.y - segment.x;
+                Shape(PrimitiveType.Cube, scenery, new Vector3(40, 0.5f, center), new Vector3(0.8f, 1, length), new Color(0.39f, 0.40f, 0.33f));
+                Shape(PrimitiveType.Cube, scenery, new Vector3(center, 0.5f, 40), new Vector3(length, 1, 0.8f), new Color(0.39f, 0.40f, 0.33f));
+            }
             var random = new System.Random(431);
             for (int i = 0; i < 90; i++)
             {
@@ -55,7 +59,7 @@ namespace ThronesOfMyth
             var root = new GameObject(kind + " " + id); root.transform.SetParent(transform, false); root.transform.position = new Vector3(x, 0, z);
             var marker = root.AddComponent<MapMarker>(); marker.id = id; marker.kind = kind;
             var collider = root.AddComponent<BoxCollider>(); collider.center = new Vector3(0, 1.2f, 0); collider.size = new Vector3(2.8f, 2.8f, 2.8f);
-            var piece = new Piece { root = root, destination = root.transform.position, color = color, kind = kind, moving = kind == "army" };
+            var piece = new Piece { root = root, destination = root.transform.position, color = color, kind = kind, moving = kind == "army" || kind == "scout" };
             pieces.Add(id, piece); return piece;
         }
         private void Put(HashSet<string> seen, string id, string kind, float x, float z, Color color, string label, float health = -1, string variant = "", int mythic = 0, UnitCounts units = null, string commanderId = "")
@@ -74,6 +78,8 @@ namespace ThronesOfMyth
         public void Sync(WorldSnapshot world, string ownId, string allianceId)
         {
             var seen = new HashSet<string>();
+            UpdateFog(world.exploration);
+            if (world.exploration != null) foreach (var scout in world.exploration.scouts) Put(seen, scout.id, "scout", scout.x, scout.z, Color.cyan, "Scout · " + scout.phase);
             foreach (var p in world.armies)
             {
                 var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
@@ -94,7 +100,7 @@ namespace ThronesOfMyth
                 pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
             }
             foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining, -1, n.resource);
-            foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), s.health / Mathf.Max(1, s.maxHealth), s.kind);
+            foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.unknown ? " · Unsurveyed" : "") + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), s.health / Mathf.Max(1, s.maxHealth), s.kind);
             foreach (var f in world.flags)
             {
                 string name = f.isRoot ? "Alliance Fort" : "Alliance Beacon";
@@ -150,7 +156,7 @@ namespace ThronesOfMyth
         }
         private void OnDestroy()
         {
-            Clear(); if (scenery != null) Destroy(scenery.gameObject);
+            Clear(); DisposeFog(); if (scenery != null) Destroy(scenery.gameObject);
             art.Dispose(); if (groundTexture != null) Destroy(groundTexture);
         }
     }
