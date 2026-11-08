@@ -4,8 +4,12 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.19
+## Playable slice 0.20
 
+- SQLite accounts: protect a city, sign in across devices, revoke sessions and
+  recover with a one-time code; retained command retries survive session changes.
+- Inventory with earned resource packs, targeted hourglasses and once-only founding
+  supplies; transparent power components and live player/alliance rankings.
 - Reference adaptation plan: all 679 workbook records mapped to 14 epics, themed
   decisions and phased acceptance gates, with an adapted Excel/CSV register.
 - First visual foundation pass: scale-safe UI decorations, compact labels/bars,
@@ -103,6 +107,7 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[accounts, retries and supplies 0.20](docs/accounts-and-supplies-0.20.md),
 [the complete reference adaptation plan](docs/reference-adaptation-plan.md),
 [the visual foundation guide](docs/visual-foundation-0.19.md),
 [the hosting and persistence guide](docs/hosting-and-persistence-0.18.md),
@@ -130,7 +135,8 @@ Cities, scenery, troops and commanders use original authored low-poly meshes.
 Weighted army animations now have Blender round-trip checks; procedural actors
 remain a fallback. This is an early art baseline, not final production quality.
 Army FBXs use Git LFS: install Git LFS and run `git lfs pull` after updating.
-There is no city siege, field interception of rallies, online account system,
-production account service, large-scale hosted kingdom deployment, or KvK yet.
+There is no city siege, field interception of rallies, production identity service,
+large-scale hosted kingdom deployment, or KvK yet. SQLite accounts now support
+realm-local password/recovery-code login; email/platform recovery is still missing.
 The default CLI saves locally; hosted SQLite mode adds bounded downtime progress.
 Field simulation pauses while the server is closed; UTC activity periods continue. See the playtest guide for save paths.

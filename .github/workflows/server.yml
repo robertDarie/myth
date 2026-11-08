@@ -24,6 +24,6 @@ jobs:
           ACME_EMAIL: test@example.com
           THRONES_JOIN_CODE: ci-validation-only
       - name: Build kingdom image
-        run: docker build -f ops/kingdom/Dockerfile -t thrones-kingdom:0.18-test .
+        run: docker build -f ops/kingdom/Dockerfile -t thrones-kingdom:0.20-test .
       - name: Check container restart and backup restore
         run: sh tools/test_hosted_kingdom.sh

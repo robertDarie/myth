@@ -85,3 +85,12 @@ A 679-record reference adaptation register, 14-epic plan and R0–R8 acceptance
 roadmap; first implementation fixes scaled UI geometry, compact labels/bars,
 world-label contention, visual fog edges and living city composition. Native
 Unity review remains pending. See [the plan](reference-adaptation-plan.md).
+
+## Accounts and supplies 0.20
+
+Realm-local SQLite accounts, password/recovery-code sign-in, expiring/revocable
+sessions, retained per-character command retries, earned inventory packs/hourglasses,
+founding supplies and derived live power rankings. All adapted workbook roles
+are now scheduled work. Save schema 12; database revision 2; protocol stays 13.
+See [the implementation guide](accounts-and-supplies-0.20.md). Native UI review
+remains pending; the full 679-record program is not complete.

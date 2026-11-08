@@ -408,7 +408,7 @@ namespace ThronesOfMyth
                             else if (lastDrawId == null) lastDrawId = "";
                             if (!worldReady) { loadingStage = "Preparing the kingdom map"; yield return null; }
                             map.Sync(world, playerId, me.allianceId);
-                            worldReady = true; loadingError = "";
+                            worldReady = true; loadingError = "";RestorePendingOrder();
                             if (!string.IsNullOrEmpty(pendingFormationHero))
                             {
                                 var assembled = Array.Find(world.armies, a => a.ownerId == playerId && a.commanderId == pendingFormationHero);
@@ -421,7 +421,7 @@ namespace ThronesOfMyth
                     else
                     {
                         status = DescribeError(request); if (!worldReady) loadingError = status;
-                        if (request.responseCode == 401) { token = null; world = null; me = null; map.Clear(); }
+                        if (request.responseCode == 401) { ReturnToAccountEntry(status); yield break; }
                     }
                 }
                 float retryAt = Time.unscaledTime + (string.IsNullOrEmpty(loadingError) ? 0.2f : 2);
@@ -448,7 +448,7 @@ namespace ThronesOfMyth
         private void Send(string type, string targetId = "") { Send(new GameCommand { type = type, targetId = targetId }); }
         private void Send(GameCommand command)
         {
-            if (string.IsNullOrEmpty(token) || LoadingActive || commands.Count >= 8) return;
+            if (string.IsNullOrEmpty(token) || LoadingActive || commands.Count >= 8 || pendingOrder != null || accountBusy) return;
             command.marchId = activeMarchId;
             commands.Enqueue(command); if (!processing) StartCoroutine(ProcessCommands());
         }
@@ -458,15 +458,16 @@ namespace ThronesOfMyth
             while (commands.Count > 0 && !string.IsNullOrEmpty(token))
             {
                 var command = commands.Dequeue();
-                using (var request = Request("/command", "POST", JsonUtility.ToJson(command)))
+                string body=JsonUtility.ToJson(command);
+                PendingOrder retained=null;
+                if(world?.persistence?.backend=="sqlite")
                 {
-                    yield return request.SendWebRequest();
-                    status = request.result == UnityWebRequest.Result.Success ? OrderFeedback(command) : DescribeError(request);
-                    if (request.result == UnityWebRequest.Result.Success && (command.type == "deploy-march" || command.type == "configure-march"))
-                    { pendingFormationHero = command.targetId; interfacePage = InterfacePage.World; }
-                    if (request.result == UnityWebRequest.Result.Success && command.type == "chat-send" && chatDraft == command.name) chatDraft = "";
-                    toastUntil = Time.unscaledTime + 5;
+                    retained=new PendingOrder{key=Guid.NewGuid().ToString("N"),body=body,playerId=playerId,server=serverUrl};
+                    if(!SavePendingOrder(retained))break;
+                    pendingOrder=retained;
                 }
+                yield return TransmitOrder(command,body,retained);
+                if(pendingOrder!=null)break;
             }
             commands.Clear(); processing = false;
         }

@@ -95,9 +95,10 @@ Extend the current roles/chat/markers rather than adding disconnected UI labels.
 
 Version 0.18 provides transactional single-kingdom SQLite, keyed commands, bounded
 downtime progression, backup/restore checks and Docker/HTTPS operations files.
-Next: deploy the first private kingdom, real accounts/cross-device recovery,
-retained command retry keys in the client, off-site backups/alerts, load/security
-tests and later service scaling. Device-held tokens are not production accounts.
+Version 0.20 adds realm-local accounts/cross-device recovery and retained command
+retry keys in the client. Next: deploy the first private kingdom, email/platform
+identity, account deletion, off-site backups/alerts, load/security tests and later
+service scaling. The current account layer is not a completed production service.
 See [the hosting guide](hosting-and-persistence-0.18.md).
 
 ## Art and usability across every milestone
@@ -113,3 +114,11 @@ After the above campaign supports mature warfare: kingdom eligibility/power,
 matchmaking, separate seasonal battlefield, objectives, scoring, rewards,
 migration and return-home rules. No early-stage KvK dependency or current rush
 into matchmaking/season implementation.
+
+## Expanded whole-workbook scope and batch 0.20
+
+All 679 adapted reference roles are scheduled, including former optional systems;
+later means sequence, not exclusion. Accounts, recovery, retained orders, inventory
+and live power/rankings are implemented foundations. Troop tiers/promotion,
+gathering cargo, talents/secondary heroes, alliance progression and later content
+remain required work. See [the current batch](accounts-and-supplies-0.20.md).

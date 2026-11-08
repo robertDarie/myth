@@ -5,12 +5,19 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; public string joinCode; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId; public int count, troops, mythic, skillIndex; public UnitCounts units; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex; public UnitCounts units; }
+    [Serializable] public sealed class InventoryItem { public string id,name,kind,resource,scope,description; public int amount,seconds,count; }
+    [Serializable] public sealed class InventoryJob { public string id,lane,type,targetId; public float remaining; }
+    [Serializable] public sealed class InventoryData { public bool suppliesAvailable; public InventoryItem[] items; public InventoryJob[] jobs; }
+    [Serializable] public sealed class PowerData { public int city,research,heroes,ready,deployed,total; }
+    [Serializable] public sealed class RankingEntry { public string id,name,civilization,allianceId; public int power; }
+    [Serializable] public sealed class RankingData { public RankingEntry[] players,alliances; public string policy; }
     [Serializable] public sealed class UnitCounts { public int infantry, archers, cavalry; public int Total => infantry + archers + cavalry; public UnitCounts Copy() => new UnitCounts { infantry = infantry, archers = archers, cavalry = cavalry }; }
     [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration; public int cityLevel; public ResourceAmounts cost; }
     [Serializable] public sealed class ArmyData
     {
         public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
+        public InventoryData inventory; public PowerData powerBreakdown;
         public RoutePoint[] route;
         public float x, z, homeX, homeZ, targetX, targetZ, attackX, attackZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
@@ -47,7 +54,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class RelicData { public string id, name, description; public ResourceAmounts cost; public float duration; }
     [Serializable] public sealed class TradeData { public string id, name; public ResourceAmounts cost, reward; }
     [Serializable] public sealed class SummonRules { public float common, rare, epic, legendary; public int epicPity, legendaryPity; }
-    [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error; }
+    [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error, backend; }
     [Serializable] public sealed class CampData { public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
     [Serializable] public sealed class NodeData { public string id, name, resource; public float x, z; public int remaining, capacity; }
     [Serializable] public sealed class SiteData { public bool unknown, locked; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
@@ -106,6 +113,7 @@ namespace ThronesOfMyth
         public TroopTypeData[] troopTypes;
         public float time;
         public SaveStatus persistence;
+        public RankingData rankings;
         public RelicData[] relics;
         public TradeData[] trades;
         public SummonRules summonRules;

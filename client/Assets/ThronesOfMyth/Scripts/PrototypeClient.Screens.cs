@@ -268,10 +268,18 @@ namespace ThronesOfMyth
             bool ambient=GUILayout.Toggle(PlayerPrefs.GetInt("ThronesOfMyth.cityAmbience",1)==1,"City ambience");PlayerPrefs.SetInt("ThronesOfMyth.cityAmbience",ambient?1:0);
             GUILayout.Label("Battlefield sound effects · " + Mathf.RoundToInt(BattlefieldAudio.Volume * 100) + "%", theme.Small);
             BattlefieldAudio.Volume = GUILayout.HorizontalSlider(BattlefieldAudio.Volume, 0, 1, GUILayout.Width(400));
-            GUILayout.Space(20); GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
+            GUILayout.Space(20);
+            if(pendingOrder!=null&&string.IsNullOrEmpty(pendingOrder.key))
+            {
+                GUILayout.Label("Check your city and queues before clearing the unreadable last-order record. Clearing it cannot undo an accepted order.",theme.Small);
+                if(GUILayout.Button("I checked my city · clear unreadable record",GUILayout.Height(36)))ClearPendingOrder(pendingOrder);
+            }
+            if(GUILayout.Button("Account and recovery",GUILayout.Height(36)))OpenAccount();
+            if(GUILayout.Button("Kingdom power rankings",GUILayout.Height(36)))OpenInterface(InterfacePage.Rankings);
+            GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
             GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
             GUILayout.Space(18); GUILayout.Label("Connected to " + serverUrl, theme.Small);
-            GUILayout.Label(world.persistence != null && world.persistence.enabled ? "Your local kingdom autosaves. Time pauses while its server is closed." : "This server is not saving world progress.", theme.Small);
+            GUILayout.Label(world.persistence != null && world.persistence.enabled ? world.persistence.backend=="sqlite"?"SQLite kingdom · progress saves on the server; downtime job recovery is enabled.":"Local JSON kingdom · progress saves on this PC." : "This server is not saving world progress.", theme.Small);
             if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }

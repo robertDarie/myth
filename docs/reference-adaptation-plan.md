@@ -1,6 +1,6 @@
 # Thrones of Myth — complete reference adaptation plan
 
-Decision baseline: 8 November 2026, repository through 0.18 and compiler fixes.
+Decision baseline: 8 November 2026; expanded implementation scope through 0.20.
 Input: `Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx` supplied by the
 user. Its 20 sheets include **679 feature records**, 50 source entries and 16
 numeric anchors. It is a research inventory, not a specification we blindly copy.
@@ -20,11 +20,18 @@ Thrones of Myth direction determine this plan.
   reverified in this adaptation; community/proposed/unknown remain those labels.
 - [First implementation: visual foundation 0.19](visual-foundation-0.19.md).
 
-The register distinguishes **282 prototype-partial**, **262 planned**, **18
-started/native-review-pending**, **84 later/optional**, and **33 open-question**
-records. Partial means related behavior exists, not that every reference rule is
-implemented. Started does not mean a whole epic is finished. Groupings are
-planning decisions; they do not silently expand the current implementation.
+The user's expanded scope includes **all adapted feature roles** in the workbook.
+“Scheduled later” means implementation order, not exclusion. Every one of the
+679 records remains tracked; the 33 evidence/design questions remain research
+work rather than invented facts. Equivalent functions from the two references may
+share one original implementation. Paid products, pets, Titans, flight and KvK now
+have scheduled milestones instead of optional omission.
+
+Current register: **275 prototype-partial**, **249 planned**, **18 started in
+0.19**, **23 prototype-partial in 0.20**, **81 scheduled later**, and **33 open
+questions**. No row is marked production-complete. Account/retry/inventory/power
+foundations are delivered in [0.20](accounts-and-supplies-0.20.md); R0 native review
+and the larger R1–R8 program remain in progress.
 
 ## Product decisions
 
@@ -52,8 +59,9 @@ Keep the agreed direction:
   Touch, safe areas and device performance are work, not implied by a Unity build.
 
 Current costs, odds, caps and short testing timers are **our original prototype
-balance**, not validated RoK/CoD numbers. Do not automatically adopt 25 Citadel
-levels, five troop tiers, energy caps, cash shops, paid banners or seasonal resets.
+balance**, not validated RoK/CoD numbers. Implement the corresponding progression, tier, energy, catalog and seasonal
+functions using our own versioned rules; do not copy exact level counts, numeric
+caps, prices or reset schedules as if they were validated requirements.
 Five ages are the strategic progression structure; how many building ranks sit
 inside an age will be decided with multi-day economy simulation.
 
@@ -96,7 +104,7 @@ both games. Reference variants may map to one Thrones of Myth institution.
 | Wall / watchtower | Aegis Rampart / Sentinel, proposed | The 0.19 decorative city edge has no defense or siege effect |
 | Monument | Chronicle Obelisk, proposed | Existing Kingdom/Chronicle UI supplies the functional baseline |
 | Siege workshop | Titanwright Workshop, proposed | Requires siege/engineer ledgers and terrain rules first |
-| Merchant / shop / quiz | Wandering Oracle / Quartermaster / Hall of Legends, optional | Later content; no paid catalog or repetitive chore requirement now |
+| Merchant / shop / quiz | Wandering Oracle / Quartermaster / Hall of Legends, scheduled | Later content; no paid catalog or repetitive chore requirement now |
 
 Detailed building records, including blueprint gates, repositioning, queue
 settlement and help limits, remain traceable in rows 06-001 through 06-052.
@@ -117,11 +125,13 @@ milestone complete because its screens exist.
 | **R5 — Living home kingdom** | Power breakdown, rankings, event calendar/scoring, governance/titles, later chapters and weekly goals | R1 audit and R4 mature campaign | Immutable event cutoffs/ties/claims; viable new and established player sessions; leadership cannot invent rewards |
 | **R6 — Android and release quality** | Touch/input abstraction, safe areas, localization, accessibility, graphics/audio tiers, device/network/store QA | Playable R0–R5 subset; earlier Android prototypes encouraged | Device/FPS/memory/network matrix, signed test bundle, policy declarations and tested account flows |
 | **R7 — Later War of the Fallen Thrones** | Cross-kingdom eligibility, matchmaking, campaign instance, migration, rewards/return/reset | Healthy mature hosted kingdoms and load evidence | Explicit carry-over/reset matrix; no permanent progression or troops lost through transitions |
-| **R8 — Optional extensions** | Cosmetic commerce, bonded companions, Titan battlefield summons, advanced flying terrain, extra modes | Stable core; individual design approval/selection | Prove added strategic value and content/operations affordability before building the whole catalog |
+| **R8 — Remaining scheduled systems** | Commerce/catalog/receipts, Renown benefits, bonded companions, Titan battlefield summons, advanced flying terrain, extra modes | Stable core; original rules and platform integration setup | Implement each tracked role with ownership, economy, asset, device and operations gates |
 
-Paid power, VIP queue gates and energy friction are **not** prerequisites of our
-core game. A regenerating Resolve pool is an evaluate-only design question; do
-not put it in the critical path before reward/session economics justify it.
+VIP-like progress is adapted as **Renown of the Realm**, an earned benefits/daily
+claim track; the existing builder unlock remains in the Lodge. A regenerating
+**Resolve** pool is scheduled for selected PvE modes with tested session pacing;
+city management, movement and gathering stay outside that energy gate. Commerce
+is scheduled later with verified platform receipts, not live charges in this pass.
 
 ## Fourteen implementation epics
 
@@ -144,7 +154,7 @@ any later REST/WebSocket split must preserve authorization and replay semantics.
 | E10 Backend/operations | Account, Session, CharacterRealm, CommandReceipt, StateRevision, AuditRecord, BackupManifest | Guest/recovered/expired/revoked/offline/maintenance/update-required | Cross-device recovery, retained retry key, restore rehearsal, crash safety, privacy, load tests |
 | E11 Client/QA | TutorialCheckpoint, InputAction, SafeAreaLayout, LocaleKey, AccessibilityPreference | Recover interrupted tutorial, touch states, reduced motion, reconnect | Unassisted loop, keyboard/touch focus, font expansion, Android matrix and poor-network recovery |
 | E12 Seasonal/backend | HomeRealm, CampaignInstance, EligibilitySnapshot, CarryOverRule, ReturnReceipt | Enroll/eligible/locked/migrate/return/results | Atomic transfer, no duplicate characters/troops, explicit reset versus permanent entitlement |
-| E13 Product/commerce | Optional CatalogOffer, VerifiedReceipt, Entitlement, RefundRecord; no current purchase commands | Currency distinction, exact contents/odds, confirmation, restored/refunded | Store receipt replay/refund/restore, region requirements and fairness review if adopted |
+| E13 Product/commerce | CatalogOffer, VerifiedReceipt, Entitlement, RefundRecord; no current purchase commands | Currency distinction, exact contents/odds, confirmation, restored/refunded | Store receipt replay/refund/restore, region requirements and fairness review if adopted |
 | E14 Tools/QA | ContentVersion, SchemaValidator, MigrationPlan, ReplayFixture, PerformanceBudget | Internal dry-run, diff, validation error, rollback preview | Definition DAGs, content checksums, migration/rollback fixtures and representative load/performance evidence |
 
 Each epic implementation must publish its concrete payload/schema, negative
@@ -174,8 +184,9 @@ to match a reference architecture label.
 6. **Help and speedups:** helper identity once per eligible job; item consumption
    and timer reduction atomic; over-large speedup preview explains wasted time.
 7. **Summons:** retain published original odds, pity, duplicate shards and earned
-   sources. A reveal animation cannot determine or change the result. No cash
-   banner, companion RNG or artifact draw is added as part of visual polish.
+   sources. A reveal animation cannot determine or change the result. Cash
+   banners, companion development and artifact acquisition are scheduled systems,
+   not features added implicitly by visual polish.
 8. **Power/rankings:** power is a transparent breakdown of buildings, technology,
    ready/deployed troops and heroes, with a stated wounded/queued policy; it is
    not combat strength or a client-submitted score. Decide each component first.
@@ -196,7 +207,7 @@ garrison/gathering) and stacking rules; never add every bonus unconditionally.
 Alliances have an explicit leader/officer/member capability matrix. Donations,
 shared research and treasury spending produce attributable entries. Event rewards
 snapshot eligibility at cutoff; joining/leaving cannot farm previous rewards.
-Personal mythic escorts, optional bonded companions and alliance-controlled Titans
+Personal mythic escorts, bonded companions and alliance-controlled Titans
 are three separate ownership/economy systems.
 
 ## Permanent versus seasonal state
@@ -240,4 +251,21 @@ Next after native R0 review: R1 recoverable identity and command retry UX, with 
 versioned progression/economy tables prepared alongside it. Choose a host/domain
 before provisioning the private kingdom; the current chat is not an uptime service.
 Android, full production art, alliance Titans, pets, city siege, commerce and KvK
-are planned work, not secretly marked complete by this reference import.
+are required later work, not marked complete by this reference import. The next
+implementation batch adds troop-tier/promotion ledgers and gathering cargo, then
+hero talents/companions and alliance progression. All require migrations and
+negative-case fixtures before their screens are called playable.
+
+## Current execution batch: 0.20
+
+- Realm-local account protection, device login, expiring/revocable sessions,
+  one-time recovery codes and password-safe account metadata.
+- Retained command IDs in the client; per-character receipt ownership permits
+  replay after account/session recovery without repeating a resource charge.
+- A private inventory with five resource packs and two hourglass types, exact
+  consumption, active-job targeting and once-only founding supplies.
+- Derived power components and live player/alliance rankings with an explicit
+  wounded/queued exclusion policy; no competitive reward cutoff is implied.
+- Schema migration and updated Windows bundling; native client review pending.
+
+This batch starts E10/E03/E09. It does not finish those epics or the full program.

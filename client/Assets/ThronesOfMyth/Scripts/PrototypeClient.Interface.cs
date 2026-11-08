@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Kingdom, Settings }
+        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Kingdom, Settings, Account, Inventory, Rankings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -54,6 +54,7 @@ namespace ThronesOfMyth
             if (LoadingActive || string.IsNullOrEmpty(token) || interfacePage != InterfacePage.World) return true;
             var p = new Vector2(screenPoint.x / InterfaceScale, (Screen.height - screenPoint.y) / InterfaceScale);
             if (p.y < 112 || p.y > ViewHeight - 94) return true;
+            if(pendingOrder!=null&&new Rect((ViewWidth-660)/2,112,660,60).Contains(p))return true;
             if (new Rect(20, 132, 282, 32).Contains(p)) return true;
             if (!compactHud)
             {
@@ -131,6 +132,8 @@ namespace ThronesOfMyth
                 case "flag": return "An Oath Beacon extends your alliance's reach.";
                 case "capture": return "Your march advances to hold the sacred site.";
                 case "trade": return "The exchange is complete.";
+                case "inventory-supplies": return "Founding supplies added to your inventory.";
+                case "inventory-use": return "Your selected supplies have been used.";
                 default: return "Your orders have been received.";
             }
         }
@@ -151,7 +154,7 @@ namespace ThronesOfMyth
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(InterfaceScale, InterfaceScale, 1));
             GUI.color = Color.white;
             if (LoadingActive) RenderLoadingScreen();
-            else if (string.IsNullOrEmpty(token)) RenderKingdomEntry();
+            else if (string.IsNullOrEmpty(token)) { if(accountEntryOpen) RenderAccountEntry(); else RenderKingdomEntry(); }
             else
             {
                 DrawTopHud();
@@ -206,11 +209,12 @@ namespace ThronesOfMyth
             if (GUILayout.Button(joining ? "Opening the gates…" : "Enter your kingdom", theme.Primary, GUILayout.Height(54))) StartCoroutine(Join());
             GUI.enabled = true;
             GUILayout.Label("This device resumes your city using its saved session.", theme.Small);
+            if(GUILayout.Button("Sign in to a protected account",theme.Tab,GUILayout.Height(28))) { accountEntryOpen=true;accountRegistered=false; }
             GUILayout.Space(18); advancedConnection = GUILayout.Toggle(advancedConnection, "Connection settings");
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.19  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.20  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -333,9 +337,9 @@ namespace ThronesOfMyth
         }
         private void DrawBottomNavigation()
         {
-            string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "CHAT", "CHRONICLE" };
-            string[] icons = { "city", "heroes", "alliance", "temple", "chronicle", "chronicle" };
-            InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Chat, InterfacePage.Chronicle };
+            string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "INVENTORY", "CHAT", "CHRONICLE" };
+            string[] icons = { "city", "heroes", "alliance", "temple", "inventory", "chronicle", "chronicle" };
+            InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Inventory, InterfacePage.Chat, InterfacePage.Chronicle };
             float width = 132, start = ViewWidth / 2 - (width * labels.Length + 8 * (labels.Length - 1)) / 2;
             for (int i = 0; i < labels.Length; i++)
             {
@@ -351,12 +355,17 @@ namespace ThronesOfMyth
         private void DrawInterfaceToast()
         {
             if (status != previousToast) { previousToast = status; toastUntil = Time.unscaledTime + 5; }
-            string message = world.persistence != null && !string.IsNullOrEmpty(world.persistence.error) ? world.persistence.error
+            string message = pendingOrder!=null ? string.IsNullOrEmpty(pendingOrder.key)?"Check your last order, then open Settings to clear its unreadable record.":"Confirm your last order before sending another." : world.persistence != null && !string.IsNullOrEmpty(world.persistence.error) ? world.persistence.error
                 : Time.unscaledTime - lastSnapshotAt > 6 ? "Connection interrupted. Retrying your kingdom server…"
                 : placeBeacon ? "PLACE BEACON · Click near the selected march. Esc cancels." : Time.unscaledTime < toastUntil ? status : "";
             if (string.IsNullOrEmpty(message)) return;
             var r = new Rect((ViewWidth - 660) / 2, 112, 660, 46); theme.Panel(r);
-            theme.Text(new Rect(r.x + 16, r.y + 9, r.width - 32, 30), message, theme.Center);
+            if(pendingOrder!=null)
+            {
+                theme.OneLine(new Rect(r.x+16,r.y+9,r.width-140,30),message,theme.Small);
+                if(theme.Button(new Rect(r.xMax-116,r.y+7,102,32),processing?"Confirming…":"Retry order",true,!processing&&!accountBusy&&!string.IsNullOrEmpty(pendingOrder.key)))StartCoroutine(RetryPendingOrder());
+            }
+            else theme.Text(new Rect(r.x + 16, r.y + 9, r.width - 32, 30), message, theme.Center);
         }
         private void DrawInterfaceWindow()
         {
@@ -373,6 +382,9 @@ namespace ThronesOfMyth
             else if (interfacePage == InterfacePage.Temple) RenderTempleWindow(inner);
             else if (interfacePage == InterfacePage.Research) RenderResearchWindow(inner);
             else if (interfacePage == InterfacePage.Settings) RenderSettingsWindow(inner);
+            else if (interfacePage == InterfacePage.Account) RenderAccountWindow(inner);
+            else if (interfacePage == InterfacePage.Inventory) RenderInventoryWindow(inner);
+            else if (interfacePage == InterfacePage.Rankings) RenderRankingsWindow(inner);
             else RenderActivityWindow(inner);
             if (placeBeacon) interfacePage = InterfacePage.World;
         }
@@ -381,7 +393,7 @@ namespace ThronesOfMyth
             var left = new Rect(r.x, r.y, 202, r.height);
             var main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Kingdom, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
+            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Inventory, InterfacePage.Rankings, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Kingdom, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             var navigation = new Rect(left.x + 12, left.y + 12, left.width - 24, left.height - 24);
             activityNavScroll = GUI.BeginScrollView(navigation, activityNavScroll, new Rect(0, 0, navigation.width - 16, pages.Length * 34));
             for (int i = 0; i < pages.Length; i++)

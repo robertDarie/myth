@@ -4,6 +4,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { World, GameError } from './world.mjs';
 import { WorldStore } from './storage.mjs';
 import { KingdomDatabase } from './database.mjs';
+import { createIdentity } from './identity.mjs';
 
 async function readJson(request) {
   let size = 0; const chunks = [];
@@ -35,15 +36,16 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
     try { store.save(world, options); persistence.lastSaved = new Date().toISOString(); if (!simulationFailed) persistence.error = ''; return true; }
     catch { persistence.error = 'Progress could not be saved. The kingdom is paused until storage recovers.'; console.error(persistence.error); return false; }
   };
-  const mutate = (action, receipt = null) => {
+  const mutate = (action, receipt = null, options = {}) => {
     if (persistence.error) throw new GameError(persistence.error, 503);
     const before = store ? checkpoint(world) : null;
     try {
       const result = action();
-      if (!saveNow(receipt ? { receipt: { ...receipt, response: result } } : undefined)) throw new GameError(persistence.error, 503);
+      if (!saveNow({ ...options, ...(receipt ? { receipt: { ...receipt, response: result } } : {}) })) throw new GameError(persistence.error, 503);
       return result;
     } catch (error) { if (before) Object.assign(world, before); throw error; }
   };
+  const identity = createIdentity({ store, world, mutate });
   const limits = new Map();
   const allow = (key, cap) => {
     const now = Date.now(), entry = limits.get(key);
@@ -61,9 +63,22 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
       const ready = !persistence.error && performance.now() - lastTick < 5000;
-      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 13, kingdomId, persistence: { ...persistence } });
+      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 13, kingdomId, accounts: identity.available, persistence: { ...persistence } });
       const address = trustProxy ? String(request.headers['x-forwarded-for'] ?? request.socket.remoteAddress).split(',').at(-1).trim() : request.socket.remoteAddress;
       allow('requests:' + address, 6000);
+      if (path.startsWith('/auth/')) {
+        allow('identity:' + address, 20);
+        const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
+        if (request.method === 'GET' && path === '/auth/me') return send(200, await identity.handle(path, null, token));
+        if (request.method !== 'POST') throw new GameError('Route not found.', 404);
+        if (['/auth/register','/auth/login','/auth/recover','/auth/rotate-recovery'].includes(path)) {
+          const local = ['127.0.0.1','::1','::ffff:127.0.0.1'].includes(request.socket.remoteAddress);
+          const secure = request.socket.encrypted || (trustProxy && request.headers['x-forwarded-proto'] === 'https');
+          if (!local && !secure) throw new GameError('Account credentials require HTTPS.', 403);
+        }
+        const result = await identity.handle(path, await readJson(request), token);
+        return send(path === '/auth/register' ? 201 : 200, result);
+      }
       if (request.method === 'POST' && path === '/launcher-shutdown') {
         if (!shutdownToken || !equalSecret(request.headers['x-thrones-launcher'], shutdownToken)) throw new GameError('Launcher authorization required.', 403);
         if (!saveNow()) throw new GameError(persistence.error, 503);
@@ -72,6 +87,7 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
       if (request.method === 'POST' && path === '/join') {
         allow('join:' + address, 20);
         const body = await readJson(request);
+        if (body?.resumeToken && world.sessions.has(body.resumeToken)) identity.authenticate(body.resumeToken);
         // A valid saved session may reconnect after the invitation code rotates.
         if (joinCode && !world.sessions.has(body?.resumeToken) && !equalSecret(body?.joinCode, joinCode)) throw new GameError('A kingdom invitation code is required.', 403);
         const session = mutate(() => {
@@ -83,18 +99,18 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
       if ((request.method === 'GET' && path === '/world') || (request.method === 'POST' && path === '/command')) {
         const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
         if (path === '/world') {
-          const player = world.authenticate(token); player.lastSeen = performance.now(); player.offline = false;
+          const player = identity.authenticate(token); player.lastSeen = performance.now(); player.offline = false;
           return send(200, { ...world.snapshot(player.id), persistence: { ...persistence } });
         }
         const body = await readJson(request);
         // Authenticate after awaiting the body: another command may have rolled back.
-        const player = world.authenticate(token);
+        const player = identity.authenticate(token);
         const key = request.headers['idempotency-key']; let receipt = null;
         if (key !== undefined) {
           if (typeof key !== 'string' || !/^[A-Za-z0-9_-]{8,128}$/.test(key)) throw new GameError('Invalid Idempotency-Key.');
           if (!store?.receipt) throw new GameError('Idempotent commands require SQLite storage.', 409);
-          receipt = { id: hash(token + ':' + key), digest: hash(JSON.stringify(body)) };
-          const prior = store.receipt(receipt.id);
+          receipt = { id: hash('player:' + player.id + ':' + key), digest: hash(JSON.stringify(body)) };
+          const prior = store.receipt(receipt.id) ?? store.receipt(hash(token + ':' + key));
           if (prior) {
             if (prior.digest !== receipt.digest) throw new GameError('Idempotency-Key already belongs to a different command.', 409);
             return send(200, JSON.parse(prior.response));

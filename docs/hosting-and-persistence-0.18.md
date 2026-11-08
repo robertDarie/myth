@@ -173,7 +173,7 @@ changes made after that backup; announce that recovery to testers.
 cd server && npm test
 # From repository root:
 docker build -f ops/kingdom/Dockerfile -t thrones-kingdom:0.18-test .
-sh tools/test_hosted_kingdom.sh
+sh tools/test_hosted_kingdom.sh thrones-kingdom:0.18-test
 ```
 
 Tests cover atomic persistence, failed-write rollback, retries across restart,
@@ -189,3 +189,7 @@ Release verification in the cloud: **171 server tests passed**, including an
 actual SIGKILL/WAL recovery test. The non-root read-only Docker image built and
 its restart/backup smoke test passed. Compose and Caddy configuration validation
 passed. These checks do not establish public uptime or a tested player capacity.
+
+The 0.20 update adds realm-local password/recovery-code accounts, retained command
+keys, inventory schema 12 and SQLite revision 2. Review [the upgrade guide](accounts-and-supplies-0.20.md)
+before using these older baseline deployment notes.

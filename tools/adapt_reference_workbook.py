@@ -26,7 +26,7 @@ EPICS = {
     'E10': ('Identity, durability and operations', 'R1', 'Backend/operations', 'Extend the SQLite private-kingdom foundation with recoverable accounts, character/realm identity, retained retry keys, revision checks, audit ledgers, off-site backups and measured hosting.', 'Two devices recover one city; lost responses never double-charge; restore rehearsal, token revocation, privacy and capacity/load checks pass.'),
     'E11': ('Onboarding, accessibility and Android', 'R6', 'Client/QA', 'A playable first session teaches city→research→march→gather/fight→alliance. Add touch controls, safe areas, localization-ready text and return-user guidance.', 'New testers finish unassisted; desktop resolutions and representative Android devices pass readability, touch, reconnect and performance checks.'),
     'E12': ('Later cross-kingdom campaigns', 'R7', 'Seasonal/backend', 'War of the Fallen Thrones is a later separate campaign world. Home cities/heroes remain permanent; campaign territory and temporary blessings reset explicitly.', 'Carry-over matrix, eligibility, migration, cutoff rewards and return-home conservation are tested before any seasonal campaign opens.'),
-    'E13': ('Optional commerce and collection extensions', 'R8', 'Product/commerce', 'Keep current summons earned-only with disclosed odds and pity. Evaluate cosmetics and optional expansions later; do not add cash purchases, VIP queues or paid randomized power in this pass.', 'If adopted, server receipt validation, restore/refund/replay protection, spending confirmation and clearly separated permanent entitlements are required.'),
+    'E13': ('Commerce and collection extensions', 'R8', 'Product/commerce', 'Keep current summons earned-only with disclosed odds and pity. Schedule cosmetics, a complete catalog and platform commerce later; do not add cash purchases, VIP queues or paid randomized power in this pass.', 'When shipping, server receipt validation, restore/refund/replay protection, spending confirmation and clearly separated permanent entitlements are required.'),
     'E14': ('Content tools, balance and quality gates', 'R1', 'Tools/QA', 'Version original definitions, validate dependencies and modifiers, maintain asset provenance and test migrations, economy curves, combat outcomes and load.', 'A content change validates before activation, preserves running-job contracts and has rollback plus regression/performance evidence.'),
 }
 
@@ -38,19 +38,19 @@ BUILDINGS = {
     'Storehouse': 'Vault of Ages (production cap exists; plunder protection is planned)',
     'Alliance Center': 'Oathbound Hall', 'Builder Hut': 'Lodge of the First Builders (earned second crew)',
     'Trading Post': 'Agora of Fates (fixed exchange exists; caravans are planned)', 'Bazaar': 'Agora of Fates',
-    'Shop': 'Quartermaster of the Dawn (planned earned-item catalog)', 'Courier Station': 'Wandering Oracle (optional later merchant)',
+    'Shop': 'Quartermaster of the Dawn (planned earned-item catalog)', 'Courier Station': 'Wandering Oracle (scheduled later merchant)',
     'Tavern': 'Temple of Echoes', 'Scout Camp': 'Wayfinder Lodge (planned institution; scouts already function)',
     'Barracks': 'Hall of Spears', 'Archery Range': 'Courtyard of Bows (planned specialization)', 'Stable': 'Courtyard of Reins (planned specialization)',
     'Siege Workshop': 'Titanwright Workshop (planned siege/engineering)', 'Hospital': 'House of Renewal',
     'Monument': 'Chronicle Obelisk (existing Kingdom screen, future physical access point)', 'Castle': 'Oathbound Hall rally capacity branch (planned)',
     'Watchtower': 'Sentinel of the Aegis (planned)', 'Blacksmith': 'Forge of Dawn',
-    'Lyceum of Wisdom': 'Hall of Legends (optional lore challenges)', 'Mana Refinery': 'Aether Well',
+    'Lyceum of Wisdom': 'Hall of Legends (scheduled lore challenges)', 'Mana Refinery': 'Aether Well',
     'Gold production building': 'Treasury of Crowns', 'Wood production building': 'Sacred Grove', 'Ore production building': 'Titan Stoneworks',
     'College of Order': 'Athenaeum of Ages', 'Knight Camp': 'Courtyard of Reins / future caravan workers', 'Swordsmen Camp': 'Hall of Spears',
     'Marksman training building': 'Courtyard of Bows', 'Magic troop training building': 'Sanctuary of Beasts and later culture-specific divine lines',
     'Celestial Temple': 'Optional later flying mythic branch; not an automatic extra combat class',
     'Rally Beacon': 'Oathbound Hall dispatch plus Fort/Beacon field network',
-    'Alliance research interface': 'Oathbound Hall shared research (planned)', 'Beast Pen / companion hub': 'Sanctuary of Beasts; optional personal companions later',
+    'Alliance research interface': 'Oathbound Hall shared research (planned)', 'Beast Pen / companion hub': 'Sanctuary of Beasts; personal companions later',
 }
 
 def choose_epic(sheet, r):
@@ -141,8 +141,8 @@ def themed(text):
         ('Hall of Order','Citadel of Mortals'),('City Hall','Citadel of Mortals'),
         ('College of Order','Athenaeum of Ages'),('Academy','Athenaeum of Ages'),
         ('Tavern','Temple of Echoes'),('War Pet','bonded companion'),('War pet','bonded companion'),
-        ('war pet','bonded companion'),('Command Points','Resolve (optional)'),('Action Points','Resolve (optional)'),
-        ('VIP','optional civic benefits; no paid queue gate'),('Gems','Premium currency (not added)'),
+        ('war pet','bonded companion'),('Command Points','Resolve'),('Action Points','Resolve'),
+        ('VIP','Renown of the Realm'),('Gems','Premium currency (scheduled later)'),
     ]
     for a,b in replacements:text=text.replace(a,b)
     return text
@@ -170,11 +170,35 @@ def main():
             feature = themed(row[3])
             action = ('Validate baseline and fill remaining behavior: ' if row[0] in PARTIAL else 'Specify and implement: ') + feature + '. UI flow: ' + themed(row[5])
             if disposition != 'Adapt': action = 'Design review only (' + disposition + '): ' + feature + '. Do not ship automatically from the reference.'
-            records.append([row[0],sheet.title,index,row[1],row[2],row[3],row[4],row[8],row[9],epic,name,milestone,owner,disposition,status,baseline,adaptation,acceptance,feature,action])
+            scope = 'Required adapted feature'
+            if row[0] in {'02-001','02-002','02-008','02-011','02-019','02-026','02-062','05-007','05-014','05-029','09-033','12-024','12-044','14-002','14-003','14-004','14-005','15-001','15-005','15-006','15-007','15-043','15-047','15-049','15-053','15-054','15-057','16-004','16-006','16-007','16-030'}:
+                status = 'Prototype partial 0.20; native review pending'
+            if epic in ['E12','E13']:
+                disposition = 'Scheduled later; required adapted feature'
+                status = 'Scheduled later'
+                adaptation = adaptation.replace('Optional', 'Scheduled').replace('optional', 'scheduled').replace('Evaluate', 'Plan')
+                action = 'Scheduled implementation: ' + feature + '. Keep permanent home progress, earned builder access and server-verified entitlements.'
+            if 'vip' in row[3].lower():
+                disposition='Required adaptation: Renown';milestone='R5';epic='E09'
+                name,_,owner,_,acceptance=EPICS[epic]
+                adaptation='Renown of the Realm is an earned civic progression track with daily claims and a benefits catalog. Keep the second crew earned through the Lodge; add no paid queue requirement.'
+                action='Implement an earned Renown track, deterministic daily claims and visible next-rank benefits; store integration is a later separate entitlement layer.'
+                status='Planned'
+            if 'action point' in row[3].lower() or 'command point' in row[3].lower():
+                disposition='Required adaptation: Resolve';milestone='R2'
+                adaptation='Implement a server-owned regenerating Resolve pool for selected PvE modes after session/reward tuning. Movement, city management and gathering remain available without energy.'
+                action='Define Resolve cap/regeneration/cost policy and implement server-time accrual, explicit spend preview and replay-safe refill items.'
+            if 'pet' in row[3].lower():
+                disposition='Scheduled R8: bonded companions';status='Scheduled later';milestone='R8'
+                adaptation='Implement personal bonded companions with capture, roster, development and scoped skills, separate from civilization mythic troops and alliance Titans.'
+                action='Define companion ownership, capture outcomes, transfer rules and content budget, then implement that system after troop/hero ledgers.'
+            if sheet.title.startswith('17 '):
+                scope='Required research/design decision';status='Open question';disposition='Resolve original design / evidence'
+            records.append([row[0],sheet.title,index,row[1],row[2],row[3],row[4],row[8],row[9],epic,name,milestone,owner,disposition,status,baseline,adaptation,acceptance,feature,action,scope])
     assert len(records)==679 and len({r[0] for r in records})==679
-    headers=['Reference ID','Source sheet','Excel row','Reference game','Subsystem','Reference feature','Reference behavior','Workbook source IDs','Workbook evidence status','Epic','Thrones of Myth epic','Milestone','Discipline','Disposition','Implementation status','Baseline caveat','Thrones of Myth adaptation','Acceptance gate','Thrones of Myth feature','Next action']
+    headers=['Reference ID','Source sheet','Excel row','Reference game','Subsystem','Reference feature','Reference behavior','Workbook source IDs','Workbook evidence status','Epic','Thrones of Myth epic','Milestone','Discipline','Disposition','Implementation status','Baseline caveat','Thrones of Myth adaptation','Acceptance gate','Thrones of Myth feature','Next action','Scope commitment']
     with (output/'adaptation-register.csv').open('w',newline='') as handle:
-        writer=csv.writer(handle);writer.writerow(headers);writer.writerows(records)
+        writer=csv.writer(handle,lineterminator='\n');writer.writerow(headers);writer.writerows(records)
     workbook=openpyxl.Workbook();overview=workbook.active;overview.title='Read first'
     for r in [
         ['Thrones of Myth — reference adaptation','2026-11-08'],
@@ -184,7 +208,7 @@ def main():
         ['Evidence','Original workbook labels retained. No external source was independently reverified for this adaptation.'],
         ['Decisions','Original mythology; five cultures/ages; earned second crew; five marches; KvK later; no commerce added.'],
         ['Plan','See docs/reference-adaptation-plan.md and docs/visual-foundation-0.19.md.'],
-        ['Current implementation','R0 readability/city/fog pass only. Other mapped work is backlog.'],
+        ['Current implementation','R0 visual foundation plus 0.20 account/retry/inventory/power foundations. Other mapped work remains backlog.'],
     ]:overview.append(r)
     overview.column_dimensions['A'].width=26;overview.column_dimensions['B'].width=110
     for row in overview:
@@ -206,7 +230,7 @@ def main():
             sheet.row_dimensions[row[0].row].height=60
             for cell in row:cell.alignment=Alignment(wrap_text=True,vertical='top')
     workbook.save(output/'Thrones_of_Myth_Adaptation_Plan.xlsx')
-    manifest={'sourceFile':source.name,'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'workbookSnapshot':'2026-11-08','independentlyReverifiedSources':False,'featureRecords':len(records),'epics':len(EPICS),'sheets':dict(Counter(r[1] for r in records)),'statuses':dict(Counter(r[14] for r in records)),'generatedFiles':['adaptation-register.csv','Thrones_of_Myth_Adaptation_Plan.xlsx']}
+    manifest={'sourceFile':source.name,'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'workbookSnapshot':'2026-11-08','independentlyReverifiedSources':False,'featureRecords':len(records),'epics':len(EPICS),'sheets':dict(Counter(r[1] for r in records)),'statuses':dict(Counter(r[14] for r in records)),'scopeCommitment':'All reference roles scheduled as adapted features; later is sequence, not exclusion; open questions remain research tasks.','generatedFiles':['adaptation-register.csv','Thrones_of_Myth_Adaptation_Plan.xlsx']}
     (output/'reference-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print(json.dumps(manifest,indent=2))
 if __name__=='__main__':main()

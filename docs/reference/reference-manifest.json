@@ -24,12 +24,14 @@
     "17 Open Questions": 33
   },
   "statuses": {
-    "Prototype partial": 282,
-    "Planned": 262,
+    "Prototype partial 0.20; native review pending": 23,
+    "Planned": 249,
+    "Prototype partial": 275,
     "Started 0.19; native review pending": 18,
-    "Later / optional": 84,
+    "Scheduled later": 81,
     "Open question": 33
   },
+  "scopeCommitment": "All reference roles scheduled as adapted features; later is sequence, not exclusion; open questions remain research tasks.",
   "generatedFiles": [
     "adaptation-register.csv",
     "Thrones_of_Myth_Adaptation_Plan.xlsx"

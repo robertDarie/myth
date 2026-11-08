@@ -99,3 +99,12 @@ Bundle version 0.19.0 starts the [visual foundation pass](visual-foundation-0.19
 Protocol 13/schema 11/SQLite revision 1 are unchanged. Rebuild the Windows player
 after pulling; test the listed resolutions/UI scales in Unity before packaging.
 No server economy or combat behavior changes in this release.
+
+## Build 0.20
+
+Bundle 0.20.0 adds account/recovery, retained retries, Inventory and Rankings UI.
+The builder includes identity/inventory/power server modules. Protocol remains
+13; saves migrate to schema 12 and SQLite revision 2. Back up before upgrading;
+old binaries cannot read the new saves. Account testing requires SQLite, while
+normal launcher JSON play supports inventory/rankings. See
+[the local account-test instructions](accounts-and-supplies-0.20.md).

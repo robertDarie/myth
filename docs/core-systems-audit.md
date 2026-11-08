@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Updated against the repository through the 0.19 visual foundation pass. **Implemented**
+Updated against the repository through the 0.20 accounts/supplies pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -22,7 +22,7 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Casualties and hospital | Partial | Typed PvP/stronghold wounded troops, paid timed treatment, exact reserve transfers and independent ward | Permanent-loss modes, solo-camp severe wounds, traditional overflow rules and alliance healing help |
 | Commander collection | Partial | Eleven commanders, four rarities, earned-sigil summons, published odds, pity and duplicate shards | Larger roster, distinct tactical identities, recruitment pacing and content events |
 | Commander development | Partial | Individual XP, levels, stars, four skills, expertise and separate ascension | Talent trees, secondary commanders, richer skill effects and reusable loadout presets |
-| Equipment and inventory | Partial | Forge, a small relic list and march relic ownership | Full inventory, consumables, equipment sets, crafting depth and item rewards |
+| Equipment and inventory | Partial | Forge, relic ownership, private resource-pack/hourglass inventory and founding supplies | Equipment instances/sets, teleports, deeper crafting and item reward tables |
 | Exploration and intelligence | Partial | Persistent discovery, current allied vision, scouts, private historical reports and server filtering | Exploration rewards, watchtower alerts, scout interception and explicit report sharing |
 | PvE variety | Partial | Seven respawning camps, chapter objectives and five three-tier rally strongholds with fixed shared rewards | Richer boss mechanics, events, dungeons and varied objectives |
 | Alliance membership | Partial | Create/join/leave, leader/officer/member permissions, kick, succession and disband cleanup | Invites/applications, full audit logs and recruitment/diplomacy tools |
@@ -31,13 +31,13 @@ production online infrastructure are still incomplete. KvK remains later in the
 | Territory and sacred sites | Partial | Constructed connected forts/beacons, destructible territory, defended shrines/gates, sanctuary buffs and supply checks | Full terrain navigation, production pacing and durable ownership history |
 | Rallies and garrisons | Partial | Timed assembly, actual march contributions, leadership/recall, capacity, late reinforcements and defended structure battles | Field interception, richer boss mechanics, progression/balance and native playtest |
 | City warfare and protection | Missing | Cities are visible and own reserves | Walls, garrison, siege, burning, looting caps, protection shields, beginner safety and teleport rules |
-| Battle reports and rankings | Partial | Private active/completed duel, group and stronghold reports with damage/healing/shield, wounds and reward receipts | Power calculation, leaderboards and extended war history |
+| Battle reports and rankings | Partial | Private active/completed duel, group and stronghold reports, plus derived power breakdown and live player/alliance rankings | Competitive cutoff rankings, historical scores/rewards, tuning and extended war history |
 | Kingdom timeline | Partial | Five age-based march unlocks, scheduled gate/sanctuary stages, contribution milestones and claims | Ruler/governance, mature timing/balance and later campaign milestones |
 | KvK / seasons | Missing | No cross-kingdom play | Multiple hosted kingdoms, eligibility/power model, matchmaking, seasonal map, rules, scoring, rewards and migration |
 | Onboarding and progression | Partial | Six chapters, 19 objectives, individual/chapter rewards, persistent next-goal HUD, contextual Go guidance, daily activity, weekly alliance goals and kingdom opening stages | Native pacing review, richer tutorial, personal weekly quests and later chapters |
 | Events and rewards | Partial | Daily free Temple offering and basic battle rewards | Event calendar, event scoring, milestone rewards, seasonal content and economy tuning |
 | Visuals, animation and audio | Partial | Original portraits/loading art, city/scenery meshes, 36 weighted army models with eight clips each, state-driven effects/audio, city diorama and first UI/fog readability pass | Production character/creature refinement, blend/state polish, richer environments, recorded audio and broad native performance validation |
-| Persistence and accounts | Partial | JSON local saves plus opt-in transactional SQLite, keyed receipts, bounded downtime progression, backups, profile tokens and safe battle interruption | Recoverable online accounts, retained client retry keys, hosted deployment, cross-device identity, off-site backups and operational drills |
+| Persistence and accounts | Partial | JSON local saves plus transactional SQLite, realm-local accounts/recovery, expiring sessions, retained character-keyed retries, downtime progression and backups | Production identity, email/platform recovery, account deletion, hosted deployment, off-site backups and operational drills |
 | Operations and integrity | Partial | Authoritative rules, 171 automated gameplay/HTTP/persistence tests, Docker/HTTPS operations files and restart/backup smoke test | Hosted deployment, monitoring, load tests, observability, abuse controls, moderation and operational tooling |
 | Monetization | Missing; later | Summons use earned resources only | Purchases, receipts and entitlements; design these only after the gameplay and economy work |
 

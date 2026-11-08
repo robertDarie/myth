@@ -202,6 +202,11 @@ namespace ThronesOfMyth
                     for (int i = 0; i < 3; i++) Fill(new Rect(r.x + 7 * u, r.y + (7 + i * 5) * u, 10 * u, u), new Color(0.15f, 0.22f, 0.23f)); break;
                 case "heroes": case "army": case "barracks":
                     Circle(new Rect(c.x - 5 * u, r.y + u, 10 * u, 10 * u), color); Fill(new Rect(c.x - 8 * u, r.y + 12 * u, 16 * u, 10 * u), color); break;
+                case "inventory":
+                    Fill(new Rect(r.x+4*u,r.y+8*u,16*u,14*u),color);
+                    Line(new Vector2(r.x+7*u,r.y+8*u),new Vector2(r.x+7*u,r.y+3*u),2*u,color);
+                    Line(new Vector2(r.x+17*u,r.y+8*u),new Vector2(r.x+17*u,r.y+3*u),2*u,color);
+                    Line(new Vector2(r.x+7*u,r.y+3*u),new Vector2(r.x+17*u,r.y+3*u),2*u,color); break;
                 case "lock":
                     Circle(new Rect(c.x - 7 * u, r.y + u, 14 * u, 15 * u), color); Circle(new Rect(c.x - 4 * u, r.y + 4 * u, 8 * u, 9 * u), new Color(0.07f, 0.12f, 0.15f)); Fill(new Rect(r.x + 3 * u, r.y + 12 * u, 18 * u, 11 * u), color); break;
                 default: Diamond(r, color); break;

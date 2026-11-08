@@ -1,7 +1,7 @@
 #!/bin/sh
 # Disposable Docker restart/backup smoke test. No public ports or real save paths.
 set -eu
-image="${1:-thrones-kingdom:0.18-test}"
+image="${1:-thrones-kingdom:0.20-test}"
 name="thrones-smoke-$$"
 volume="$name-data"
 docker_local() { env -u DOCKER_HOST -u DOCKER_CONTEXT -u DOCKER_TLS -u DOCKER_TLS_VERIFY -u DOCKER_CERT_PATH docker --host=unix:///var/run/docker.sock "$@"; }
@@ -15,8 +15,10 @@ docker_local exec "$name" node --input-type=module -e '
 import assert from "node:assert/strict";import {writeFileSync} from "node:fs";
 const base="http://127.0.0.1:8080";
 const s=await (await fetch(base+"/join",{method:"POST",body:JSON.stringify({name:"Container Smoke",joinCode:"smoke-only"})})).json();assert.ok(s.token);
-writeFileSync("/data/smoke-session.json",JSON.stringify(s),{mode:384});
+
 for(let i=0;i<2;i++){const r=await fetch(base+"/command",{method:"POST",headers:{Authorization:"Bearer "+s.token,"Idempotency-Key":"docker-train-once"},body:JSON.stringify({type:"train"})});assert.equal(r.status,200);}
+const protectedCity=await (await fetch(base+"/auth/register",{method:"POST",headers:{Authorization:"Bearer "+s.token},body:JSON.stringify({username:"container_smoke",password:"smoke-only strong password"})})).json();assert.ok(protectedCity.token);assert.equal(protectedCity.playerId,s.playerId);
+writeFileSync("/data/smoke-session.json",JSON.stringify(protectedCity),{mode:384});
 '
 docker_local restart --time 15 "$name" >/dev/null
 ready
@@ -33,5 +35,5 @@ docker_local stop --time 15 "$name" >/dev/null
 docker_local run --rm --read-only --cap-drop ALL --mount "type=volume,src=$volume,dst=/data" "$image" node --input-type=module -e '
 import assert from "node:assert/strict";import {readFileSync} from "node:fs";import {KingdomDatabase} from "./database.mjs";
 const s=JSON.parse(readFileSync("/data/smoke-session.json")),db=new KingdomDatabase("/data/backups/smoke.sqlite",{now:()=>Date.now()+31000});
-try{const w=db.load();assert.equal(w.authenticate(s.token).name,"Container Smoke");assert.ok(db.receipt((await import("node:crypto")).createHash("sha256").update(s.token+":docker-train-once").digest("hex")));console.log("Online backup restored state and durable receipt.");}finally{db.close();}
+try{const w=db.load();assert.equal(w.authenticate(s.token).name,"Container Smoke");assert.equal(db.accountForPlayer(s.playerId).username,"container_smoke");assert.ok(db.receipt((await import("node:crypto")).createHash("sha256").update("player:"+s.playerId+":docker-train-once").digest("hex")));console.log("Online backup restored state and durable receipt.");}finally{db.close();}
 '

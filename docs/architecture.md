@@ -187,3 +187,13 @@ saves; a renewable writer lease fences concurrent simulations. Startup performs
 bounded economic catch-up and explicit field interruption instead of offline
 combat replay. Local JSON remains available. See
 [the hosting guide](hosting-and-persistence-0.18.md) for guarantees and limitations.
+
+## Account, inventory and power foundation 0.20
+
+`identity.mjs` uses salted scrypt passwords, hashed rotating recovery codes and
+realm-local session records. SQLite revision 2 commits account changes with world
+state. Character-scoped receipts support session rotation; the client retains
+exact command bodies/keys before sending. `inventory.mjs` adds schema-12 private
+item ledgers, pack consumption and single-job acceleration. `power.mjs` derives
+public player/alliance scores without exposing inventory or hidden positions.
+See [contracts, compatibility and limits](accounts-and-supplies-0.20.md).
