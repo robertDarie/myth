@@ -1,3 +1,4 @@
+import { refreshEconomy } from './economy.mjs';
 import { activityClock, ensureActivity } from './activity.mjs';
 
 export const OFFLINE_PRODUCTION_CAP = 8 * 60 * 60;
@@ -21,7 +22,7 @@ export function advanceDowntime(world, savedAt, now) {
       for (const p of world.players.values()) world.cityTick(p, step, { production: elapsed <= OFFLINE_PRODUCTION_CAP });
     }
     world.now = () => Math.max(now, savedAt); activityClock(world);
-    for (const p of world.players.values()) ensureActivity(world, p);
+    for (const p of world.players.values()) {ensureActivity(world, p);refreshEconomy(world,p);}
     world.time += seconds;
     world.markers = world.markers.filter(m => m.expires > world.time);
     // Timers may finish, but a server outage cannot count as a defended hold.

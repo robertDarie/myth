@@ -151,3 +151,10 @@ Bundle version 0.28.0 requires protocol 15 and world schema 14. Rebuild client a
 server together. JSON schema 13 saves are archived before migration; back up the
 SQLite kingdom using the existing backup workflow. See
 [core rules and exact Windows acceptance steps](core-corrections-0.28.md).
+
+## Build 0.29
+
+Bundle 0.29.0 requires protocol 16 and world schema 15. The server bundle includes
+`economy.mjs`. Back up the previous kingdom, rebuild both client and server, then
+follow [the economy acceptance checklist](playtest-economy-0.29.md). Earned legacy
+Aether becomes Mana; current premium starts at zero. No paid store is included.

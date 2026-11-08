@@ -121,8 +121,9 @@ namespace ThronesOfMyth
                 case "research": return "The Athenaeum has begun its studies.";
                 case "summon": return "The Oracle has heard your invocation.";
                 case "temple-offering": return "The Temple has granted your offering.";
-                case "buy-sigil": return "An Oracle Sigil has been added to your collection.";
-                case "unlock-commander": return HeroName(command.targetId) + " has joined your cause.";
+                case "premium-sigil": return "An Oracle Sigil has been added to your collection.";
+                case "resource-transfer": return "Alliance delivery confirmed. Details are in Reports.";
+                case "recruit-shards": return HeroName(command.targetId) + " has joined your cause.";
                 case "commander": return "Your commander is ready to lead the selected march.";
                 case "mentor-commander": return "Your commander has gained experience.";
                 case "promote-commander": return "Your commander has earned a new star.";
@@ -227,7 +228,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.28  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.29  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -239,17 +240,18 @@ namespace ThronesOfMyth
             theme.OneLine(new Rect(85,49,157,19),me==null?"Age of Fallen Gods":me.ageName+" · Citadel "+me.cityLevel,theme.Small);
             if(me!=null)
             {
-                string[] ids={"food","wood","stone","gold","aether","sigil"};string[] names={"FOOD","WOOD","STONE","GOLD","AETHER","SIGILS"};
-                int[] values={me.food,me.wood,me.stone,me.gold,me.aether,me.sigils};float width=Mathf.Min(126,(ViewWidth-436)/6-6);
+                string[] ids={"food","wood","stone","gold","mana","aether","sigil"};string[] names={"FOOD","WOOD","STONE","GOLD","MANA","AETHER","SIGILS"};
+                int[] values={me.food,me.wood,me.stone,me.gold,me.mana,me.aether,me.sigils};float width=Mathf.Min(126,(ViewWidth-436)/7-6);
                 for(int i=0;i<ids.Length;i++)
                 {
                     var rect=new Rect(266+i*(width+6),20,width,54);theme.Panel(rect,false,true);
                     theme.Icon(new Rect(rect.x+9,rect.y+18,19,22),ids[i],i==4?new Color(.70f,.60f,.95f):MythInterfaceTheme.Gold);
                     theme.OneLine(new Rect(rect.x+36,rect.y+4,width-43,18),names[i],theme.Eyebrow);
                     theme.OneLine(new Rect(rect.x+36,rect.y+23,width-43,27),ShortNumber(values[i]),theme.Number);
-                    if(GUI.Button(rect,new GUIContent("",values[i].ToString("N0")+" "+names[i].ToLowerInvariant()),GUIStyle.none))OpenInterface(i==5?InterfacePage.Temple:InterfacePage.Market);
+                    if(GUI.Button(rect,new GUIContent("",values[i].ToString("N0")+" "+names[i].ToLowerInvariant()),GUIStyle.none))OpenInterface(i>=5?InterfacePage.Temple:InterfacePage.Market);
                 }
             }
+            if(me?.economy!=null){var e=me.economy;var apRect=new Rect(266,76,ViewWidth-450,22);string text="AP "+e.ap+" / "+e.apCap+(e.ap<e.apCap?" · +1 in "+e.nextAPSeconds+"s":" · Full")+" · Camps "+e.rules.campAP+" · Strongholds "+e.rules.strongholdAP;foreach(var buff in e.buffs)if(buff.remaining>0)text+=" · "+buff.kind+" "+(buff.percent*100).ToString("F0")+"% "+buff.remaining+"s";if(GUI.Button(apRect,text,theme.Small))OpenInterface(InterfacePage.Inventory);}
             bool stale=Time.unscaledTime-lastSnapshotAt>6;theme.Circle(new Rect(ViewWidth-156,37,7,7),stale?MythInterfaceTheme.Red:MythInterfaceTheme.Teal);
             theme.OneLine(new Rect(ViewWidth-143,27,88,24),stale?"Reconnecting":"Connected",theme.Small);
             if(theme.Button(new Rect(ViewWidth-49,24,32,34),"•••"))OpenInterface(InterfacePage.Settings);

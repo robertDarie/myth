@@ -4,13 +4,18 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.28
+## Playable slice 0.29
 
+- Economy redesign: ordinary Mana separated from earned premium Aether, shard/
+  summon/progression commander acquisition, transactional alliance transfers,
+  categorized consumables, real-time AP and authoritative timed combat oaths.
+  [Rules and safe migration](docs/economy-release-0.29.md) ·
+  [Windows rebuild and playtest](docs/playtest-economy-0.29.md).
 - Core corrections: persistent last-known static map intelligence, home formations
   distinct from deployed marches, composition-based cargo with delivery-only
   resource credit, and unified private reports with filters/search.
   [Rules, migration and Windows acceptance](docs/core-corrections-0.28.md).
-  [Next economy milestone proposal (design only)](docs/economy-plan-0.29.md).
+  [Approved economy design foundation](docs/economy-plan-0.29.md).
 - Gameplay-feel milestone: replay-safe combat/arrival feedback, clearer routes and
   affiliations, optional first-session guidance and confirmed reward/outcome cues.
   [Exact Unity demonstration and verification](docs/gameplay-feel-0.27.md).

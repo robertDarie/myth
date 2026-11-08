@@ -1,3 +1,4 @@
+import { grantReward, rewardSnapshot } from './inventory.mjs';
 import { recordKingdomContribution } from './kingdom.mjs';
 const DAY=86400000,MAX_COUNTER=1000000000;
 export const ACTIVITY_KEYS=['gather','food','trained','scouts','camps','distance','offering','helps','development','strongholds'];
@@ -15,16 +16,16 @@ export const DAILY_TASKS=[
  task('stronghold','Break the Godbreakers','Earn contribution credit in one victorious stronghold rally.','strongholds',1,25,'warfare')
 ];
 export const ACTIVITY_CHESTS=[
- {id:'chest-20',points:20,reward:{wood:60,food:60,gold:30}},
- {id:'chest-40',points:40,reward:{stone:50,food:80,gold:40}},
- {id:'chest-60',points:60,reward:{wood:100,food:100,gold:60,aether:5}},
+ {id:'chest-20',points:20,reward:{wood:60,food:60,gold:30,items:{'training-minute':1}}},
+ {id:'chest-40',points:40,reward:{stone:50,food:80,gold:40,items:{'research-minute':1,'healing-minute':1}}},
+ {id:'chest-60',points:60,reward:{wood:100,food:100,gold:60,mana:5,aether:2,items:{'ap-tonic-20':1}}},
  {id:'chest-80',points:80,reward:{stone:100,gold:80,sigils:1}},
- {id:'chest-100',points:100,reward:{wood:150,food:150,gold:100,aether:10,sigils:2}}
+ {id:'chest-100',points:100,reward:{wood:150,food:150,gold:100,mana:10,aether:3,sigils:2,items:{'echo-sigil':1,'attack-oath-10m':1,'defense-oath-10m':1}}}
 ];
 export const ALLIANCE_GOALS=[
  {id:'supply',title:'Provision the alliance',description:'Gather resources while a member of this alliance.',key:'gather',goal:1600,personal:100,guide:'gather',targetId:'wood',reward:{wood:200,food:200,gold:150,stone:100}},
- {id:'aid',title:'Many hands, one city',description:'Successfully help allied building and research jobs.',key:'helps',goal:8,personal:1,guide:'alliance',targetId:'',reward:{gold:120,wood:120,stone:80,aether:10}},
- {id:'strongholds',title:'Bring down their banners',description:'Earn stronghold-victory contribution credit while in this alliance. Each encounter counts once for shared progress, even with several contributors.',key:'strongholds',goal:3,personal:1,guide:'warfare',targetId:'',reward:{gold:200,food:200,aether:20,sigils:2}}
+ {id:'aid',title:'Many hands, one city',description:'Successfully help allied building and research jobs.',key:'helps',goal:8,personal:1,guide:'alliance',targetId:'',reward:{gold:120,wood:120,stone:80,mana:10}},
+ {id:'strongholds',title:'Bring down their banners',description:'Earn stronghold-victory contribution credit while in this alliance. Each encounter counts once for shared progress, even with several contributors.',key:'strongholds',goal:3,personal:1,guide:'warfare',targetId:'',reward:{gold:200,food:200,mana:20,sigils:2}}
 ];
 const date=day=>new Date(day*DAY).toISOString().slice(0,10);
 const emptyDaily=day=>({day,counters:Object.fromEntries(ACTIVITY_KEYS.map(k=>[k,0])),claimed:[],chests:[]});
@@ -64,7 +65,7 @@ export function recordStrongholdActivity(w,report){
 const score=p=>DAILY_TASKS.filter(t=>p.daily.claimed.includes(t.id)).reduce((n,t)=>n+t.points,0);
 const progress=(p,t)=>Math.min(t.goal,Math.floor(p.daily.counters[t.key]+0.000001));
 const total=(data,g)=>g.key==='strongholds'?data.strongholdEvents.length:Object.values(data.contributions).reduce((n,c)=>n+c[g.key],0);
-const grant=(p,reward)=>{for(const [key,n]of Object.entries(reward))p[key]+=n;};
+const grant=grantReward;
 export function activityCommand(w,p,c,fail){
  if(!['daily-claim','activity-chest','alliance-goal-claim'].includes(c.type))return false;
  const {day,week}=ensureActivity(w,p);
@@ -85,8 +86,8 @@ export function activityCommand(w,p,c,fail){
 }
 export function activitySnapshot(w,p){
  const {day,week,now}=ensureActivity(w,p),points=score(p),a=w.alliances.get(p.allianceId);let alliance=null;
- if(a){const data=allianceWeek(w,a);alliance={id:a.id,name:a.name,period:date(week*7-3),resetSeconds:Math.ceil(((week+1)*7-3)*DAY/1000-now/1000),goals:ALLIANCE_GOALS.map(g=>({...g,progress:Math.min(g.goal,total(data,g)),personalProgress:data.contributions[p.id]?.[g.key]||0,claimed:p.weeklyClaims.claimed.includes(g.id),canClaim:!p.weeklyClaims.claimed.includes(g.id)&&total(data,g)>=g.goal&&(data.contributions[p.id]?.[g.key]||0)>=g.personal})),members:Object.entries(data.contributions).map(([id,c])=>({id,name:w.players.get(id)?.name||'Former member',current:w.players.get(id)?.allianceId===a.id,...c}))};}
- return {daily:{period:date(day),resetSeconds:Math.ceil(((day+1)*DAY-now)/1000),points,maxChestPoints:100,tasks:DAILY_TASKS.map(t=>({...t,progress:progress(p,t),claimed:p.daily.claimed.includes(t.id),canClaim:!p.daily.claimed.includes(t.id)&&progress(p,t)>=t.goal})),chests:ACTIVITY_CHESTS.map(c=>({...c,claimed:p.daily.chests.includes(c.id),canClaim:!p.daily.chests.includes(c.id)&&points>=c.points}))},alliance};
+ if(a){const data=allianceWeek(w,a);alliance={id:a.id,name:a.name,period:date(week*7-3),resetSeconds:Math.ceil(((week+1)*7-3)*DAY/1000-now/1000),goals:ALLIANCE_GOALS.map(g=>({...g,reward:rewardSnapshot(g.reward),progress:Math.min(g.goal,total(data,g)),personalProgress:data.contributions[p.id]?.[g.key]||0,claimed:p.weeklyClaims.claimed.includes(g.id),canClaim:!p.weeklyClaims.claimed.includes(g.id)&&total(data,g)>=g.goal&&(data.contributions[p.id]?.[g.key]||0)>=g.personal})),members:Object.entries(data.contributions).map(([id,c])=>({id,name:w.players.get(id)?.name||'Former member',current:w.players.get(id)?.allianceId===a.id,...c}))};}
+ return {daily:{period:date(day),resetSeconds:Math.ceil(((day+1)*DAY-now)/1000),points,maxChestPoints:100,tasks:DAILY_TASKS.map(t=>({...t,reward:rewardSnapshot(t.reward),progress:progress(p,t),claimed:p.daily.claimed.includes(t.id),canClaim:!p.daily.claimed.includes(t.id)&&progress(p,t)>=t.goal})),chests:ACTIVITY_CHESTS.map(c=>({...c,reward:rewardSnapshot(c.reward),claimed:p.daily.chests.includes(c.id),canClaim:!p.daily.chests.includes(c.id)&&points>=c.points}))},alliance};
 }
 export function validateActivity(w){
  if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0||w.activityClockMs>8640000000000000-DAY)throw new Error('Invalid saved activity clock.');

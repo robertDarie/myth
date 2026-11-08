@@ -33,12 +33,12 @@ test('fresh-city first session legally builds, trains, assembles, gathers, defea
   command('attack', { targetId: camp.id });
   let rewardBefore;
   for (let i=0;i<2400&&p.kills<1;i++) {
-    const before={gold:p.gold,food:p.food,stone:p.stone,aether:p.aether,sigils:p.sigils};
+    const before={gold:p.gold,food:p.food,stone:p.stone,mana:p.mana,sigils:p.sigils};
     w.tick(.1);if(p.kills===1)rewardBefore=before;
   }
   assert.equal(p.kills,1);
   assert.ok(p.gold>=rewardBefore.gold+50 && p.food>=rewardBefore.food+30);
-  assert.equal(p.aether,rewardBefore.aether+5);
+  assert.equal(p.mana,rewardBefore.mana+5);
   assert.equal(p.sigils,rewardBefore.sigils+1);
   assert.equal(camp.health, 0);
   assert.equal(p.state, 'Victorious');

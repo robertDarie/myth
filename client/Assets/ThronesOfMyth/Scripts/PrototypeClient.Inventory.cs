@@ -4,7 +4,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private int selectedItem,itemQuantity=1;
+        private int selectedItem,itemQuantity=1,itemCategory;
         private string speedupJobId="";
         private Vector2 itemScroll;
         private void RenderInventoryWindow(Rect r)
@@ -22,9 +22,14 @@ namespace ThronesOfMyth
             }
             if(bag.items==null||bag.items.Length==0){GUILayout.EndScrollView();GUILayout.EndArea();return;}
             selectedItem=Mathf.Clamp(selectedItem,0,bag.items.Length-1);
-            var names=new string[bag.items.Length];for(int i=0;i<names.Length;i++)names[i]=bag.items[i].name+" · "+bag.items[i].count;
+            itemCategory=GUILayout.Toolbar(itemCategory,new[]{"All","Resources","Speedups","Summons","Energy","Combat buffs"});
+            var categories=new[]{"","Resources","Speedups","Summons","Energy","Combat buffs"};
+            var filtered=Array.FindAll(bag.items,i=>itemCategory==0||i.category==categories[itemCategory]);
+            if(filtered.Length==0){GUILayout.Label("No items in this category.",theme.Small);GUILayout.EndScrollView();GUILayout.EndArea();return;}
+            selectedItem=Mathf.Clamp(selectedItem,0,filtered.Length-1);
+            var names=new string[filtered.Length];for(int i=0;i<names.Length;i++)names[i]=filtered[i].name+" · "+filtered[i].count;
             selectedItem=GUILayout.SelectionGrid(selectedItem,names,2,GUILayout.Height(Mathf.CeilToInt(names.Length/2f)*46));
-            var item=bag.items[selectedItem];GUILayout.Space(12);GUILayout.Label(item.name,theme.Heading);GUILayout.Label(item.description,theme.Body);
+            var item=filtered[selectedItem];GUILayout.Space(12);GUILayout.Label(item.name,theme.Heading);GUILayout.Label(item.description,theme.Body);
             int max=Mathf.Max(1,Mathf.Min(100,item.count));itemQuantity=Mathf.Clamp(itemQuantity,1,max);
             GUILayout.Label("Quantity · "+itemQuantity+" / "+item.count,theme.Small);
             itemQuantity=Mathf.RoundToInt(GUILayout.HorizontalSlider(itemQuantity,1,max,GUILayout.Width(Mathf.Min(450,r.width-64))));
@@ -42,10 +47,15 @@ namespace ThronesOfMyth
                 if(job!=null)GUILayout.Label("Remove "+Mathf.CeilToInt(Mathf.Min(job.remaining,item.seconds*itemQuantity))+" seconds. Unused time: "+Mathf.FloorToInt(Mathf.Max(0,item.seconds*itemQuantity-job.remaining))+" seconds. Other jobs do not advance.",theme.Small);
                 else GUILayout.Label("Only the first active training batch can be accelerated. Select a job above.",theme.Small);
             }
-            else GUILayout.Label("Adds "+item.amount*itemQuantity+" "+item.resource+" to your spendable stockpile.",theme.Heading);
+            else if(item.kind=="resource")GUILayout.Label("Adds "+item.amount*itemQuantity+" "+item.resource+" to your spendable stockpile.",theme.Heading);
+            else GUILayout.Label(item.description,theme.Small);
+            if(me.economy!=null){var e=me.economy;GUILayout.Label("AP "+e.ap+" / "+e.apCap+(e.ap<e.apCap?" · Next point in "+e.nextAPSeconds+"s · Full in "+e.fullAPSeconds+"s":" · Full")+". Movement, PvP, gathering and scouting cost no AP.",noteStyle);foreach(var buff in e.buffs)if(buff.remaining>0)GUILayout.Label("Active "+buff.kind+" oath · "+buff.remaining+" seconds remaining",noteStyle);}
+            GUILayout.Label("Free premium Aether: 5 from each of Chapters I and III, and 2 / 3 from daily chests at 60 / 100 points. Claimed rewards never pay twice.",theme.Small);
             bool valid=item.kind!="speedup"||job!=null&&(item.scope=="universal"||job.lane==item.scope)&&itemQuantity<=Mathf.CeilToInt(job.remaining/Mathf.Max(1,item.seconds));
+            if(item.kind=="energy"&&me.economy!=null)valid &= me.economy.ap+item.amount*itemQuantity<=me.economy.apCap;
+            if(item.kind=="buff"&&me.economy!=null)valid &= itemQuantity==1&&!Array.Exists(me.economy.buffs,b=>b.kind==item.scope&&b.remaining>0);
             GUI.enabled=!processing&&pendingOrder==null&&item.count>=itemQuantity&&valid;
-            if(GUILayout.Button(item.kind=="speedup"?"Use hourglass":"Open supplies",theme.Primary,GUILayout.Height(42)))Send(new GameCommand{type="inventory-use",targetId=item.id,count=itemQuantity,jobId=job==null?"":job.id});GUI.enabled=true;
+            if(GUILayout.Button(item.kind=="speedup"?"Use hourglass":item.kind=="buff"?"Activate oath":"Use item",theme.Primary,GUILayout.Height(42)))Send(new GameCommand{type="inventory-use",targetId=item.id,count=itemQuantity,jobId=job==null?"":job.id});GUI.enabled=true;
             GUILayout.EndScrollView();GUILayout.EndArea();
         }
         private void RenderRankingsWindow(Rect r)

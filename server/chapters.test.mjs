@@ -108,5 +108,5 @@ test('authenticated claims expose only the owner campaign and reject repeated or
  assert.equal((await post(0,{type:'train'})).status,200);assert.equal((await post(0,{type:'train'})).status,200);advance(w,17);
  const gold=p.gold;assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,200);assert.equal(p.gold,gold+40);
  assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,400);assert.equal(p.gold,gold+40);
- const own=await get(0),outside=await get(1);assert.equal(own.version,15);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
+ const own=await get(0),outside=await get(1);assert.equal(own.version,16);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
 });

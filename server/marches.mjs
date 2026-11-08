@@ -49,7 +49,7 @@ export function marchCommand(world, p, c, fail) {
       world.requireHome(a);
       const hero = COMMANDERS.find(h => h.id === c.targetId); if (!hero) fail('Unknown commander.');
       if (armyList(p).some(other => other.id !== a.id && other.commanderId === c.targetId)) fail('That commander already leads another march.');
-      if (!p.ownedCommanders.includes(hero.id)) { world.spend(p, { gold: hero.cost }); p.ownedCommanders.push(hero.id); }
+      if (!p.ownedCommanders.includes(hero.id)) fail('Acquire this commander through summons, shards or progression first.');
       ensureHero(p, hero.id); a.commanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); a.rage = 0; return true;
     }
     case 'configure-march': {

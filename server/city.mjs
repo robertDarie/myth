@@ -9,7 +9,7 @@ export function initializeCity(p, migrated = false) {
   for (const [id, level] of Object.entries(INITIAL_BUILDINGS)) p.buildings[id] ??= level;
   p.technologies ??= Object.fromEntries(TECHNOLOGIES.map(t => [t.id, 0]));
   for (const t of TECHNOLOGIES) p.technologies[t.id] ??= 0;
-  p.stone ??= 150; p.aether ??= 30; p.sigils ??= 3;
+  p.stone ??= 150; p.mana ??= 30; p.sigils ??= 3;
   p.research ??= null; p.crafting ??= null; p.secondConstruction ??= null; p.economyClock ??= 0;
   p.productionCarry ??= Object.fromEntries(RESOURCES.map(id => [id, 0]));
   p.commanderShards ??= {}; p.commanderRanks ??= {};
@@ -60,7 +60,7 @@ export function citySnapshot(world, p) {
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
     offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),
     offeringAmount: p.buildings.oracle >= 5 ? 3 : p.buildings.oracle >= 3 ? 2 : 1,
-    sealCost: { gold: Math.ceil(75 / (1 + 0.05 * Math.max(0, p.buildings.oracle - 1))), aether: 10 } };
+    sealCost: { aether:10 } };
 }
 export function cityCommand(world, p, c, fail) {
   const requireBuilding = id => { if (!p.buildings[id]) fail(`${BUILDINGS.find(b => b.id === id).name} must be built first.`); };
@@ -83,7 +83,7 @@ export function cityCommand(world, p, c, fail) {
       if (!citySnapshot(world, p).offeringAvailable) fail('The free offering has already been claimed for this UTC day.');
       p.sigils += citySnapshot(world, p).offeringAmount; p.lastOfferingDay = new Date(activityClock(world).now).toISOString().slice(0, 10); return true;
     case 'buy-sigil':
-      requireBuilding('oracle'); world.spend(p, citySnapshot(world, p).sealCost); p.sigils++; return true;
+      fail('Ordinary-resource sigil purchases are closed. Earn sigils through offerings, inventory or progression.');
     case 'summon': {
       requireBuilding('oracle'); const count = c.count ?? 1;
       if (![1, 10].includes(count)) fail('Choose one or ten summons.');
@@ -99,10 +99,6 @@ export function cityCommand(world, p, c, fail) {
       if (rank >= 5) fail('Commander is at maximum rank.');
       if ((p.commanderShards[id] ?? 0) < shards) fail('Not enough commander-specific Echo Shards.');
       world.spend(p, { gold: 50 * (rank + 1) }); p.commanderShards[id] -= shards; p.commanderRanks[id] = rank + 1; return true;
-    }
-    case 'trade': {
-      requireBuilding('market'); const trade = TRADES.find(t => t.id === c.targetId); if (!trade) fail('Unknown exchange.');
-      world.spend(p, trade.cost); for (const [id, amount] of Object.entries(trade.reward)) p[id] += amount; return true;
     }
     case 'craft': {
       requireBuilding('forge'); if (p.crafting) fail('The forge is busy.');
@@ -155,7 +151,7 @@ export function tickCity(world, p, dt, { production = true } = {}) {
       // Carry fractional production so a 15% bonus actually works at level one.
       // Production pauses at its ceiling; existing wealth is never clamped.
       if (p[b.resource] >= cap) { p.productionCarry[b.resource] = 0; continue; }
-      p.productionCarry[b.resource] += (b.resource === 'aether' ? 1 : 2) * level * (1 + 0.15 * p.technologies.harvest);
+      p.productionCarry[b.resource] += (b.resource === 'mana' ? 1 : 2) * level * (1 + 0.15 * p.technologies.harvest);
       const amount = Math.floor(p.productionCarry[b.resource] + 0.000001);
       p.productionCarry[b.resource] = Math.max(0, p.productionCarry[b.resource] - amount);
       p[b.resource] += Math.min(amount, cap - p[b.resource]);
@@ -178,7 +174,7 @@ export function validateCity(p) {
   if (constructionJobs(p).some(job => job.type === 'building' && !BUILDINGS.some(b => b.id !== 'citadel' && b.id === job.targetId))) throw new Error('Invalid saved building job.');
   if (p.research && !TECHNOLOGIES.some(t => t.id === p.research.targetId)) throw new Error('Invalid saved research job.');
   if (p.crafting && !RELICS.some(r => r.id === p.crafting.targetId)) throw new Error('Invalid saved crafting job.');
-  if (![p.stone, p.aether, p.sigils, p.economyClock, p.summonCount, p.epicPity, p.legendaryPity].every(v => Number.isFinite(v) && v >= 0)) throw new Error('Invalid saved city economy.');
+  if (![p.stone, p.mana, p.sigils, p.economyClock, p.summonCount, p.epicPity, p.legendaryPity].every(v => Number.isFinite(v) && v >= 0)) throw new Error('Invalid saved city economy.');
   if (!p.productionCarry || RESOURCES.some(id => !Number.isFinite(p.productionCarry[id]) || p.productionCarry[id] < 0 || p.productionCarry[id] >= 1)) throw new Error('Invalid saved production carry.');
   for (const [levels, definitions, cap] of [[p.buildings, BUILDINGS.filter(b => b.id !== 'citadel'), 5], [p.technologies, TECHNOLOGIES, 3]])
     if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > (item.maxLevel??cap))) throw new Error('Invalid saved city progression.');

@@ -1,0 +1,939 @@
+{
+  "schema": 14,
+  "world": {
+    "kingdom": {
+      "startedAtMs": 1794096000000,
+      "metrics": {
+        "gather": 0,
+        "trained": 0,
+        "camps": 0,
+        "strongholds": 0,
+        "development": 0,
+        "scouts": 0,
+        "helps": 0
+      },
+      "contributions": {},
+      "completed": [],
+      "holdAllianceId": "",
+      "holdSinceMs": 0
+    },
+    "activityClockMs": 1794096000000,
+    "players": [
+      {
+        "id": "334dd5bb-b999-4bd9-87c5-c9582f78a2d2",
+        "slot": 0,
+        "name": "Legacy Economy Fixture",
+        "civilization": "greek",
+        "x": 33,
+        "z": 32,
+        "homeX": 5,
+        "homeZ": 5,
+        "health": 105,
+        "gold": 4100,
+        "wood": 4900,
+        "food": 4950,
+        "troops": 20,
+        "mythic": 0,
+        "cityLevel": 3,
+        "commanderId": "captain",
+        "ownedCommanders": [
+          "captain",
+          "heracles"
+        ],
+        "xp": 0,
+        "level": 1,
+        "kills": 0,
+        "questClaimed": false,
+        "allianceId": "",
+        "target": {
+          "type": "return",
+          "x": 5,
+          "z": 5
+        },
+        "cooldown": 0,
+        "gatherClock": 0.4999999999999999,
+        "lastSeen": 0,
+        "state": "Returning",
+        "recovery": 0,
+        "reserveTroops": 0,
+        "reserveMythic": 0,
+        "construction": {
+          "id": "79e93caf-a161-4440-b8ab-7acb5dc02e4a",
+          "type": "building",
+          "duration": 12,
+          "remaining": 9.500000000000009,
+          "cost": {
+            "wood": 60,
+            "stone": 40,
+            "gold": 30
+          },
+          "amount": 1,
+          "targetId": "well"
+        },
+        "trainingQueue": [
+          {
+            "id": "18eaf796-1c9f-4814-bb3b-773f172c2ad3",
+            "type": "train",
+            "duration": 8,
+            "remaining": 5.500000000000009,
+            "cost": {
+              "food": 50,
+              "gold": 20
+            },
+            "amount": 5,
+            "targetId": "infantry"
+          }
+        ],
+        "offline": false,
+        "buildings": {
+          "oracle": 1,
+          "academy": 2,
+          "barracks": 1,
+          "menagerie": 0,
+          "farm": 1,
+          "lumber": 1,
+          "quarry": 2,
+          "mint": 0,
+          "well": 0,
+          "infirmary": 1,
+          "vault": 1,
+          "market": 0,
+          "oathhall": 0,
+          "forge": 1,
+          "builders": 1
+        },
+        "technologies": {
+          "veterans": 0,
+          "harvest": 1,
+          "masonry": 0,
+          "writing": 0,
+          "logistics": 0,
+          "drill": 0,
+          "vitality": 0,
+          "march": 0,
+          "beastlore": 0
+        },
+        "stone": 4880,
+        "aether": 122,
+        "sigils": 3,
+        "research": {
+          "id": "2eb4c014-7a0c-4ef1-a1db-f8655ecc75f9",
+          "type": "research",
+          "duration": 12,
+          "remaining": 9.500000000000009,
+          "cost": {
+            "wood": 40,
+            "gold": 40,
+            "aether": 5
+          },
+          "amount": 1,
+          "targetId": "writing"
+        },
+        "crafting": {
+          "id": "1ffee37d-13ff-4a15-9970-216fe88cf501",
+          "type": "craft",
+          "duration": 15,
+          "remaining": 12.500000000000009,
+          "cost": {
+            "stone": 80,
+            "gold": 60,
+            "aether": 10
+          },
+          "amount": 1,
+          "targetId": "aegis"
+        },
+        "secondConstruction": null,
+        "economyClock": 2.500000000000001,
+        "productionCarry": {
+          "food": 0,
+          "wood": 0,
+          "stone": 0,
+          "gold": 0,
+          "aether": 0
+        },
+        "commanderShards": {
+          "warden": 7
+        },
+        "commanderRanks": {},
+        "summonHistory": [],
+        "summonCount": 0,
+        "epicPity": 0,
+        "legendaryPity": 0,
+        "lastOfferingDay": "",
+        "ownedRelics": [],
+        "equippedRelic": "",
+        "inventory": {
+          "food-pack-100": 2,
+          "wood-pack-100": 2,
+          "stone-pack-75": 1,
+          "gold-pack-50": 1,
+          "aether-pack-10": 1,
+          "build-minute": 1,
+          "universal-minute": 2
+        },
+        "suppliesClaimed": true,
+        "marches": [],
+        "nextMarchNumber": 2,
+        "heroRecords": {
+          "captain": {
+            "xp": 0,
+            "stars": 1,
+            "skills": [
+              1,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "rage": 0,
+        "shield": 0,
+        "shieldTime": 0,
+        "lastSkill": "",
+        "skillCasts": 0,
+        "reserveUnits": {
+          "infantry": 0,
+          "archers": 0,
+          "cavalry": 0
+        },
+        "units": {
+          "infantry": 20,
+          "archers": 0,
+          "cavalry": 0
+        },
+        "wounded": {
+          "infantry": 0,
+          "archers": 0,
+          "cavalry": 0
+        },
+        "woundedMythic": 0,
+        "healing": null,
+        "battleReports": [],
+        "lastChatAt": -10,
+        "groupReports": [],
+        "explored": [
+          0,
+          1,
+          2,
+          3,
+          20,
+          21,
+          22,
+          23,
+          40,
+          41,
+          42,
+          60,
+          61,
+          127,
+          128,
+          129,
+          146,
+          147,
+          148,
+          149,
+          166,
+          167,
+          168,
+          169,
+          187,
+          188,
+          189
+        ],
+        "scout": null,
+        "scoutReports": [],
+        "journey": {
+          "metrics": {
+            "wood": 0,
+            "food": 0,
+            "trained": 0,
+            "surveys": 0,
+            "garrison": 0
+          },
+          "progress": {
+            "gather-wood": 0,
+            "gather-food": 0,
+            "train-ten": 0,
+            "citadel-two": 2,
+            "farm-two": 1,
+            "second-crew": 1,
+            "temple": 1,
+            "first-echo": 0,
+            "forsaken": 0,
+            "scout-survey": 0,
+            "discover": 27,
+            "logistics": 0,
+            "hero-two": 1,
+            "drill": 0,
+            "two-marches": 1,
+            "alliance": 0,
+            "oath-hall": 0,
+            "shrine": 0,
+            "first-garrison": 0
+          },
+          "claimed": [],
+          "chapters": []
+        },
+        "strongholdVictories": 0,
+        "daily": {
+          "day": 20765,
+          "counters": {
+            "gather": 0,
+            "food": 0,
+            "trained": 0,
+            "scouts": 0,
+            "camps": 0,
+            "distance": 0,
+            "offering": 0,
+            "helps": 0,
+            "development": 0,
+            "strongholds": 0
+          },
+          "claimed": [],
+          "chests": []
+        },
+        "weeklyClaims": {
+          "week": 2966,
+          "claimed": []
+        },
+        "kingdomClaims": [],
+        "coreReports": [
+          {
+            "id": "legacy-cargo-report",
+            "type": "gathering",
+            "title": "Gathering delivered",
+            "outcome": "Delivered",
+            "time": 0,
+            "started": 0,
+            "resources": {
+              "food": 0,
+              "wood": 0,
+              "stone": 0,
+              "gold": 0,
+              "aether": 10
+            },
+            "lost": {
+              "food": 0,
+              "wood": 0,
+              "stone": 0,
+              "gold": 0,
+              "aether": 0
+            },
+            "sources": [
+              {
+                "nodeId": "aether-1",
+                "name": "Fallen Star",
+                "resource": "aether",
+                "x": 33,
+                "z": 32,
+                "amount": 10
+              }
+            ]
+          }
+        ],
+        "discovery": [
+          {
+            "kind": "nodes",
+            "observedAt": 2.500000000000001,
+            "value": {
+              "id": "resource-0",
+              "name": "Sacred Grove",
+              "resource": "wood",
+              "x": 8,
+              "z": 12,
+              "remaining": 600,
+              "capacity": 600
+            }
+          },
+          {
+            "kind": "nodes",
+            "observedAt": 2.500000000000001,
+            "value": {
+              "id": "resource-2",
+              "name": "Harvest Fields",
+              "resource": "food",
+              "x": 12,
+              "z": 10,
+              "remaining": 600,
+              "capacity": 600
+            }
+          },
+          {
+            "kind": "cities",
+            "observedAt": 2.500000000000001,
+            "value": {
+              "id": "334dd5bb-b999-4bd9-87c5-c9582f78a2d2",
+              "name": "Legacy Economy Fixture",
+              "civilization": "greek",
+              "homeX": 5,
+              "homeZ": 5,
+              "cityLevel": 3,
+              "allianceId": ""
+            }
+          },
+          {
+            "kind": "nodes",
+            "observedAt": 2.500000000000001,
+            "value": {
+              "id": "resource-7",
+              "name": "Golden Vein",
+              "resource": "gold",
+              "x": 32,
+              "z": 26,
+              "remaining": 600,
+              "capacity": 600
+            }
+          },
+          {
+            "kind": "nodes",
+            "observedAt": 2.500000000000001,
+            "value": {
+              "id": "resource-11",
+              "name": "Harvest Fields",
+              "resource": "food",
+              "x": 32,
+              "z": 34,
+              "remaining": 600,
+              "capacity": 600
+            }
+          },
+          {
+            "kind": "nodes",
+            "observedAt": 2.500000000000001,
+            "value": {
+              "id": "aether-1",
+              "name": "Fallen Star",
+              "resource": "aether",
+              "x": 33,
+              "z": 32,
+              "remaining": 584,
+              "capacity": 600
+            }
+          }
+        ],
+        "deployed": true,
+        "cargo": {
+          "food": 0,
+          "wood": 0,
+          "stone": 0,
+          "gold": 0,
+          "aether": 16
+        },
+        "cargoTripId": "40ec1554-837a-44f6-bc7d-83d8191341dc",
+        "cargoSources": [
+          {
+            "nodeId": "aether-1",
+            "name": "Fallen Star",
+            "resource": "aether",
+            "x": 33,
+            "z": 32,
+            "amount": 16
+          }
+        ],
+        "cargoStarted": 1.0999999999999999,
+        "returnReason": "Manual recall"
+      }
+    ],
+    "sessions": [
+      [
+        "cd610e95-f82b-4cd7-9e56-4030aab204c8",
+        "334dd5bb-b999-4bd9-87c5-c9582f78a2d2"
+      ]
+    ],
+    "alliances": [],
+    "camps": [
+      {
+        "id": "forsaken-1",
+        "name": "Forsaken Scouts",
+        "level": 1,
+        "x": 19,
+        "z": 15,
+        "health": 100,
+        "maxHealth": 100,
+        "respawn": 0,
+        "contributors": {}
+      },
+      {
+        "id": "forsaken-2",
+        "name": "Deserter Encampment",
+        "level": 1,
+        "x": 14,
+        "z": 28,
+        "health": 100,
+        "maxHealth": 100,
+        "respawn": 0,
+        "contributors": {}
+      },
+      {
+        "id": "forsaken-3",
+        "name": "Tomb Raiders",
+        "level": 2,
+        "x": 31,
+        "z": 15,
+        "health": 200,
+        "maxHealth": 200,
+        "respawn": 0,
+        "contributors": {}
+      },
+      {
+        "id": "forsaken-4",
+        "name": "Unbound Minotaur",
+        "level": 3,
+        "x": 26,
+        "z": 36,
+        "health": 300,
+        "maxHealth": 300,
+        "respawn": 0,
+        "contributors": {}
+      },
+      {
+        "id": "forsaken-5",
+        "name": "Godbreaker Vanguard",
+        "level": 4,
+        "x": 50,
+        "z": 25,
+        "health": 400,
+        "maxHealth": 400,
+        "respawn": 0,
+        "contributors": {}
+      },
+      {
+        "id": "forsaken-6",
+        "name": "Giant Warband",
+        "level": 4,
+        "x": 25,
+        "z": 52,
+        "health": 400,
+        "maxHealth": 400,
+        "respawn": 0,
+        "contributors": {}
+      },
+      {
+        "id": "forsaken-7",
+        "name": "Godbreaker Citadel",
+        "level": 5,
+        "x": 60,
+        "z": 58,
+        "health": 500,
+        "maxHealth": 500,
+        "respawn": 0,
+        "contributors": {}
+      }
+    ],
+    "nodes": [
+      {
+        "id": "resource-0",
+        "name": "Sacred Grove",
+        "resource": "wood",
+        "x": 8,
+        "z": 12,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-1",
+        "name": "Golden Vein",
+        "resource": "gold",
+        "x": 16,
+        "z": 18,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-2",
+        "name": "Harvest Fields",
+        "resource": "food",
+        "x": 12,
+        "z": 10,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-3",
+        "name": "Sacred Grove",
+        "resource": "wood",
+        "x": 32,
+        "z": 18,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-4",
+        "name": "Golden Vein",
+        "resource": "gold",
+        "x": 8,
+        "z": 26,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-5",
+        "name": "Harvest Fields",
+        "resource": "food",
+        "x": 16,
+        "z": 26,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-6",
+        "name": "Sacred Grove",
+        "resource": "wood",
+        "x": 24,
+        "z": 26,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-7",
+        "name": "Golden Vein",
+        "resource": "gold",
+        "x": 32,
+        "z": 26,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-8",
+        "name": "Harvest Fields",
+        "resource": "food",
+        "x": 8,
+        "z": 34,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-9",
+        "name": "Sacred Grove",
+        "resource": "wood",
+        "x": 16,
+        "z": 34,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-10",
+        "name": "Golden Vein",
+        "resource": "gold",
+        "x": 24,
+        "z": 34,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "resource-11",
+        "name": "Harvest Fields",
+        "resource": "food",
+        "x": 32,
+        "z": 34,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "stone-1",
+        "name": "Titan Outcrop",
+        "resource": "stone",
+        "x": 10,
+        "z": 36,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "stone-2",
+        "name": "Marble Ridge",
+        "resource": "stone",
+        "x": 30,
+        "z": 10,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "stone-3",
+        "name": "Giant Quarry",
+        "resource": "stone",
+        "x": 50,
+        "z": 42,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "stone-4",
+        "name": "Basalt Ridge",
+        "resource": "stone",
+        "x": 62,
+        "z": 32,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "aether-1",
+        "name": "Fallen Star",
+        "resource": "aether",
+        "x": 33,
+        "z": 32,
+        "remaining": 584,
+        "capacity": 600,
+        "refill": 0
+      },
+      {
+        "id": "aether-2",
+        "name": "Divine Spring",
+        "resource": "aether",
+        "x": 54,
+        "z": 58,
+        "remaining": 600,
+        "capacity": 600,
+        "refill": 0
+      }
+    ],
+    "sites": [
+      {
+        "id": "shrine-dawn",
+        "name": "Shrine of Dawn",
+        "kind": "shrine",
+        "x": 20,
+        "z": 23,
+        "description": "+10% army damage for the owning alliance",
+        "allianceId": "",
+        "challengerId": "",
+        "progress": 0,
+        "maxHealth": 300,
+        "health": 300
+      },
+      {
+        "id": "shrine-life",
+        "name": "Shrine of Renewal",
+        "kind": "shrine",
+        "x": 50,
+        "z": 52,
+        "description": "+25% recovery for the owning alliance",
+        "allianceId": "",
+        "challengerId": "",
+        "progress": 0,
+        "maxHealth": 300,
+        "health": 300
+      },
+      {
+        "id": "gate-east",
+        "name": "Eastern Divine Gate",
+        "kind": "gate",
+        "x": 39,
+        "z": 20,
+        "description": "Opens the eastern province for your alliance",
+        "allianceId": "",
+        "challengerId": "",
+        "progress": 0,
+        "maxHealth": 450,
+        "health": 450
+      },
+      {
+        "id": "gate-north",
+        "name": "Northern Divine Gate",
+        "kind": "gate",
+        "x": 20,
+        "z": 39,
+        "description": "Opens the northern province for your alliance",
+        "allianceId": "",
+        "challengerId": "",
+        "progress": 0,
+        "maxHealth": 450,
+        "health": 450
+      },
+      {
+        "id": "first-sanctuary",
+        "name": "The First Sanctuary",
+        "kind": "sanctuary",
+        "x": 65,
+        "z": 65,
+        "description": "Requires both gates; +20% gathering for the owning alliance",
+        "allianceId": "",
+        "challengerId": "",
+        "progress": 0,
+        "maxHealth": 650,
+        "health": 650
+      }
+    ],
+    "flags": [],
+    "strongholds": [
+      {
+        "id": "godbreaker-watch",
+        "name": "Godbreaker Watch",
+        "tier": 1,
+        "x": 27,
+        "z": 20,
+        "kind": "stronghold",
+        "allianceId": "",
+        "health": 180,
+        "maxHealth": 180,
+        "guardHealth": 300,
+        "maxGuardHealth": 300,
+        "guardDamage": 12,
+        "units": {
+          "infantry": 60,
+          "archers": 0,
+          "cavalry": 0
+        },
+        "respawn": 0,
+        "cycle": 1,
+        "reward": {
+          "wood": 120,
+          "food": 160,
+          "gold": 160,
+          "stone": 80,
+          "aether": 8,
+          "sigils": 2
+        },
+        "xp": 100
+      },
+      {
+        "id": "godbreaker-redoubt",
+        "name": "Godbreaker Redoubt",
+        "tier": 1,
+        "x": 14,
+        "z": 32,
+        "kind": "stronghold",
+        "allianceId": "",
+        "health": 180,
+        "maxHealth": 180,
+        "guardHealth": 300,
+        "maxGuardHealth": 300,
+        "guardDamage": 12,
+        "units": {
+          "infantry": 60,
+          "archers": 0,
+          "cavalry": 0
+        },
+        "respawn": 0,
+        "cycle": 1,
+        "reward": {
+          "wood": 120,
+          "food": 160,
+          "gold": 160,
+          "stone": 80,
+          "aether": 8,
+          "sigils": 2
+        },
+        "xp": 100
+      },
+      {
+        "id": "godbreaker-forge",
+        "name": "Godbreaker War Forge",
+        "tier": 2,
+        "x": 53,
+        "z": 24,
+        "kind": "stronghold",
+        "allianceId": "",
+        "health": 300,
+        "maxHealth": 300,
+        "guardHealth": 650,
+        "maxGuardHealth": 650,
+        "guardDamage": 25,
+        "units": {
+          "infantry": 70,
+          "archers": 60,
+          "cavalry": 0
+        },
+        "respawn": 0,
+        "cycle": 1,
+        "reward": {
+          "wood": 240,
+          "food": 300,
+          "gold": 300,
+          "stone": 160,
+          "aether": 16,
+          "sigils": 3
+        },
+        "xp": 200
+      },
+      {
+        "id": "godbreaker-spire",
+        "name": "Godbreaker Runic Spire",
+        "tier": 2,
+        "x": 24,
+        "z": 53,
+        "kind": "stronghold",
+        "allianceId": "",
+        "health": 300,
+        "maxHealth": 300,
+        "guardHealth": 650,
+        "maxGuardHealth": 650,
+        "guardDamage": 25,
+        "units": {
+          "infantry": 70,
+          "archers": 60,
+          "cavalry": 0
+        },
+        "respawn": 0,
+        "cycle": 1,
+        "reward": {
+          "wood": 240,
+          "food": 300,
+          "gold": 300,
+          "stone": 160,
+          "aether": 16,
+          "sigils": 3
+        },
+        "xp": 200
+      },
+      {
+        "id": "godbreaker-throne",
+        "name": "Throne of the Godbreakers",
+        "tier": 3,
+        "x": 62,
+        "z": 61,
+        "kind": "stronghold",
+        "allianceId": "",
+        "health": 500,
+        "maxHealth": 500,
+        "guardHealth": 1050,
+        "maxGuardHealth": 1050,
+        "guardDamage": 44,
+        "units": {
+          "infantry": 70,
+          "archers": 70,
+          "cavalry": 70
+        },
+        "respawn": 0,
+        "cycle": 1,
+        "reward": {
+          "wood": 400,
+          "food": 500,
+          "gold": 500,
+          "stone": 240,
+          "aether": 30,
+          "sigils": 5
+        },
+        "xp": 350
+      }
+    ],
+    "rallies": [],
+    "garrisons": [],
+    "sieges": [],
+    "messages": [],
+    "markers": [],
+    "battles": [],
+    "time": 2.500000000000001,
+    "events": [
+      {
+        "time": 0,
+        "message": "Legacy Economy Fixture founded a greek city."
+      }
+    ]
+  }
+}

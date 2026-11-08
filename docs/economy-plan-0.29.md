@@ -1,6 +1,8 @@
 # v0.29 proposed economy — design and migration contract
 
-**Design only.** v0.28 intentionally keeps gold recruitment, Aether production,
+**Implemented in v0.29.0:** see [release rules and migration](economy-release-0.29.md). This document records the approved design foundation.
+
+**Original design proposal:** v0.28 intentionally keeps gold recruitment, Aether production,
 existing market exchanges and current PvE access. The changes below must ship as
 one versioned model, with revised UI/content/tests, rather than isolated renames.
 No premium entitlement, paid item or energy balance is created by this document.

@@ -58,7 +58,7 @@ namespace ThronesOfMyth
         {
             GUILayout.Label("WAR ARCHIVE",theme.Eyebrow);GUILayout.Label("Your battles",sectionStyle);
             if(!string.IsNullOrEmpty(map.LatestEncounterTitle)){GUILayout.Label(map.LatestEncounterTitle,theme.Heading);GUILayout.Label(map.LatestEncounterDetail,theme.Body);}
-            GUILayout.Label("Camp victories: "+me.kills+" · Current treasury: "+me.gold+" gold / "+me.food+" food / "+me.stone+" stone / "+me.aether+" aether / "+me.sigils+" sigils",theme.Small);
+            GUILayout.Label("Camp victories: "+me.kills+" · Current treasury: "+me.gold+" gold / "+me.food+" food / "+me.stone+" stone / "+me.mana+" mana / "+me.sigils+" sigils",theme.Small);
             GUILayout.Label("Camp rewards are credited directly. These are current totals, not an attributed reward breakdown. Field and alliance reports below contain their own confirmed outcomes.",theme.Small);
 
             GUILayout.Space(14); GUILayout.Label("FIELD DUELS", theme.Eyebrow);

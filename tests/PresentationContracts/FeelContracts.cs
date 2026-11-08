@@ -65,6 +65,15 @@ static class FeelContracts
         check(dto.homeFormations.Length==1&&!dto.homeFormations[0].deployed&&dto.activeMarches==0,"Protocol must distinguish home formations from active marches");
         check(dto.homeFormations[0].carryCapacity==320&&dto.homeFormations[0].cargo.wood==12,"Cargo and capacity DTO fields missing");
         check(dto.reports[0].resources.wood==12&&dto.reports[0].sources[0].nodeId=="grove","Delivery report attribution DTO missing");
+        var economyJson="{\"mana\":137,\"aether\":5,\"economy\":{\"ap\":95,\"apCap\":100,\"nextAPSeconds\":60,\"fullAPSeconds\":300,\"nextTransfer\":4,\"rules\":{\"campAP\":5,\"strongholdAP\":10,\"tradeTax\":0.1},\"buffs\":[{\"kind\":\"attack\",\"percent\":0.1,\"remaining\":600}],\"members\":[{\"id\":\"ally\",\"name\":\"Ally\"}]}}";
+        var economyDto=System.Text.Json.JsonSerializer.Deserialize<ArmyData>(economyJson,new System.Text.Json.JsonSerializerOptions{IncludeFields=true});
+        check(economyDto.mana==137&&economyDto.aether==5,"Ordinary Mana and premium Aether must remain separate DTO balances");
+        check(economyDto.economy.ap==95&&economyDto.economy.nextAPSeconds==60&&economyDto.economy.fullAPSeconds==300,"Server AP and refill timers missing");
+        check(economyDto.economy.nextTransfer==4&&economyDto.economy.members[0].id=="ally","Transfer nonce and authenticated member IDs missing");
+        check(economyDto.economy.rules.campAP==5&&economyDto.economy.rules.strongholdAP==10,"PvE AP costs missing from client rules");
+        check(economyDto.economy.buffs[0].remaining==600&&Math.Abs(economyDto.economy.buffs[0].percent-.1f)<.0001,"Timed authoritative buff state missing");
+        var rewardDto=System.Text.Json.JsonSerializer.Deserialize<JourneyRewards>("{\"mana\":10,\"aether\":2,\"itemRewards\":[{\"id\":\"ap-tonic-20\",\"name\":\"Pilgrim tonic\",\"count\":1}]}",new System.Text.Json.JsonSerializerOptions{IncludeFields=true});
+        check(rewardDto.mana==10&&rewardDto.aether==2&&rewardDto.itemRewards[0].count==1,"Reward previews must show distinct currencies and exact stored items");
         Console.WriteLine("Gameplay-feel contracts: "+checks+" passed.");return checks;
     }
 }

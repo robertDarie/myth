@@ -1,3 +1,4 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,7 +12,7 @@ const setup = () => {
   const [a,b,c] = players; a.x = 20; a.z = 15; b.x = 21.5; b.z = 15; c.x = 19; c.z = 15;
   return { w, a,b,c,sessions };
 };
-const command = (w,p,type,extra={}) => w.command(p, { type, ...extra });
+const command = (w,p,type,extra={}) => fixtureCommand(w,p, { type, ...extra });
 const census = p => p.troops + p.marches.reduce((n,a)=>n+a.troops,0) + p.reserveTroops + wardTroops(p);
 
 test('field PvP rejects protected, allied, own and foreign-controlled targets before changing orders', () => {
@@ -89,7 +90,7 @@ test('active combats are sealed on restore, treatment persists and malformed hos
 test('schema-4 migrates an empty hospital and troop counters are a bounded mixed-composition modifier', () => {
   const {w,a}=setup(),old=structuredClone(w.toSave());old.schema=4;delete old.world.battles;
   for(const p of old.world.players)for(const k of['wounded','woundedMythic','healing','battleReports'])delete p[k];
-  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,14);
+  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,15);
   const infantry={troops:10,units:{infantry:10,archers:0,cavalry:0}},cavalry={troops:10,units:{infantry:0,archers:0,cavalry:10}};
   assert.equal(counterMultiplier(infantry,cavalry),1.15);assert.equal(counterMultiplier(cavalry,infantry),0.85);
 });

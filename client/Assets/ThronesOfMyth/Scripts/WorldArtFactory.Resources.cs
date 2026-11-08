@@ -32,7 +32,7 @@ namespace ThronesOfMyth
                 }
                 else
                 {
-                    var rock=Shape(group,PrimitiveType.Cube,new Vector3(0,.35f,0),new Vector3(.85f,.70f,.75f),resource=="aether"?darkStone:stone);
+                    var rock=Shape(group,PrimitiveType.Cube,new Vector3(0,.35f,0),new Vector3(.85f,.70f,.75f),resource=="mana"?darkStone:stone);
                     rock.localRotation=Quaternion.Euler(8,section*37,12);
                     if(resource=="stone")
                     {

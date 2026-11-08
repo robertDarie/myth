@@ -5,7 +5,7 @@ import { World } from './world.mjs';
 import { BUILDINGS, TECHNOLOGIES, resourceNodes, SUMMON_RULES } from './city-content.mjs';
 import { buildingCard, technologyCard, capacity, passiveCap } from './city.mjs';
 const advance = (w, seconds) => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
-const setup = options => { const w = testWorld(options), s = w.join('A'), p = w.authenticate(s.token); for (const id of ['wood', 'food', 'gold', 'stone', 'aether']) p[id] = 10000; return { w, p, s }; };
+const setup = options => { const w = testWorld(options), s = w.join('A'), p = w.authenticate(s.token); for (const id of ['wood', 'food', 'gold', 'stone', 'mana']) p[id] = 10000; return { w, p, s }; };
 const cmd = (w, p, type, targetId, extra = {}) => w.command(p, { type, targetId, ...extra });
 const build = (w, p, id) => { cmd(w, p, 'building-upgrade', id); advance(w, 80); };
 const prepareAcademy = (w, p) => { build(w, p, 'oracle'); build(w, p, 'citadel'); build(w, p, 'academy'); };
@@ -65,7 +65,7 @@ test('passive income pauses at the vault limit without deleting earned wealth; n
   const { w, p } = setup();
   p.wood = passiveCap(p) - 1; advance(w, 6); assert.equal(p.wood, passiveCap(p));
   p.wood = passiveCap(p) + 200; advance(w, 20); assert.equal(p.wood, passiveCap(p) + 200);
-  for (const resource of ['stone', 'aether']) {
+  for (const resource of ['stone', 'mana']) {
     const node = w.nodes.find(n => n.resource === resource); p.x = node.x; p.z = node.z;
     const amount = p[resource]; cmd(w, p, 'gather', node.id); advance(w, 3); cmd(w,p,'return'); advance(w,20); assert.ok(p[resource] > amount);
   }
@@ -114,7 +114,7 @@ test('a batch is all-or-nothing on insufficient sigils and invalid counts; summo
   assert.throws(() => cmd(w, p, 'summon', '', { count: 10 }));
   for (const count of [0, -1, 2, 100, '10', 1.5]) assert.throws(() => cmd(w, p, 'summon', '', { count }));
   assert.equal(p.sigils, 9); assert.equal(p.gold, gold); assert.equal(p.summonHistory.length, history);
-  cmd(w, p, 'buy-sigil'); assert.equal(p.sigils, 10); assert.equal(p.gold, gold - 75);
+  assert.throws(()=>cmd(w,p,'buy-sigil'),/closed/);p.aether=10;cmd(w,p,'premium-sigil');assert.equal(p.sigils,10);assert.equal(p.gold,gold);assert.equal(p.aether,0);
 });
 
 test('daily offering is once per UTC day, saved across restart, with explicit higher-level benefits', () => {
@@ -122,7 +122,7 @@ test('daily offering is once per UTC day, saved across restart, with explicit hi
   const { w, p, s } = setup({ now: () => date }); build(w, p, 'oracle');
   const before = p.sigils; cmd(w, p, 'temple-offering'); assert.equal(p.sigils, before + 1);
   assert.throws(() => cmd(w, p, 'temple-offering'), /already/);
-  const restored = World.fromSave(w.toSave()); restored.now = () => date;
+  const restored = World.fromSave(w.toSave(),{now:()=>date});
   const q = restored.authenticate(s.token); assert.throws(() => cmd(restored, q, 'temple-offering'));
   date += 86400000; q.buildings.oracle = 3; cmd(restored, q, 'temple-offering'); assert.equal(q.sigils, before + 3);
 });
@@ -136,12 +136,9 @@ test('commander ascension spends specific shards once and changes stats without 
   assert.throws(() => cmd(w, p, 'upgrade-commander', 'captain'));
 });
 
-test('market exchanges have visible rates, enforce affordability and cannot print resources', () => {
-  const { w, p } = setup(); assert.throws(() => cmd(w, p, 'trade', 'timber-stone'), /Agora/);
-  p.cityLevel = 2; build(w, p, 'market'); const wood = p.wood, stone = p.stone;
-  cmd(w, p, 'trade', 'timber-stone'); cmd(w, p, 'trade', 'stone-wood');
-  assert.equal(p.wood, wood - 10); assert.equal(p.stone, stone - 10);
-  p.wood = 0; const before = p.stone; assert.throws(() => cmd(w, p, 'trade', 'timber-stone')); assert.equal(p.stone, before);
+test('self exchanges are closed before and after building the Agora',()=>{
+ const {w,p}=setup();assert.throws(()=>cmd(w,p,'trade','timber-stone'),/closed/);p.cityLevel=2;build(w,p,'market');const wood=p.wood,stone=p.stone;
+ assert.throws(()=>cmd(w,p,'trade','timber-stone'),/closed/);assert.equal(p.wood,wood);assert.equal(p.stone,stone);
 });
 
 test('forging has its own saved lane and relics must be equipped at home', () => {
@@ -173,12 +170,12 @@ test('schema-1 saves migrate once without losing queues, resources, commanders o
   const { w, p, s } = setup(); p.cityLevel = 2; p.mythic = 1; cmd(w, p, 'train'); p.gold = 1234;
   const old = structuredClone(w.toSave()); old.schema = 1;
   const q = old.world.players[0];
-  for (const field of ['buildings', 'technologies', 'stone', 'aether', 'sigils', 'research', 'crafting', 'economyClock', 'commanderShards', 'commanderRanks', 'summonHistory', 'summonCount', 'epicPity', 'legendaryPity', 'lastOfferingDay', 'ownedRelics', 'equippedRelic', 'productionCarry']) delete q[field];
+  for (const field of ['buildings', 'technologies', 'stone', 'mana', 'sigils', 'research', 'crafting', 'economyClock', 'commanderShards', 'commanderRanks', 'summonHistory', 'summonCount', 'epicPity', 'legendaryPity', 'lastOfferingDay', 'ownedRelics', 'equippedRelic', 'productionCarry']) delete q[field];
   old.world.nodes = old.world.nodes.filter(n => !resourceNodes.some(r => r.id === n.id));
   const migrated = World.fromSave(old), city = migrated.authenticate(s.token);
   assert.equal(city.gold, 1234); assert.equal(city.trainingQueue.length, 1); assert.equal(city.mythic, 1);
   assert.equal(city.buildings.menagerie, 1); assert.equal(city.stone, 150); assert.equal(city.sigils, 3);
-  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema,14);
+  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema,15);
   city.sigils = 0; const again = World.fromSave(migrated.toSave()); assert.equal(again.authenticate(s.token).sigils, 0);
 });
 

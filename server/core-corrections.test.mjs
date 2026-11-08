@@ -1,3 +1,4 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -7,7 +8,7 @@ import { armyList } from './progression.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(.1);};
 const setup=()=>{const w=testWorld(),session=w.join('Logistics');const p=w.authenticate(session.token);p.buildings.lumber=0;return {w,p,session};};
-const command=(w,p,type,extra={})=>w.command(p,{type,...extra});
+const command=(w,p,type,extra={})=>fixtureCommand(w,p,{type,...extra});
 const load=(w,session)=>{const next=World.fromSave(w.toSave());return {w:next,p:next.authenticate(session.token)};};
 const at=(a,b)=>{a.x=b.x;a.z=b.z;};
 const total=p=>armyList(p).reduce((n,a)=>n+a.troops,0)+p.reserveTroops+p.wounded.infantry+p.wounded.archers+p.wounded.cavalry;
@@ -71,7 +72,7 @@ test('combat defeat destroys carried resources with an attributed loss report an
 test('schema thirteen migration preserves paid progress and balances without inventing cargo or historical observations',()=>{
  const {w,p,session}=setup();p.gold=777;p.ownedRelics.push('aegis');command(w,p,'train');at(p,{x:30,z:30});const save=structuredClone(w.toSave());save.schema=13;
  for(const a of save.world.players){delete a.cargo;delete a.cargoTripId;delete a.cargoSources;delete a.cargoStarted;delete a.deployed;delete a.discovery;delete a.coreReports;}
- const next=World.fromSave(save),q=next.authenticate(session.token);assert.equal(next.toSave().schema,14);assert.equal(q.gold,p.gold);assert.equal(q.trainingQueue.length,1);assert.equal(cargoTotal(q),0);assert.ok(q.ownedRelics.includes('aegis'));assert.ok(q.discovery.every(r=>r.observedAt===next.time));
+ const next=World.fromSave(save),q=next.authenticate(session.token);assert.equal(next.toSave().schema,15);assert.equal(q.gold,p.gold);assert.equal(q.trainingQueue.length,1);assert.equal(cargoTotal(q),0);assert.ok(q.ownedRelics.includes('aegis'));assert.ok(q.discovery.every(r=>r.observedAt===next.time));
 });
 test('damaged cargo, discovery, settled trip replay and malformed report saves are rejected',()=>{
  const {w,p}=setup();const node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);
@@ -113,10 +114,10 @@ test('a failed simulation delivery commit rolls back and pauses, then recovery d
 });
 test('schema thirteen JSON migration archives the untouched original before saving current cargo format',async t=>{
  const {mkdtempSync,readFileSync,writeFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {WorldStore}=await import('./storage.mjs');
- const directory=mkdtempSync(join(tmpdir(),'tom-028-'));t.after(()=>rmSync(directory,{recursive:true,force:true}));const path=join(directory,'world.json'),{w}=setup(),old=structuredClone(w.toSave());old.schema=13;const original=JSON.stringify(old);writeFileSync(path,original);const store=new WorldStore(path),migrated=store.load();store.save(migrated);assert.equal(readFileSync(path+'.schema13.bak','utf8'),original);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,14);
+ const directory=mkdtempSync(join(tmpdir(),'tom-028-'));t.after(()=>rmSync(directory,{recursive:true,force:true}));const path=join(directory,'world.json'),{w}=setup(),old=structuredClone(w.toSave());old.schema=13;const original=JSON.stringify(old);writeFileSync(path,original);const store=new WorldStore(path),migrated=store.load();store.save(migrated);assert.equal(readFileSync(path+'.schema13.bak','utf8'),original);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,15);
 });
-test('Windows package includes the entire server import graph and matches protocol fifteen',async()=>{
+test('Windows package includes the entire server import graph and matches protocol sixteen',async()=>{
  const {readFileSync}=await import('node:fs');const builder=readFileSync(new URL('../client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs',import.meta.url),'utf8');const launcher=readFileSync(new URL('../packaging/windows/Launcher.ps1',import.meta.url),'utf8');const visited=new Set();
  function visit(file){if(visited.has(file))return;visited.add(file);assert.ok(builder.includes('"'+file+'"'),'Windows builder must bundle '+file);const source=readFileSync(new URL(file,import.meta.url),'utf8');for(const match of source.matchAll(/(?:from\s*|import\s*)['"]\.\/([^'"]+\.mjs)['"]/g))visit(match[1]);}
- visit('index.mjs');assert.ok(visited.has('field-logistics.mjs')&&visited.has('discovery.mjs'));assert.ok(launcher.includes('$health.version -eq 15'));assert.ok(builder.includes('bundleVersion = "0.28.0"'));
+ visit('index.mjs');assert.ok(visited.has('field-logistics.mjs')&&visited.has('discovery.mjs'));assert.ok(launcher.includes('$health.version -eq 16'));assert.ok(builder.includes('bundleVersion = "0.29.0"'));
 });

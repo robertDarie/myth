@@ -70,15 +70,15 @@ export function validateLogistics(p){
   if(p.coreReports.some(r=>r.id===a.cargoTripId)||(total>0)!==!!a.cargoTripId||(!a.deployed&&total)||a.cargoSources.reduce((n,s)=>n+s.amount,0)!==total||RESOURCES.some(k=>a.cargoSources.filter(s=>s.resource===k).reduce((n,s)=>n+s.amount,0)!==a.cargo[k]))throw new Error('Unreconciled saved cargo.');
  }
  if(activeMarches(p).length>age(p).marches)throw new Error('Invalid active march slots.');
- for(const r of p.coreReports){if(!r||typeof r.id!=='string'||!r.id||!['gathering','system','alliance','pve'].includes(r.type)||typeof r.title!=='string'||r.title.length>256||r.detail!==undefined&&typeof r.detail!=='string'||!Number.isFinite(r.time)||r.time<0)throw new Error('Invalid saved core report.');
+ for(const r of p.coreReports){if(!r||typeof r.id!=='string'||!r.id||!['gathering','system','alliance','pve','trade'].includes(r.type)||typeof r.title!=='string'||r.title.length>256||r.detail!==undefined&&typeof r.detail!=='string'||!Number.isFinite(r.time)||r.time<0)throw new Error('Invalid saved core report.');
   if(r.resources!==undefined&&!amounts(r.resources))throw new Error('Invalid saved report resources.');
   if(r.type==='gathering'&&(!amounts(r.resources)||!amounts(r.lost)||!sources(r.sources)||!['Delivered','Lost'].includes(r.outcome)||RESOURCES.some(k=>r.sources.filter(s=>s.resource===k).reduce((n,s)=>n+s.amount,0)!==r.resources[k]+r.lost[k])||(r.outcome==='Delivered'?Object.values(r.lost):Object.values(r.resources)).some(v=>v!==0)))throw new Error('Invalid saved gathering report.');
  }
 }
 export function unifiedReports(w,p,battles=p.battleReports,groups=p.groupReports){
  const rows=p.coreReports.map(r=>({...r}));
- for(const r of battles)rows.push({id:'battle:'+r.id,type:'battle',time:r.ended||r.started,title:r.outcome,detail:r.sides.map(s=>s.playerName).join(' vs '),sourceId:r.id});
- for(const r of groups)rows.push({id:'rally:'+r.id,type:'rally',time:r.ended||r.started,title:r.outcome,detail:r.targetName,sourceId:r.id});
- for(const r of p.scoutReports)rows.push({id:'scout:'+r.id,type:'scouting',time:r.time,title:'Scouting survey',detail:`${r.x.toFixed(1)}, ${r.z.toFixed(1)}`,sourceId:r.id});
+ for(const r of battles)rows.push({id:'battle:'+r.id,type:'battle',time:r.ended||r.started,title:r.outcome,detail:r.sides.map(s=>s.playerName).join(' vs '),sourceId:r.id,currencyNote:r.currencyNote});
+ for(const r of groups)rows.push({id:'rally:'+r.id,type:'rally',time:r.ended||r.started,title:r.outcome,detail:r.targetName,sourceId:r.id,currencyNote:r.currencyNote});
+ for(const r of p.scoutReports)rows.push({id:'scout:'+r.id,type:'scouting',time:r.time,title:'Scouting survey',detail:`${r.x.toFixed(1)}, ${r.z.toFixed(1)}`,sourceId:r.id,currencyNote:r.currencyNote});
  return rows.sort((a,b)=>b.time-a.time||a.id.localeCompare(b.id)).slice(0,170);
 }

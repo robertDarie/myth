@@ -1,3 +1,4 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld, openKingdom } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -6,10 +7,10 @@ import { initializeFortification, refreshBeacons, campaignFor, CAMPAIGN_LIMITS }
 import { wardTroops, wardMythic } from './war.mjs';
 const advance=(w,s)=>{for(let i=0;i<Math.ceil(s*10);i++)w.tick(0.1);};
 const until=(w,predicate,seconds=120)=>{for(let i=0;i<seconds*10&&!predicate();i++)w.tick(0.1);assert.ok(predicate(),'Timed out waiting for campaign state');};
-const cmd=(w,p,type,targetId='',extra={})=>w.command(p,{type,targetId,...extra});
+const cmd=(w,p,type,targetId='',extra={})=>fixtureCommand(w,p,{type,targetId,...extra});
 function setup(){
  const w=testWorld(),sessions=['A','B','C','D','E'].map(n=>w.join(n)),p=sessions.map(s=>w.authenticate(s.token));
- for(const a of p){a.cityLevel=2;a.buildings.oathhall=1;for(const k of['gold','wood','food','stone','aether'])a[k]=10000;}
+ for(const a of p){a.cityLevel=2;a.buildings.oathhall=1;for(const k of['gold','wood','food','stone','mana'])a[k]=10000;}
  const[a,b,c,d,e]=p;cmd(w,a,'alliance-create','',{name:'Dawn'});cmd(w,b,'alliance-join',a.allianceId);cmd(w,c,'alliance-create','',{name:'Dusk'});cmd(w,d,'alliance-join',c.allianceId);cmd(w,e,'alliance-join',c.allianceId);
  const gate=w.sites.find(s=>s.id==='gate-east');gate.allianceId=c.allianceId;
  const supply={id:'supply',allianceId:a.allianceId,x:32,z:20};initializeFortification(supply);supply.isRoot=true;w.flags.push(supply);refreshBeacons(w);
@@ -113,7 +114,7 @@ test('assembly can be canceled and saved/migrated without creating contributions
  cmd(w,a,'rally-leave');assert.equal(w.rallies.length,0);assert.equal(census(a),20);assert.equal(census(b),20);
  const old=w.toSave();old.schema=5;delete old.world.rallies;delete old.world.garrisons;delete old.world.sieges;
  for(const p of old.world.players)delete p.groupReports;
- const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,14);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
+ const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,15);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
 });
 
 test('surviving attackers can garrison their captured gate without being healed or duplicating units',()=>{
@@ -190,7 +191,7 @@ test('authenticated rally and reinforcement HTTP commands preserve permissions, 
  assert.equal((await get(1)).rallies.length,1);assert.equal((await get(3)).rallies.length,0);
  until(w,()=>w.sieges.length>0);assert.equal((await get(0)).players.find(p=>p.id===a.id).groupReports.length,1);
  until(w,()=>gate.allianceId===a.allianceId);
- const own=await get(0),outside=await get(3);assert.equal(own.version,15);
+ const own=await get(0),outside=await get(3);assert.equal(own.version,16);
  assert.equal(own.players.find(p=>p.id===a.id).groupReports.length,1);
  assert.equal(outside.players.find(p=>p.id===a.id).groupReports,undefined);
  assert.equal(outside.players.find(p=>p.id===observer.id).groupReports.length,0);

@@ -1,3 +1,4 @@
+import { ECONOMY, refreshEconomy } from './economy.mjs';
 import { siteIsOpen } from './kingdom.mjs';
 import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, rewardStronghold, resetStronghold, validateStrongholdReport } from './strongholds.mjs';
 import { route, travel } from './navigation.mjs';
@@ -243,7 +244,16 @@ export function tickCampaign(w,dt) {
     if(r.phase==='Marching') {
       const before={x:r.x,z:r.z},speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));r.ownerId=r.leaderId;const arrived=travel(w,r,t,speed,dt,1.2);
       for(const a of actors(w,r.armyIds)){a.x=Math.max(1,Math.min(79,a.x+r.x-before.x));a.z=Math.max(1,Math.min(79,a.z+r.z-before.z));setOrder(a,'rally',r.id,t,'Rally marching');}
-      if(!arrived)continue;r.phase='Fighting';newSiege(w,r,t);
+      if(!arrived)continue;
+      if(isStronghold(t)){
+       const members=[...new Set(actors(w,r.armyIds).map(a=>w.owner(a)))];for(const p of members)refreshEconomy(w,p);
+       const eligible=actors(w,r.armyIds).filter(a=>w.owner(a).ap>=ECONOMY.strongholdAP);
+       if(eligible.length<STRONGHOLD_RULES.minMarches){removeRally(w,r,'Not enough AP for two stronghold marches');continue;}
+       for(const id of [...r.armyIds])if(!eligible.some(a=>a.id===id))removeMember(w,{kind:'rally',group:r},id,'Withdrawn');
+       if(!r.armyIds.includes(r.leaderArmyId)){r.leaderArmyId=r.armyIds[0];r.leaderId=w.owner(w.army(r.leaderArmyId)).id;}
+       for(const p of new Set(eligible.map(a=>w.owner(a))))p.ap-=ECONOMY.strongholdAP;w.logisticsRevision++;
+      }
+      r.phase='Fighting';newSiege(w,r,t);
     }
     const s=rallySiege(w,r.id);if(s)siegeRound(w,r,t,s);
   }

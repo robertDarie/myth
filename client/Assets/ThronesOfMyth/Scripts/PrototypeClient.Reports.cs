@@ -6,24 +6,25 @@ namespace ThronesOfMyth
     {
         private string reportSearch="",reportSelection="";
         private int reportCategory;
-        private static string CargoLabel(ArmyData army) => (army.cargo==null?0:army.cargo.food+army.cargo.wood+army.cargo.stone+army.cargo.gold+army.cargo.aether)+" / "+army.carryCapacity;
+        private static string CargoLabel(ArmyData army) => (army.cargo==null?0:army.cargo.food+army.cargo.wood+army.cargo.stone+army.cargo.gold+army.cargo.mana)+" / "+army.carryCapacity;
         private void DrawUnifiedReports()
         {
             GUILayout.Label("MESSENGERS' ARCHIVE",theme.Eyebrow);
             GUILayout.Label("Reports",theme.Heading);
             GUILayout.Label("Private observations and confirmed outcomes. Reading a report never grants rewards.",noteStyle);
-            reportCategory=GUILayout.Toolbar(reportCategory,new[]{"All","Battles","Gathering","Scouting","Alliance","System"});
+            reportCategory=GUILayout.Toolbar(reportCategory,new[]{"All","Battles","Gathering","Scouting","Alliance","System","Transfers"});
             GUILayout.Label("Search titles, outcomes or details",theme.Small);reportSearch=GUILayout.TextField(reportSearch,80);
             bool found=false;
             foreach(var report in me.reports??Array.Empty<CoreReport>())
             {
-                string category=reportCategory==1?"battle":reportCategory==2?"gathering":reportCategory==3?"scouting":reportCategory==4?"alliance":"system";
+                string category=reportCategory==1?"battle":reportCategory==2?"gathering":reportCategory==3?"scouting":reportCategory==4?"alliance":reportCategory==6?"trade":"system";
                 if(reportCategory>0&&report.type!=category&&!(category=="battle"&&(report.type=="pve"||report.type=="rally"))&&!(category=="alliance"&&report.type=="rally"))continue;
                 if(!string.IsNullOrWhiteSpace(reportSearch)&&((report.title??"")+" "+report.detail+" "+report.outcome+" "+report.reason).IndexOf(reportSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
                 found=true;
                 if(GUILayout.Button(report.type.ToUpperInvariant()+" · "+report.title+" · "+Mathf.Max(0,Mathf.FloorToInt(world.time-report.time))+"s ago"))reportSelection=reportSelection==report.id?"":report.id;
                 if(reportSelection!=report.id)continue;
                 GUILayout.BeginVertical(GUI.skin.box);
+                if(!string.IsNullOrEmpty(report.currencyNote))GUILayout.Label(report.currencyNote,noteStyle);
                 GUILayout.Label(report.detail??"",new GUIStyle(noteStyle){richText=false});
                 if(report.type=="gathering")
                 {
@@ -39,6 +40,7 @@ namespace ThronesOfMyth
                     var survey=Array.Find(world.exploration.reports,r=>r.id==report.sourceId);
                     if(survey!=null){GUILayout.Label(survey.armies.Length+" observed enemy marches · "+survey.camps.Length+" camps · "+survey.sites.Length+" sacred sites",noteStyle);foreach(var enemy in survey.armies)GUILayout.Label(enemy.name+" · "+enemy.troops+" troops · "+enemy.health+" HP",noteStyle);foreach(var site in survey.sites)GUILayout.Label(site.name+" · "+AllianceName(site.allianceId),noteStyle);foreach(var fort in survey.strongholds??Array.Empty<StrongholdData>())GUILayout.Label(fort.name+" · "+Mathf.CeilToInt(fort.guardHealth)+" guard HP",noteStyle);foreach(var garrison in survey.garrisons)GUILayout.Label(WarTargetName(garrison.targetId)+" · "+garrison.marches+" marches · "+garrison.troops+" troops",noteStyle);if(GUILayout.Button("Focus surveyed area")){cameraControl?.Focus(survey.x,survey.z);OpenInterface(InterfacePage.World);}}
                 }
+                else if(report.type=="trade")GUILayout.Label("Delivered transfer: "+Cost(report.resources),noteStyle);
                 else if(report.resources!=null)GUILayout.Label("Credited: "+Cost(report.resources),noteStyle);
                 GUILayout.EndVertical();
             }

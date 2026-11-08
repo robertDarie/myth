@@ -1,8 +1,8 @@
 export const KINGDOM_STAGES=[
  {id:'foundations',name:'Embers Become Cities',description:'Gather 400 resources and train 10 mortal troops across the kingdom.',afterSeconds:0,minScore:1,reward:{wood:100,food:100,gold:50,stone:50}},
  {id:'gates',name:'The Divine Gates Awaken',description:'Defeat four camps and raise at least one Citadel to level 2. Opens both Divine Gates for contest.',afterSeconds:600,minScore:5,reward:{wood:150,food:150,gold:100,stone:100}},
- {id:'sanctuary',name:'The Road to the First Throne',description:'Defeat two strongholds and occupy both Divine Gates. Opens the First Sanctuary for contest.',afterSeconds:1800,minScore:10,reward:{gold:150,food:150,stone:150,aether:15,sigils:1}},
- {id:'secured',name:'An Oath Holds the Throne',description:'One alliance must hold the sanctuary continuously for five minutes.',afterSeconds:2100,minScore:15,reward:{gold:250,wood:200,food:200,aether:30,sigils:3}}
+ {id:'sanctuary',name:'The Road to the First Throne',description:'Defeat two strongholds and occupy both Divine Gates. Opens the First Sanctuary for contest.',afterSeconds:1800,minScore:10,reward:{gold:150,food:150,stone:150,mana:15,sigils:1}},
+ {id:'secured',name:'An Oath Holds the Throne',description:'One alliance must hold the sanctuary continuously for five minutes.',afterSeconds:2100,minScore:15,reward:{gold:250,wood:200,food:200,mana:30,sigils:3}}
 ];
 const KEYS=['gather','trained','camps','strongholds','development','scouts','helps'];
 const zero=()=>Object.fromEntries(KEYS.map(k=>[k,0]));

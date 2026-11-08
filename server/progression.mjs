@@ -89,7 +89,7 @@ export function progressionCommand(world, p, c, fail) {
   }
   if (c.type === 'promote-commander') {
     if (r.stars >= 6 || heroLevel(r) < r.stars * 10) fail('Reach the current star level cap before promotion (maximum six stars).');
-    world.spend(p, { gold: 100 * r.stars, aether: 10 * r.stars }); r.stars++; if (r.stars <= 4) r.skills[r.stars - 1] = 1;
+    world.spend(p, { gold: 100 * r.stars, mana: 10 * r.stars }); r.stars++; if (r.stars <= 4) r.skills[r.stars - 1] = 1;
   }
   if (c.type === 'upgrade-skill') {
     const slot = c.skillIndex;

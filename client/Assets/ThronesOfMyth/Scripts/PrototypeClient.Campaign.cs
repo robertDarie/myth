@@ -11,8 +11,10 @@ namespace ThronesOfMyth
         {
             if(r==null)return "Not currently observed";
             var text = "";
-            foreach (var pair in new[] { new { name = "wood", value = r.wood }, new { name = "food", value = r.food }, new { name = "gold", value = r.gold }, new { name = "stone", value = r.stone }, new { name = "aether", value = r.aether }, new { name = "sigils", value = r.sigils } })
+            foreach (var pair in new[] { new { name = "wood", value = r.wood }, new { name = "food", value = r.food }, new { name = "gold", value = r.gold }, new { name = "stone", value = r.stone }, new { name = "mana", value = r.mana }, new { name = "sigils", value = r.sigils } })
                 if (pair.value > 0) text += (text.Length > 0 ? " · " : "") + pair.value + " " + pair.name;
+            if(r.aether>0)text+=(text.Length>0?" · ":"")+r.aether+" premium Aether";
+            if(r.itemRewards!=null)foreach(var item in r.itemRewards)text+=" · "+item.count+" "+item.name+" (stored)";
             return text;
         }
         private void GuidePage(InterfacePage page) { if (interfacePage != page) OpenInterface(page); }

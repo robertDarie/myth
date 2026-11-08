@@ -1,3 +1,4 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync,rmSync } from 'node:fs';
@@ -9,9 +10,9 @@ import { createGameServer } from './http.mjs';
 import { TROOP_TYPES,unitTotal,countOf,legacyUnits,changeUnits,troopBase,tierLock } from './troops.mjs';
 import { counterMultiplier,retreat } from './war.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
-const command=(w,p,type,extra={})=>w.command(p,{type,...extra});
+const command=(w,p,type,extra={})=>fixtureCommand(w,p,{type,...extra});
 const advance=(w,seconds)=>{for(let i=0;i<Math.ceil(seconds/.1);i++)w.tick(.1);};
-function fixture(){const w=testWorld(),s=w.join('Veteran City'),p=w.authenticate(s.token);p.gold=p.food=p.wood=p.stone=p.aether=10000;return {w,s,p};}
+function fixture(){const w=testWorld(),s=w.join('Veteran City'),p=w.authenticate(s.token);p.gold=p.food=p.wood=p.stone=p.mana=10000;return {w,s,p};}
 function unlock(w,p){
  command(w,p,'upgrade');advance(w,21);
  for(const id of ['oracle','academy','academy','barracks']){command(w,p,'building-upgrade',{targetId:id});advance(w,25);}
@@ -81,7 +82,7 @@ test('promotions survive SQLite downtime and an hourglass completes only the cho
 });
 test('HTTP promotion retries are once-only, use the owning city and preserve a fixed soldier count',async t=>{
  const dir=mkdtempSync(join(tmpdir(),'tom-veteran-http-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const app=createGameServer({databasePath:join(dir,'world.sqlite')});
- const session=app.world.join('HTTP Veterans'),p=app.world.authenticate(session.token);p.gold=p.food=p.wood=p.stone=p.aether=10000;unlock(app.world,p);reserves(app.world,p);app.saveNow();
+ const session=app.world.join('HTTP Veterans'),p=app.world.authenticate(session.token);p.gold=p.food=p.wood=p.stone=p.mana=10000;unlock(app.world,p);reserves(app.world,p);app.saveNow();
  await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));t.after(()=>new Promise(resolve=>{app.server.close(resolve);app.server.closeAllConnections();}));
  const url=`http://127.0.0.1:${app.server.address().port}/command`,body=JSON.stringify({type:'promote',targetId:'veteranInfantry'}),headers={Authorization:'Bearer '+session.token,'Idempotency-Key':'promote-once-001'};
  const before=census(p);for(let i=0;i<2;i++)assert.equal((await fetch(url,{method:'POST',headers,body})).status,200);
@@ -94,7 +95,7 @@ test('a promotion at full troop capacity reserves its place and cannot open free
  command(w,p,'cancel-job',{targetId:p.trainingQueue[0].id});assert.equal(p.reserveTroops,45);
 });
 test('veteran rally contributors retain their tier in group reports, rewards and restored saves',()=>{
- const {w,p}=fixture();unlock(w,p);const other=w.authenticate(w.join('Veteran Ally').token);other.gold=other.wood=other.food=other.stone=other.aether=10000;unlock(w,other);
+ const {w,p}=fixture();unlock(w,p);const other=w.authenticate(w.join('Veteran Ally').token);other.gold=other.wood=other.food=other.stone=other.mana=10000;unlock(w,other);
  for(const a of[p,other]){a.buildings.oathhall=1;a.units={...legacyUnits(0),veteranInfantry:20};a.troops=20;a.health=w.stats(a).maxHealth;}
  command(w,p,'alliance-create',{name:'Veteran Oath'});command(w,other,'alliance-join',{targetId:p.allianceId});
  const before=[census(p),census(other)],target=w.strongholds[0];command(w,p,'rally-create',{targetId:target.id,count:10});command(w,other,'rally-join',{targetId:w.rallies[0].id});
@@ -109,7 +110,7 @@ test('JSON schema-12 migration archives the untouched source and preserves reser
  const {w,p,s}=fixture();command(w,p,'inventory-supplies');command(w,p,'train',{targetId:'archers'});
  const old=structuredClone(w.toSave());old.schema=12;delete old.world.players[0].technologies.veterans;const bytes=JSON.stringify(old);writeFileSync(path,bytes);
  const store=new WorldStore(path),loaded=store.load(),q=loaded.authenticate(s.token);assert.equal(q.technologies.veterans,0);assert.deepEqual(q.units,p.units);assert.deepEqual(q.inventory,p.inventory);assert.equal(q.trainingQueue[0].id,p.trainingQueue[0].id);
- assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,14);assert.equal(q.gold,p.gold);
+ assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,15);assert.equal(q.gold,p.gold);
 });
 
 test('splitting a class between tiers cannot evade severe wounds through rounding',()=>{

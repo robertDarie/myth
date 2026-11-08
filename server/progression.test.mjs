@@ -1,11 +1,12 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { AGES, age, crews, armyList, constructionJobs, heroLevel, skillInfo, activeSkill } from './progression.mjs';
 const advance = (w, n) => { for (let i = 0; i < Math.ceil(n * 10); i++) w.tick(0.1); };
-const setup = () => { const w = testWorld(), session = w.join('A'), p = w.authenticate(session.token); for (const key of ['food','wood','gold','stone','aether']) p[key] = 10000; return { w,p,session }; };
-const cmd = (w,p,type,extra={}) => w.command(p,{type,...extra});
+const setup = () => { const w = testWorld(), session = w.join('A'), p = w.authenticate(session.token); for (const key of ['food','wood','gold','stone','mana']) p[key] = 10000; return { w,p,session }; };
+const cmd = (w,p,type,extra={}) => fixtureCommand(w,p,{type,...extra});
 const unlock = (w,p,id) => cmd(w,p,'unlock-commander',{targetId:id});
 function deploy(w,p,id,troops=5) {
   unlock(w,p,id); cmd(w,p,'deploy-march',{targetId:id,troops,mythic:0}); return p.marches.at(-1);
@@ -131,7 +132,7 @@ test('five formations, both construction jobs and accepted movement survive sche
   cmd(w,p,'move',{marchId:p.marches[0].id,x:20,z:20});advance(w,2);
   const position=p.marches[0].x, restored=World.fromSave(w.toSave()),q=restored.authenticate(session.token);
   assert.equal(armyList(q).length,5);assert.equal(constructionJobs(q).length,2);assert.equal(crews(q),2);
-  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target.type,'move');assert.equal(restored.toSave().schema,14);
+  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target.type,'move');assert.equal(restored.toSave().schema,15);
   advance(restored,11);assert.equal(q.buildings.oracle,1);assert.equal(q.buildings.quarry,1);
 });
 

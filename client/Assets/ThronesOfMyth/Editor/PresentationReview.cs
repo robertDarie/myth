@@ -24,7 +24,7 @@ namespace ThronesOfMyth.Editor
             var art=new WorldArtFactory();var roots=new List<GameObject>();
             try
             {
-                foreach(var resource in new[]{"food","wood","stone","gold","aether"})
+                foreach(var resource in new[]{"food","wood","stone","gold","mana"})
                 {
                     var root=new GameObject("Isolated resource review");root.transform.position=new Vector3(4000,0,4000);roots.Add(root);
                     var collider=root.AddComponent<BoxCollider>();

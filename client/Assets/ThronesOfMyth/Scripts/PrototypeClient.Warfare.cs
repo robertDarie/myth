@@ -85,6 +85,7 @@ namespace ThronesOfMyth
                 if(!boss.lastKnown)GUILayout.Label("Defenders · " + UnitSummary(boss.units) + " · Base retaliation " + boss.guardDamage.ToString("F0"), theme.Small);
                 GUILayout.Label("At least " + world.strongholdRules.minMarches + " assembled marches. Defeat the guards, then the walls. " + world.strongholdRules.roundLimit + " combat-round limit; no beacon supply required.", noteStyle);
                 if(!boss.lastKnown)GUILayout.Label("TOTAL SHARED REWARD POOL · " + JourneyRewardText(boss.reward) + " · " + boss.xp + " commander XP", theme.Small);
+                GUILayout.Label((me.economy?.rules.strongholdAP??10)+" AP per participating city on actual siege entry, not during assembly. AP can be spent elsewhere before arrival.",noteStyle);
                 GUILayout.Label("The pool is divided by actual guard/wall damage, aggregated per city. Additional marches do not multiply rewards. Survivors return home automatically.", theme.Small);
             }
             foreach (var fallen in world.strongholds) if (fallen.respawn > 0) GUILayout.Label(fallen.name + (fallen.lastKnown?" · Last observed reforming; scout to refresh":" · Reforms in " + Mathf.CeilToInt(fallen.respawn) + "s"), theme.Small);

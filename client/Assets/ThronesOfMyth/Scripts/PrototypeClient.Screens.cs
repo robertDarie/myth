@@ -122,7 +122,7 @@ namespace ThronesOfMyth
             var actions = new Rect(detail.x + 205, detail.y + 191, detail.width - 229, 42);
             if (!recruited)
             {
-                if (theme.Button(actions, "Recruit · " + selected.cost.ToString("N0") + " gold", true, me.gold >= selected.cost && !processing)) Send("unlock-commander", selected.id);
+                if (theme.Button(actions, "Recruit · 10 matching shards", true, progress!=null && progress.shards>=10 && !processing)) Send("recruit-shards", selected.id);
             }
             else
             {
@@ -199,7 +199,7 @@ namespace ThronesOfMyth
             GUILayout.Space(12); GUI.enabled = ready && me.offeringAvailable;
             if (GUILayout.Button("Free offering · " + me.offeringAmount + " sigil(s)", theme.Primary)) Send("temple-offering");
             GUI.enabled = ready && Afford(me.sealCost);
-            if (GUILayout.Button("Exchange for 1 sigil · " + Cost(me.sealCost))) Send("buy-sigil");
+            if (GUILayout.Button("Optional premium sigil · " + Cost(me.sealCost))) Send("premium-sigil");
             GUI.enabled = true;
             GUILayout.Label("Free offering resets at 00:00 UTC. Invoking never converts your gold automatically.", theme.Small);
             GUILayout.Space(16); GUILayout.Label("RECENT ECHOES", theme.Eyebrow);
@@ -302,6 +302,7 @@ namespace ThronesOfMyth
             else if (camp != null)
             {
                 title = camp.name; subtitle = "LEVEL " + camp.level + " · " + camp.health + " / " + camp.maxHealth + " HEALTH"; health = (float)camp.health / camp.maxHealth;
+                subtitle += " · "+(me.economy?.rules.campAP??5)+" AP ON FIRST ENGAGEMENT";
                 action = camp.health > 0 ? "March & attack" : "Returns in " + camp.respawn + "s"; enabled &= camp.health > 0;
                 perform = () => Send("attack", camp.id);
             }

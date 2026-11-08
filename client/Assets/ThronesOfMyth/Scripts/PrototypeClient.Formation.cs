@@ -92,7 +92,7 @@ namespace ThronesOfMyth
                 SetUnits(formationUnits, type.id, QuantityRow(new Rect(2, i * 98, viewport.width - 22, 92), type.name+" · T"+type.tier, type.role, type.id, Mathf.Min(UnitsOf(formationUnits, type.id), available), available));
             }
             string mythicName = Array.Find(world.civilizations, c => c.id == me.civilization)?.mythic ?? "Mythic guardian";
-            formationMythic = QuantityRow(new Rect(2, world.troopTypes.Length*98, viewport.width - 22, 92), mythicName, "Mythic escort", "aether", Mathf.Min(formationMythic, readyMythic), readyMythic);
+            formationMythic = QuantityRow(new Rect(2, world.troopTypes.Length*98, viewport.width - 22, 92), mythicName, "Mythic escort", "mana", Mathf.Min(formationMythic, readyMythic), readyMythic);
             GUI.EndScrollView();
             var footer = new Rect(right.x + 18, right.yMax - 96, right.width - 36, 84);
             theme.Text(new Rect(footer.x, footer.y, footer.width - 200, 25), formationUnits.Total + " mortal · " + formationMythic + " mythic selected", theme.Heading);

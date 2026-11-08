@@ -82,7 +82,7 @@ test('passive catch-up caps at eight hours, respects ceilings and never pays for
   const short = World.fromSave(data, { now: () => at }), long = World.fromSave(data, { now: () => at });
   advanceDowntime(short, at, at + OFFLINE_PRODUCTION_CAP * 1000);
   assert.equal(advanceDowntime(long, at, at + 30 * 86400000).productionSeconds, OFFLINE_PRODUCTION_CAP);
-  for (const key of ['wood','food','gold','stone','aether']) assert.equal(long.authenticate(s.token)[key], short.authenticate(s.token)[key]);
+  for (const key of ['wood','food','gold','stone','mana']) assert.equal(long.authenticate(s.token)[key], short.authenticate(s.token)[key]);
   const before = structuredClone(long.toSave()); advanceDowntime(long, at + 30 * 86400000, at); assert.deepEqual(long.toSave(), before);
 });
 test('jobs credit their completion day, not login day, and downtime invents no field victories', () => {

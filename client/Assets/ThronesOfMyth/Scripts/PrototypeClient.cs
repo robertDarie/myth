@@ -196,10 +196,11 @@ namespace ThronesOfMyth
             if (cost.wood > 0) parts.Add(cost.wood + " wood");
             if (cost.stone > 0) parts.Add(cost.stone + " stone");
             if (cost.gold > 0) parts.Add(cost.gold + " gold");
-            if (cost.aether > 0) parts.Add(cost.aether + " aether");
+            if (cost.mana > 0) parts.Add(cost.mana + " mana");
+            if (cost.aether > 0) parts.Add(cost.aether + " premium Aether");
             return parts.Count==0?"none":string.Join(" / ", parts);
         }
-        private bool Afford(ResourceAmounts c) => c != null && me.food >= c.food && me.wood >= c.wood && me.stone >= c.stone && me.gold >= c.gold && me.aether >= c.aether;
+        private bool Afford(ResourceAmounts c) => c != null && me.food >= c.food && me.wood >= c.wood && me.stone >= c.stone && me.gold >= c.gold && me.mana >= c.mana && me.aether >= c.aether;
         private int BuildingLevel(string id)
         {
             foreach (var b in me.cityBuildings) if (b.id == id) return b.level;
@@ -243,17 +244,29 @@ namespace ThronesOfMyth
                 GUI.enabled = true;
             }
         }
+        private int tradeMember,tradeResource;
+        private string tradeAmount="100";
         private void DrawMarket()
         {
-            GUILayout.Label("Agora of Fates", sectionStyle);
-            if (BuildingLevel("market") == 0) GUILayout.Label("Build the Agora in your city to exchange resources.", noteStyle);
-            foreach (var trade in world.trades)
-            {
-                GUI.enabled = BuildingLevel("market") > 0 && Afford(trade.cost);
-                if (GUILayout.Button(trade.name)) Send("trade", trade.id);
-                GUI.enabled = true;
-            }
-            GUILayout.Label("Rates are fixed and displayed before exchange. Resource trades cannot create profit loops.", noteStyle);
+            GUILayout.Label("Agora of Fates · Alliance deliveries",sectionStyle);
+            var economy=me.economy;if(economy==null)return;
+            GUILayout.Label("Immediate delivery to another alliance member. Sender pays amount + "+(economy.rules.tradeTax*100).ToString("F0")+"% tax. Premium Aether, Sigils and items cannot be transferred.",noteStyle);
+            GUILayout.Label("Remaining today: "+economy.tradeRemaining+" resources · Resets in "+economy.tradeResetSeconds+"s",theme.Small);
+            if(BuildingLevel("market")==0)GUILayout.Label("Build the Agora to send resources. Receiving does not require a Market.",noteStyle);
+            if(economy.members.Length==0){GUILayout.Label("Join an alliance with another member to trade.",noteStyle);return;}
+            tradeMember=Mathf.Clamp(tradeMember,0,economy.members.Length-1);
+            var names=Array.ConvertAll(economy.members,m=>m.name);tradeMember=GUILayout.SelectionGrid(tradeMember,names,2);
+            string[] resources={"food","wood","stone","gold","mana"};tradeResource=GUILayout.Toolbar(tradeResource,resources);
+            GUILayout.Label("Amount delivered",theme.Small);tradeAmount=GUILayout.TextField(tradeAmount,8);
+            bool valid=int.TryParse(tradeAmount,out int amount)&&amount>0&&amount<=economy.tradeRemaining;
+            int tax=valid?Mathf.CeilToInt(amount*economy.rules.tradeTax):0;
+            GUILayout.Label("Recipient receives "+(valid?amount:0)+" · Tax "+tax+" · Sender pays "+(valid?amount+tax:0),noteStyle);
+            int[] available={me.food,me.wood,me.stone,me.gold,me.mana};
+            GUILayout.Label("Available to send: "+available[tradeResource]+" "+resources[tradeResource],theme.Small);
+            GUI.enabled=valid&&amount+tax<=available[tradeResource]&&BuildingLevel("market")>0&&!processing&&pendingOrder==null;
+            if(GUILayout.Button("Send to "+names[tradeMember],theme.Primary))Send(new GameCommand{type="resource-transfer",targetId=economy.members[tradeMember].id,name=resources[tradeResource],count=amount,jobId=economy.nextTransfer+"-"+Guid.NewGuid().ToString("N")});
+            GUI.enabled=true;
+            if(GUILayout.Button("View transfer reports"))OpenInterface(InterfacePage.Reports);
         }
         private void DrawAlliance()
         {
@@ -330,8 +343,8 @@ namespace ThronesOfMyth
             GUILayout.Space(8);
             GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20 && !processing;
             if (GUILayout.Button("Mentor +100 XP · 40 gold / 20 food")) Send("mentor-commander", hero.id);
-            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.aether >= progress.stars * 10 && !processing;
-            if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " aether")) Send("promote-commander", hero.id);
+            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.mana >= progress.stars * 10 && !processing;
+            if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana")) Send("promote-commander", hero.id);
             GUI.enabled = true;
             foreach (var skill in progress.skills)
             {
@@ -340,7 +353,7 @@ namespace ThronesOfMyth
                 var emblem = GUILayoutUtility.GetRect(46, 46, GUILayout.Width(46), GUILayout.Height(46));
                 var color = skill.level == 0 ? MythInterfaceTheme.Muted : skill.kind == "Active" ? RarityColor(hero.color) : MythInterfaceTheme.Teal;
                 theme.Panel(emblem, skill.kind == "Active" && skill.level > 0);
-                theme.Icon(new Rect(emblem.x + 10, emblem.y + 10, 26, 26), skill.level == 0 ? "lock" : skill.kind == "Active" ? "aether" : "research", color);
+                theme.Icon(new Rect(emblem.x + 10, emblem.y + 10, 26, 26), skill.level == 0 ? "lock" : skill.kind == "Active" ? "mana" : "research", color);
                 GUILayout.Space(10); GUILayout.BeginVertical();
                 GUILayout.Label(skill.kind.ToUpperInvariant() + (skill.level == 0 ? " · LOCKED" : " · LEVEL " + skill.level + " / 5"), theme.Eyebrow);
                 GUILayout.Label(skill.name, sectionStyle);
@@ -416,7 +429,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 15) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 16) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)

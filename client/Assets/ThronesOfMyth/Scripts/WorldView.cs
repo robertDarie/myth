@@ -86,7 +86,7 @@ namespace ThronesOfMyth
             }
             foreach(var n in world.nodes)
             {
-                Put(seen,n.id,"node",n.x,n.z,n.resource=="stone"?new Color(.62f,.65f,.7f):n.resource=="aether"?new Color(.6f,.35f,.9f):n.resource=="gold"?gold:n.resource=="wood"?new Color(.3f,.55f,.25f):new Color(.75f,.62f,.35f),n.name+" · "+n.remaining,-1,n.resource);
+                Put(seen,n.id,"node",n.x,n.z,n.resource=="stone"?new Color(.62f,.65f,.7f):n.resource=="mana"?new Color(.6f,.35f,.9f):n.resource=="gold"?gold:n.resource=="wood"?new Color(.3f,.55f,.25f):new Color(.75f,.62f,.35f),n.name+" · "+n.remaining,-1,n.resource);
                 var piece=pieces[n.id];piece.compactLabel=n.remaining>0?n.remaining.ToString("N0"):"Empty";piece.icon=n.resource;piece.resource?.Observe(n.remaining,n.capacity);
             }
             foreach(var army in world.armies)if(army.state=="Gathering"&&pieces.TryGetValue(army.targetId??"",out var target)&&target.resource!=null)pieces[army.id].actor.GatheringColor(target.color);

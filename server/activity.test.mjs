@@ -26,7 +26,7 @@ test('a city reaches the final chest through normal repeatable solo play without
  for(let i=0;i<2;i++){cmd(w,a,'move',{x:14,z:10});advance(w,10);cmd(w,a,'attack',{targetId:w.camps[0].id});advance(w,30);cmd(w,a,'return');advance(w,50);}
  for(const id of['gather','food','scout','camps','patrol','offering'])claim(w,a,id);
  const daily=activitySnapshot(w,a).daily;assert.equal(daily.points,105);assert.ok(daily.chests.every(c=>c.canClaim));assert.equal(a.allianceId,'');assert.equal(a.summonCount,0);assert.equal(a.daily.counters.trained,0);assert.equal(a.daily.counters.helps,0);
- const before=Object.fromEntries(['wood','food','gold','stone','aether','sigils'].map(k=>[k,a[k]]));
+ const before=Object.fromEntries(['wood','food','gold','stone','mana','sigils'].map(k=>[k,a[k]]));
  for(const chest of daily.chests)cmd(w,a,'activity-chest',{targetId:chest.id,period:daily.period});
  for(const resource of Object.keys(before))assert.equal(a[resource]-before[resource],ACTIVITY_CHESTS.reduce((n,c)=>n+(c.reward[resource]||0),0));
  assert.ok(activitySnapshot(w,a).daily.chests.every(c=>c.claimed));assert.equal(activitySnapshot(w,a).daily.points,105);
@@ -92,13 +92,13 @@ test('malformed daily counters, chest claims, alliance contribution rows and clo
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad,{now:()=>Date.UTC(2026,10,2,12)}),/activity|claims/);
  }
  const old=structuredClone(w.toSave());old.schema=9;delete old.world.activityClockMs;for(const p of old.world.players){delete p.daily;delete p.weeklyClaims;}for(const a of old.world.alliances)delete a.weekly;
- const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,14);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
+ const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,15);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
 });
 
 test('all three weekly goals unlock individual rewards only for members who earned the required contributions',()=>{
  const {w,a,b,c}=setup();join(w,a,b);recordActivity(w,a,'gather',1600);recordActivity(w,a,'helps',8);recordActivity(w,b,'gather',100);recordActivity(w,b,'helps',1);
  for(let i=0;i<3;i++)recordStrongholdActivity(w,{id:'earned-victory-'+i,settled:true,attackingAllianceId:a.allianceId,rewards:[{playerId:a.id},{playerId:b.id}]});
- const board=activitySnapshot(w,b).alliance;assert.ok(board.goals.every(g=>g.canClaim));const before=Object.fromEntries(['wood','food','gold','stone','aether','sigils'].map(k=>[k,b[k]]));
+ const board=activitySnapshot(w,b).alliance;assert.ok(board.goals.every(g=>g.canClaim));const before=Object.fromEntries(['wood','food','gold','stone','mana','sigils'].map(k=>[k,b[k]]));
  for(const goal of board.goals)goalClaim(w,b,goal.id);
  for(const k of Object.keys(before))assert.equal(b[k]-before[k],board.goals.reduce((n,g)=>n+(g.reward[k]||0),0));
  assert.ok(activitySnapshot(w,b).alliance.goals.every(g=>g.claimed));assert.ok(activitySnapshot(w,a).alliance.goals.every(g=>g.canClaim));
@@ -114,7 +114,7 @@ test('authenticated activity claims preserve daily privacy, alliance-only ledger
  const sessions=await Promise.all(['HTTP Active','HTTP Member','HTTP Outsider'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));
  const [a,b,c]=sessions.map(s=>w.authenticate(s.token));join(w,a,b);
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();
- assert.equal((await post(0,{type:'gather',targetId:w.nodes[0].id})).status,200);advance(w,30);await post(0,{type:'return'});advance(w,10);const own=await get(0),period=own.activity.daily.period;assert.equal(own.version,15);
+ assert.equal((await post(0,{type:'gather',targetId:w.nodes[0].id})).status,200);advance(w,30);await post(0,{type:'return'});advance(w,10);const own=await get(0),period=own.activity.daily.period;assert.equal(own.version,16);
  assert.equal((await post(2,{type:'daily-claim',targetId:'gather',period,playerId:a.id,count:200})).status,400);
  assert.equal((await post(0,{type:'daily-claim',targetId:'gather',period})).status,200);const gold=a.gold;
  assert.equal((await post(0,{type:'daily-claim',targetId:'gather',period})).status,400);assert.equal(a.gold,gold);

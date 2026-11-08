@@ -1,3 +1,4 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -6,7 +7,7 @@ import { CIVILIZATIONS, COMMANDERS } from './content.mjs';
 import { createGameServer } from './http.mjs';
 const advance = (w, seconds) => { for (let i = 0; i < Math.round(seconds * 10); i++) w.tick(0.1); };
 const player = (w, name = 'A', civ = 'greek') => w.authenticate(w.join(name, civ).token);
-const cmd = (w, p, type, args = {}) => w.command(p, { type, ...args });
+const cmd = (w, p, type, args = {}) => fixtureCommand(w,p, { type, ...args });
 const rich = p => { p.gold = 10000; p.wood = 10000; p.food = 10000; };
 const alliance = (w, p, name = 'Dawn') => { cmd(w, p, 'alliance-create', { name }); return p.allianceId; };
 const flag = (w, p, x, z) => { p.x = x; p.z = z; cmd(w, p, 'flag', { x, z }); advance(w, w.flags.at(-1).buildRemaining + 0.1); };
@@ -95,7 +96,7 @@ test('training lane, troop capacity, mythic prerequisites and cancellation refun
   p.gold = 0; const food = p.food;
   assert.throws(() => cmd(w, p, 'upgrade'), /resources/); assert.equal(p.food, food);
 });
-test('city management remains available while an army is recovering; remote recruitment does not equip', () => {
+test('city management remains available during recovery; an authored fixture hero does not auto-equip', () => {
   const w = testWorld(), p = player(w); rich(p); p.recovery = 5;
   cmd(w, p, 'upgrade'); cmd(w, p, 'train');
   cmd(w, p, 'unlock-commander', { targetId: 'atalanta' });
@@ -103,10 +104,10 @@ test('city management remains available while an army is recovering; remote recr
   assert.throws(() => cmd(w, p, 'commander', { targetId: 'atalanta' }), /recover/);
   advance(w, 21); assert.equal(p.cityLevel, 2); assert.equal(p.reserveTroops, 5);
 });
-test('commanders are purchased once and a quest reward cannot be duplicated', () => {
+test('gold cannot recruit commanders and a quest reward cannot be duplicated', () => {
   const w = testWorld(), p = player(w); rich(p); const before = p.gold;
-  cmd(w, p, 'commander', { targetId: 'heracles' }); assert.equal(p.gold, before - 750);
-  cmd(w, p, 'commander', { targetId: 'captain' }); cmd(w, p, 'commander', { targetId: 'heracles' }); assert.equal(p.gold, before - 750);
+  assert.throws(()=>w.command(p,{type:'commander',targetId:'heracles'}),/Acquire/);
+  assert.throws(()=>w.command(p,{type:'unlock-commander',targetId:'heracles'}),/Recruit/);assert.equal(p.gold,before);
   assert.throws(() => cmd(w, p, 'quest')); p.kills = 3; cmd(w, p, 'quest');
   assert.ok(p.ownedCommanders.includes('atalanta')); assert.throws(() => cmd(w, p, 'quest'));
 });
@@ -170,11 +171,11 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version,15);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version,16);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(a.token);
-  assert.equal(after.version,15); assert.equal(after.players.length, 2);
+  assert.equal(after.version,16); assert.equal(after.players.length, 2);
   assert.ok(after.armies.find(p => p.id === a.playerId).x > before.players.find(p=>p.id===a.playerId).homeX);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);
@@ -197,7 +198,8 @@ test('economic and territory campaign reaches the sanctuary with opened-stage fi
   cmd(w, p, 'recruit'); advance(w, 21);
   for (let i = 0; i < 4; i++) { cmd(w, p, 'train'); advance(w, 9); }
   cmd(w, p, 'reinforce');
-  cmd(w, p, 'commander', { targetId: 'atalanta' });
+  for(let i=0;i<3;i++){cmd(w,p,'move',{x:14,z:10});advance(w,10);cmd(w,p,'attack',{targetId:w.camps[0].id});advance(w,20);cmd(w,p,'return');advance(w,50);}
+  cmd(w,p,'quest');cmd(w, p, 'commander', { targetId: 'atalanta' });
   const id = alliance(w, p);
   const build = (x, z) => { cmd(w, p, 'move', { x, z }); advance(w, 30); cmd(w, p, 'flag', { x, z }); advance(w, w.flags.at(-1).buildRemaining + 0.1); };
   const capture = targetId => { cmd(w, p, 'capture', { targetId }); advance(w, 30); assert.equal(w.sites.find(s => s.id === targetId).allianceId, id); };

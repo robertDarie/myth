@@ -4,9 +4,9 @@ import { activeSkill, ensureHero, heroLevel } from './progression.mjs';
 import { applyDamage, counterMultiplier } from './war.mjs';
 export const STRONGHOLD_RULES={minMarches:2,roundLimit:90,respawnSeconds:300};
 const TIERS={
- 1:{guardHealth:300,guardDamage:12,maxHealth:180,units:{infantry:60,archers:0,cavalry:0},reward:{wood:120,food:160,gold:160,stone:80,aether:8,sigils:2},xp:100},
- 2:{guardHealth:650,guardDamage:25,maxHealth:300,units:{infantry:70,archers:60,cavalry:0},reward:{wood:240,food:300,gold:300,stone:160,aether:16,sigils:3},xp:200},
- 3:{guardHealth:1050,guardDamage:44,maxHealth:500,units:{infantry:70,archers:70,cavalry:70},reward:{wood:400,food:500,gold:500,stone:240,aether:30,sigils:5},xp:350}
+ 1:{guardHealth:300,guardDamage:12,maxHealth:180,units:{infantry:60,archers:0,cavalry:0},reward:{wood:120,food:160,gold:160,stone:80,mana:8,sigils:2},xp:100},
+ 2:{guardHealth:650,guardDamage:25,maxHealth:300,units:{infantry:70,archers:60,cavalry:0},reward:{wood:240,food:300,gold:300,stone:160,mana:16,sigils:3},xp:200},
+ 3:{guardHealth:1050,guardDamage:44,maxHealth:500,units:{infantry:70,archers:70,cavalry:70},reward:{wood:400,food:500,gold:500,stone:240,mana:30,sigils:5},xp:350}
 };
 const DEFINITIONS=[['godbreaker-watch','Godbreaker Watch',1,27,20],['godbreaker-redoubt','Godbreaker Redoubt',1,14,32],['godbreaker-forge','Godbreaker War Forge',2,53,24],['godbreaker-spire','Godbreaker Runic Spire',2,24,53],['godbreaker-throne','Throne of the Godbreakers',3,62,61]];
 export const isStronghold=t=>t?.kind==='stronghold';

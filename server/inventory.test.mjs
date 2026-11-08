@@ -1,10 +1,11 @@
+import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { powerOf,rankings } from './power.mjs';
-const fixture=()=>{const w=testWorld(),s=w.join('Supplied'),p=w.authenticate(s.token);return {w,s,p};};
-const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
+const fixture=()=>{const w=testWorld({now:()=>Date.UTC(2026,10,8)}),s=w.join('Supplied'),p=w.authenticate(s.token);return {w,s,p};};
+const cmd=(w,p,type,extra={})=>fixtureCommand(w,p,{type,...extra});
 test('founding inventory is once-only, unopened packs are not spendable wealth and pack opening is exact',()=>{
  const {w,p}=fixture(),food=p.food;cmd(w,p,'inventory-supplies');assert.equal(p.food,food);assert.equal(p.inventory['food-pack-100'],2);
  assert.throws(()=>cmd(w,p,'inventory-supplies'),/already/);cmd(w,p,'inventory-use',{targetId:'food-pack-100',count:2});assert.equal(p.food,food+200);assert.equal(p.inventory['food-pack-100'],0);

@@ -250,7 +250,7 @@ namespace ThronesOfMyth
                     Fill(new Rect(c.x - 2 * u, c.y, 4 * u, 10 * u), color); Diamond(new Rect(r.x + 2 * u, r.y, 20 * u, 17 * u), color); break;
                 case "stone": case "quarry": Diamond(new Rect(r.x, r.y + 3 * u, 15 * u, 19 * u), color); Diamond(new Rect(r.x + 10 * u, r.y + 9 * u, 14 * u, 14 * u), color); break;
                 case "gold": case "mint": for (int i = 0; i < 3; i++) { Circle(new Rect(r.x + (i % 2) * 7 * u, r.y + (2 + i * 5) * u, 15 * u, 8 * u), color); } break;
-                case "aether": case "well": case "sigil": Diamond(new Rect(r.x + 3 * u, r.y, 18 * u, 24 * u), color); break;
+                case "aether": case "mana": case "well": case "sigil": Diamond(new Rect(r.x + 3 * u, r.y, 18 * u, 24 * u), color); break;
                 case "temple": case "oracle": case "academy": case "city": case "citadel":
                     Line(new Vector2(r.x, r.y + 7 * u), new Vector2(c.x, r.y + u), 3 * u, color); Line(new Vector2(c.x, r.y + u), new Vector2(r.xMax, r.y + 7 * u), 3 * u, color);
                     for (int i = 0; i < 3; i++) Fill(new Rect(r.x + (3 + i * 8) * u, r.y + 10 * u, 3 * u, 10 * u), color);
