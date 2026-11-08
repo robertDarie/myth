@@ -27,7 +27,9 @@ namespace ThronesOfMyth.Editor
                 const float tolerance=.025f;
                 if(point.x<bounds.xMin-tolerance||point.x>bounds.xMax+tolerance||point.z<bounds.yMin-tolerance||point.z>bounds.yMax+tolerance)errors.Add(context+": viewport outside map: "+point);
                 var projected=camera.WorldToViewportPoint(point);
-                if(Vector2.Distance(new Vector2(projected.x,projected.y),viewport)>.0005f)errors.Add(context+": ground picking round trip failed");
+                // Pixel error remains meaningful even in very thin windows, where tiny
+                // viewport fractions amplify normal world-coordinate float rounding.
+                if(Mathf.Abs(projected.x-viewport.x)*camera.pixelWidth>.75f||Mathf.Abs(projected.y-viewport.y)*camera.pixelHeight>.75f)errors.Add(context+": ground picking round trip failed");
             }
         }
         [MenuItem("Thrones of Myth/Visual Review/Validate Camera Boundaries")]
@@ -39,7 +41,7 @@ namespace ThronesOfMyth.Editor
             var camera=root.AddComponent<Camera>();camera.enabled=false;
             var controller=root.AddComponent<StrategyCamera>();controller.Initialize();controller.reducedMotion=true;
             var targets=new[]{new Vector3(1,0,1),new Vector3(79,0,1),new Vector3(1,0,79),new Vector3(79,0,79),new Vector3(40,0,1),new Vector3(1,0,40),new Vector3(79,0,40),new Vector3(40,0,79),new Vector3(40,0,40),new Vector3(-100,0,200)};
-            var sizes=new[]{new Vector2Int(1280,720),new Vector2Int(1920,1080),new Vector2Int(2560,1440),new Vector2Int(1024,768),new Vector2Int(2560,1080),new Vector2Int(3840,1080),new Vector2Int(720,1280)};
+            var sizes=new[]{new Vector2Int(1280,720),new Vector2Int(1920,1080),new Vector2Int(2560,1440),new Vector2Int(1024,768),new Vector2Int(2560,1080),new Vector2Int(3840,1080),new Vector2Int(720,1280),new Vector2Int(16384,2),new Vector2Int(2,16384)};
             try
             {
                 foreach(var size in sizes)

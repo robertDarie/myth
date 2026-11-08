@@ -139,7 +139,7 @@ namespace ThronesOfMyth
                 actor.selection = Ring(root, kind == "node" ? 1.5f : 2.6f, team, 0.09f).gameObject;
                 actor.selection.SetActive(false);
             }
-            return actor;
+            actor.ConfigureFootprint();return actor;
         }
         private void City(Transform root, string culture, Color team)
         {
@@ -176,7 +176,7 @@ namespace ThronesOfMyth
         private WorldActorAnimation.Rig Soldier(Transform root, Vector3 offset, Color team, string culture, WorldActorAnimation actor, string type, bool commander = false)
         {
             var unit = Pivot(root, commander ? "Commander" : type + " formation proxy", offset);
-            var rig = new WorldActorAnimation.Rig { root = unit, ranged = type == "archers", mounted = type == "cavalry", commander = commander };
+            var rig = new WorldActorAnimation.Rig { root = unit, formationRole=type=="archers"?"Archer":type=="cavalry"?"Cavalry":"Infantry", ranged = type == "archers", mounted = type == "cavalry", commander = commander };
             actor.rigs.Add(rig); if (!commander) actor.soldiers.Add(unit.gameObject);
             rig.bodyRest = Vector3.up * (rig.mounted ? 0.65f : 0);
             rig.body = Pivot(unit, "Breathing torso", rig.bodyRest);
@@ -256,8 +256,8 @@ namespace ThronesOfMyth
         {
             var beast = new GameObject("Mythic · " + culture).transform; beast.SetParent(root, false); beast.localPosition = offset;
             var bodyRoot = Pivot(beast, "Creature torso", Vector3.zero);
-            var rig = new WorldActorAnimation.Rig { root = beast, body = bodyRoot, bodyRest = Vector3.zero };
-            if (actor != null) actor.rigs.Add(rig);
+            var rig = new WorldActorAnimation.Rig { root = beast, body = bodyRoot, bodyRest = Vector3.zero, formationRole="Mythic" };
+            if (actor != null){actor.rigs.Add(rig);actor.soldiers.Add(beast.gameObject);}
             bool quadruped = culture == "egyptian" || culture == "chinese";
             Color body = culture == "norse" ? new Color(0.52f, 0.73f, 0.79f) : culture == "chinese" ? new Color(0.26f, 0.59f, 0.49f) : culture == "japanese" ? new Color(0.28f, 0.29f, 0.37f) : new Color(0.52f, 0.35f, 0.22f);
             Ball(bodyRoot, 0, 1, 0, 0.95f, quadruped ? 0.85f : 1.5f, quadruped ? 1.65f : 0.85f, body);
@@ -279,26 +279,6 @@ namespace ThronesOfMyth
             if (culture == "norse") { rig.weapon = Pivot(bodyRoot, "Giant club shoulder", new Vector3(0.72f, 1.4f, 0)); Box(rig.weapon, 0, -0.2f, 0, 0.2f, 2, 0.2f, timber); Ball(rig.weapon, 0, 0.7f, 0, 0.7f, 0.7f, 0.7f, darkStone); }
             if (culture == "greek") MinotaurKit(bodyRoot, rig);
             if (culture == "egyptian") Box(bodyRoot, 0, 1.95f, 0.65f, 0.85f, 0.25f, 0.65f, bronze);
-        }
-        private void Resource(Transform root, string resource, Color color)
-        {
-            Pillar(root, 0, 0.07f, 0, 2.3f, 0.14f, darkStone);
-            if (resource == "wood")
-            {
-                for (int i = 0; i < 5; i++) { var log = Pillar(root, (i % 3 - 1) * 0.5f, 0.35f + i / 3 * 0.4f, 0, 0.42f, 1.7f, timber); log.localRotation = Quaternion.Euler(90, 0, 0); }
-            }
-            else if (resource == "food")
-            {
-                for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) { Pillar(root, x * 0.5f, 0.4f, z * 0.5f, 0.055f, 0.8f, bronze); Ball(root, x * 0.5f, 0.85f, z * 0.5f, 0.16f, 0.4f, 0.16f, color); }
-            }
-            else
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    var rock = Shape(root, resource == "aether" ? PrimitiveType.Cube : PrimitiveType.Sphere, new Vector3((i % 2 - 0.5f) * 0.8f, 0.5f + i * 0.1f, (i / 2 - 0.5f) * 0.7f), new Vector3(0.65f, resource == "aether" ? 1.3f : 0.75f, 0.65f), color);
-                    rock.localRotation = Quaternion.Euler(resource == "aether" ? 15 : 0, i * 35, resource == "aether" ? 25 : 0);
-                }
-            }
         }
         public void Dispose() { foreach (var mesh in authoredMeshes) Object.Destroy(mesh); authoredMeshes.Clear(); equipmentMeshes.Clear(); foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
     }

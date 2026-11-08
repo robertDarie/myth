@@ -5,7 +5,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class WorldView : MonoBehaviour
     {
-        private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public string kind, visualKey; public WorldActorAnimation actor; }
+        private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public string kind, visualKey,compactLabel,icon; public bool owned,working,compactFormation; public ResourceSiteVisual resource; public WorldActorAnimation actor; }
         private readonly Dictionary<string, Piece> pieces = new Dictionary<string, Piece>();
         private readonly WorldArtFactory art = new WorldArtFactory();
         public bool reducedMotion;
@@ -40,7 +40,7 @@ namespace ThronesOfMyth
             if (piece.visualKey != visualKey)
             {
                 if (piece.actor != null) { piece.actor.gameObject.SetActive(false); Destroy(piece.actor.gameObject); }
-                piece.actor = art.Build(piece.root.transform, kind, variant, color, mythic, units, commanderId); piece.visualKey = visualKey;
+                piece.actor = art.Build(piece.root.transform, kind, variant, color, mythic, units, commanderId); piece.resource=piece.actor.GetComponent<ResourceSiteVisual>(); piece.visualKey = visualKey;
             }
             if (piece.actor.fire != null) piece.actor.fire.gameObject.SetActive(health != 0);
         }
@@ -53,6 +53,7 @@ namespace ThronesOfMyth
             {
                 var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
                 Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.units.Veterans>0?" · T2: "+p.units.Veterans:"") + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic, p.units, p.commanderId);
+                pieces[p.id].owned=p.ownerId==ownId;pieces[p.id].compactLabel=p.name;pieces[p.id].icon="army";pieces[p.id].working=p.state=="Gathering";
                 pieces[p.id].actor.allowAudio = p.ownerId == ownId;
                 pieces[p.id].actor.Observe(p);
             }
@@ -60,21 +61,29 @@ namespace ThronesOfMyth
             {
                 var color = p.id == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
                 Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · " + p.ageName + " · City " + p.cityLevel, -1, p.civilization);
+                pieces["city-"+p.id].owned=p.id==ownId;pieces["city-"+p.id].compactLabel=p.name+" · "+p.cityLevel;pieces["city-"+p.id].icon="city";
                 pieces["city-" + p.id].root.transform.localScale = Vector3.one * (0.82f + 0.035f * p.cityLevel);
             }
             foreach (var boss in world.strongholds)
             {
                 bool wasAlive = pieces.TryGetValue(boss.id, out var previousBoss) && previousBoss.health > 0;
                 Put(seen, boss.id, "stronghold", boss.x, boss.z, boss.respawn > 0 ? Color.gray : red, boss.name + " · Tier " + boss.tier + (boss.respawn > 0 ? " · Reforms " + Mathf.CeilToInt(boss.respawn) + "s" : " · Guards " + Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth)), boss.health / Mathf.Max(1, boss.maxHealth), boss.tier.ToString());
+                pieces[boss.id].compactLabel="Tier "+boss.tier;pieces[boss.id].icon="camp";
                 pieces[boss.id].actor.ObserveCamp(new CampData { health = Mathf.CeilToInt(boss.guardHealth + boss.health) }, wasAlive && boss.respawn > 0);
             }
             foreach (var c in world.camps)
             {
                 bool wasAlive = pieces.TryGetValue(c.id, out var previous) && previous.health > 0;
                 Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth, c.id);
+                pieces[c.id].compactLabel=c.health>0?"Lv "+c.level:"Reforming";pieces[c.id].icon="camp";
                 pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
             }
-            foreach (var n in world.nodes) Put(seen, n.id, "node", n.x, n.z, n.resource == "stone" ? new Color(0.62f, 0.65f, 0.7f) : n.resource == "aether" ? new Color(0.6f, 0.35f, 0.9f) : n.resource == "gold" ? gold : n.resource == "wood" ? new Color(0.3f, 0.55f, 0.25f) : new Color(0.75f, 0.62f, 0.35f), n.name + " · " + n.remaining, -1, n.resource);
+            foreach(var n in world.nodes)
+            {
+                Put(seen,n.id,"node",n.x,n.z,n.resource=="stone"?new Color(.62f,.65f,.7f):n.resource=="aether"?new Color(.6f,.35f,.9f):n.resource=="gold"?gold:n.resource=="wood"?new Color(.3f,.55f,.25f):new Color(.75f,.62f,.35f),n.name+" · "+n.remaining,-1,n.resource);
+                var piece=pieces[n.id];piece.compactLabel=n.remaining>0?n.remaining.ToString("N0"):"Empty";piece.icon=n.resource;piece.resource?.Observe(n.remaining,n.capacity);
+            }
+            foreach(var army in world.armies)if(army.state=="Gathering"&&pieces.TryGetValue(army.targetId??"",out var target)&&target.resource!=null)pieces[army.id].actor.GatheringColor(target.color);
             foreach (var s in world.sites) Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, s.name + (s.locked ? " · Sealed" : "") + (s.unknown ? " · Unsurveyed" : "") + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : ""), s.health / Mathf.Max(1, s.maxHealth), s.kind);
             foreach (var f in world.flags)
             {
@@ -92,63 +101,60 @@ namespace ThronesOfMyth
         private void Update()
         {
             var camera = Camera.main;
-            bool wide = camera != null && camera.orthographicSize > 25;
+
             foreach (var pair in pieces)
             {
                 var piece = pair.Value;
                 if (piece.moving && (piece.root.transform.position - piece.destination).sqrMagnitude > 144)
                 { piece.root.transform.position = piece.destination; piece.actor.RebaseMotion(); }
                 piece.root.transform.position = piece.moving ? Vector3.Lerp(piece.root.transform.position, piece.destination, 1 - Mathf.Exp(-14 * Time.deltaTime)) : piece.destination;
-                if (piece.actor != null) { piece.actor.reducedMotion = reducedMotion; piece.actor.SetSelected(pair.Key == selectedId,pair.Key==hoveredId); piece.actor.SetWideView(wide); }
+                if(piece.actor!=null)
+                {
+                    piece.actor.reducedMotion=reducedMotion;piece.actor.SetSelected(pair.Key==selectedId,pair.Key==hoveredId);
+                    float unitPixels=camera==null?100:1.6f*piece.root.transform.lossyScale.x*camera.pixelHeight/(2*Mathf.Max(.01f,camera.orthographicSize));
+                    float scale=Mathf.Max(.8f,labelScale);
+                    if(pair.Key==selectedId||pair.Key==hoveredId)piece.compactFormation=false;
+                    else if(unitPixels<32*scale)piece.compactFormation=true;
+                    else if(unitPixels>40*scale)piece.compactFormation=false;
+                    piece.actor.SetWideView(piece.compactFormation);
+                }
             }
         }
-        private readonly List<Rect> labelBounds = new List<Rect>();
-        public void DrawLabels(Camera camera)
+        private readonly WorldLabelLayout labelLayout=new WorldLabelLayout();
+        private readonly List<string> labelOrder=new List<string>();
+        private GUIStyle markerText;
+        public void DrawLabels(Camera camera,MythInterfaceTheme theme)
         {
-            if (camera == null || !labels) return;
-            var colorBefore = GUI.color;
-            labelBounds.Clear();
-            var order = new List<string>(pieces.Keys);
-            order.Sort((a, b) => LabelPriority(a).CompareTo(LabelPriority(b)));
-            var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(10, Mathf.RoundToInt(11 * labelScale)), wordWrap = false, padding = new RectOffset(5, 5, 0, 0), clipping = TextClipping.Clip };
-            foreach (string id in order)
+            if(camera==null||!labels)return;
+            int size=Mathf.Max(12,Mathf.RoundToInt(13*labelScale));
+            if(markerText==null||markerText.fontSize!=size)markerText=new GUIStyle(GUI.skin.label){alignment=TextAnchor.MiddleLeft,fontSize=size,wordWrap=false,padding=new RectOffset(),clipping=TextClipping.Clip};
+            float scale=Mathf.Max(.8f,labelScale);
+            labelLayout.Reset(new Rect(0,0,Screen.width,Screen.height));labelOrder.Clear();labelOrder.AddRange(pieces.Keys);
+            labelOrder.Sort((a,b)=>{int priority=LabelPriority(a).CompareTo(LabelPriority(b));return priority!=0?priority:string.CompareOrdinal(a,b);});
+            foreach(string id in labelOrder)
             {
-                var piece = pieces[id];
-                if (piece.actor != null) piece.actor.DrawCaption(camera, labelScale, occluded);
-                var point = camera.WorldToScreenPoint(piece.root.transform.position + Vector3.up * (piece.kind == "army" ? 2.8f : 3.7f));
-                if (point.z <= 0 || point.x < 0 || point.x > Screen.width || point.y < 0 || point.y > Screen.height) continue;
-                if (piece.kind == "node" && camera.orthographicSize > 20 && id != selectedId && id != hoveredId) continue;
-                if (piece.kind == "camp" && camera.orthographicSize > 34 && id != selectedId && id != hoveredId) continue;
-                float width = Mathf.Clamp(style.CalcSize(new GUIContent(piece.label)).x, 70 * labelScale, 210 * labelScale);
-                var rect = new Rect(point.x - width / 2, Screen.height - point.y - 10 * labelScale, width, 22 * labelScale);
-                bool placed = false;
-                for (int attempt = 0; attempt < 3; attempt++)
-                {
-                    bool collision = false;
-                    foreach (var occupied in labelBounds) if (occupied.Overlaps(rect)) { collision = true; break; }
-                    bool blocked = occluded != null && (occluded(rect.center) || occluded(new Vector2(rect.xMin, rect.yMin)) || occluded(new Vector2(rect.xMax, rect.yMax)));
-                    if (!collision && !blocked && rect.yMin >= 0 && rect.yMax <= Screen.height) { placed = true; break; }
-                    rect.y -= 24 * labelScale;
-                }
-                if (!placed) continue;
-                labelBounds.Add(new Rect(rect.x - 3, rect.y - 2, rect.width + 6, rect.height + 8));
-                GUI.color = new Color(.025f, .06f, .08f, id == selectedId ? .92f : .72f); GUI.DrawTexture(rect, Texture2D.whiteTexture);
-                GUI.color = id == selectedId ? MythInterfaceTheme.Gold : MythInterfaceTheme.Cream;
-                GUI.Label(rect, piece.label, style);
-                if (piece.health >= 0)
-                {
-                    GUI.color = new Color(.025f, .05f, .06f); GUI.DrawTexture(new Rect(rect.center.x - 30, rect.yMax + 2, 60, 3), Texture2D.whiteTexture);
-                    GUI.color = piece.color; GUI.DrawTexture(new Rect(rect.center.x - 30, rect.yMax + 2, 60 * Mathf.Clamp01(piece.health), 3), Texture2D.whiteTexture);
-                }
+                var piece=pieces[id];bool selected=id==selectedId,hovered=id==hoveredId,detailed=selected||hovered;
+                piece.actor?.DrawCaption(camera,labelScale,occluded);
+                var origin=piece.root.transform.position+Vector3.up*(piece.kind=="army"?2.8f:piece.kind=="node"?1.8f:3.7f);
+                var screen=camera.WorldToScreenPoint(origin);
+                if(screen.z<=0||screen.x<0||screen.x>Screen.width||screen.y<0||screen.y>Screen.height)continue;
+                string text=detailed?piece.label:piece.compactLabel??piece.label;
+                string icon=piece.icon??(piece.kind=="site"?"temple":piece.kind=="flag"?"alliance":piece.kind=="scout"?"army":"chronicle");
+                float width=Mathf.Clamp(markerText.CalcSize(new GUIContent(text)).x+34*scale,58*scale,(detailed?300:160)*scale);
+                float height=(detailed?30:26)*scale;
+                var desired=new Rect(screen.x-width/2,Screen.height-screen.y-height/2,width,height);
+                if(!labelLayout.TryPlace(desired,4*scale,occluded,out var rect))continue;
+                if(detailed&&(rect.center-desired.center).sqrMagnitude>1)MythInterfaceTheme.Line(new Vector2(screen.x,Screen.height-screen.y),new Vector2(rect.center.x,rect.yMax),scale,new Color(.90f,.74f,.43f,.65f));
+                theme.WorldMarker(rect,text,icon,detailed?MythInterfaceTheme.Gold:piece.color,selected,markerText,scale);
+                if(piece.working)theme.WorldStatus(new Rect(rect.xMax-11*scale,rect.y-5*scale,14*scale,14*scale),"Gathering",MythInterfaceTheme.Teal,scale);
+                if(piece.health>=0&&(detailed||piece.health<.999f))theme.Bar(new Rect(rect.x+7*scale,rect.yMax+2*scale,rect.width-14*scale,3*scale),piece.health,piece.color);
             }
-            GUI.color = colorBefore;
         }
         private int LabelPriority(string id)
         {
-            if (id == selectedId) return 0;
-            if (id == hoveredId) return 1;
-            string kind = pieces[id].kind;
-            return kind == "city" ? 1 : kind == "army" ? 2 : kind == "site" ? 3 : kind == "camp" ? 4 : 5;
+            if(id==selectedId)return 0;if(id==hoveredId)return 1;
+            var piece=pieces[id];if(piece.owned&&piece.kind=="army")return 2;
+            return piece.kind=="city"?3:piece.kind=="army"?4:piece.kind=="site"?5:piece.kind=="camp"?6:7;
         }
         public void Clear()
         {

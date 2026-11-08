@@ -25,7 +25,7 @@ namespace ThronesOfMyth
             }
             offsets=Rect.MinMaxRect(minX,minZ,maxX,maxZ);return offsets.width>.0001f&&offsets.height>.0001f;
         }
-        public static float MaximumZoom(Rect bounds,Rect offsets) => Mathf.Max(.01f,Mathf.Min(bounds.width/offsets.width,bounds.height/offsets.height)*.9999f);
+        public static float MaximumZoom(Rect bounds,Rect offsets) => Mathf.Min(bounds.width/offsets.width,bounds.height/offsets.height)*.9999f;
         public static Vector3 ClampFocus(Vector3 focus,float size,Rect bounds,Rect offsets)
         {
             float minX=bounds.xMin-offsets.xMin*size,maxX=bounds.xMax-offsets.xMax*size;

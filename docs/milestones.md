@@ -108,3 +108,10 @@ Implemented viewport-footprint camera constraints and fit zoom, regional map
 presentation, compact HUD and city framing/selection/status improvements.
 206 server tests pass; native Unity compilation, geometry validation and rendered
 Windows acceptance remain pending. See [the validation guide](visual-camera-0.22.md).
+
+## Visual quality phase 1 — 0.23
+
+Resource worksites and stock depletion/refill presentation, quiet icon-led map
+markers, mixed-class screen-size detail, fitted selection/picking and observed
+gathering feedback. No gameplay/save format changes. Native visual acceptance
+remains pending; see [the audit and phased plan](visual-quality-plan-0.23.md).

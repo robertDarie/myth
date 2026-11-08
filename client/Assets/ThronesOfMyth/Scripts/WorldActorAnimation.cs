@@ -13,6 +13,7 @@ namespace ThronesOfMyth
             public Vector3 bodyRest, formationRest, formationVelocity;
             public bool formationCaptured;
             public bool ranged, mounted, commander;
+            public string formationRole;
         }
         public Transform artwork, banner, fire, projectile, impact;
         public GameObject selection, skill, shield;
@@ -34,6 +35,19 @@ namespace ThronesOfMyth
         private bool recovering, campDead, impactSoundPending, wasFlashing;
         private string previewPose;
         private float previewPoseUntil, dustAt;
+        public Vector3 FootprintCenter {get;private set;}
+        public float FootprintRadius {get;private set;}=2.2f;
+        private LineRenderer selectionLine;
+        private BoxCollider pickingCollider;
+        private Bounds visualBounds;
+        private Quaternion pickingRotation;
+        private bool pickingInitialized;
+        private float workAt;
+        private Color workColor=new Color(.68f,.70f,.47f);
+        private bool? previousWide;
+        private readonly HashSet<string> visibleRoles=new HashSet<string>();
+        public bool IsGathering => gathering;
+        public bool IsWorking => gathering&&!recovering;
         private float walkBlend, recoilUntil, victoryUntil, impactAt, impactUntil, footstepAt;
         private Renderer[] flashRenderers;
         private Color[][] flashColors;
@@ -105,19 +119,63 @@ namespace ThronesOfMyth
             skillKind = kind; castUntil = Time.unscaledTime + 0.9f;
             if (skillLine != null) skillLine.sharedMaterial = kind == "heal" ? healMaterial : kind == "shield" ? shieldMaterial : damageMaterial;
         }
+        public void ConfigureFootprint()
+        {
+            bool first=true;var bounds=new Bounds();
+            foreach(var renderer in GetComponentsInChildren<Renderer>())
+            {
+                if(renderer is LineRenderer)continue;
+                var local=renderer.localBounds;
+                for(int i=0;i<8;i++)
+                {
+                    var corner=local.center+Vector3.Scale(local.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));
+                    var point=transform.InverseTransformPoint(renderer.transform.TransformPoint(corner));
+                    if(first){bounds=new Bounds(point,Vector3.zero);first=false;}else bounds.Encapsulate(point);
+                }
+            }
+            if(first)return;
+            FootprintCenter=new Vector3(bounds.center.x,0,bounds.center.z);
+            FootprintRadius=Mathf.Max(.9f,new Vector2(bounds.extents.x,bounds.extents.z).magnitude+.12f);
+            selectionLine=selection==null?null:selection.GetComponent<LineRenderer>();
+            if(selectionLine!=null)
+            {
+                for(int i=0;i<selectionLine.positionCount;i++){float angle=i*Mathf.PI*2/selectionLine.positionCount;selectionLine.SetPosition(i,FootprintCenter+new Vector3(Mathf.Cos(angle)*FootprintRadius,.09f,Mathf.Sin(angle)*FootprintRadius));}
+            }
+            visualBounds=bounds;pickingCollider=transform.parent.GetComponent<BoxCollider>();RefreshPickingBounds();
+        }
+        private void RefreshPickingBounds()
+        {
+            if(pickingCollider==null||pickingInitialized&&pickingRotation==transform.localRotation)return;
+            pickingInitialized=true;pickingRotation=transform.localRotation;
+            var matrix=Matrix4x4.TRS(transform.localPosition,pickingRotation,transform.localScale);
+            var x=matrix.MultiplyVector(Vector3.right*visualBounds.extents.x);
+            var y=matrix.MultiplyVector(Vector3.up*visualBounds.extents.y);
+            var z=matrix.MultiplyVector(Vector3.forward*visualBounds.extents.z);
+            var extents=new Vector3(Mathf.Abs(x.x)+Mathf.Abs(y.x)+Mathf.Abs(z.x),Mathf.Abs(x.y)+Mathf.Abs(y.y)+Mathf.Abs(z.y),Mathf.Abs(x.z)+Mathf.Abs(y.z)+Mathf.Abs(z.z));
+            pickingCollider.center=matrix.MultiplyPoint3x4(visualBounds.center);pickingCollider.size=extents*2+Vector3.one*.20f;
+        }
+        public void GatheringColor(Color color){workColor=color;}
         public void SetWideView(bool wide)
         {
-            bool keptMythic=false;
-            for(int i=0;i<soldiers.Count;i++)
+            if(previousWide==wide)return;previousWide=wide;visibleRoles.Clear();
+            foreach(var soldier in soldiers)
             {
-                var unit=soldiers[i].GetComponent<AuthoredUnit>();bool special=unit!=null&&unit.mythic&&!keptMythic;if(special)keptMythic=true;
-                bool show=!wide||i==0||special;if(soldiers[i].activeSelf!=show)soldiers[i].SetActive(show);
+                var unit=soldier.GetComponent<AuthoredUnit>();
+                string role=unit!=null?unit.formationRole:null;
+                if(string.IsNullOrEmpty(role))
+                {
+                    var rig=rigs.Find(r=>r.root==soldier.transform);
+                    role=rig==null?"Mythic":rig.formationRole;
+                }
+                bool representative=visibleRoles.Add(role??"Infantry");
+                bool show=!wide||representative;if(soldier.activeSelf!=show)soldier.SetActive(show);
             }
         }
         public void SetSelected(bool chosen,bool hovered=false)
         {
             if(selection==null)return;selection.SetActive(chosen||hovered);
-            var line=selection.GetComponent<LineRenderer>();if(line!=null)line.widthMultiplier=chosen ? .09f:.045f;
+            if(selectionLine==null)selectionLine=selection.GetComponent<LineRenderer>();
+            if(selectionLine!=null)selectionLine.widthMultiplier=chosen ? .09f:.045f;
         }
         private void LateUpdate()
         {
@@ -188,6 +246,9 @@ namespace ThronesOfMyth
                 if (impacting) { impact.position = attackTarget + Vector3.up * 0.12f; impact.localScale = Vector3.one * (reducedMotion ? 1 : 0.5f + (Time.unscaledTime - impactAt) * 4); }
             }
             if (impacting && impactSoundPending) { impactSoundPending = false; BattlefieldFeedback.Emit("impact",attackTarget,new Color(1,.79f,.35f),reducedMotion); if (allowAudio) BattlefieldAudio.Cue(rangedAttack ? "impact" : "strike", attackTarget); }
+            RefreshPickingBounds();
+            if(gathering&&!walking&&!recovering&&Time.unscaledTime>=workAt)
+            {workAt=Time.unscaledTime+1.2f;BattlefieldFeedback.Emit("gather",targetPosition,workColor,reducedMotion);}
             if(walking&&Time.unscaledTime>dustAt&&!previewWalking){dustAt=Time.unscaledTime+.28f;BattlefieldFeedback.Emit("dust",position,new Color(.70f,.63f,.43f),reducedMotion);}
             if (allowAudio && walkBlend > 0.6f && Time.unscaledTime > footstepAt)
             { footstepAt = Time.unscaledTime + 0.4f; BattlefieldAudio.Cue(mountedArmy?"hoof":"step", position); }

@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.22
+## Playable slice 0.23
 
+- Map readability phase: five recognizable resource worksites with server-driven
+  stock, compact map markers and mixed-class overview formations with fitted
+  selection/picking. [Audit, phases and native acceptance](docs/visual-quality-plan-0.23.md).
 - Viewport-aware world camera limits and aspect-aware zoom; compact HUD, regional
   terrain/scenery and city framing/status feedback. Native visual acceptance is
   pending; see [changes and Windows validation](docs/visual-camera-0.22.md).

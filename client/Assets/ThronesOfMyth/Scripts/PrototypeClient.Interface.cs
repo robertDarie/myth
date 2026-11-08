@@ -160,7 +160,7 @@ namespace ThronesOfMyth
             commanderPreview?.SetVisible(interfacePage == InterfacePage.Heroes && !LoadingActive && showCommanderModel);
             if (map != null) map.reducedMotion = reducedMotion;
             if(cameraControl!=null)cameraControl.reducedMotion=reducedMotion;
-            if (!LoadingActive && world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main); }
+            if (!LoadingActive && world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main,theme); }
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(InterfaceScale, InterfaceScale, 1));
             GUI.color = Color.white;
             if (LoadingActive) RenderLoadingScreen();
@@ -225,7 +225,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.22  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.23  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()

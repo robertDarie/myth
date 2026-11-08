@@ -39,7 +39,7 @@ namespace ThronesOfMyth
                 renderer.sharedMaterials = palette; renderer.updateWhenOffscreen = false;
             }
             animation.cullingType = AnimationCullingType.BasedOnRenderers; animation.Play("Idle");
-            var unit = pivot.gameObject.AddComponent<AuthoredUnit>(); unit.player = animation; unit.commander = role == "Commander"; unit.mythic = role == "Mythic"; unit.ranged = role == "Archer" || heroId == "atalanta" || heroId == "scout" || heroId == "tomoe";
+            var unit = pivot.gameObject.AddComponent<AuthoredUnit>(); unit.player = animation; unit.formationRole=role; unit.commander = role == "Commander"; unit.mythic = role == "Mythic"; unit.ranged = role == "Archer" || heroId == "atalanta" || heroId == "scout" || heroId == "tomoe";
             actor.authored.Add(unit); if (role != "Commander") actor.soldiers.Add(pivot.gameObject);
             return true;
         }

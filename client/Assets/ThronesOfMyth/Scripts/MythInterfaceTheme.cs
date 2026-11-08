@@ -118,6 +118,7 @@ namespace ThronesOfMyth
                 singleLines[style] = line;
             }
             line.alignment = style.alignment == TextAnchor.MiddleCenter ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+            line.normal.textColor=style.normal.textColor;
             string shown = text ?? "";
             if (line.CalcSize(new GUIContent(shown)).x > rect.width)
             {
@@ -125,6 +126,22 @@ namespace ThronesOfMyth
                 shown += "…";
             }
             GUI.Label(rect, new GUIContent(shown, shown == text ? "" : text), line);
+        }
+        public void WorldMarker(Rect rect,string text,string icon,Color accent,bool chosen,GUIStyle textStyle,float scale)
+        {
+            // Quiet map plates use the same palette/icons as the HUD, without panel trim.
+            Fill(new Rect(rect.x+1,rect.y+2,rect.width,rect.height),new Color(.015f,.03f,.04f,.24f));
+            Fill(rect,chosen?new Color(.09f,.16f,.18f,.97f):new Color(.025f,.055f,.065f,.83f));
+            Fill(new Rect(rect.x,rect.y,chosen?3*scale:2*scale,rect.height),accent);
+            Icon(new Rect(rect.x+7*scale,rect.center.y-8*scale,16*scale,16*scale),icon,accent);
+            var previous=textStyle.normal.textColor;textStyle.normal.textColor=chosen?Cream:Muted;
+            OneLine(new Rect(rect.x+29*scale,rect.y,rect.width-35*scale,rect.height),text,textStyle);textStyle.normal.textColor=previous;
+        }
+        public void WorldStatus(Rect rect,string tooltip,Color accent,float scale)
+        {
+            Circle(rect,new Color(.025f,.06f,.07f));
+            Circle(new Rect(rect.x+3*scale,rect.y+3*scale,rect.width-6*scale,rect.height-6*scale),accent);
+            GUI.Label(rect,new GUIContent("",tooltip),GUIStyle.none);
         }
         public bool Button(Rect rect, string text, bool primary = false, bool enabled = true)
         {
@@ -166,6 +183,10 @@ namespace ThronesOfMyth
             var c = r.center; float u = r.width / 24;
             switch (id)
             {
+                case "camp":
+                    Line(new Vector2(r.x+4*u,r.y+3*u),new Vector2(r.xMax-3*u,r.yMax-3*u),2*u,color);
+                    Line(new Vector2(r.xMax-4*u,r.y+3*u),new Vector2(r.x+3*u,r.yMax-3*u),2*u,color);
+                    Diamond(new Rect(r.x+1*u,r.y,6*u,7*u),color);Diamond(new Rect(r.xMax-7*u,r.y,6*u,7*u),color);break;
                 case "infantry":
                     Line(new Vector2(r.x + 3 * u, r.y + 4 * u), new Vector2(r.xMax - 3 * u, r.y + 4 * u), 2 * u, color);
                     Line(new Vector2(r.x + 3 * u, r.y + 4 * u), new Vector2(r.x + 5 * u, r.y + 17 * u), 2 * u, color);

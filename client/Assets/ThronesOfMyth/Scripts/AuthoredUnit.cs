@@ -6,6 +6,7 @@ namespace ThronesOfMyth
     {
         public Animation player;
         public bool commander, mythic, ranged;
+        public string formationRole;
         private string current;
         private bool frozen;
         public static void Prepare(Animation animation)

@@ -121,3 +121,10 @@ Bundle 0.22.0 contains the camera/world/HUD/city presentation pass. Protocol 14,
 save schema 13 and SQLite revision 2 are unchanged. Pull main and rebuild; existing
 executables retain their old presentation. Before visual acceptance, run the new
 Unity camera validation menu and [Windows matrix](visual-camera-0.22.md).
+
+## Build 0.23
+
+Bundle 0.23.0 delivers visual quality phase 1. Protocol 14, save schema 13 and SQLite
+revision 2 remain unchanged. Pull main and rebuild. Run both Visual Review commands
+and the [native acceptance matrix](visual-quality-plan-0.23.md) before accepting
+rendered quality; these checks could not run in the cloud.
