@@ -1,6 +1,6 @@
 # Thrones of Myth: core systems audit
 
-Updated against the repository through the 0.20 accounts/supplies pass. **Implemented**
+Updated against the repository through the 0.21 veteran progression pass. **Implemented**
 means working prototype code, not production-ready quality. **Partial** means the
 foundation works but significant gameplay is absent. **Missing** means no working
 system yet. A design document, label or building name does not count as gameplay.
@@ -16,7 +16,7 @@ production online infrastructure are still incomplete. KvK remains later in the
 | --- | --- | --- | --- |
 | City development | Partial | 16 institutions, paid timers, prerequisites, two earnable build queues, five ages | Native-polished city art, building placement, deeper age progression and long-term balance |
 | Economy | Partial | Five resources, passive production, shared finite nodes, resource sinks and exchanges | Gathering load/return delivery, caravans, plunder rules and sustained economy balance |
-| Troop training and dispatch | Partial | Infantry/archer/cavalry training, civilization mythics, exact counts, reserves, five marches | Troop tiers/upgrades, siege, richer role effects and formations with tactical consequences |
+| Troop training and dispatch | Partial | Tier I/II infantry/archer/cavalry training and reserve promotion, civilization mythics, exact formations, five marches and tier-preserving hospitals | Tier III–V, siege, richer role effects and formations with tactical consequences |
 | March control | Partial | Select, move, stop, return, attack camps, gather, capture; server-owned orders | Obstacle-aware pathfinding, true pass corridors, multi-select and group orders |
 | Open-field combat | Partial | Server-owned PvE and one-versus-one PvP, retaliation, rage/shields/heals, counters and protection | Rally field interception, ranged spacing, area effects and richer disengagement rules |
 | Casualties and hospital | Partial | Typed PvP/stronghold wounded troops, paid timed treatment, exact reserve transfers and independent ward | Permanent-loss modes, solo-camp severe wounds, traditional overflow rules and alliance healing help |

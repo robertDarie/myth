@@ -122,3 +122,10 @@ later means sequence, not exclusion. Accounts, recovery, retained orders, invent
 and live power/rankings are implemented foundations. Troop tiers/promotion,
 gathering cargo, talents/secondary heroes, alliance progression and later content
 remain required work. See [the current batch](accounts-and-supplies-0.20.md).
+
+## Delivered: first troop-tier loop (0.21)
+
+Tier II veterans for each mortal class, city/research gates, training/promotion,
+refunded reservations, mixed-tier marches, preserved counters, healing, rally
+reports and save migration. See [the playable loop](veteran-troops-0.21.md).
+Higher tiers, gathering cargo and deeper tactical specializations remain next work.

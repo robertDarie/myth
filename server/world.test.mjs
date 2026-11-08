@@ -169,11 +169,11 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 13);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 14);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(b.token);
-  assert.equal(after.version, 13); assert.equal(after.players.length, 2);
+  assert.equal(after.version, 14); assert.equal(after.players.length, 2);
   assert.ok(after.armies.find(p => p.id === a.playerId).x > before.armies.find(p => p.id === a.playerId).x);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);

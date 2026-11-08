@@ -214,10 +214,10 @@ namespace ThronesOfMyth
             var diagram = new Rect(r.x, r.y, r.width - 370, r.height); var detail = new Rect(r.xMax - 350, r.y, 350, r.height);
             theme.Panel(diagram, false, true); theme.Panel(detail, false, true);
             theme.Text(new Rect(diagram.x + 20, diagram.y + 12, diagram.width - 40, 26), "ATHENAEUM OF AGES", theme.Eyebrow);
-            var positions = new Dictionary<string, Vector2Int> { { "harvest", new Vector2Int(0, 0) }, { "masonry", new Vector2Int(1, 0) }, { "writing", new Vector2Int(1, 1) }, { "logistics", new Vector2Int(0, 2) }, { "march", new Vector2Int(1, 2) }, { "drill", new Vector2Int(0, 3) }, { "vitality", new Vector2Int(1, 3) }, { "beastlore", new Vector2Int(2, 3) } };
+            var positions = new Dictionary<string, Vector2Int> { { "harvest", new Vector2Int(0, 0) }, { "masonry", new Vector2Int(1, 0) }, { "writing", new Vector2Int(1, 1) }, { "logistics", new Vector2Int(0, 2) }, { "march", new Vector2Int(1, 2) }, { "drill", new Vector2Int(0, 3) }, { "vitality", new Vector2Int(1, 3) }, { "beastlore", new Vector2Int(2, 3) }, { "veterans",new Vector2Int(0,4) } };
             float step = (diagram.width - 34) / 3, cardWidth = step - 18;
             var viewport = new Rect(diagram.x + 12, diagram.y + 48, diagram.width - 24, diagram.height - 60);
-            rosterScroll = GUI.BeginScrollView(viewport, rosterScroll, new Rect(0, 0, diagram.width - 42, 490));
+            rosterScroll = GUI.BeginScrollView(viewport, rosterScroll, new Rect(0, 0, diagram.width - 42, 610));
             foreach (var technology in me.researchOptions)
             {
                 if (string.IsNullOrEmpty(technology.prerequisite) || !positions.ContainsKey(technology.prerequisite) || !positions.ContainsKey(technology.id)) continue;

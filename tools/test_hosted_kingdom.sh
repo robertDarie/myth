@@ -1,7 +1,7 @@
 #!/bin/sh
 # Disposable Docker restart/backup smoke test. No public ports or real save paths.
 set -eu
-image="${1:-thrones-kingdom:0.20-test}"
+image="${1:-thrones-kingdom:0.21-test}"
 name="thrones-smoke-$$"
 volume="$name-data"
 docker_local() { env -u DOCKER_HOST -u DOCKER_CONTEXT -u DOCKER_TLS -u DOCKER_TLS_VERIFY -u DOCKER_CERT_PATH docker --host=unix:///var/run/docker.sock "$@"; }

@@ -9,7 +9,7 @@ import { initializeExploration, explorationTick, explorationCommand, filterFog, 
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase } from './troops.mjs';
+import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, countOf, changeUnits, tierLock, promotionCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
@@ -105,16 +105,20 @@ export class World {
     const fail = message => { throw new GameError(message); };
     if (kingdomCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
     switch (c.type) {
-      case 'train': {
+      case 'promote': case 'train': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
-        const queued = p.trainingQueue.filter(j => j.type === 'train').reduce((total, j) => total + j.amount, 0);
-        if (totalTroops(p) + p.reserveTroops + wardTroops(p) + queued + 5 > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
+        const queued = p.trainingQueue.filter(j => ['train','promote'].includes(j.type)).reduce((total, j) => total + j.amount, 0);
+        if (totalTroops(p) + p.reserveTroops + wardTroops(p) + queued + (c.type==='promote'?0:5) > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
         const type = TROOP_TYPES.find(t => t.id === (c.targetId || 'infantry'));
         if (!type) throw new GameError('Choose a valid troop type.');
-        if (p.cityLevel < type.cityLevel) throw new GameError('This troop type requires Citadel level ' + type.cityLevel + '.');
-        this.spend(p, type.cost);
-        const job = this.job('train', type.duration / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), { ...type.cost }, 5);
-        job.targetId = type.id; p.trainingQueue.push(job); return;
+        const locked=tierLock(p,type);if(locked)throw new GameError(locked);
+        const promoting=c.type==='promote';
+        if(promoting&&(type.tier!==2||countOf(p.reserveUnits,type.baseId)<5))throw new GameError('Promotion requires five ready Tier I reserves of this class.');
+        const cost=promoting?promotionCost(type):type.cost;
+        this.spend(p,cost);
+        if(promoting){changeUnits(p.reserveUnits,type.baseId,-5);p.reserveTroops-=5;}
+        const job = this.job(promoting?'promote':'train', (promoting?type.duration-TROOP_TYPES.find(t=>t.id===type.baseId).duration:type.duration) / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), { ...cost }, 5);
+        job.targetId = type.id;if(promoting)job.sourceId=type.baseId; p.trainingQueue.push(job); return;
       }
       case 'recruit': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
@@ -132,6 +136,7 @@ export class World {
           if (index < 0) throw new GameError('Queue order no longer exists.');
           [job] = p.trainingQueue.splice(index, 1);
         }
+        if(job.type==='promote'){changeUnits(p.reserveUnits,job.sourceId,job.amount);p.reserveTroops+=job.amount;}
         for (const [resource, amount] of Object.entries(job.cost)) p[resource] += amount;
         return;
       }
@@ -262,10 +267,10 @@ export class World {
       const job = p.trainingQueue[0];
       const spent = Math.min(remaining, job.remaining); job.remaining -= spent; remaining -= spent;
       if (job.remaining > 0.00001) break;
-      if (job.type === 'train') { p.reserveTroops += job.amount; p.reserveUnits[job.targetId] += job.amount; journeyMetric(p, 'trained', job.amount); recordActivity(this,p,'trained',job.amount); }
+      if (['train','promote'].includes(job.type)) { p.reserveTroops += job.amount; changeUnits(p.reserveUnits,job.targetId,job.amount);if(job.type==='train'){journeyMetric(p,'trained',job.amount);recordActivity(this,p,'trained',job.amount);} }
       else p.reserveMythic += job.amount;
       p.trainingQueue.shift();
-      this.event(`${p.name}: ${job.type === 'train' ? job.amount + ' troops' : 'a mythic recruit'} ready in city reserves.`);
+      this.event(`${p.name}: ${['train','promote'].includes(job.type) ? job.amount + (job.type==='promote'?' veterans':' troops') : 'a mythic recruit'} ready in city reserves.`);
     }
   }
   expire(now) {
@@ -275,13 +280,13 @@ export class World {
     }
   }
   toSave() {
-    return { schema: 12, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 13, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) world.activityClockMs = w.activityClockMs;
@@ -298,12 +303,13 @@ export class World {
       if (data.schema < 9) p.strongholdVictories = 0;
       if (!Number.isSafeInteger(p.strongholdVictories) || p.strongholdVictories < 0) throw new Error('Invalid saved stronghold victories.');
       if(data.schema<12)initializeInventory(p);
+      if(data.schema<13)p.technologies.veterans=0;
       validateInventory(p);
       validateCity(p); validateProgression(p); validateUnits(p); validateWar(p);
       for (const job of [...constructionJobs(p), p.research, p.crafting, ...p.trainingQueue].filter(Boolean)) {
-        if (!['upgrade', 'building', 'research', 'craft', 'train', 'recruit'].includes(job.type) || typeof job.id !== 'string' || !Number.isFinite(job.remaining) || job.remaining < 0 || !Number.isFinite(job.duration) || job.duration <= 0 || job.remaining > job.duration || !Number.isInteger(job.amount) || job.amount < 1 || !job.cost || Object.entries(job.cost).some(([k, v]) => !RESOURCES.includes(k) || !Number.isFinite(v) || v < 0)) throw new Error('Invalid saved queue.');
+        if (!['upgrade', 'building', 'research', 'craft', 'train', 'promote', 'recruit'].includes(job.type) || typeof job.id !== 'string' || !Number.isFinite(job.remaining) || job.remaining < 0 || !Number.isFinite(job.duration) || job.duration <= 0 || job.remaining > job.duration || !Number.isInteger(job.amount) || job.amount < 1 || !job.cost || Object.entries(job.cost).some(([k, v]) => !RESOURCES.includes(k) || !Number.isFinite(v) || v < 0)) throw new Error('Invalid saved queue.');
       }
-      if (constructionJobs(p).some(job => !['upgrade', 'building'].includes(job.type)) || (p.research && p.research.type !== 'research') || (p.crafting && p.crafting.type !== 'craft') || p.trainingQueue.some(job => !['train', 'recruit'].includes(job.type))) throw new Error('Invalid saved queue lane.');
+      if (constructionJobs(p).some(job => !['upgrade', 'building'].includes(job.type)) || (p.research && p.research.type !== 'research') || (p.crafting && p.crafting.type !== 'craft') || p.trainingQueue.some(job => !['train', 'promote', 'recruit'].includes(job.type))) throw new Error('Invalid saved queue lane.');
       const ids = new Set([p.id]), commanders = new Set([p.commanderId]);
       for (const a of p.marches) {
         if (!a || typeof a.id !== 'string' || ids.has(a.id) || a.ownerId !== p.id || !p.ownedCommanders.includes(a.commanderId) || commanders.has(a.commanderId) || !finitePoint(a) || ['troops', 'mythic', 'health', 'recovery', 'cooldown', 'gatherClock', 'rage', 'shield', 'shieldTime'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.homeX !== p.homeX || a.homeZ !== p.homeZ) throw new Error('Invalid saved march.');
@@ -365,7 +371,7 @@ export class World {
   snapshot(viewerId = null) {
     const activity = viewerId && this.players.has(viewerId) ? activitySnapshot(this, this.players.get(viewerId)) : null;
     const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
-    const snapshot = { version: 13, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
+    const snapshot = { version: 14, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
       players: [...this.players.values()].map(p => {
         const { lastSeen, target, cooldown, gatherClock, slot, marches, ...visible } = p;
         if (viewerId && viewerId !== p.id) {

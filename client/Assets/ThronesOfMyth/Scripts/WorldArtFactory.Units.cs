@@ -48,15 +48,21 @@ namespace ThronesOfMyth
             int visible = Mathf.Min(6, units.Total), assigned = 0;
             foreach (var role in new[] { "Infantry", "Archer", "Cavalry" })
             {
-                int count = role == "Infantry" ? units.infantry : role == "Archer" ? units.archers : units.cavalry;
+                int count = role == "Infantry" ? units.Infantry : role == "Archer" ? units.Archers : units.Cavalry;
                 if (count <= 0) continue;
-                int reserved = role == "Infantry" ? (units.archers > 0 ? 1 : 0) + (units.cavalry > 0 ? 1 : 0) : role == "Archer" && units.cavalry > 0 ? 1 : 0;
+                int reserved = role == "Infantry" ? (units.Archers > 0 ? 1 : 0) + (units.Cavalry > 0 ? 1 : 0) : role == "Archer" && units.Cavalry > 0 ? 1 : 0;
                 int proxies = Mathf.Min(count, Mathf.Min(6 - assigned - reserved, Mathf.Clamp(Mathf.RoundToInt(visible * count / (float)Mathf.Max(1,units.Total)), 1, 3)));
                 for (int i = 0; i < proxies && assigned < 6; i++, assigned++)
                 {
                     float side = i % 2 == 0 ? -1 : 1;
                     var position = role == "Archer" ? new Vector3((i-0.5f)*0.85f,0,-1.35f) : role == "Cavalry" ? new Vector3(side*(1.65f+i/2*0.8f),0,-0.2f) : new Vector3((i-0.5f)*0.85f,0,0.05f);
                     if (!SkinnedUnit(root,culture,role,"",position,team,actor)) Soldier(root,position,team,culture,actor,role == "Archer" ? "archers" : role.ToLowerInvariant());
+                    int veterans=role=="Infantry"?units.veteranInfantry:role=="Archer"?units.veteranArchers:units.veteranCavalry;
+                    if(i<veterans&&actor.soldiers.Count>0)
+                    {
+                        var badge=Shape(actor.soldiers[actor.soldiers.Count-1].transform,PrimitiveType.Cube,new Vector3(0,2.1f,0),new Vector3(.15f,.15f,.06f),new Color(.95f,.75f,.28f));
+                        badge.localRotation=Quaternion.Euler(0,0,45);
+                    }
                 }
             }
             var leader = new Vector3(0,0,1.2f);

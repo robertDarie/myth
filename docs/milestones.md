@@ -94,3 +94,10 @@ founding supplies and derived live power rankings. All adapted workbook roles
 are now scheduled work. Save schema 12; database revision 2; protocol stays 13.
 See [the implementation guide](accounts-and-supplies-0.20.md). Native UI review
 remains pending; the full 679-record program is not complete.
+
+## Veteran troops 0.21
+
+A complete Tier I→II loop: legal city/research unlocks, direct veteran training,
+reserve promotion/refunds, class counters, exact formations, tiered wounds/healing,
+rallies and persistence. Protocol 14/save schema 13; older saves migrate.
+206 tests pass; native Unity review remains pending. See [the playable guide](veteran-troops-0.21.md).

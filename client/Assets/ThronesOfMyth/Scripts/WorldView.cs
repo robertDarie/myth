@@ -36,7 +36,7 @@ namespace ThronesOfMyth
             seen.Add(id);
             if (!pieces.TryGetValue(id, out var piece)) piece = Create(id, kind, x, z, color);
             piece.destination = new Vector3(x, 0, z); piece.label = label; piece.color = color; piece.health = health;
-            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : (units.infantry > 0 ? "I" : "") + (units.archers > 0 ? "A" : "") + (units.cavalry > 0 ? "C" : "") + Mathf.Min(3, units.Total));
+            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : (units.Infantry > 0 ? "I" : "") + (units.Archers > 0 ? "A" : "") + (units.Cavalry > 0 ? "C" : "") + Mathf.Min(3, units.Total)+":"+Mathf.Min(3,units.veteranInfantry)+":"+Mathf.Min(3,units.veteranArchers)+":"+Mathf.Min(3,units.veteranCavalry));
             if (piece.visualKey != visualKey)
             {
                 if (piece.actor != null) { piece.actor.gameObject.SetActive(false); Destroy(piece.actor.gameObject); }
@@ -52,7 +52,7 @@ namespace ThronesOfMyth
             foreach (var p in world.armies)
             {
                 var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
-                Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic, p.units, p.commanderId);
+                Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.units.Veterans>0?" · T2: "+p.units.Veterans:"") + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic, p.units, p.commanderId);
                 pieces[p.id].actor.allowAudio = p.ownerId == ownId;
                 pieces[p.id].actor.Observe(p);
             }

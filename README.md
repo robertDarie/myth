@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.20
+## Playable slice 0.21
 
+- Playable veteran progression: research-gated Tier II infantry/archers/cavalry,
+  direct training or reserve promotion, tier-preserving formations/wounds/healing
+  and visible rank markers; existing class counters remain active.
 - SQLite accounts: protect a city, sign in across devices, revoke sessions and
   recover with a one-time code; retained command retries survive session changes.
 - Inventory with earned resource packs, targeted hourglasses and once-only founding
@@ -107,6 +110,7 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[veteran troop progression 0.21](docs/veteran-troops-0.21.md),
 [accounts, retries and supplies 0.20](docs/accounts-and-supplies-0.20.md),
 [the complete reference adaptation plan](docs/reference-adaptation-plan.md),
 [the visual foundation guide](docs/visual-foundation-0.19.md),

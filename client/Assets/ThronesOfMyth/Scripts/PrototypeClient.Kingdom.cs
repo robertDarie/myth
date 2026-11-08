@@ -37,18 +37,16 @@ namespace ThronesOfMyth
             }
             else
             {
-                healingDraft.infantry = HospitalQuantity("Oathguard", healingDraft.infantry, me.wounded.infantry);
-                healingDraft.archers = HospitalQuantity("Dawn Archers", healingDraft.archers, me.wounded.archers);
-                healingDraft.cavalry = HospitalQuantity("Dawn Riders", healingDraft.cavalry, me.wounded.cavalry);
+                foreach(var troop in world.troopTypes)SetUnits(healingDraft,troop.id,HospitalQuantity(troop.name+" · T"+troop.tier,UnitsOf(healingDraft,troop.id),UnitsOf(me.wounded,troop.id)));
                 healingMythic = HospitalQuantity("Mythic guardians", healingMythic, me.woundedMythic);
                 if (GUILayout.Button("Fill available beds"))
                 {
                     int beds = me.hospitalCapacity; healingDraft = new UnitCounts();
-                    foreach (var type in new[] { "infantry", "archers", "cavalry" }) { int count = Mathf.Min(beds, UnitsOf(me.wounded, type)); SetUnits(healingDraft, type, count); beds -= count; }
+                    foreach (var type in world.troopTypes) { int count = Mathf.Min(beds, UnitsOf(me.wounded, type.id)); SetUnits(healingDraft, type.id, count); beds -= count; }
                     healingMythic = Mathf.Min(me.woundedMythic, beds / 5);
                 }
                 int used = healingDraft.Total + healingMythic * 5;
-                var cost = new ResourceAmounts { food = healingDraft.Total * 2 + healingMythic * 20, gold = healingDraft.Total + healingMythic * 15 };
+                var cost = new ResourceAmounts { food = healingDraft.HealingWeight * 2 + healingMythic * 20, gold = healingDraft.HealingWeight + healingMythic * 15 };
                 GUILayout.Label("Selected " + used + " / " + me.hospitalCapacity + " beds · " + Cost(cost), noteStyle);
                 GUI.enabled = BuildingLevel("infirmary") > 0 && used > 0 && used <= me.hospitalCapacity && Afford(cost) && !processing;
                 if (GUILayout.Button("Begin treatment", theme.Primary, GUILayout.Height(44))) Send(new GameCommand { type = "hospital-heal", units = healingDraft.Copy(), mythic = healingMythic });

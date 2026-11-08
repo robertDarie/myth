@@ -1,7 +1,7 @@
 import { siteIsOpen } from './kingdom.mjs';
 import { initializeFortification, territoryNear } from './campaign.mjs';
 import { allianceRole } from './social.mjs';
-import { TROOP_TYPES, selection, readyFor, transfer, unitTotal } from './troops.mjs';
+import { TROOP_TYPES, selection, readyFor, transfer, unitTotal, countOf, changeUnits } from './troops.mjs';
 import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
 import { age, armyList, ensureHero } from './progression.mjs';
@@ -62,7 +62,7 @@ export function marchCommand(world, p, c, fail) {
     case 'reinforce': {
       world.requireHome(a); if (!p.reserveTroops && !p.reserveMythic) fail('No reserves are ready.');
       const oldMax = world.stats(a).maxHealth;
-      for (const t of TROOP_TYPES) { a.units[t.id] += p.reserveUnits[t.id]; p.reserveUnits[t.id] = 0; }
+      for (const t of TROOP_TYPES) { changeUnits(a.units,t.id,countOf(p.reserveUnits,t.id));changeUnits(p.reserveUnits,t.id,-countOf(p.reserveUnits,t.id)); }
       a.troops = unitTotal(a.units); a.mythic += p.reserveMythic; p.reserveTroops = 0; p.reserveMythic = 0;
       a.health = Math.min(world.stats(a).maxHealth, a.health + world.stats(a).maxHealth - oldMax); return true;
     }
@@ -70,7 +70,7 @@ export function marchCommand(world, p, c, fail) {
       world.requireHome(a);
       if (a.id === p.id) fail('The founding march stays assigned.');
       if (a.health + 0.001 < world.stats(a).maxHealth) fail('Recover fully at home before returning this march to reserves.');
-      for (const t of TROOP_TYPES) p.reserveUnits[t.id] += a.units[t.id];
+      for (const t of TROOP_TYPES) changeUnits(p.reserveUnits,t.id,countOf(a.units,t.id));
       p.reserveTroops = unitTotal(p.reserveUnits); p.reserveMythic += a.mythic; p.marches = p.marches.filter(other => other.id !== a.id); return true;
     case 'unequip-relic':
       world.requireHome(a); a.equippedRelic = ''; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;

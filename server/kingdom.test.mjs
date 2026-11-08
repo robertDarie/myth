@@ -55,7 +55,7 @@ test('authenticated milestone claims enforce ownership and snapshot eligibility 
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();
  assert.equal((await get(0)).sites.find(s=>s.id==='gate-east').locked,true);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates',count:999})).status,400);
  recordKingdomContribution(w,p,'gather',400);recordKingdomContribution(w,p,'trained',10);p.cityLevel=2;for(let i=0;i<4;i++)recordKingdomVictory(w,'camps');recordKingdomContribution(w,p,'camps',4);const future=w.kingdom.startedAtMs+600000;w.now=()=>future;
- let snapshot=await get(0);assert.equal(snapshot.version,13);assert.equal(snapshot.sites.find(s=>s.id==='gate-east').locked,false);assert.equal(snapshot.kingdom.stages[1].canClaim,true);
+ let snapshot=await get(0);assert.equal(snapshot.version,14);assert.equal(snapshot.sites.find(s=>s.id==='gate-east').locked,false);assert.equal(snapshot.kingdom.stages[1].canClaim,true);
  const gold=p.gold;assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates'})).status,200);assert.equal(p.gold,gold+100);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates'})).status,400);
  assert.equal((await post(1,{type:'kingdom-claim',targetId:'gates',playerId:p.id})).status,400);snapshot=await get(1);assert.equal(snapshot.players.find(p=>p.id===sessions[0].playerId).kingdomClaims,undefined);assert.equal(snapshot.kingdom.stages[1].eligible,false);assert.deepEqual(q.kingdomClaims,[]);
 });

@@ -1,3 +1,4 @@
+import { trainingOptions } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { age, crews, constructionJobs, totalTroops, totalMythic, skillInfo } from './progression.mjs';
@@ -44,16 +45,16 @@ export function technologyCard(p, t) {
   const level = p.technologies[t.id], next = level + 1, cost = scaled(t.base, next * next);
   const duration = 12 * next / (1 + 0.05 * p.technologies.writing);
   let lockedReason = '';
-  if (level >= 3) lockedReason = 'Maximum research rank.';
+  if (level >= (t.maxLevel??3)) lockedReason = 'Maximum research rank.';
   else if (p.research) lockedReason = 'Research lane is busy.';
   else if (p.buildings.academy < Math.max(t.academy, next)) lockedReason = `Athenaeum level ${Math.max(t.academy, next)} required.`;
   else if (t.prerequisite && p.technologies[t.prerequisite] < 1) lockedReason = `${TECHNOLOGIES.find(k => k.id === t.prerequisite).name} rank 1 required.`;
   else if (t.building && !p.buildings[t.building]) lockedReason = `${BUILDINGS.find(b => b.id === t.building).name} required.`;
   else if (!affordable(p, cost)) lockedReason = 'Not enough resources.';
-  return { ...t, level, maxLevel: 3, cost, duration, canResearch: !lockedReason, lockedReason };
+  return { ...t, level, maxLevel: t.maxLevel??3, cost, duration, canResearch: !lockedReason, lockedReason };
 }
 export function citySnapshot(world, p) {
-  return { ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), deployedTroops: totalTroops(p), deployedMythic: totalMythic(p), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
+  return { trainingOptions: trainingOptions(p), ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), deployedTroops: totalTroops(p), deployedMythic: totalMythic(p), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
     trainingDuration: 8 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
     troopCapacity: capacity(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
@@ -180,7 +181,7 @@ export function validateCity(p) {
   if (![p.stone, p.aether, p.sigils, p.economyClock, p.summonCount, p.epicPity, p.legendaryPity].every(v => Number.isFinite(v) && v >= 0)) throw new Error('Invalid saved city economy.');
   if (!p.productionCarry || RESOURCES.some(id => !Number.isFinite(p.productionCarry[id]) || p.productionCarry[id] < 0 || p.productionCarry[id] >= 1)) throw new Error('Invalid saved production carry.');
   for (const [levels, definitions, cap] of [[p.buildings, BUILDINGS.filter(b => b.id !== 'citadel'), 5], [p.technologies, TECHNOLOGIES, 3]])
-    if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > cap)) throw new Error('Invalid saved city progression.');
+    if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > (item.maxLevel??cap))) throw new Error('Invalid saved city progression.');
   if (!Array.isArray(p.ownedRelics) || p.ownedRelics.some(id => !RELICS.some(r => r.id === id)) || (p.equippedRelic && !p.ownedRelics.includes(p.equippedRelic))) throw new Error('Invalid saved relic.');
   if (!Number.isInteger(p.sigils) || !Number.isInteger(p.epicPity) || p.epicPity >= SUMMON_RULES.epicPity || !Number.isInteger(p.legendaryPity) || p.legendaryPity >= SUMMON_RULES.legendaryPity || !Array.isArray(p.summonHistory) || p.summonHistory.length > 20 || p.summonHistory.some(d => !d || !COMMANDERS.some(c => c.id === d.commanderId) || !Number.isInteger(d.shards) || d.shards < 0) || typeof p.lastOfferingDay !== 'string') throw new Error('Invalid saved summon history.');
   for (const map of [p.commanderShards, p.commanderRanks]) if (!map || typeof map !== 'object' || Object.entries(map).some(([id, value]) => !COMMANDERS.some(c => c.id === id) || !Number.isInteger(value) || value < 0)) throw new Error('Invalid saved hero progression.');

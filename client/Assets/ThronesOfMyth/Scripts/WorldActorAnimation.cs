@@ -56,11 +56,11 @@ namespace ThronesOfMyth
         }
         public void Observe(ArmyData army)
         {
-            mountedArmy=army.units!=null&&army.units.cavalry>0;
+            mountedArmy=army.units!=null&&army.units.Cavalry>0;
             woundedReturning=army.state=="Returning"&&army.health<army.maxHealth*.5f;
             gathering = army.state == "Gathering"; hasTarget = army.hasOrder;
             targetPosition = new Vector3(army.targetX, 0, army.targetZ); skillKind = army.skillKind;
-            rangedAttack = army.units != null && army.units.archers > 0 || authored.Exists(u => u.commander && u.ranged);
+            rangedAttack = army.units != null && army.units.Archers > 0 || authored.Exists(u => u.commander && u.ranged);
             if (shield != null) shield.SetActive(army.shield > 0);
             if (initialized)
             {

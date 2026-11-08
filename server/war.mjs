@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { TROOP_TYPES, emptyUnits, unitTotal, validUnits } from './troops.mjs';
+import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
 import { activeSkill, armyList } from './progression.mjs';
 export const hospitalCapacity = p => 25 + 15 * p.buildings.infirmary;
 export const wardTroops = p => unitTotal(p.wounded) + (p.healing ? unitTotal(p.healing.units) : 0);
@@ -19,7 +19,7 @@ export function attackReason(w, a, b) {
 }
 export function counterMultiplier(a, b) {
   if (!a.troops || !b.troops) return 1;
-  const x = a.units, y = b.units;
+  const x = classCounts(a.units), y = classCounts(b.units);
   return 1 + 0.15 * (x.infantry * y.cavalry + x.cavalry * y.archers + x.archers * y.infantry - x.infantry * y.archers - x.cavalry * y.infantry - x.archers * y.cavalry) / (a.troops * b.troops);
 }
 export function side(w, a) {
@@ -42,9 +42,18 @@ export function finishBattle(w, battle, outcome) {
 export function retreat(w, a, result) {
   const p = w.owner(a); let remaining = a.troops + a.mythic;
   // Severe wounds are removed from the march exactly once. At least one unit stays with its commander.
-  for (const type of TROOP_TYPES) {
-    const amount = Math.min(Math.floor(a.units[type.id] * 0.25), Math.max(0, remaining - 1));
-    a.units[type.id] -= amount; p.wounded[type.id] += amount; result.wounded[type.id] += amount; remaining -= amount;
+  // Determine losses per class, then apportion across tiers. Splitting one
+  // stack into Tier I/II must not reduce casualties through separate rounding.
+  for (const family of TROOP_TYPES.filter(t=>t.tier===1)) {
+    const members=TROOP_TYPES.filter(t=>t.baseId===family.id);
+    const total=members.reduce((sum,t)=>sum+countOf(a.units,t.id),0);
+    const amount=Math.min(Math.floor(total*.25),Math.max(0,remaining-1));
+    if(!amount)continue;
+    const shares=members.map(t=>{const exact=countOf(a.units,t.id)*amount/total;return {id:t.id,amount:Math.floor(exact),fraction:exact-Math.floor(exact)};});
+    let extra=amount-shares.reduce((sum,s)=>sum+s.amount,0);
+    shares.sort((a,b)=>b.fraction-a.fraction||a.id.localeCompare(b.id,'en'));
+    for(const share of shares){if(extra>0){share.amount++;extra--;}changeUnits(a.units,share.id,-share.amount);changeUnits(p.wounded,share.id,share.amount);changeUnits(result.wounded,share.id,share.amount);}
+    remaining-=amount;
   }
   if (a.mythic > 0 && remaining > 1) { a.mythic--; p.woundedMythic++; result.woundedMythic++; }
   a.troops = unitTotal(a.units); a.health = 1; a.recovery = 8; a.x = p.homeX; a.z = p.homeZ; a.target = null; a.state = 'Recovering'; a.rage = 0; a.shield = 0; a.shieldTime = 0;
@@ -90,20 +99,21 @@ export function warCommand(w, p, c, fail) {
   if (c.type === 'hospital-heal') {
     if (!p.buildings.infirmary) fail('Build the House of Renewal before starting treatment.');
     if (p.healing) fail('The healing ward is already occupied.');
-    const units = c.units, mythic = c.mythic ?? 0;
+    const units = validUnits(c.units)?normalizedUnits(c.units):c.units, mythic = c.mythic ?? 0;
     if (!validUnits(units) || !Number.isSafeInteger(mythic) || mythic < 0 || unitTotal(units) + mythic < 1) fail('Choose whole wounded unit counts.');
-    if (TROOP_TYPES.some(t => units[t.id] > p.wounded[t.id]) || mythic > p.woundedMythic) fail('Those wounded units are not in your hospital.');
+    if (TROOP_TYPES.some(t => countOf(units,t.id) > countOf(p.wounded,t.id)) || mythic > p.woundedMythic) fail('Those wounded units are not in your hospital.');
     const beds = unitTotal(units) + mythic * 5;
     if (beds > hospitalCapacity(p)) fail('Healing batch exceeds available beds. Upgrade the House of Renewal or heal a smaller batch.');
-    const cost = { food: unitTotal(units) * 2 + mythic * 20, gold: unitTotal(units) + mythic * 15 };
+    const healingWeight=TROOP_TYPES.reduce((sum,t)=>sum+countOf(units,t.id)*t.tier,0);
+    const cost = { food: healingWeight * 2 + mythic * 20, gold: healingWeight + mythic * 15 };
     w.spend(p, cost);
-    for (const t of TROOP_TYPES) p.wounded[t.id] -= units[t.id]; p.woundedMythic -= mythic;
-    const duration = Math.max(2, (unitTotal(units) * 1.2 + mythic * 8) / (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)));
+    for (const t of TROOP_TYPES) changeUnits(p.wounded,t.id,-countOf(units,t.id)); p.woundedMythic -= mythic;
+    const duration = Math.max(2, (healingWeight * 1.2 + mythic * 8) / (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)));
     p.healing = { id: randomUUID(), units: { ...units }, mythic, cost, duration, remaining: duration }; return true;
   }
   if (c.type === 'hospital-cancel') {
     const job = p.healing; if (!job || job.id !== c.targetId) fail('That healing batch no longer exists.');
-    for (const t of TROOP_TYPES) p.wounded[t.id] += job.units[t.id]; p.woundedMythic += job.mythic;
+    for (const t of TROOP_TYPES) changeUnits(p.wounded,t.id,countOf(job.units,t.id)); p.woundedMythic += job.mythic;
     for (const [id, amount] of Object.entries(job.cost)) p[id] += amount; p.healing = null; return true;
   }
   if (c.type === 'attack-player') {
@@ -124,7 +134,7 @@ export function warCommand(w, p, c, fail) {
 export function tickHospital(w, p, dt) {
   const job = p.healing; if (!job) return; job.remaining = Math.max(0, job.remaining - dt);
   if (job.remaining > 0.00001) return;
-  for (const t of TROOP_TYPES) p.reserveUnits[t.id] += job.units[t.id];
+  for (const t of TROOP_TYPES) changeUnits(p.reserveUnits,t.id,countOf(job.units,t.id));
   p.reserveTroops = unitTotal(p.reserveUnits); p.reserveMythic += job.mythic; p.healing = null;
   w.event(`${p.name}: healed units returned to city reserves.`);
 }

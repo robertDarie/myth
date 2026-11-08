@@ -12,12 +12,25 @@ namespace ThronesOfMyth
     [Serializable] public sealed class PowerData { public int city,research,heroes,ready,deployed,total; }
     [Serializable] public sealed class RankingEntry { public string id,name,civilization,allianceId; public int power; }
     [Serializable] public sealed class RankingData { public RankingEntry[] players,alliances; public string policy; }
-    [Serializable] public sealed class UnitCounts { public int infantry, archers, cavalry; public int Total => infantry + archers + cavalry; public UnitCounts Copy() => new UnitCounts { infantry = infantry, archers = archers, cavalry = cavalry }; }
-    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration; public int cityLevel; public ResourceAmounts cost; }
+    [Serializable] public sealed class UnitCounts
+    {
+        public int infantry,archers,cavalry,veteranInfantry,veteranArchers,veteranCavalry;
+        public int Infantry => infantry+veteranInfantry;
+        public int Archers => archers+veteranArchers;
+        public int Cavalry => cavalry+veteranCavalry;
+        public int Veterans => veteranInfantry+veteranArchers+veteranCavalry;
+        public int Total => Infantry+Archers+Cavalry;
+        public int HealingWeight => Total+Veterans;
+        public int Get(string id) { switch(id){case "infantry":return infantry;case "archers":return archers;case "cavalry":return cavalry;case "veteranInfantry":return veteranInfantry;case "veteranArchers":return veteranArchers;case "veteranCavalry":return veteranCavalry;default:return 0;} }
+        public void Set(string id,int value) { switch(id){case "infantry":infantry=value;break;case "archers":archers=value;break;case "cavalry":cavalry=value;break;case "veteranInfantry":veteranInfantry=value;break;case "veteranArchers":veteranArchers=value;break;case "veteranCavalry":veteranCavalry=value;break;} }
+        public UnitCounts Copy() => new UnitCounts{infantry=infantry,archers=archers,cavalry=cavalry,veteranInfantry=veteranInfantry,veteranArchers=veteranArchers,veteranCavalry=veteranCavalry};
+    }
+    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration; public int cityLevel,tier,sourceAvailable; public string baseId,lockedReason; public ResourceAmounts cost,promotionCost; }
     [Serializable] public sealed class ArmyData
     {
         public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
         public InventoryData inventory; public PowerData powerBreakdown;
+        public TroopTypeData[] trainingOptions;
         public RoutePoint[] route;
         public float x, z, homeX, homeZ, targetX, targetZ, attackX, attackZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
@@ -44,7 +57,7 @@ namespace ThronesOfMyth
         public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
     }
-    [Serializable] public sealed class QueueJob { public string id, type; public float remaining, duration; public int amount; public string targetId; public ResourceAmounts cost; }
+    [Serializable] public sealed class QueueJob { public string id, type; public float remaining, duration; public int amount; public string targetId,sourceId; public ResourceAmounts cost; }
     [Serializable] public sealed class ResourceAmounts { public int food, wood, stone, gold, aether; }
     [Serializable] public sealed class BuildingCard { public string id, name, category, description, lockedReason; public int level, maxLevel; public bool canUpgrade; public ResourceAmounts nextCost; public float nextDuration; }
     [Serializable] public sealed class ResearchCard { public string id, name, branch, description, lockedReason, prerequisite; public int level, maxLevel; public bool canResearch; public ResourceAmounts cost; public float duration; }

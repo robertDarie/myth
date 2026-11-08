@@ -132,6 +132,7 @@ namespace ThronesOfMyth
                 case "flag": return "An Oath Beacon extends your alliance's reach.";
                 case "capture": return "Your march advances to hold the sacred site.";
                 case "trade": return "The exchange is complete.";
+                case "promote": return "Your reserves have begun veteran training.";
                 case "inventory-supplies": return "Founding supplies added to your inventory.";
                 case "inventory-use": return "Your selected supplies have been used.";
                 default: return "Your orders have been received.";
@@ -214,7 +215,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.20  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.21  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()

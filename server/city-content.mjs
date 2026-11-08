@@ -26,6 +26,7 @@ export const CITADEL_REQUIREMENTS = {
   5: [{ id: 'academy', level: 3 }, { id: 'menagerie', level: 2 }, { id: 'forge', level: 1 }],
 };
 export const TECHNOLOGIES = [
+  { id:'veterans',name:'Veteran Oaths',branch:'Military',description:'Unlock Tier II infantry, archers and cavalry at Hall of Spears level 2. Promotes existing reserves without creating extra soldiers.',academy:2,prerequisite:'drill',maxLevel:1,base:{food:100,wood:80,gold:80,stone:50} },
   { id: 'harvest', name: 'Blessings of Plenty', branch: 'Economy', description: '+15% passive production per rank.', academy: 1, base: { wood: 30, gold: 30, food: 20 } },
   { id: 'masonry', name: 'Titan Masonry', branch: 'Economy', description: '+5% construction speed per rank.', academy: 1, prerequisite: 'harvest', base: { stone: 30, gold: 40 } },
   { id: 'writing', name: 'Runic Scriptoria', branch: 'Economy', description: '+5% research speed per rank.', academy: 1, prerequisite: 'harvest', base: { wood: 40, gold: 40, aether: 5 } },

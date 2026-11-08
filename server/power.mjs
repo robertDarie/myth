@@ -1,7 +1,8 @@
+import { unitPower } from './troops.mjs';
 import { armyList } from './progression.mjs';
 export function powerOf(p) {
-  const ready=p.reserveTroops*5+p.reserveMythic*25;
-  const deployed=armyList(p).reduce((sum,a)=>sum+a.troops*5+a.mythic*25,0);
+  const ready=unitPower(p.reserveUnits)+p.reserveMythic*25;
+  const deployed=armyList(p).reduce((sum,a)=>sum+unitPower(a.units)+a.mythic*25,0);
   const city=p.cityLevel*100+Object.values(p.buildings).reduce((sum,rank)=>sum+rank*30,0);
   const research=Object.values(p.technologies).reduce((sum,rank)=>sum+rank*40,0);
   const heroes=p.ownedCommanders.map(id=>p.heroRecords[id]??{xp:0,stars:1,skills:[1,0,0,0]}).reduce((sum,h)=>sum+Math.min(h.stars*10,1+Math.floor(h.xp/100))*10+h.stars*20+h.skills.reduce((n,v)=>n+v*5,0),0);

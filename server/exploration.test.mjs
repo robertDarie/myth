@@ -70,7 +70,7 @@ test('recall, gate loss and restart retain scouts safely without replaying rewar
  for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scout.phase,'Returning');advance(restored,10);assert.equal(q.scout,null);assert.equal(q.scoutReports.length,0);
  cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scout.id});advance(restored,0.1);assert.equal(q.scout,null);
  for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scout={id:'bad'},p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
- const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,12);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
+ const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,13);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
 });
 
 test('garrisons and rally centers obey the same gate corridors as ordinary marches',()=>{

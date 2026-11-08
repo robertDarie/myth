@@ -108,3 +108,9 @@ The builder includes identity/inventory/power server modules. Protocol remains
 old binaries cannot read the new saves. Account testing requires SQLite, while
 normal launcher JSON play supports inventory/rankings. See
 [the local account-test instructions](accounts-and-supplies-0.20.md).
+
+## Build 0.21
+
+Bundle 0.21.0 requires protocol 14 and save schema 13 for tiered troops. Stop the
+old local game/server and rebuild after pulling; the launcher rejects protocol 13.
+SQLite revision remains 2. See [veteran unlocks and upgrade instructions](veteran-troops-0.21.md).

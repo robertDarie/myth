@@ -13,9 +13,9 @@ namespace ThronesOfMyth
         private string formationMarchId, formationHeroId, pendingFormationHero;
         private Vector2 formationHeroScroll, formationTroopScroll;
         private string TroopName(string id) => Array.Find(world.troopTypes, t => t.id == id)?.name ?? "Oathguard";
-        private static string UnitSummary(UnitCounts units) => units == null ? "" : units.infantry + " infantry · " + units.archers + " archers · " + units.cavalry + " cavalry";
-        private static int UnitsOf(UnitCounts units, string id) => units == null ? 0 : id == "infantry" ? units.infantry : id == "archers" ? units.archers : units.cavalry;
-        private static void SetUnits(UnitCounts units, string id, int count) { if (id == "infantry") units.infantry = count; else if (id == "archers") units.archers = count; else units.cavalry = count; }
+        private static string UnitSummary(UnitCounts units) => units == null ? "" : units.Infantry + " infantry · " + units.Archers + " archers · " + units.Cavalry + " cavalry · " + units.Veterans + " veterans";
+        private static int UnitsOf(UnitCounts units,string id) => units==null?0:units.Get(id);
+        private static void SetUnits(UnitCounts units,string id,int count) { units.Set(id,count); }
         private void PrepareCityMarch()
         {
             var ready = OwnMarches().Find(a => a.id == activeMarchId && !a.hasOrder && a.recovery <= 0 && Vector2.Distance(new Vector2(a.x, a.z), new Vector2(me.homeX, me.homeZ)) < 2)
@@ -36,7 +36,7 @@ namespace ThronesOfMyth
         private int QuantityRow(Rect row, string title, string description, string icon, int count, int available)
         {
             theme.Panel(row, false, true);
-            theme.Icon(new Rect(row.x + 13, row.y + 13, 30, 30), icon, count > 0 ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted);
+            theme.Icon(new Rect(row.x + 13, row.y + 13, 30, 30), icon.StartsWith("veteran")?icon.Substring(7).ToLowerInvariant():icon, count > 0 ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted);
             theme.Text(new Rect(row.x + 57, row.y + 8, row.width - 210, 27), title, theme.Heading);
             theme.Text(new Rect(row.x + 57, row.y + 37, row.width - 74, 23), description + " · Ready " + available, theme.Small);
             if (!formationEntries.TryGetValue(icon, out var entry)) entry = count.ToString();
@@ -55,7 +55,7 @@ namespace ThronesOfMyth
         {
             var current = formationEditing ? Array.Find(world.armies, a => a.id == formationMarchId && a.ownerId == playerId) : null;
             var ready = me.reserveUnits.Copy();
-            if (current != null) { ready.infantry += current.units.infantry; ready.archers += current.units.archers; ready.cavalry += current.units.cavalry; }
+            if (current != null) foreach(var type in world.troopTypes) ready.Set(type.id,ready.Get(type.id)+current.units.Get(type.id));
             int readyMythic = me.reserveMythic + (current?.mythic ?? 0);
             var left = new Rect(r.x, r.y, 286, r.height); var right = new Rect(r.x + 302, r.y, r.width - 302, r.height);
             theme.Panel(left, false, true); theme.Panel(right, false, true);
@@ -85,14 +85,14 @@ namespace ThronesOfMyth
             theme.Text(new Rect(right.x + 18, right.y + 12, right.width - 36, 26), formationEditing ? "REFORM AT YOUR CITY" : "TROOPS LEAVING YOUR CITY", theme.Eyebrow);
             theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), "Choose each troop type and exact count. Unselected units stay home.", theme.Small);
             var viewport = new Rect(right.x + 10, right.y + 85, right.width - 20, right.height - 187);
-            formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, 4 * 98));
+            formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, (world.troopTypes.Length+1) * 98));
             for (int i = 0; i < world.troopTypes.Length; i++)
             {
                 var type = world.troopTypes[i]; int available = UnitsOf(ready, type.id);
-                SetUnits(formationUnits, type.id, QuantityRow(new Rect(2, i * 98, viewport.width - 22, 92), type.name, type.role, type.id, Mathf.Min(UnitsOf(formationUnits, type.id), available), available));
+                SetUnits(formationUnits, type.id, QuantityRow(new Rect(2, i * 98, viewport.width - 22, 92), type.name+" · T"+type.tier, type.role, type.id, Mathf.Min(UnitsOf(formationUnits, type.id), available), available));
             }
             string mythicName = Array.Find(world.civilizations, c => c.id == me.civilization)?.mythic ?? "Mythic guardian";
-            formationMythic = QuantityRow(new Rect(2, 294, viewport.width - 22, 92), mythicName, "Mythic escort", "aether", Mathf.Min(formationMythic, readyMythic), readyMythic);
+            formationMythic = QuantityRow(new Rect(2, world.troopTypes.Length*98, viewport.width - 22, 92), mythicName, "Mythic escort", "aether", Mathf.Min(formationMythic, readyMythic), readyMythic);
             GUI.EndScrollView();
             var footer = new Rect(right.x + 18, right.yMax - 96, right.width - 36, 84);
             theme.Text(new Rect(footer.x, footer.y, footer.width - 200, 25), formationUnits.Total + " mortal · " + formationMythic + " mythic selected", theme.Heading);

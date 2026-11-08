@@ -115,6 +115,7 @@ namespace ThronesOfMyth
             if (GUILayout.Button("Choose troops for selected march", GUILayout.Height(40))) BeginFormation(true);
             GUI.enabled = true;
         }
+        private int trainingTier;
         private void DrawTraining()
         {
             if (GUILayout.Button("House of Renewal · " + me.hospitalTroops + " mortal / " + me.hospitalMythic + " mythic awaiting recovery")) OpenInterface(InterfacePage.Hospital);
@@ -122,21 +123,40 @@ namespace ThronesOfMyth
             GUILayout.Label("Your city works while armies march, gather or fight. New recruits wait in city reserves until you reinforce at home.", noteStyle);
             int queuedTroops = 0, queuedMythic = 0;
             foreach (var job in me.trainingQueue)
-                if (job.type == "train") queuedTroops += job.amount; else queuedMythic += job.amount;
+                if (job.type == "train"||job.type=="promote") queuedTroops += job.amount; else queuedMythic += job.amount;
             int cap = me.troopCapacity;
             GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
             DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
-            foreach (var troop in world.troopTypes)
+            GUILayout.Label("Infantry counters cavalry · Cavalry counters archers · Archers counter infantry. Tiers keep these roles.",noteStyle);
+            trainingTier=GUILayout.SelectionGrid(trainingTier,new[]{"Tier I · Levies","Tier II · Veterans"},2,GUILayout.Height(38));
+            if(trainingTier==1)
             {
+                GUILayout.Label("Unlock: Citadel 2, Hall of Spears 2, Athenaeum 2 and Veteran Oaths research. Promote five ready Tier I reserves or train veterans directly.",noteStyle);
+                if(GUILayout.Button("Open Veteran Oaths research")){inspectedTechnology=Mathf.Max(0,Array.FindIndex(me.researchOptions,t=>t.id=="veterans"));OpenInterface(InterfacePage.Research);}
+                if(GUILayout.Button("Assemble march / leave troops in reserves"))PrepareCityMarch();
+            }
+            foreach (var troop in me.trainingOptions)
+            {
+                if(troop.tier!=trainingTier+1)continue;
                 GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Label(troop.name + " · " + troop.role, sectionStyle);
+                GUILayout.Label(troop.name + " · " + troop.role + " · T" + troop.tier, sectionStyle);
                 GUILayout.Label(troop.description + "  Base health " + troop.health + " · Damage " + troop.damage.ToString("F2") + " per troop", noteStyle);
-                GUI.enabled = me.trainingQueue.Length < 3 && me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops + 5 <= cap && me.cityLevel >= troop.cityLevel && Afford(troop.cost) && !processing;
+                GUI.enabled = me.trainingQueue.Length < 3 && me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops + 5 <= cap && string.IsNullOrEmpty(troop.lockedReason) && Afford(troop.cost) && !processing;
                 float duration = me.trainingDuration * troop.duration / 8;
                 if (GUILayout.Button("Train 5 · " + Mathf.CeilToInt(duration) + "s · " + Cost(troop.cost))) Send("train", troop.id);
                 GUI.enabled = true;
-                if (me.cityLevel < troop.cityLevel) GUILayout.Label("Citadel level " + troop.cityLevel + " required", noteStyle);
+                if (!string.IsNullOrEmpty(troop.lockedReason)) GUILayout.Label(troop.lockedReason,noteStyle);
+                if(troop.tier==2)
+                {
+                    var source=Array.Find(world.troopTypes,t=>t.id==troop.baseId);
+                    GUILayout.Label("Per unit: health "+source.health+" → "+troop.health+" · damage "+source.damage.ToString("F2")+" → "+troop.damage.ToString("F2"),noteStyle);
+                    GUILayout.Label("Ready Tier I reserves: "+troop.sourceAvailable+" · promotion preserves soldier count",noteStyle);
+                    GUI.enabled=!processing&&pendingOrder==null&&string.IsNullOrEmpty(troop.lockedReason)&&troop.sourceAvailable>=5&&me.trainingQueue.Length<3&&Afford(troop.promotionCost);
+                    float sourceDuration=Array.Find(world.troopTypes,t=>t.id==troop.baseId).duration;
+                    if(GUILayout.Button("Promote 5 · "+Mathf.CeilToInt(me.trainingDuration*(troop.duration-sourceDuration)/8)+"s · "+Cost(troop.promotionCost)))Send("promote",troop.id);
+                    GUI.enabled=true;
+                }
                 GUILayout.EndVertical();
             }
             string mythic = "Mythic guardian";
@@ -146,7 +166,7 @@ namespace ThronesOfMyth
             GUI.enabled = true;
             GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment needs Citadel 2 and Sanctuary of Beasts.", noteStyle);
             for (int i = 0; i < me.trainingQueue.Length; i++)
-                DrawJob(me.trainingQueue[i], me.trainingQueue[i].type == "train" ? me.trainingQueue[i].amount + " " + TroopName(me.trainingQueue[i].targetId) : mythic, i > 0);
+                DrawJob(me.trainingQueue[i], (me.trainingQueue[i].type == "train"||me.trainingQueue[i].type=="promote") ? me.trainingQueue[i].amount + " " + TroopName(me.trainingQueue[i].targetId) : mythic, i > 0);
             GUILayout.Label($"Ready reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", sectionStyle);
             DrawReinforce();
             if (!CanEditArmy) GUILayout.Label("Keep working here while your army is away. Return only to reinforce, change commander, or recover.", noteStyle);
@@ -186,6 +206,7 @@ namespace ThronesOfMyth
         }
         private string JobName(QueueJob job)
         {
+            if(job.type=="promote"||job.type=="train")return (job.type=="promote"?"Promoting ":"Training ")+job.amount+" "+TroopName(job.targetId);
             if (job.type == "upgrade") return "Citadel level " + (me.cityLevel + 1);
             foreach (var b in me.cityBuildings) if (b.id == job.targetId) return b.name;
             foreach (var t in me.researchOptions) if (t.id == job.targetId) return t.name;
@@ -394,7 +415,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 13) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 14) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
