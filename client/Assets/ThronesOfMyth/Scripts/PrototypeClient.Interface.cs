@@ -378,7 +378,8 @@ namespace ThronesOfMyth
         }
         private void RenderActivityWindow(Rect r)
         {
-            var left = new Rect(r.x, r.y, 202, r.height), main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
+            var left = new Rect(r.x, r.y, 202, r.height);
+            var main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
             var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Kingdom, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
             var navigation = new Rect(left.x + 12, left.y + 12, left.width - 24, left.height - 24);
