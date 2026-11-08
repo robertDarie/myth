@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ThronesOfMyth;
 class Program
 {
@@ -28,6 +29,20 @@ class Program
         Check(!signal.IsRecent("academy",2),"Clock rollback must reset transient state");
         signal.Reset();signal.Observe("A",City(1,true),0);signal.Observe("A",City(3),1);
         Check(!signal.IsRecent("academy",1),"Multiple offline levels must not look like one live completion");
+        var destinations=new HashSet<InterfacePage>();
+        foreach(var entry in GameNavigation.Entries)
+        {
+            Check(destinations.Add(entry.Page),"Duplicate navigation destination");
+            Check(!string.IsNullOrWhiteSpace(entry.Title)&&!string.IsNullOrWhiteSpace(entry.Hint),"Every menu destination needs a title and hint");
+            Check(entry.Group>=0&&entry.Group<GameNavigation.Groups.Length,"Invalid menu group");
+        }
+        foreach(InterfacePage page in Enum.GetValues(typeof(InterfacePage)))if(page!=InterfacePage.World&&page!=InterfacePage.Menu)Check(destinations.Contains(page),"Unreachable interface: "+page);
+        foreach(float scale in new[]{.68f,.8f,.92f,1.02f,1.2f,1.38f,1.6f,1.84f})
+        {
+            Check(InterfaceReadability.FontSize(15,12,scale)*scale>=12-.001f,"Body text below physical floor");
+            Check(InterfaceReadability.FontSize(13,11,scale)*scale>=11-.001f,"Small text below physical floor");
+            Check(InterfaceReadability.FontSize(13,12,scale)*scale>=12-.001f,"Navigation text below physical floor");
+        }
         Console.WriteLine("Presentation contracts: "+checks+" passed (production C# state/model sources; no Unity rendering).");
     }
 }

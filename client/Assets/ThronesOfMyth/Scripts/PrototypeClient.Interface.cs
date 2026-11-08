@@ -6,7 +6,6 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Kingdom, Settings, Account, Inventory, Rankings }
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
@@ -25,7 +24,7 @@ namespace ThronesOfMyth
         private Rect QuestRect => new Rect(18,138,242,142);
         private Rect ActivityRect => new Rect(18,100,242,28);
         private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);
-        private Rect NotificationRect => new Rect((ViewWidth-620)/2,96,620,46);
+        private Rect NotificationRect => new Rect((ViewWidth-560)/2,90,560,72);
         private float MarchStep => Mathf.Min(72,(ViewHeight-390)/5);
         private Rect MarchRail => new Rect(ViewWidth-186,100,168,32+5*MarchStep);
         private string hoveredTooltip="";
@@ -47,6 +46,7 @@ namespace ThronesOfMyth
         {
             placeBeacon = false; chooseScoutDestination = false;
             interfacePage = interfacePage == page ? InterfacePage.World : page;
+            pageOpenedAt=Time.unscaledTime;
             contentScroll = Vector2.zero; rosterScroll = Vector2.zero;
             GUIUtility.keyboardControl = 0;
             if (interfacePage == InterfacePage.World) PlayerPrefs.Save();
@@ -155,7 +155,7 @@ namespace ThronesOfMyth
             }
             var skinBefore = GUI.skin; var matrixBefore = GUI.matrix; var colorBefore = GUI.color;
             GUI.skin = theme.Skin;
-            theme.ReducedMotion = reducedMotion;
+            theme.ReducedMotion = reducedMotion;theme.ApplyScale(InterfaceScale);
             cityDiorama?.SetVisible(interfacePage == InterfacePage.City && cityModelView && !LoadingActive);
             commanderPreview?.SetVisible(interfacePage == InterfacePage.Heroes && !LoadingActive && showCommanderModel);
             if (map != null) map.reducedMotion = reducedMotion;
@@ -225,7 +225,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.24  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.25  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -334,22 +334,14 @@ namespace ThronesOfMyth
         }
         private void DrawBottomNavigation()
         {
-            string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "INVENTORY", "CHAT", "CHRONICLE" };
-            string[] icons = { "city", "heroes", "alliance", "temple", "inventory", "chronicle", "chronicle" };
-            InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Inventory, InterfacePage.Chat, InterfacePage.Chronicle };
-            float width = 116, start = ViewWidth / 2 - (width * labels.Length + 6 * (labels.Length - 1)) / 2;
-            for (int i = 0; i < labels.Length; i++)
+            float width=148,start=(ViewWidth-(width*5+24))/2;
+            for(int i=0;i<PrimaryPages.Length;i++)
             {
-                var r = new Rect(start + i * (width + 6), ViewHeight - 76, width, 58); theme.Panel(r, interfacePage == pages[i]);
-                theme.Circle(new Rect(r.center.x - 15, r.y + 4, 30, 30), MythInterfaceTheme.Gold);
-                theme.Circle(new Rect(r.center.x - 13, r.y + 6, 26, 26), new Color(0.13f,0.27f,0.34f));
-                theme.Icon(new Rect(r.center.x - 9, r.y + 9, 18, 18), icons[i], interfacePage == pages[i] ? MythInterfaceTheme.Cream : MythInterfaceTheme.Gold);
-                theme.OneLine(new Rect(r.x + 5, r.y + 35, width - 10, 19), labels[i], theme.Tab);
-                if(interfacePage==pages[i])MythInterfaceTheme.Fill(new Rect(r.x+12,r.yMax-3,r.width-24,2),MythInterfaceTheme.Gold);
-                else if(r.Contains(Event.current.mousePosition))MythInterfaceTheme.Fill(new Rect(r.x+12,r.yMax-3,r.width-24,2),MythInterfaceTheme.Teal);
-                if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+                var rect=new Rect(start+i*(width+6),ViewHeight-70,width,48);
+                if(theme.NavigationButton(rect,PrimaryTitles[i],PrimaryIcons[i],interfacePage==PrimaryPages[i],i==4?"Every screen and action":"Open "+PrimaryTitles[i]))
+                {if(interfacePage!=PrimaryPages[i])Navigate(PrimaryPages[i]);else CloseInterface();}
             }
-            if(interfacePage==InterfacePage.World&&theme.Button(new Rect(18,ViewHeight-34,160,22),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);
+            if(interfacePage==InterfacePage.World&&theme.Button(new Rect(18,ViewHeight-36,166,28),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);
         }
         private void DrawInterfaceToast()
         {
@@ -358,24 +350,33 @@ namespace ThronesOfMyth
                 : Time.unscaledTime - lastSnapshotAt > 6 ? "Connection interrupted. Retrying your kingdom server…"
                 : placeBeacon ? "PLACE BEACON · Click near the selected march. Esc cancels." : Time.unscaledTime < toastUntil ? status : "";
             if (string.IsNullOrEmpty(message)) return;
-            var r = NotificationRect; theme.Panel(r);
+            var r=NotificationRect;
+            bool interrupted=Time.unscaledTime-lastSnapshotAt>6;
+            bool persistenceError=world.persistence!=null&&!string.IsNullOrEmpty(world.persistence.error);
+            string heading=pendingOrder!=null?"CONFIRM YOUR ORDER":interrupted?"RECONNECTING":persistenceError||lastOrderFailed&&Time.unscaledTime-orderNoticeAt<6?"ACTION NEEDS ATTENTION":placeBeacon?"PLACE ALLIANCE BEACON":Time.unscaledTime-orderNoticeAt<6?"ORDER ACCEPTED":"KINGDOM UPDATE";
+            var accent=interrupted||persistenceError||lastOrderFailed&&Time.unscaledTime-orderNoticeAt<6?MythInterfaceTheme.Red:pendingOrder!=null?MythInterfaceTheme.Gold:MythInterfaceTheme.Teal;
             if(pendingOrder!=null)
             {
-                theme.OneLine(new Rect(r.x+16,r.y+9,r.width-140,30),message,theme.Small);
-                if(theme.Button(new Rect(r.xMax-116,r.y+7,102,32),processing?"Confirming…":"Retry order",true,!processing&&!accountBusy&&!string.IsNullOrEmpty(pendingOrder.key)))StartCoroutine(RetryPendingOrder());
+                theme.Panel(r);MythInterfaceTheme.Fill(new Rect(r.x,r.y+5,3,r.height-10),accent);
+                theme.OneLine(new Rect(r.x+14,r.y+4,r.width-28,22),heading,theme.Eyebrow);
+                theme.OneLine(new Rect(r.x+14,r.y+30,r.width-138,32),message,theme.Small);
+                if(theme.Button(new Rect(r.xMax-116,r.y+29,102,36),processing?"Confirming…":"Retry order",true,!processing&&!accountBusy&&!string.IsNullOrEmpty(pendingOrder.key)))StartCoroutine(RetryPendingOrder());
             }
-            else theme.Text(new Rect(r.x + 16, r.y + 9, r.width - 32, 30), message, theme.Center);
+            else theme.Notice(r,heading,message,accent,Time.unscaledTime-orderNoticeAt);
         }
         private void DrawInterfaceWindow()
         {
             MythInterfaceTheme.Fill(new Rect(0, 88, ViewWidth, ViewHeight - 172), new Color(0.015f, 0.03f, 0.045f, 0.72f));
             var r = WindowRect; theme.Panel(r);
-            string title = interfacePage == InterfacePage.City ? "Your civilization" : interfacePage == InterfacePage.Heroes ? "Hall of Commanders" : interfacePage == InterfacePage.Temple ? "Temple of Echoes" : interfacePage == InterfacePage.Formation ? "Assemble your march" : interfacePage == InterfacePage.Marches ? "March command" : interfacePage.ToString();
-            theme.Text(new Rect(r.x + 25, r.y + 16, 650, 38), title, theme.Title);
-            theme.Text(new Rect(r.xMax - 300, r.y + 26, 220, 22), "Your kingdom continues in real time", theme.Small);
+            string title=interfacePage==InterfacePage.City?"Your civilization":interfacePage==InterfacePage.Heroes?"Hall of Commanders":interfacePage==InterfacePage.Formation?"Assemble your march":GameNavigation.Title(interfacePage);
+            theme.OneLine(new Rect(r.x+25,r.y+16,320,38),title,theme.Title);
+            if(interfacePage!=InterfacePage.Menu&&theme.Button(new Rect(r.xMax-152,r.y+16,84,34),"Menu"))OpenInterface(InterfacePage.Menu);
             if (theme.Button(new Rect(r.xMax - 57, r.y + 14, 38, 38), "×")) { CloseInterface(); return; }
             var inner = new Rect(r.x + 20, r.y + 70, r.width - 40, r.height - 90);
-            if (interfacePage == InterfacePage.Formation) RenderFormationWindow(inner);
+            var before=GUI.color;
+            if(!reducedMotion){float alpha=Mathf.Clamp01((Time.unscaledTime-pageOpenedAt)/.13f);GUI.color=new Color(before.r,before.g,before.b,before.a*(.70f+.30f*alpha));}
+            if(interfacePage==InterfacePage.Menu)DrawMenuWindow(inner);
+            else if (interfacePage == InterfacePage.Formation) RenderFormationWindow(inner);
             else if (interfacePage == InterfacePage.City) RenderCityWindow(inner);
             else if (interfacePage == InterfacePage.Heroes) RenderHeroesWindow(inner);
             else if (interfacePage == InterfacePage.Temple) RenderTempleWindow(inner);
@@ -385,6 +386,7 @@ namespace ThronesOfMyth
             else if (interfacePage == InterfacePage.Inventory) RenderInventoryWindow(inner);
             else if (interfacePage == InterfacePage.Rankings) RenderRankingsWindow(inner);
             else RenderActivityWindow(inner);
+            GUI.color=before;
             if (placeBeacon) interfacePage = InterfacePage.World;
         }
         private void RenderActivityWindow(Rect r)
@@ -392,11 +394,18 @@ namespace ThronesOfMyth
             var left = new Rect(r.x, r.y, 202, r.height);
             var main = new Rect(r.x + 222, r.y, r.width - 222, r.height);
             theme.Panel(left, false, true);
-            var pages = new[] { InterfacePage.Marches, InterfacePage.Training, InterfacePage.Hospital, InterfacePage.Research, InterfacePage.Inventory, InterfacePage.Rankings, InterfacePage.Forge, InterfacePage.Market, InterfacePage.Alliance, InterfacePage.Campaign, InterfacePage.Activity, InterfacePage.Kingdom, InterfacePage.Warfare, InterfacePage.Exploration, InterfacePage.Chat, InterfacePage.Reports, InterfacePage.Chronicle };
-            var navigation = new Rect(left.x + 12, left.y + 12, left.width - 24, left.height - 24);
-            activityNavScroll = GUI.BeginScrollView(navigation, activityNavScroll, new Rect(0, 0, navigation.width - 16, pages.Length * 34));
-            for (int i = 0; i < pages.Length; i++)
-                if (theme.Button(new Rect(0, i * 34, navigation.width - 16, 30), pages[i] == InterfacePage.Marches ? "Marches & reserves" : pages[i].ToString(), interfacePage == pages[i])) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
+            int group=0,count=0;
+            foreach(var entry in GameNavigation.Entries)if(entry.Page==interfacePage){group=entry.Group;break;}
+            foreach(var entry in GameNavigation.Entries)if(entry.Group==group)count++;
+            var navigation=new Rect(left.x+12,left.y+12,left.width-24,left.height-24);
+            activityNavScroll=GUI.BeginScrollView(navigation,activityNavScroll,new Rect(0,0,navigation.width-16,(count+1)*42));
+            int row=0;
+            foreach(var entry in GameNavigation.Entries)
+            {
+                if(entry.Group!=group)continue;
+                if(theme.NavigationButton(new Rect(0,row++*42,navigation.width-16,36),entry.Title,"",interfacePage==entry.Page,entry.Hint)&&interfacePage!=entry.Page)Navigate(entry.Page);
+            }
+            if(theme.NavigationButton(new Rect(0,row*42,navigation.width-16,36),"All activities","",false,"Open the kingdom menu"))OpenInterface(InterfacePage.Menu);
             GUI.EndScrollView();
             theme.Panel(main, false, true);
             GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));

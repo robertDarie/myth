@@ -62,10 +62,8 @@ namespace ThronesOfMyth
                 GUILayout.Space(16); GUILayout.Label("NEXT DEVELOPMENT", theme.Eyebrow);
                 GUILayout.Label(Cost(selected.nextCost), theme.Body);
                 GUILayout.Label("Build time · " + Mathf.CeilToInt(selected.nextDuration) + " seconds", theme.Small);
-                GUI.enabled = selected.canUpgrade && !processing;
-                if (GUILayout.Button(selected.level == 0 ? "Lay the foundation" : "Upgrade to level " + (selected.level + 1), theme.Primary, GUILayout.Height(44))) Send("building-upgrade", selected.id);
-                GUI.enabled = true;
-                if (!selected.canUpgrade) GUILayout.Label(selected.lockedReason, theme.Small);
+                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":selected.lockedReason;
+                if(theme.Action(selected.level==0?"Build institution":"Upgrade to level "+(selected.level+1),selected.canUpgrade&&!processing&&pendingOrder==null,reason))Send("building-upgrade",selected.id);
             }
             GUILayout.Space(18); DrawConstructionJobs();
             GUILayout.Space(12); GUILayout.Label("Production rests at " + me.passiveLimit.ToString("N0") + " of each resource. Gathering and rewards can exceed this limit.", theme.Small);
@@ -138,9 +136,8 @@ namespace ThronesOfMyth
                 DrawHeroSkills(selected, progress);
                 GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
                 GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.", theme.Small);
-                GUI.enabled = progress.rank < 5 && progress.shards >= progress.nextShards && me.gold >= progress.nextGold && !processing;
-                if (GUILayout.Button("Ascend · " + progress.nextShards + " Echo Shards / " + progress.nextGold + " gold", theme.Primary)) Send("upgrade-commander", selected.id);
-                GUI.enabled = true;
+                string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";
+                if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);
             }
             else
             {
@@ -245,9 +242,8 @@ namespace ThronesOfMyth
             if (selected.level < selected.maxLevel)
             {
                 GUILayout.Label(Cost(selected.cost), theme.Body); GUILayout.Label(Mathf.CeilToInt(selected.duration) + " seconds", theme.Small);
-                GUI.enabled = selected.canResearch && !processing;
-                if (GUILayout.Button("Research next rank", theme.Primary, GUILayout.Height(46))) Send("research", selected.id);
-                GUI.enabled = true; if (!selected.canResearch) GUILayout.Label(selected.lockedReason, theme.Small);
+                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":selected.lockedReason;
+                if(theme.Action("Research rank "+(selected.level+1),selected.canResearch&&!processing&&pendingOrder==null,reason))Send("research",selected.id);
             }
             if (HasJob(me.research)) { GUILayout.Space(18); DrawJob(me.research, JobName(me.research), false); }
             GUILayout.Label("Research continues independently of city construction and troop training.", theme.Small);
@@ -310,7 +306,7 @@ namespace ThronesOfMyth
             }
             else if (node != null)
             {
-                title = node.name; subtitle = node.remaining.ToString("N0") + " " + node.resource.ToUpperInvariant() + " AVAILABLE"; emblem = node.resource;
+                title = node.name; subtitle = node.remaining.ToString("N0") + " " + node.resource.ToUpperInvariant() + " AVAILABLE · SELECT A MARCH, THEN GATHER"; emblem = node.resource;
                 action = node.remaining > 0 ? "March & gather" : "Replenishing"; enabled &= node.remaining > 0; perform = () => Send("gather", node.id);
             }
             else if (site != null)

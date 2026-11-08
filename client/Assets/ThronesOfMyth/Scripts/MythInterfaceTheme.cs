@@ -14,7 +14,8 @@ namespace ThronesOfMyth
         public static readonly Color Red = new Color(0.88f, 0.42f, 0.32f);
         public GUISkin Skin { get; private set; }
         public GUIStyle Title, Heading, Body, Small, Eyebrow, Number, Center, Primary, Danger, Tab, Card;
-        private GUIStyle panel, inset, selected, compactPrimary;
+        private GUIStyle panel, inset, selected, compactPrimary,noticeText;
+        private float appliedScale=-1;
         private readonly Dictionary<GUIStyle, GUIStyle> singleLines = new Dictionary<GUIStyle, GUIStyle>();
         private Texture2D disk;
         private readonly MythArtwork artwork = new MythArtwork();
@@ -73,6 +74,17 @@ namespace ThronesOfMyth
             for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++) pixels[y * 64 + x] = new Color(1, 1, 1, Mathf.Clamp01(31.5f - Vector2.Distance(new Vector2(x, y), new Vector2(31.5f, 31.5f))));
             disk.SetPixels(pixels); disk.Apply(); textures.Add(disk);
         }
+        public void ApplyScale(float scale)
+        {
+            if(Mathf.Abs(appliedScale-scale)<.001f)return;appliedScale=scale;scale=Mathf.Max(.4f,scale);
+            Body.fontSize=InterfaceReadability.FontSize(15,12,scale);Small.fontSize=InterfaceReadability.FontSize(13,11,scale);
+            Heading.fontSize=InterfaceReadability.FontSize(19,14,scale);Eyebrow.fontSize=InterfaceReadability.FontSize(12,10,scale);
+            Tab.fontSize=InterfaceReadability.FontSize(13,12,scale);Tab.padding=new RectOffset(5,5,2,2);
+            compactPrimary.fontSize=InterfaceReadability.FontSize(13,13,scale);compactPrimary.padding=new RectOffset(5,5,2,2);
+            Primary.fontSize=InterfaceReadability.FontSize(16,13,scale);Skin.button.fontSize=InterfaceReadability.FontSize(15,12,scale);Skin.label.fontSize=Body.fontSize;
+            Danger.fontSize=Primary.fontSize;Center.fontSize=Body.fontSize;Card.fontSize=Skin.button.fontSize;Skin.toggle.fontSize=Small.fontSize;Skin.textField.fontSize=InterfaceReadability.FontSize(17,12,scale);
+            if(noticeText==null)noticeText=new GUIStyle(Small){padding=new RectOffset()};noticeText.fontSize=Small.fontSize;
+        }
         private GUIStyle Label(int size, Color color, FontStyle font = FontStyle.Normal)
         {
             var style = new GUIStyle(Skin.label) { fontSize = size, fontStyle = font }; style.normal.textColor = color; return style;
@@ -118,7 +130,7 @@ namespace ThronesOfMyth
                 singleLines[style] = line;
             }
             line.alignment = style.alignment == TextAnchor.MiddleCenter ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
-            line.normal.textColor=style.normal.textColor;
+            line.normal.textColor=style.normal.textColor;line.fontSize=style.fontSize;
             string shown = text ?? "";
             if (line.CalcSize(new GUIContent(shown)).x > rect.width)
             {
@@ -143,10 +155,41 @@ namespace ThronesOfMyth
             Circle(new Rect(rect.x+3*scale,rect.y+3*scale,rect.width-6*scale,rect.height-6*scale),accent);
             GUI.Label(rect,new GUIContent("",tooltip),GUIStyle.none);
         }
-        public bool Button(Rect rect, string text, bool primary = false, bool enabled = true)
+        public bool NavigationButton(Rect rect,string title,string icon,bool chosen,string hint="")
         {
-            bool wasEnabled = GUI.enabled; GUI.enabled = wasEnabled && enabled;
-            bool result = GUI.Button(rect, text, primary ? rect.height <= 36 ? compactPrimary : Primary : rect.height <= 36 ? Tab : Skin.button); GUI.enabled = wasEnabled; return result;
+            bool hover=rect.Contains(Event.current.mousePosition);
+            Fill(rect,chosen?new Color(.13f,.29f,.33f):hover?new Color(.10f,.21f,.25f):new Color(.045f,.10f,.13f,.96f));
+            if(chosen)Fill(new Rect(rect.x,rect.y,3,rect.height),Gold);
+            float inset=string.IsNullOrEmpty(icon)?10:38;
+            if(!string.IsNullOrEmpty(icon))Icon(new Rect(rect.x+11,rect.center.y-10,20,20),icon,chosen?Gold:Muted);
+            OneLine(new Rect(rect.x+inset,rect.y,rect.width-inset-8,rect.height),title,Tab);
+            return GUI.Button(rect,new GUIContent("",hint),GUIStyle.none);
+        }
+        public void Notice(Rect rect,string title,string message,Color accent,float animationAge)
+        {
+            Panel(rect);Fill(new Rect(rect.x,rect.y+5,3,rect.height-10),accent);
+            if(!ReducedMotion&&animationAge>=0&&animationAge<.35f)Fill(new Rect(rect.x,rect.yMax-2,rect.width*(1-animationAge/.35f),2),accent);
+            OneLine(new Rect(rect.x+14,rect.y+4,rect.width-28,22),title,Eyebrow);
+            GUI.Label(new Rect(rect.x+14,rect.y+27,rect.width-28,rect.height-30),new GUIContent(message,message),noticeText??Small);
+        }
+        public bool Button(Rect rect,string text,bool primary=false,bool enabled=true,string disabledReason="")
+        {
+            bool wasEnabled=GUI.enabled;GUI.enabled=wasEnabled&&enabled;
+            var style=primary?(rect.height<=36?compactPrimary:Primary):(rect.height<=36?Tab:Skin.button);
+            string shown=text??"";
+            while(shown.Length>0&&style.CalcSize(new GUIContent(shown)).x>rect.width)shown=shown.Substring(0,shown.Length-1);
+            if(shown!=text&&shown.Length>1)shown=shown.Substring(0,shown.Length-1)+"…";
+            string tip=!enabled&&!string.IsNullOrEmpty(disabledReason)?disabledReason:shown!=text?text:"";
+            bool result=GUI.Button(rect,new GUIContent(shown,tip),style);GUI.enabled=wasEnabled;
+            if(!enabled&&!string.IsNullOrEmpty(tip))GUI.Label(rect,new GUIContent("",tip),GUIStyle.none);
+            return result;
+        }
+        public bool Action(string title,bool available,string reason,bool primary=true)
+        {
+            bool before=GUI.enabled;GUI.enabled=before&&available;
+            bool pressed=GUILayout.Button(new GUIContent(title,available?"":reason),primary?Primary:Skin.button,GUILayout.MinHeight(42));GUI.enabled=before;
+            if(!available&&!string.IsNullOrEmpty(reason))GUILayout.Label(reason,Small);
+            return pressed;
         }
         public static void Fill(Rect rect, Color color)
         {

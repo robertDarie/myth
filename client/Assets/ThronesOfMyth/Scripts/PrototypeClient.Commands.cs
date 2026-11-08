@@ -54,7 +54,7 @@ namespace ThronesOfMyth
                     bool success=request.result==UnityWebRequest.Result.Success;
                     bool rejected=request.responseCode==400||request.responseCode==403||request.responseCode==404||request.responseCode==413||request.responseCode==422;
                     if(retained!=null&&(success||rejected))ClearPendingOrder(retained);
-                    status=success?OrderFeedback(command):DescribeError(request);
+                    status=success?OrderFeedback(command):DescribeError(request);lastOrderFailed=!success;orderNoticeAt=Time.unscaledTime;
                     if(success&&(command.type=="deploy-march"||command.type=="configure-march")){pendingFormationHero=command.targetId;interfacePage=InterfacePage.World;}
                     if(success&&command.type=="chat-send"&&chatDraft==command.name)chatDraft="";
                     retry=retained!=null&&!success&&(request.result==UnityWebRequest.Result.ConnectionError||request.responseCode>=500)&&attempt+1<attempts&&!string.IsNullOrEmpty(token);

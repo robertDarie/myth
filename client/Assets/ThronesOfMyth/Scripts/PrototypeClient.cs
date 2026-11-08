@@ -121,8 +121,8 @@ namespace ThronesOfMyth
         private void DrawTraining()
         {
             if (GUILayout.Button("House of Renewal · " + me.hospitalTroops + " mortal / " + me.hospitalMythic + " mythic awaiting recovery")) OpenInterface(InterfacePage.Hospital);
-            GUILayout.Label("City development", sectionStyle);
-            GUILayout.Label("Your city works while armies march, gather or fight. New recruits wait in city reserves until you reinforce at home.", noteStyle);
+            GUILayout.Label("Ready troops & capacity", sectionStyle);
+            GUILayout.Label("Train reserves → prepare a march → gather or fight. City work continues while armies are away.", noteStyle);
             int queuedTroops = 0, queuedMythic = 0;
             foreach (var job in me.trainingQueue)
                 if (job.type == "train"||job.type=="promote") queuedTroops += job.amount; else queuedMythic += job.amount;
@@ -144,20 +144,17 @@ namespace ThronesOfMyth
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(troop.name + " · " + troop.role + " · T" + troop.tier, sectionStyle);
                 GUILayout.Label(troop.description + "  Base health " + troop.health + " · Damage " + troop.damage.ToString("F2") + " per troop", noteStyle);
-                GUI.enabled = me.trainingQueue.Length < 3 && me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops + 5 <= cap && string.IsNullOrEmpty(troop.lockedReason) && Afford(troop.cost) && !processing;
-                float duration = me.trainingDuration * troop.duration / 8;
-                if (GUILayout.Button("Train 5 · " + Mathf.CeilToInt(duration) + "s · " + Cost(troop.cost))) Send("train", troop.id);
-                GUI.enabled = true;
-                if (!string.IsNullOrEmpty(troop.lockedReason)) GUILayout.Label(troop.lockedReason,noteStyle);
+                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.deployedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+5>cap?"Increase troop capacity or finish current training.":!Afford(troop.cost)?"More resources required: "+Cost(troop.cost):"";
+                float duration=me.trainingDuration*troop.duration/8;
+                if(theme.Action("Train 5 · "+Mathf.CeilToInt(duration)+"s · "+Cost(troop.cost),string.IsNullOrEmpty(reason),reason))Send("train",troop.id);
                 if(troop.tier==2)
                 {
                     var source=Array.Find(world.troopTypes,t=>t.id==troop.baseId);
                     GUILayout.Label("Per unit: health "+source.health+" → "+troop.health+" · damage "+source.damage.ToString("F2")+" → "+troop.damage.ToString("F2"),noteStyle);
                     GUILayout.Label("Ready Tier I reserves: "+troop.sourceAvailable+" · promotion preserves soldier count",noteStyle);
-                    GUI.enabled=!processing&&pendingOrder==null&&string.IsNullOrEmpty(troop.lockedReason)&&troop.sourceAvailable>=5&&me.trainingQueue.Length<3&&Afford(troop.promotionCost);
-                    float sourceDuration=Array.Find(world.troopTypes,t=>t.id==troop.baseId).duration;
-                    if(GUILayout.Button("Promote 5 · "+Mathf.CeilToInt(me.trainingDuration*(troop.duration-sourceDuration)/8)+"s · "+Cost(troop.promotionCost)))Send("promote",troop.id);
-                    GUI.enabled=true;
+                    string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<5?"Needs five ready Tier I reserves.":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
+                    float sourceDuration=source.duration;
+                    if(theme.Action("Promote 5 · "+Mathf.CeilToInt(me.trainingDuration*(troop.duration-sourceDuration)/8)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
                 }
                 GUILayout.EndVertical();
             }
