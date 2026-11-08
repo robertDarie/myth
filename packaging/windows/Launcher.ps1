@@ -1,3 +1,4 @@
+param([switch]$ProfileVisuals)
 # Runs only the local prototype server started by this launcher. No admin access required.
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Windows.Forms
@@ -47,7 +48,8 @@ try {
         }
         if (-not (Is-Compatible $health)) { throw 'The local server did not become ready. Check the server logs in LocalAppData\ThronesOfMyth\Logs.' }
     }
-    $game = Start-Process -FilePath $gameExe -WorkingDirectory (Split-Path $gameExe) -PassThru
+    if ($ProfileVisuals) { $game = Start-Process -FilePath $gameExe -ArgumentList '--thrones-profile' -WorkingDirectory (Split-Path $gameExe) -PassThru }
+    else { $game = Start-Process -FilePath $gameExe -WorkingDirectory (Split-Path $gameExe) -PassThru }
     $game.WaitForExit()
 }
 catch { Show-Error $_.Exception.Message; exit 1 }

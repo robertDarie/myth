@@ -11,12 +11,13 @@ namespace ThronesOfMyth.Editor
     {
         [Serializable] private sealed class AssetResult { public string asset; public int renderers,vertices,bones,clips; public float height; }
         [Serializable] private sealed class Review { public string unityVersion,graphicsDevice; public bool success; public AssetResult[] assets; public string[] errors; public string note="Asset/import review only; native gameplay layout and Windows executable need a playtest."; }
-        [Serializable] private sealed class Performance { public string unityVersion,graphicsDevice; public int frames,width,height; public float averageFrameMs,p95FrameMs,maxFrameMs,averageDrawCalls; public string note="Measured in the Editor Game View, not a standalone-build benchmark."; }
+        [Serializable] private sealed class Performance { public string unityVersion,graphicsDevice,cpu; public int systemMemoryMB,graphicsMemoryMB,vSync,targetFrameRate; public long managedHeapStart,managedHeapEnd; public int frames,width,height; public float averageFrameMs,p95FrameMs,maxFrameMs,averageDrawCalls; public string note="Measured in the Editor Game View, not a standalone-build benchmark."; }
         private const string Root="Assets/ThronesOfMyth/Resources/Art/";
         private static readonly string[] Poses={"Idle","March","Attack","Skill","Retreat","Victory","Gather","Hit"};
         private static readonly List<float> frameTimes=new List<float>();
         private static int lastFrame;
         private static float drawCalls;
+        private static long heapAtStart;
         private static string Folder { get { string path=Path.GetFullPath(Path.Combine(Application.dataPath,"../..","work/native-art-review"));Directory.CreateDirectory(path);return path; } }
         private static AnimationState FindPose(Animation animation,string pose)
         {
@@ -86,16 +87,16 @@ namespace ThronesOfMyth.Editor
         public static void MeasureFrames()
         {
             if(!EditorApplication.isPlaying)throw new InvalidOperationException("Enter Play mode, keep the Game View active and move/fight while capturing.");
-            frameTimes.Clear();drawCalls=0;lastFrame=-1;EditorApplication.update-=Collect;EditorApplication.update+=Collect;Debug.Log("Capturing 300 Game View frames. Exercise marching/combat and city views.");
+            frameTimes.Clear();drawCalls=0;heapAtStart=GC.GetTotalMemory(false);lastFrame=-1;EditorApplication.update-=Collect;EditorApplication.update+=Collect;Debug.Log("Capturing 300 Game View frames. Exercise marching/combat and city views.");
         }
         private static void Collect()
         {
             if(!EditorApplication.isPlaying){EditorApplication.update-=Collect;return;}if(EditorApplication.isPaused||Time.frameCount==lastFrame)return;lastFrame=Time.frameCount;
             frameTimes.Add(Time.unscaledDeltaTime*1000);drawCalls+=UnityStats.drawCalls;if(frameTimes.Count<300)return;EditorApplication.update-=Collect;
             var sorted=frameTimes.ToArray();Array.Sort(sorted);float sum=0;foreach(float ms in sorted)sum+=ms;
-            var result=new Performance{unityVersion=Application.unityVersion,graphicsDevice=SystemInfo.graphicsDeviceName,frames=sorted.Length,width=Screen.width,height=Screen.height,averageFrameMs=sum/sorted.Length,p95FrameMs=sorted[Mathf.FloorToInt((sorted.Length-1)*.95f)],maxFrameMs=sorted[sorted.Length-1],averageDrawCalls=drawCalls/sorted.Length};File.WriteAllText(Path.Combine(Folder,"game-view-performance.json"),JsonUtility.ToJson(result,true));Debug.Log("Measured Game View performance saved in "+Folder);
+            var result=new Performance{cpu=SystemInfo.processorType,systemMemoryMB=SystemInfo.systemMemorySize,graphicsMemoryMB=SystemInfo.graphicsMemorySize,vSync=QualitySettings.vSyncCount,targetFrameRate=Application.targetFrameRate,managedHeapStart=heapAtStart,managedHeapEnd=GC.GetTotalMemory(false),unityVersion=Application.unityVersion,graphicsDevice=SystemInfo.graphicsDeviceName,frames=sorted.Length,width=Screen.width,height=Screen.height,averageFrameMs=sum/sorted.Length,p95FrameMs=sorted[Mathf.FloorToInt((sorted.Length-1)*.95f)],maxFrameMs=sorted[sorted.Length-1],averageDrawCalls=drawCalls/sorted.Length};File.WriteAllText(Path.Combine(Folder,"game-view-performance.json"),JsonUtility.ToJson(result,true));Debug.Log("Measured Game View performance saved in "+Folder);
         }
         [MenuItem("Thrones of Myth/Art Review/Capture Current Game View")]
-        public static void CaptureGame(){if(!EditorApplication.isPlaying)throw new InvalidOperationException("Enter Play mode first.");ScreenCapture.CaptureScreenshot(Path.Combine(Folder,"game-view.png"));}
+        public static void CaptureGame(){if(!EditorApplication.isPlaying)throw new InvalidOperationException("Enter Play mode first.");ScreenCapture.CaptureScreenshot(Path.Combine(Folder,"game-view-"+Screen.width+"x"+Screen.height+"-"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff")+".png"));}
     }
 }

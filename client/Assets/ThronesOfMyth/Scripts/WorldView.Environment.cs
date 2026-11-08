@@ -12,11 +12,11 @@ namespace ThronesOfMyth
             for (int i = 0; i < RoadPoints.Length - 1; i++) { if (i == 5) continue; distance = Mathf.Min(distance, SegmentDistance(point, RoadPoints[i], RoadPoints[i + 1])); }
             return distance;
         }
+        private static readonly Vector2[] Clearings = { new Vector2(20,23), new Vector2(50,52), new Vector2(65,65), new Vector2(27,20), new Vector2(14,32), new Vector2(53,24), new Vector2(24,53), new Vector2(62,61), new Vector2(19,15), new Vector2(14,28), new Vector2(31,15), new Vector2(26,36), new Vector2(50,25), new Vector2(25,52), new Vector2(60,58), new Vector2(10,36), new Vector2(30,10), new Vector2(50,42), new Vector2(62,32), new Vector2(33,32), new Vector2(54,58) };
         private bool SceneryClearing(Vector2 p)
         {
             if (p.x < 32 && p.y < 16 || RoadDistance(p) < 2.3f || Mathf.Abs(p.x - 40) < 3 || Mathf.Abs(p.y - 40) < 3) return true;
-            var clearings = new[] { new Vector2(20,23), new Vector2(50,52), new Vector2(65,65), new Vector2(27,20), new Vector2(14,32), new Vector2(53,24), new Vector2(24,53), new Vector2(62,61), new Vector2(19,15), new Vector2(14,28), new Vector2(31,15), new Vector2(26,36), new Vector2(50,25), new Vector2(25,52), new Vector2(60,58), new Vector2(10,36), new Vector2(30,10), new Vector2(50,42), new Vector2(62,32), new Vector2(33,32), new Vector2(54,58) };
-            foreach (var at in clearings) if (Vector2.Distance(p, at) < 3.4f) return true;
+            foreach (var at in Clearings) if (Vector2.Distance(p, at) < 3.4f) return true;
             for (int i = 0; i < 12; i++) if (Vector2.Distance(p, new Vector2(8 + i % 4 * 8, 18 + i / 4 * 8)) < 2.7f) return true;
             return false;
         }
@@ -35,10 +35,10 @@ namespace ThronesOfMyth
                 var meadow = Color.Lerp(south, north, Mathf.SmoothStep(0,1,(p.y-34)/22)); meadow *= 0.86f + patch * 0.24f + grain * 0.055f;
                 float vein=Mathf.Abs(Mathf.PerlinNoise(p.x*.05f+12,p.y*.08f+21)-.5f);
                 meadow=Color.Lerp(meadow,new Color(.34f,.37f,.27f),Mathf.Clamp01((.07f-vein)*5)*.30f);
-                float road = 1 - Mathf.SmoothStep(0.65f, 1.9f, RoadDistance(p)); var earth = Color.Lerp(new Color(0.65f,0.56f,0.36f), new Color(0.81f,0.72f,0.49f), patch);
-                float shoulder=Mathf.Clamp01(1-Mathf.Abs(RoadDistance(p)-1.45f)*2)*.22f;
+                float roadDistance=RoadDistance(p);float road = 1 - Mathf.SmoothStep(0.65f, 1.9f, roadDistance); var earth = Color.Lerp(new Color(0.65f,0.56f,0.36f), new Color(0.81f,0.72f,0.49f), patch);
+                float shoulder=Mathf.Clamp01(1-Mathf.Abs(roadDistance-1.45f)*2)*.22f;
                 meadow=Color.Lerp(meadow,new Color(.36f,.37f,.25f),shoulder);
-                earth*=.96f+Mathf.Sin(RoadDistance(p)*6)*.035f;
+                earth*=.96f+Mathf.Sin(roadDistance*6)*.035f;
                 pixels[y * 512 + x] = Color.Lerp(meadow, earth, road * 0.86f);
             }
             groundTexture.SetPixels(pixels); groundTexture.Apply(true, true); material.mainTexture = groundTexture; ground.GetComponent<Renderer>().enabled=false;BuildRelief(material);

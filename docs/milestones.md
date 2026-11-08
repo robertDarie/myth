@@ -115,3 +115,12 @@ Resource worksites and stock depletion/refill presentation, quiet icon-led map
 markers, mixed-class screen-size detail, fitted selection/picking and observed
 gathering feedback. No gameplay/save format changes. Native visual acceptance
 remains pending; see [the audit and phased plan](visual-quality-plan-0.23.md).
+
+## Visual quality phases 2–4 — 0.24 to 0.26
+
+Phase 2 (`6f091d7`) composes regions and gives institutions distinct culture roofs,
+workyards and live completion feedback. Phase 3 (`dff0aa6`) simplifies navigation,
+adds readable theme controls and standardizes core action/notice states. Phase 4
+adds measured CLR allocation improvements, cached presentation data and native
+acceptance/performance tools. 206 server tests and 146 pure-C# contracts pass;
+native compilation/rendering/input/FPS remain pending. See [delivery and acceptance](visual-quality-delivery-0.26.md).

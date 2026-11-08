@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.23
+## Playable slice 0.26
 
+- Composed regions, distinct culture institutions and confirmed city completion
+  feedback; grouped navigation, readable controls and clearer action states.
+  [Phases 2–4 delivery, verification and rebuild guide](docs/visual-quality-delivery-0.26.md).
 - Map readability phase: five recognizable resource worksites with server-driven
   stock, compact map markers and mixed-class overview formations with fitted
   selection/picking. [Audit, phases and native acceptance](docs/visual-quality-plan-0.23.md).

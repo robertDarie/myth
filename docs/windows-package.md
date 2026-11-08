@@ -128,3 +128,11 @@ Bundle 0.23.0 delivers visual quality phase 1. Protocol 14, save schema 13 and S
 revision 2 remain unchanged. Pull main and rebuild. Run both Visual Review commands
 and the [native acceptance matrix](visual-quality-plan-0.23.md) before accepting
 rendered quality; these checks could not run in the cloud.
+
+## Build 0.26
+
+Pull main and rebuild bundle 0.26.0 to test visual phases 2–4 together. Protocol 14,
+save schema 13 and SQLite revision 2 remain unchanged. The [combined delivery guide](visual-quality-delivery-0.26.md)
+includes the Windows validation script, 120-case acceptance matrix, native review
+menus, unique screenshots and opt-in F8 standalone performance recording. Native
+execution is pending; the cloud results are not rendered Windows acceptance.

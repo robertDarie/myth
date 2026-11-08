@@ -3,6 +3,8 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
+        public InterfacePage ReviewPage => interfacePage;
+        public float ReviewUiScale => InterfaceScale;
         private static readonly InterfacePage[] PrimaryPages={InterfacePage.City,InterfacePage.Marches,InterfacePage.Heroes,InterfacePage.Alliance,InterfacePage.Menu};
         private static readonly string[] PrimaryTitles={"City","Marches","Commanders","Alliance","Menu"};
         private static readonly string[] PrimaryIcons={"city","army","heroes","alliance","chronicle"};

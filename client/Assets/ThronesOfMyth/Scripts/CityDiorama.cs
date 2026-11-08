@@ -19,6 +19,9 @@ namespace ThronesOfMyth
         private string hoveredDistrict="";
         private float fittedAspect=-1,fittedYaw=-999;
         private string signature;
+        private ArmyData appearanceObserved;
+        private readonly List<BuildingCard> labelOrder=new List<BuildingCard>();
+        private WorldActorAnimation[] guardActors;
         private float renderedAt=-1,yaw;
         private bool showDistrictNames;
         private readonly List<Rect> labelBounds = new List<Rect>();
@@ -69,13 +72,10 @@ namespace ThronesOfMyth
             bool audio=Application.isPlaying&&visible&&BattlefieldAudio.Volume>0&&PlayerPrefs.GetInt("ThronesOfMyth.cityAmbience",1)==1&&ambient.clip!=null;
             ambient.volume=BattlefieldAudio.Volume*.22f;if(audio&&!ambient.isPlaying)ambient.Play();if(!audio&&ambient.isPlaying)ambient.Stop();
         }
-        private QueueJob Job(ArmyData city,string id)
-        {
-            foreach(var job in new[]{city.construction,city.secondConstruction})if(job!=null&&!string.IsNullOrEmpty(job.id)&&(job.targetId==id||job.type=="upgrade"&&id=="citadel"))return job;
-            if(id=="academy")return city.research;if(id=="forge")return city.crafting;if(id=="barracks"&&city.trainingQueue.Length>0)return city.trainingQueue[0];return null;
-        }
+        private QueueJob Job(ArmyData city,string id) => CityPresentationData.Job(city,id);
         private void Sync(ArmyData city)
         {
+            if(ReferenceEquals(appearanceObserved,city))return;appearanceObserved=city;
             string key=city.civilization;foreach(var b in city.cityBuildings)key+="|"+b.id+":"+b.level;
             if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();plotSeals.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
             art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.23f,0),new Vector3(16,.22f,16),new Color(.36f,.42f,.29f));
@@ -121,7 +121,7 @@ namespace ThronesOfMyth
                 var crane=new GameObject("Active construction scaffold").transform;crane.SetParent(district,false);art.Shape(crane,PrimitiveType.Cube,new Vector3(-.7f,.8f,.3f),new Vector3(.07f,1.6f,.07f),new Color(.49f,.34f,.18f));art.Shape(crane,PrimitiveType.Cube,new Vector3(-.20f,1.55f,.3f),new Vector3(1.1f,.06f,.06f),new Color(.49f,.34f,.18f));cranes[b.id]=crane;
             }
             for(int edge=0;edge<32;edge++){float angle=edge*Mathf.PI*2/32;framingPoints.Add(new Vector3(Mathf.Sin(angle)*8,-.45f,Mathf.Cos(angle)*8));}
-            guards=new[]{art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization)};Layer(content);renderedAt=-1;
+            guards=new[]{art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization)};guardActors=new[]{guards[0].GetComponent<WorldActorAnimation>(),guards[1].GetComponent<WorldActorAnimation>()};Layer(content);renderedAt=-1;
         }
         private void FitCity(float aspect)
         {
@@ -159,7 +159,7 @@ namespace ThronesOfMyth
                 // Construction stays readable with motion disabled; only the crane's idle sway stops.
                 cranes[b.id].localRotation=Quaternion.Euler(0,reducedMotion?0:Mathf.Sin(Time.unscaledTime*.8f)*5,0);
             }
-            for(int i=0;i<guards.Length;i++){float t=reducedMotion?i*Mathf.PI:Time.unscaledTime*.16f+i*Mathf.PI;guards[i].localPosition=new Vector3(Mathf.Cos(t)*6.5f,0,Mathf.Sin(t)*6.5f);guards[i].localRotation=Quaternion.Euler(0,-t*Mathf.Rad2Deg,0);guards[i].GetComponent<WorldActorAnimation>().reducedMotion=reducedMotion;}
+            for(int i=0;i<guards.Length;i++){float t=reducedMotion?i*Mathf.PI:Time.unscaledTime*.16f+i*Mathf.PI;guards[i].localPosition=new Vector3(Mathf.Cos(t)*6.5f,0,Mathf.Sin(t)*6.5f);guards[i].localRotation=Quaternion.Euler(0,-t*Mathf.Rad2Deg,0);guardActors[i].reducedMotion=reducedMotion;}
             var image=new Rect(rect.x+5,rect.y+5,rect.width-10,rect.height-45);
             // Match render density to UI scale, capped to keep this inset inexpensive.
             int width=Mathf.Clamp(Mathf.CeilToInt(image.width*Mathf.Abs(GUI.matrix.m00)/16)*16,512,1600);
@@ -196,7 +196,7 @@ namespace ThronesOfMyth
             labelBounds.Clear();
             // Selected and working districts get labels first. Unbuilt plots stay quiet
             // until selected; the district list always exposes every institution.
-            var labelOrder=new List<BuildingCard>(city.cityBuildings);
+            labelOrder.Clear();labelOrder.AddRange(city.cityBuildings);
             string selectedId=city.cityBuildings[selected].id;
             labelOrder.Sort((a,b)=>DistrictLabelPriority(city,a,selectedId).CompareTo(DistrictLabelPriority(city,b,selectedId)));
             foreach(var b in labelOrder)

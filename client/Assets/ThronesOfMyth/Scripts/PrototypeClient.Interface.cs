@@ -186,7 +186,7 @@ namespace ThronesOfMyth
             if (!string.IsNullOrEmpty(GUI.tooltip)&&Time.unscaledTime-tooltipSince>.35f)
             {
                 var point = Event.current.mousePosition;
-                float tipHeight = Mathf.Clamp(theme.Small.CalcHeight(new GUIContent(GUI.tooltip), 274) + 18, 42, 160);
+                float tipHeight = Mathf.Clamp(theme.Small.CalcHeight(new GUIContent(GUI.tooltip), 274) + 18, 42, Mathf.Min(320,ViewHeight*.4f));
                 var tip = new Rect(Mathf.Clamp(point.x + 16, 8, ViewWidth - 306), Mathf.Clamp(point.y + 18, 8, ViewHeight - tipHeight - 8), 298, tipHeight);
                 theme.Panel(tip); theme.Text(new Rect(tip.x + 12, tip.y + 8, tip.width - 24, tip.height - 16), GUI.tooltip, theme.Small);
             }
@@ -225,7 +225,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.25  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.26  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()

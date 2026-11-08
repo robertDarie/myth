@@ -158,7 +158,7 @@ namespace ThronesOfMyth
         }
         public void Clear()
         {
-            foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();
+            foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();fogGrid.Reset();
         }
         private void OnDestroy()
         {

@@ -16,6 +16,10 @@ namespace ThronesOfMyth
         public GUIStyle Title, Heading, Body, Small, Eyebrow, Number, Center, Primary, Danger, Tab, Card;
         private GUIStyle panel, inset, selected, compactPrimary,noticeText;
         private float appliedScale=-1;
+        private GUIStyle measureStyle;
+        private readonly GUIContent measuringContent=new GUIContent();
+        private readonly Func<string,float> measureWidth;
+        private float MeasureWidth(string text){measuringContent.text=text;return measureStyle.CalcSize(measuringContent).x;}
         private readonly Dictionary<GUIStyle, GUIStyle> singleLines = new Dictionary<GUIStyle, GUIStyle>();
         private Texture2D disk;
         private readonly MythArtwork artwork = new MythArtwork();
@@ -39,6 +43,7 @@ namespace ThronesOfMyth
         private readonly List<Texture2D> textures = new List<Texture2D>();
         public MythInterfaceTheme(GUISkin original)
         {
+            measureWidth=MeasureWidth;
             Skin = UnityEngine.Object.Instantiate(original);
             var normal = Rounded(new Color(0.12f, 0.23f, 0.29f), new Color(0.3f, 0.37f, 0.36f));
             var hover = Rounded(new Color(0.15f, 0.25f, 0.27f), Gold);
@@ -131,12 +136,7 @@ namespace ThronesOfMyth
             }
             line.alignment = style.alignment == TextAnchor.MiddleCenter ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
             line.normal.textColor=style.normal.textColor;line.fontSize=style.fontSize;
-            string shown = text ?? "";
-            if (line.CalcSize(new GUIContent(shown)).x > rect.width)
-            {
-                while (shown.Length > 0 && line.CalcSize(new GUIContent(shown + "…")).x > rect.width) shown = shown.Substring(0, shown.Length - 1);
-                shown += "…";
-            }
+            measureStyle=line;string shown=TextElision.Fit(text,rect.width,measureWidth);
             GUI.Label(rect, new GUIContent(shown, shown == text ? "" : text), line);
         }
         public void WorldMarker(Rect rect,string text,string icon,Color accent,bool chosen,GUIStyle textStyle,float scale)
@@ -176,9 +176,7 @@ namespace ThronesOfMyth
         {
             bool wasEnabled=GUI.enabled;GUI.enabled=wasEnabled&&enabled;
             var style=primary?(rect.height<=36?compactPrimary:Primary):(rect.height<=36?Tab:Skin.button);
-            string shown=text??"";
-            while(shown.Length>0&&style.CalcSize(new GUIContent(shown)).x>rect.width)shown=shown.Substring(0,shown.Length-1);
-            if(shown!=text&&shown.Length>1)shown=shown.Substring(0,shown.Length-1)+"…";
+            measureStyle=style;string shown=TextElision.Fit(text,rect.width,measureWidth);
             string tip=!enabled&&!string.IsNullOrEmpty(disabledReason)?disabledReason:shown!=text?text:"";
             bool result=GUI.Button(rect,new GUIContent(shown,tip),style);GUI.enabled=wasEnabled;
             if(!enabled&&!string.IsNullOrEmpty(tip))GUI.Label(rect,new GUIContent("",tip),GUIStyle.none);

@@ -1,0 +1,17 @@
+{
+  "runtime": ".NET 8.0.33",
+  "iterations": 10000,
+  "text": {
+    "legacyMs": 132.387,
+    "legacyBytes": 723280040,
+    "optimizedMs": 4.6704,
+    "optimizedBytes": 15280040
+  },
+  "cityJob": {
+    "legacyMs": 0.5715,
+    "legacyBytes": 400040,
+    "optimizedMs": 0.2755,
+    "optimizedBytes": 40
+  },
+  "limitation": ".NET CLR microbenchmark of production pure C# helpers; not Unity/Windows rendering, input, GUI font measurement or FPS."
+}

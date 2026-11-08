@@ -3,9 +3,10 @@
 Baseline: main `686e917` (0.22); phase 1 implementation: 0.23. This is a visual
 milestone, with no economy, progression, command, protocol or save-schema changes.
 The audit uses the current Unity source and earlier gameplay screenshots in the
-conversation. No new recording was attached to this request. Unity rendering and
-a C# compiler are unavailable in this cloud workspace, so source findings and
-implemented changes are not a claim of rendered acceptance.
+conversation. No new recording was attached to this request. At the 0.23 audit, Unity rendering and
+a C# compiler were unavailable. The 0.26 delivery adds compiled pure-C# checks;
+Unity rendering remains unavailable, so source findings and implementation are
+not a claim of rendered acceptance.
 
 ## Audit: what matters most
 
@@ -77,7 +78,7 @@ Acceptance:
 5. Existing camera tests pass, including thin aspect ratios, followed by native
    corner/edge input, resize and map picking checks. Server regressions stay green.
 
-### 2. Composed world and living city — next
+### 2. Composed world and living city — implemented 0.24; native acceptance pending
 
 Refine regional scenery density and light/shadow contrast around the existing roads;
 frame actual gates/shrines/strongholds with original decorative landmarks without
@@ -95,7 +96,7 @@ normal zoom; all institutions selectable through a full rotation; all level/queu
 states correct; no overlap with controls or false hidden-object disclosure. City
 remains sharp without unbounded render-target growth. Reduced motion stays static.
 
-### 3. UI flow and consistent motion — after world/city acceptance
+### 3. UI flow and consistent motion — implemented 0.25; native acceptance pending
 
 Audit most common tasks (upgrade, train/promote, deploy/gather, research, inventory,
 commander management and alliance actions). Consolidate repeated headings and move
@@ -114,7 +115,7 @@ world order beneath a panel or inaccessible disabled reason. Keyboard shortcuts,
 retry/error flow and all existing interfaces work at 85/100/115% scale. New motion
 never delays a command or obscures a battle; reduced motion retains static meaning.
 
-### 4. Native acceptance and optimization — release gate
+### 4. Native acceptance and optimization — cloud work/tooling complete 0.26; native gate pending
 
 Run Unity import/compile checks, camera/presentation contract menus, the full Windows
 matrix below, matched captures and the existing 300-frame measurement. Profile dense
@@ -167,4 +168,4 @@ same hardware. Use the broader [0.22 Windows checklist](visual-camera-0.22.md) t
 
 Remaining: native compilation, execution of both native checkers, visual captures,
 real input/picking acceptance, dense-scene label/selection overlap review and
-performance measurement. Phases 2–4 are planned work, not delivered features.
+performance measurement. Phases 2–3 are implemented and phase 4 cloud verification/tooling is complete. Native acceptance remains pending; see [the combined delivery](visual-quality-delivery-0.26.md).
