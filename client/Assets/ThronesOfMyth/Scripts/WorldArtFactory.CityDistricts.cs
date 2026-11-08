@@ -6,8 +6,13 @@ namespace ThronesOfMyth
         public Transform Institution(Transform parent,string id,string culture,int level,Color team)
         {
             var root=new GameObject("District · "+id).transform;root.SetParent(parent,false);
-            Box(root,0,.07f,0,1.5f,.14f,1.3f,level>0?stone:darkStone);
-            if(level<=0){Ring(root,.6f,new Color(.45f,.52f,.52f));return root;}
+            if(level<=0)
+            {
+                Box(root,0,.035f,0,1.2f,.04f,1.05f,new Color(.47f,.44f,.33f));
+                for(int side=-1;side<=1;side+=2)for(int end=-1;end<=1;end+=2)Pillar(root,side*.54f,.16f,end*.45f,.065f,.26f,timber);
+                return root;
+            }
+            Box(root,0,.045f,0,1.5f,.09f,1.3f,stone);
             if(id=="citadel") { City(root,culture,team);root.localScale=Vector3.one*.55f;return root; }
             if(id=="farm")
             {

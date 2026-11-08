@@ -14,7 +14,8 @@ namespace ThronesOfMyth
         public static readonly Color Red = new Color(0.88f, 0.42f, 0.32f);
         public GUISkin Skin { get; private set; }
         public GUIStyle Title, Heading, Body, Small, Eyebrow, Number, Center, Primary, Danger, Tab, Card;
-        private GUIStyle panel, inset, selected;
+        private GUIStyle panel, inset, selected, compactPrimary;
+        private readonly Dictionary<GUIStyle, GUIStyle> singleLines = new Dictionary<GUIStyle, GUIStyle>();
         private Texture2D disk;
         private readonly MythArtwork artwork = new MythArtwork();
         public bool ReducedMotion;
@@ -41,7 +42,7 @@ namespace ThronesOfMyth
             var normal = Rounded(new Color(0.12f, 0.23f, 0.29f), new Color(0.3f, 0.37f, 0.36f));
             var hover = Rounded(new Color(0.15f, 0.25f, 0.27f), Gold);
             var active = Rounded(new Color(0.27f, 0.29f, 0.21f), Gold);
-            Skin.button = new GUIStyle(original.button) { fontSize = 15, fixedHeight = 0, padding = new RectOffset(12, 12, 9, 9), margin = new RectOffset(2, 2, 4, 4), border = new RectOffset(10, 10, 10, 10), wordWrap = true };
+            Skin.button = new GUIStyle(original.button) { fontSize = 15, fixedHeight = 0, padding = new RectOffset(12, 12, 9, 9), margin = new RectOffset(2, 2, 4, 4), border = new RectOffset(10, 10, 10, 10), wordWrap = false };
             Set(Skin.button.normal, normal, Cream); Set(Skin.button.hover, hover, Color.white); Set(Skin.button.active, active, Color.white);
             Set(Skin.button.onNormal, active, Cream); Set(Skin.button.onHover, hover, Color.white); Set(Skin.button.onActive, active, Cream);
             Skin.label = new GUIStyle(original.label) { fontSize = 15, wordWrap = true, padding = new RectOffset(0, 0, 3, 3) };
@@ -63,6 +64,7 @@ namespace ThronesOfMyth
             Primary = new GUIStyle(Skin.button) { fontStyle = FontStyle.Bold, fontSize = 16, padding = new RectOffset(10, 10, 5, 5) };
             Set(Primary.normal, Rounded(new Color(0.13f, 0.39f, 0.52f), new Color(0.95f, 0.8f, 0.43f)), new Color(1, 0.97f, 0.85f));
             Set(Primary.hover, Rounded(new Color(0.20f, 0.49f, 0.61f), Cream), Color.white);
+            compactPrimary = new GUIStyle(Primary) { fontSize = 12, padding = new RectOffset(5, 5, 3, 3) };
             Danger = new GUIStyle(Primary); Set(Danger.normal, Rounded(new Color(0.46f, 0.19f, 0.16f), Red), Cream);
             Tab = new GUIStyle(Skin.button) { fontSize = 12, padding = new RectOffset(3, 3, 4, 4) };
             Card = new GUIStyle(Skin.button) { alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 14, 12, 12) };
@@ -107,10 +109,27 @@ namespace ThronesOfMyth
             }
         }
         public void Text(Rect rect, string text, GUIStyle style = null) => GUI.Label(rect, text, style ?? Body);
+        public void OneLine(Rect rect, string text, GUIStyle style = null)
+        {
+            style = style ?? Body;
+            if (!singleLines.TryGetValue(style, out var line))
+            {
+                line = new GUIStyle(style) { wordWrap = false, clipping = TextClipping.Clip, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(0, 0, 0, 0) };
+                singleLines[style] = line;
+            }
+            line.alignment = style.alignment == TextAnchor.MiddleCenter ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
+            string shown = text ?? "";
+            if (line.CalcSize(new GUIContent(shown)).x > rect.width)
+            {
+                while (shown.Length > 0 && line.CalcSize(new GUIContent(shown + "…")).x > rect.width) shown = shown.Substring(0, shown.Length - 1);
+                shown += "…";
+            }
+            GUI.Label(rect, new GUIContent(shown, shown == text ? "" : text), line);
+        }
         public bool Button(Rect rect, string text, bool primary = false, bool enabled = true)
         {
             bool wasEnabled = GUI.enabled; GUI.enabled = wasEnabled && enabled;
-            bool result = GUI.Button(rect, text, primary ? Primary : rect.height <= 36 ? Tab : Skin.button); GUI.enabled = wasEnabled; return result;
+            bool result = GUI.Button(rect, text, primary ? rect.height <= 36 ? compactPrimary : Primary : rect.height <= 36 ? Tab : Skin.button); GUI.enabled = wasEnabled; return result;
         }
         public static void Fill(Rect rect, Color color)
         {
@@ -119,8 +138,10 @@ namespace ThronesOfMyth
         public static void Line(Vector2 start, Vector2 end, float width, Color color)
         {
             var matrix = GUI.matrix; var colorBefore = GUI.color;
-            GUIUtility.RotateAroundPivot(Mathf.Atan2(end.y - start.y, end.x - start.x) * Mathf.Rad2Deg, start);
-            GUI.color = color; GUI.DrawTexture(new Rect(start.x, start.y - width / 2, Vector2.Distance(start, end), width), Texture2D.whiteTexture);
+            // Compose in local GUI coordinates. RotateAroundPivot can displace geometry
+            // when the parent GUI matrix already contains resolution scaling.
+            GUI.matrix = matrix * Matrix4x4.TRS(new Vector3(start.x, start.y, 0), Quaternion.Euler(0, 0, Mathf.Atan2(end.y - start.y, end.x - start.x) * Mathf.Rad2Deg), Vector3.one);
+            GUI.color = color; GUI.DrawTexture(new Rect(0, -width / 2, Vector2.Distance(start, end), width), Texture2D.whiteTexture);
             GUI.matrix = matrix; GUI.color = colorBefore;
         }
         public void Circle(Rect rect, Color color)
@@ -129,12 +150,16 @@ namespace ThronesOfMyth
         }
         public void Diamond(Rect rect, Color color)
         {
-            var old = GUI.matrix; GUIUtility.RotateAroundPivot(45, rect.center);
-            Fill(new Rect(rect.center.x - rect.width * 0.3f, rect.center.y - rect.height * 0.3f, rect.width * 0.6f, rect.height * 0.6f), color); GUI.matrix = old;
+            var old = GUI.matrix;
+            GUI.matrix = old * Matrix4x4.TRS(new Vector3(rect.center.x, rect.center.y, 0), Quaternion.Euler(0, 0, 45), Vector3.one);
+            Fill(new Rect(-rect.width * 0.3f, -rect.height * 0.3f, rect.width * 0.6f, rect.height * 0.6f), color); GUI.matrix = old;
         }
         public void Bar(Rect rect, float value, Color color)
         {
-            Panel(rect, false, true); Fill(new Rect(rect.x + 2, rect.y + 2, Mathf.Max(0, rect.width - 4) * Mathf.Clamp01(value), Mathf.Max(1, rect.height - 4)), color);
+            // Thin bars must not inherit a panel's eleven-pixel border and shadow.
+            Fill(rect, new Color(0.025f, 0.055f, 0.07f, .95f));
+            float inset = rect.height < 6 ? 0 : 1;
+            Fill(new Rect(rect.x + inset, rect.y + inset, Mathf.Max(0, rect.width - inset * 2) * Mathf.Clamp01(value), Mathf.Max(1, rect.height - inset * 2)), color);
         }
         public void Icon(Rect r, string id, Color color)
         {

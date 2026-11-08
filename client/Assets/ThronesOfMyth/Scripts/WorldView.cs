@@ -102,30 +102,52 @@ namespace ThronesOfMyth
                 if (piece.actor != null) { piece.actor.reducedMotion = reducedMotion; piece.actor.SetSelected(pair.Key == selectedId); piece.actor.SetWideView(wide); }
             }
         }
+        private readonly List<Rect> labelBounds = new List<Rect>();
         public void DrawLabels(Camera camera)
         {
             if (camera == null || !labels) return;
-            foreach (var pair in pieces)
+            var colorBefore = GUI.color;
+            labelBounds.Clear();
+            var order = new List<string>(pieces.Keys);
+            order.Sort((a, b) => LabelPriority(a).CompareTo(LabelPriority(b)));
+            var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.Max(10, Mathf.RoundToInt(11 * labelScale)), wordWrap = false, padding = new RectOffset(5, 5, 0, 0), clipping = TextClipping.Clip };
+            foreach (string id in order)
             {
-                var piece = pair.Value;
+                var piece = pieces[id];
                 if (piece.actor != null) piece.actor.DrawCaption(camera, labelScale, occluded);
-                var point = camera.WorldToScreenPoint(piece.root.transform.position + Vector3.up * 3.7f);
+                var point = camera.WorldToScreenPoint(piece.root.transform.position + Vector3.up * (piece.kind == "army" ? 2.8f : 3.7f));
                 if (point.z <= 0 || point.x < 0 || point.x > Screen.width || point.y < 0 || point.y > Screen.height) continue;
-                float x = point.x, y = Screen.height - point.y;
-                if (occluded != null && occluded(new Vector2(x, y))) continue;
-                if (piece.kind == "node" && camera.orthographicSize > 20 && pair.Key != selectedId) continue;
-                if (piece.kind == "camp" && camera.orthographicSize > 34 && pair.Key != selectedId) continue;
-                var rect = new Rect(x - 105 * labelScale, y - 10 * labelScale, 210 * labelScale, 22 * labelScale);
-                GUI.color = pair.Key == selectedId ? Color.yellow : Color.white;
-                var oldColor = GUI.color; GUI.color = new Color(0.04f,0.09f,0.12f,0.68f); GUI.DrawTexture(new Rect(rect.x-4,rect.y,rect.width+8,rect.height),Texture2D.whiteTexture); GUI.color = oldColor;
-                GUI.Label(rect, piece.label, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.RoundToInt(11 * labelScale) });
-                GUI.color = Color.white;
+                if (piece.kind == "node" && camera.orthographicSize > 20 && id != selectedId) continue;
+                if (piece.kind == "camp" && camera.orthographicSize > 34 && id != selectedId) continue;
+                float width = Mathf.Clamp(style.CalcSize(new GUIContent(piece.label)).x, 70 * labelScale, 210 * labelScale);
+                var rect = new Rect(point.x - width / 2, Screen.height - point.y - 10 * labelScale, width, 22 * labelScale);
+                bool placed = false;
+                for (int attempt = 0; attempt < 3; attempt++)
+                {
+                    bool collision = false;
+                    foreach (var occupied in labelBounds) if (occupied.Overlaps(rect)) { collision = true; break; }
+                    bool blocked = occluded != null && (occluded(rect.center) || occluded(new Vector2(rect.xMin, rect.yMin)) || occluded(new Vector2(rect.xMax, rect.yMax)));
+                    if (!collision && !blocked && rect.yMin >= 0 && rect.yMax <= Screen.height) { placed = true; break; }
+                    rect.y -= 24 * labelScale;
+                }
+                if (!placed) continue;
+                labelBounds.Add(new Rect(rect.x - 3, rect.y - 2, rect.width + 6, rect.height + 8));
+                GUI.color = new Color(.025f, .06f, .08f, id == selectedId ? .92f : .72f); GUI.DrawTexture(rect, Texture2D.whiteTexture);
+                GUI.color = id == selectedId ? MythInterfaceTheme.Gold : MythInterfaceTheme.Cream;
+                GUI.Label(rect, piece.label, style);
                 if (piece.health >= 0)
                 {
-                    GUI.color = new Color(0.12f, 0.12f, 0.12f); GUI.DrawTexture(new Rect(x - 30, y + 13, 60, 4), Texture2D.whiteTexture);
-                    GUI.color = piece.color; GUI.DrawTexture(new Rect(x - 30, y + 13, 60 * Mathf.Clamp01(piece.health), 4), Texture2D.whiteTexture); GUI.color = Color.white;
+                    GUI.color = new Color(.025f, .05f, .06f); GUI.DrawTexture(new Rect(rect.center.x - 30, rect.yMax + 2, 60, 3), Texture2D.whiteTexture);
+                    GUI.color = piece.color; GUI.DrawTexture(new Rect(rect.center.x - 30, rect.yMax + 2, 60 * Mathf.Clamp01(piece.health), 3), Texture2D.whiteTexture);
                 }
             }
+            GUI.color = colorBefore;
+        }
+        private int LabelPriority(string id)
+        {
+            if (id == selectedId) return 0;
+            string kind = pieces[id].kind;
+            return kind == "city" ? 1 : kind == "army" ? 2 : kind == "site" ? 3 : kind == "camp" ? 4 : 5;
         }
         public void Clear()
         {

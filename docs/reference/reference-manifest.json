@@ -1,0 +1,37 @@
+{
+  "sourceFile": "Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx",
+  "sha256": "f603c6b47acc303557c75cfc091efabbca1b2d620f4a2d457569acad0d7b6283",
+  "workbookSnapshot": "2026-11-08",
+  "independentlyReverifiedSources": false,
+  "featureRecords": 679,
+  "epics": 14,
+  "sheets": {
+    "02 UI Screen Atlas": 69,
+    "03 Visual Art": 40,
+    "04 Gameplay Loops": 24,
+    "05 Resources": 37,
+    "06 Buildings": 52,
+    "07 Research": 28,
+    "08 Troops Combat": 53,
+    "09 Leaders Items": 36,
+    "10 Map PvE": 39,
+    "11 Alliances": 33,
+    "12 Timers": 51,
+    "13 Events Seasons": 41,
+    "14 Economy Shop": 31,
+    "15 Codex Architecture": 67,
+    "16 MVP Backlog": 45,
+    "17 Open Questions": 33
+  },
+  "statuses": {
+    "Prototype partial": 282,
+    "Planned": 262,
+    "Started 0.19; native review pending": 18,
+    "Later / optional": 84,
+    "Open question": 33
+  },
+  "generatedFiles": [
+    "adaptation-register.csv",
+    "Thrones_of_Myth_Adaptation_Plan.xlsx"
+  ]
+}

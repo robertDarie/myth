@@ -92,3 +92,10 @@ also bundles `database.mjs` and `downtime.mjs` because HTTP imports them. Local
 playtests still use JSON and loopback. Connection settings now accept a private
 kingdom invitation code for hosted HTTPS play. Native Unity compilation remains
 pending. See [the hosted-server guide](hosting-and-persistence-0.18.md).
+
+## Build 0.19
+
+Bundle version 0.19.0 starts the [visual foundation pass](visual-foundation-0.19.md).
+Protocol 13/schema 11/SQLite revision 1 are unchanged. Rebuild the Windows player
+after pulling; test the listed resolutions/UI scales in Unity before packaging.
+No server economy or combat behavior changes in this release.

@@ -78,3 +78,10 @@ Transactional SQLite, durable keyed receipts, failed-save rollback, downtime job
 completion, capped passive production, online backups, invitations and Docker/HTTPS
 operations files. Disconnects no longer cancel live orders. Hosting infrastructure
 and real accounts are not provisioned. See [the deployment guide](hosting-and-persistence-0.18.md).
+
+## Reference and visual foundation 0.19
+
+A 679-record reference adaptation register, 14-epic plan and R0–R8 acceptance
+roadmap; first implementation fixes scaled UI geometry, compact labels/bars,
+world-label contention, visual fog edges and living city composition. Native
+Unity review remains pending. See [the plan](reference-adaptation-plan.md).

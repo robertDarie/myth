@@ -4,8 +4,12 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.18
+## Playable slice 0.19
 
+- Reference adaptation plan: all 679 workbook records mapped to 14 epics, themed
+  decisions and phased acceptance gates, with an adapted Excel/CSV register.
+- First visual foundation pass: scale-safe UI decorations, compact labels/bars,
+  collision-aware world labels, feathered fog and a composed living city layout.
 - Hosted-kingdom foundation: transactional SQLite, rollback on failed saves, keyed
   command receipts, downtime progression, online backups and Docker/HTTPS deployment.
 - Disconnected players keep their accepted field orders in a running kingdom.
@@ -99,6 +103,8 @@ For a second player, run a Windows standalone build beside the editor and use a
 name and saved local token resume the same city; names alone are not credentials.
 
 See [the kingdom roadmap—KvK later](docs/kingdom-roadmap.md),
+[the complete reference adaptation plan](docs/reference-adaptation-plan.md),
+[the visual foundation guide](docs/visual-foundation-0.19.md),
 [the hosting and persistence guide](docs/hosting-and-persistence-0.18.md),
 [the 0.17 army and living city guide](docs/army-and-living-city-0.17.md),
 [the 0.16 kingdom and art guide](docs/kingdom-and-art-0.16.md),

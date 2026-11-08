@@ -1,5 +1,9 @@
 # Kingdom development roadmap
 
+The [complete reference adaptation plan](reference-adaptation-plan.md) now maps
+all 679 workbook records into 14 epics and R0–R8 acceptance milestones. Use it
+as the detailed planning register; this document retains milestone history.
+
 Accepted direction: develop the missing core kingdom systems in connected,
 testable milestones. **KvK belongs later in progression and is not the current
 implementation priority.** A future KvK should unlock after a functioning kingdom

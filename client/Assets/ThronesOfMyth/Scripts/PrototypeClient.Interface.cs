@@ -210,7 +210,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.18  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.19  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -234,7 +234,7 @@ namespace ThronesOfMyth
                 {
                     var rect = new Rect(318 + i * (width + 8), 25, width, 70); theme.Panel(rect, false, true);
                     theme.Icon(new Rect(rect.x + 10, rect.y + 21, 24, 24), ids[i], i == 4 ? new Color(0.7f, 0.6f, 0.95f) : MythInterfaceTheme.Gold);
-                    theme.Text(new Rect(rect.x + 43, rect.y + 6, width - 47, 20), names[i], theme.Eyebrow);
+                    theme.OneLine(new Rect(rect.x + 43, rect.y + 6, width - 47, 20), names[i], theme.Eyebrow);
                     theme.Text(new Rect(rect.x + 43, rect.y + 29, width - 47, 32), ShortNumber(values[i]), theme.Number);
                     if (GUI.Button(rect, new GUIContent("", values[i].ToString("N0") + " " + names[i].ToLowerInvariant()), GUIStyle.none))
                         OpenInterface(i == 5 ? InterfacePage.Temple : InterfacePage.Market);
@@ -293,8 +293,8 @@ namespace ThronesOfMyth
                     var army = own[i]; theme.Panel(r, army.id == ActiveArmy.id);
                     var definition = Array.Find(world.commanders, h => h.id == army.commanderId);
                     theme.Portrait(new Rect(x + 10, r.y + 8, Mathf.Min(44, r.height - 16), Mathf.Min(44, r.height - 16)), army.commanderId, RarityColor(definition.color));
-                    theme.Text(new Rect(x + 63, r.y + 7, 112, 22), HeroName(army.commanderId), theme.Small);
-                    if (r.height > 60) theme.Text(new Rect(x + 63, r.y + 27, 112, 20), army.state, theme.Small);
+                    theme.OneLine(new Rect(x + 63, r.y + 7, 112, 22), HeroName(army.commanderId), theme.Small);
+                    if (r.height > 60) theme.OneLine(new Rect(x + 63, r.y + 27, 112, 20), army.state, theme.Small);
                     theme.Bar(new Rect(x + 63, r.yMax - 18, 108, 5), (float)army.health / Mathf.Max(1, army.maxHealth), MythInterfaceTheme.Teal);
                     theme.Bar(new Rect(x + 63, r.yMax - 8, 108, 3), army.rage / 1000f, MythInterfaceTheme.Gold);
                     if (GUI.Button(r, new GUIContent("", "Select and focus " + HeroName(army.commanderId)), GUIStyle.none))
@@ -336,14 +336,14 @@ namespace ThronesOfMyth
             string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "CHAT", "CHRONICLE" };
             string[] icons = { "city", "heroes", "alliance", "temple", "chronicle", "chronicle" };
             InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Chat, InterfacePage.Chronicle };
-            float width = 123, start = ViewWidth / 2 - (width * labels.Length + 8 * (labels.Length - 1)) / 2;
+            float width = 132, start = ViewWidth / 2 - (width * labels.Length + 8 * (labels.Length - 1)) / 2;
             for (int i = 0; i < labels.Length; i++)
             {
                 var r = new Rect(start + i * (width + 8), ViewHeight - 88, width, 70); theme.Panel(r, interfacePage == pages[i]);
                 theme.Circle(new Rect(r.center.x - 19, r.y + 4, 38, 38), MythInterfaceTheme.Gold);
                 theme.Circle(new Rect(r.center.x - 17, r.y + 6, 34, 34), new Color(0.13f,0.27f,0.34f));
                 theme.Icon(new Rect(r.center.x - 12, r.y + 10, 24, 24), icons[i], interfacePage == pages[i] ? MythInterfaceTheme.Cream : MythInterfaceTheme.Gold);
-                theme.Text(new Rect(r.x + 2, r.y + 41, width - 4, 23), labels[i], theme.Center);
+                theme.OneLine(new Rect(r.x + 5, r.y + 43, width - 10, 22), labels[i], theme.Tab);
                 if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
             }
             if (interfacePage == InterfacePage.World) theme.Text(new Rect(20, ViewHeight - 44, 380, 26), "WASD pan · Wheel zoom · Right-click orders", theme.Small);
