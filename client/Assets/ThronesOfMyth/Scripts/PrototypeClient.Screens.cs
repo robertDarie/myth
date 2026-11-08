@@ -290,7 +290,7 @@ namespace ThronesOfMyth
             var camp = Array.Find(world.camps, c => c.id == selectedId);
             var node = Array.Find(world.nodes, n => n.id == selectedId);
             var site = Array.Find(world.sites, s => s.id == selectedId);
-            var army = Array.Find(world.armies, a => a.id == selectedId);
+            var army = OwnMarches().Find(a => a.id == selectedId) ?? Array.Find(world.armies, a => a.id == selectedId);
             var beacon = Array.Find(world.flags, f => f.id == selectedId);
             var pin = Array.Find(world.markers, m => m.id == selectedId);
             var city = Array.Find(world.players, p => "city-" + p.id == selectedId);
@@ -335,10 +335,11 @@ namespace ThronesOfMyth
                 bool allied = !string.IsNullOrEmpty(me.allianceId) && army.allianceId == me.allianceId;
                 var owner = Array.Find(world.players, p => p.id == army.ownerId);
                 bool ownCity = Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2;
-                bool protectedArmy = ownCity || owner == null || owner.cityLevel < 2 || me.cityLevel < 2 || army.recovery > 0 || Vector2.Distance(new Vector2(army.x, army.z), new Vector2(army.homeX, army.homeZ)) < 2;
-                action = army.ownerId == playerId ? "Return home" : allied ? "Alliance army" : ownCity ? "Leave city first" : protectedArmy ? "Protected army" : "Attack player";
+                bool protectedArmy = ownCity || me.cityLevel < 2 || army.protectedField;
+                if(army.ownerId==playerId)subtitle += " · CARGO " + CargoLabel(army);
+                action = army.ownerId == playerId ? (army.deployed?"Return home":"Edit formation") : allied ? "Alliance army" : ownCity ? "Leave city first" : protectedArmy ? "Protected army" : "Attack player";
                 enabled &= army.ownerId == playerId || (!allied && !protectedArmy);
-                perform = () => { if (army.ownerId == playerId) Send("return"); else Send("attack-player", army.id); };
+                perform = () => { if (army.ownerId == playerId) { activeMarchId=army.id; if(army.deployed)Send("return");else BeginFormation(true); } else Send("attack-player", army.id); };
             }
             else if (city != null)
             {
@@ -347,6 +348,8 @@ namespace ThronesOfMyth
             }
             else if (pin != null) { title = pin.name; subtitle = "ALLIANCE MARKER · " + Mathf.CeilToInt(pin.expires - world.time) + "s"; action = "Focus marker"; perform = () => cameraControl?.Focus(pin.x, pin.z); }
             else { selectedId = ""; return; }
+            bool remembered=boss?.lastKnown==true||camp?.lastKnown==true||node?.lastKnown==true||site?.lastKnown==true||beacon?.lastKnown==true||city?.lastKnown==true;
+            if(remembered){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
             theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);

@@ -9,6 +9,7 @@ namespace ThronesOfMyth
         private JourneyTask NextTask(JourneyChapter c) => c == null ? null : Array.Find(c.tasks, t => t.canClaim) ?? Array.Find(c.tasks, t => !t.claimed);
         private string JourneyRewardText(JourneyRewards r)
         {
+            if(r==null)return "Not currently observed";
             var text = "";
             foreach (var pair in new[] { new { name = "wood", value = r.wood }, new { name = "food", value = r.food }, new { name = "gold", value = r.gold }, new { name = "stone", value = r.stone }, new { name = "aether", value = r.aether }, new { name = "sigils", value = r.sigils } })
                 if (pair.value > 0) text += (text.Length > 0 ? " · " : "") + pair.value + " " + pair.name;

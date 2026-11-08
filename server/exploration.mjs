@@ -1,3 +1,4 @@
+import { rememberStatics, recalled } from './discovery.mjs';
 import { recordActivity } from './activity.mjs';
 import { journeyMetric } from './chapters.mjs';
 import { randomUUID } from 'node:crypto';
@@ -9,7 +10,7 @@ const allied=(p,q)=>p.id===q.id||!!p.allianceId&&p.allianceId===q.allianceId;
 export function initializeExploration(p){p.explored=[];p.scout=null;p.scoutReports=[];}
 export function sources(w,p){
  const members=[...w.players.values()].filter(q=>allied(p,q));
- return members.flatMap(q=>[{x:q.homeX,z:q.homeZ,radius:FOG.cityRadius},...w.armies().filter(a=>w.owner(a).id===q.id).map(a=>({x:a.x,z:a.z,radius:FOG.armyRadius})),...(q.scout?[{...q.scout,radius:FOG.scoutRadius}]:[])]);
+ return members.flatMap(q=>[{x:q.homeX,z:q.homeZ,radius:FOG.cityRadius},...w.armies().filter(a=>(a.deployed||a.target||dist(a,{x:q.homeX,z:q.homeZ})>=2)&&w.owner(a).id===q.id).map(a=>({x:a.x,z:a.z,radius:FOG.armyRadius})),...(q.scout?[{...q.scout,radius:FOG.scoutRadius}]:[])]);
 }
 export const visible=(w,p,target)=>sources(w,p).some(s=>dist(s,target)<=s.radius);
 export const cellIndex=t=>Math.min(19,Math.max(0,Math.floor(t.z/4)))*20+Math.min(19,Math.max(0,Math.floor(t.x/4)));
@@ -22,7 +23,7 @@ export function explorationTick(w,dt){
    if(s.phase==='Returning'){p.scout=null;continue;}
    const report={id:randomUUID(),x:s.x,z:s.z,time:w.time,camps:w.camps.filter(c=>dist(c,s)<=FOG.scoutRadius).map(({contributors,...c})=>({...c})),
     flags:w.flags.filter(f=>dist(f,s)<=FOG.scoutRadius).map(f=>({...f})),
-    armies:w.armies().filter(a=>!allied(p,w.owner(a))&&dist(a,s)<=FOG.scoutRadius).map(a=>({id:a.id,ownerId:w.owner(a).id,name:w.owner(a).name,x:a.x,z:a.z,troops:a.troops,mythic:a.mythic,health:Math.ceil(a.health),commanderId:a.commanderId})),
+    armies:w.armies().filter(a=>a.deployed&&!allied(p,w.owner(a))&&dist(a,s)<=FOG.scoutRadius).map(a=>({id:a.id,ownerId:w.owner(a).id,name:w.owner(a).name,x:a.x,z:a.z,troops:a.troops,mythic:a.mythic,health:Math.ceil(a.health),commanderId:a.commanderId})),
     strongholds:w.strongholds.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     sites:w.sites.filter(t=>dist(t,s)<=FOG.scoutRadius).map(t=>({...t})),
     garrisons:w.garrisons.filter(g=>{const t=[...w.sites,...w.flags].find(t=>t.id===g.targetId);return t&&dist(t,s)<=FOG.scoutRadius;}).map(g=>({targetId:g.targetId,marches:g.armyIds.length,troops:g.armyIds.reduce((n,id)=>n+(w.army(id)?.troops||0),0),mythic:g.armyIds.reduce((n,id)=>n+(w.army(id)?.mythic||0),0)}))};
@@ -32,7 +33,7 @@ export function explorationTick(w,dt){
  for(const p of w.players.values()){
   const known=new Set(p.explored),eyes=sources(w,p);
   for(let z=0;z<20;z++)for(let x=0;x<20;x++)if(eyes.some(s=>dist(s,{x:x*4+2,z:z*4+2})<=s.radius))known.add(z*20+x);
-  p.explored=[...known].sort((a,b)=>a-b);
+  p.explored=[...known].sort((a,b)=>a-b);rememberStatics(w,p,t=>visible(w,p,t));
  }
 }
 export function explorationCommand(w,p,c,fail){
@@ -46,7 +47,7 @@ export function explorationCommand(w,p,c,fail){
   if(!p.scout||p.scout.id!==c.targetId)fail('That scout mission is no longer active.');p.scout.phase='Returning';return true;
  }
  if(c.type==='attack-player'){
-  const a=w.army(c.targetId);if(a&&!visible(w,p,a))fail('That enemy march is outside current allied vision. Scout the area first.');
+  const a=w.army(c.targetId);if(a&&(!a.deployed||!visible(w,p,a)))fail('That enemy march is outside current allied vision. Scout the area first.');
  }
  return false;
 }
@@ -56,14 +57,21 @@ export function fogSnapshot(w,p){
 }
 export function filterFog(w,snapshot,p){
  const seen=t=>visible(w,p,t),friendly=a=>a.ownerId===p.id||!!p.allianceId&&a.allianceId===p.allianceId;
- snapshot.exploration=fogSnapshot(w,p);
- snapshot.armies=snapshot.armies.filter(a=>friendly(a)||seen(a)).map(a=>friendly(a)?a:{...a,hasOrder:false,targetId:'',targetX:a.x,targetZ:a.z,route:[]});
+ snapshot.exploration=fogSnapshot(w,p);rememberStatics(w,p,seen);
+ snapshot.armies=snapshot.armies.filter(a=>friendly(a)||seen(a)).map(a=>a.ownerId===p.id?a:{...a,cargo:undefined,cargoSources:undefined,carryCapacity:undefined,homeX:undefined,homeZ:undefined,hasOrder:false,targetId:'',targetX:a.x,targetZ:a.z,route:[]});
  for(const q of snapshot.players)if(q.id!==p.id){q.x=q.homeX;q.z=q.homeZ;delete q.explored;delete q.scout;delete q.scoutReports;}
- snapshot.strongholds=snapshot.strongholds.filter(seen);
- snapshot.camps=snapshot.camps.filter(seen);snapshot.nodes=snapshot.nodes.filter(seen);
- snapshot.flags=snapshot.flags.filter(f=>f.allianceId===p.allianceId||seen(f));
- // Sacred sites are public landmarks, but hidden ownership and live state are not public intelligence.
- snapshot.sites=snapshot.sites.map(s=>(!!p.allianceId&&s.allianceId===p.allianceId)||seen(s)?s:{id:s.id,name:s.name,kind:s.kind,x:s.x,z:s.z,description:s.description,allianceId:'',challengerId:'',progress:0,health:0,maxHealth:s.maxHealth,locked:s.locked,unknown:true});
+ for(const kind of ['strongholds','camps','nodes','flags','sites']){
+  const actual=snapshot[kind],memory=recalled(p,kind),merged=new Map(memory.map(t=>[t.id,t]));
+  for(const t of actual)if(seen(t)||(kind==='flags'||kind==='sites')&&!!p.allianceId&&t.allianceId===p.allianceId)merged.set(t.id,{...t,lastKnown:false,observedAt:w.time});
+  snapshot[kind]=[...merged.values()];
+ }
+ const cities=new Map(recalled(p,'cities').map(c=>[c.id,c]));
+ snapshot.players=snapshot.players.map(q=>{
+  if(q.id===p.id)return {...q,mapVisible:true};
+  if(seen({x:q.homeX,z:q.homeZ}))return {...q,mapVisible:true,lastKnown:false};
+  const memory=cities.get(q.id);
+  return memory?{id:q.id,name:q.name,civilization:q.civilization,...memory,mapVisible:true}:{id:q.id,name:q.name,civilization:q.civilization,allianceId:q.allianceId,construction:null,secondConstruction:null,research:null,mapVisible:false};
+ });
  snapshot.garrisons=snapshot.garrisons.filter(g=>g.allianceId===p.allianceId);snapshot.sieges=snapshot.sieges.filter(s=>{const t=[...w.sites,...w.flags,...w.strongholds].find(t=>t.id===s.targetId);return t&&seen(t);});
  snapshot.events=[];return snapshot;
 }

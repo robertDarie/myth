@@ -21,7 +21,7 @@ namespace ThronesOfMyth
         {
             var known = Array.Find(world.strongholds, t => t.id == id); if (known != null) return known;
             if (world.exploration != null) foreach (var report in world.exploration.reports)
-                if (report.strongholds != null) { known = Array.Find(report.strongholds, t => t.id == id); if (known != null) return known; }
+                if (report.strongholds != null) { known = Array.Find(report.strongholds, t => t.id == id); if (known != null) { known.lastKnown=true; return known; } }
             return null;
         }
         private void OpenWarfare(string id)
@@ -79,14 +79,15 @@ namespace ThronesOfMyth
             var boss = KnownStronghold(warfareTargetId);
             if (boss != null)
             {
+                if(boss.lastKnown)GUILayout.Label("LAST OBSERVED · Scout again for current guards and availability.",noteStyle);
                 GUILayout.Label("GODBREAKER STRONGHOLD · TIER " + boss.tier, theme.Eyebrow);
                 GUILayout.Label(Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth) + " defender HP · " + Mathf.CeilToInt(boss.health) + "/" + Mathf.CeilToInt(boss.maxHealth) + " wall HP", noteStyle);
-                GUILayout.Label("Defenders · " + UnitSummary(boss.units) + " · Base retaliation " + boss.guardDamage.ToString("F0"), theme.Small);
+                if(!boss.lastKnown)GUILayout.Label("Defenders · " + UnitSummary(boss.units) + " · Base retaliation " + boss.guardDamage.ToString("F0"), theme.Small);
                 GUILayout.Label("At least " + world.strongholdRules.minMarches + " assembled marches. Defeat the guards, then the walls. " + world.strongholdRules.roundLimit + " combat-round limit; no beacon supply required.", noteStyle);
-                GUILayout.Label("TOTAL SHARED REWARD POOL · " + JourneyRewardText(boss.reward) + " · " + boss.xp + " commander XP", theme.Small);
+                if(!boss.lastKnown)GUILayout.Label("TOTAL SHARED REWARD POOL · " + JourneyRewardText(boss.reward) + " · " + boss.xp + " commander XP", theme.Small);
                 GUILayout.Label("The pool is divided by actual guard/wall damage, aggregated per city. Additional marches do not multiply rewards. Survivors return home automatically.", theme.Small);
             }
-            foreach (var fallen in world.strongholds) if (fallen.respawn > 0) GUILayout.Label(fallen.name + " · Reforms in " + Mathf.CeilToInt(fallen.respawn) + "s", theme.Small);
+            foreach (var fallen in world.strongholds) if (fallen.respawn > 0) GUILayout.Label(fallen.name + (fallen.lastKnown?" · Last observed reforming; scout to refresh":" · Reforms in " + Mathf.CeilToInt(fallen.respawn) + "s"), theme.Small);
             rallyAssemblyIndex = GUILayout.Toolbar(rallyAssemblyIndex, new[] { "10s assembly", "30s assembly", "60s assembly" });
             GUILayout.Label("Up to " + world.campaignLimits.rallyMarches + " marches / " + world.campaignLimits.rallyLoad + " load. A mortal uses one load; a mythic uses five. Contributions must reach the leader's city before assembly ends.", theme.Small);
             bool createReady = (WarOfficer || boss != null) && BuildingLevel("oathhall") > 0 && ContributionReady && CanEditArmy && warfareTargetId != null;
@@ -142,6 +143,7 @@ namespace ThronesOfMyth
             GUILayout.Label("Active sieges and the latest 20 completed group reports. Each contribution keeps its own damage, wounds and owner. Structure damage is separate from damage to defending troops.", noteStyle);
             foreach (var report in me.groupReports)
             {
+                if(interfacePage==InterfacePage.Reports&&reportSelection!="rally:"+report.id)continue;
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(report.targetName + " · " + report.outcome, sectionStyle);
                 GUILayout.Label(report.rounds + " rounds · Structure damage " + report.structureDamage.ToString("F1"), noteStyle);

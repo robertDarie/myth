@@ -8,7 +8,7 @@ export class WorldStore {
   archiveLegacy(path) {
     const schema = JSON.parse(readFileSync(path, 'utf8')).schema;
     const archive = this.path + '.schema' + schema + '.bak';
-    if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].includes(schema) && !existsSync(archive)) copyFileSync(path, archive);
+    if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].includes(schema) && !existsSync(archive)) copyFileSync(path, archive);
   }
   load() {
     if (!existsSync(this.path) && !existsSync(this.path + '.bak')) return new World();

@@ -64,6 +64,7 @@ namespace ThronesOfMyth
             }
             foreach (var p in world.players)
             {
+                if(!p.mapVisible)continue;
                 var color = p.id == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
                 Put(seen, "city-" + p.id, "city", p.homeX, p.homeZ, color, p.name + " · " + p.ageName + " · City " + p.cityLevel, -1, p.civilization);
                 pieces["city-"+p.id].owned=p.id==ownId;pieces["city-"+p.id].compactLabel=p.name+" · "+p.cityLevel;pieces["city-"+p.id].icon="city";
@@ -74,14 +75,14 @@ namespace ThronesOfMyth
                 bool wasAlive = pieces.TryGetValue(boss.id, out var previousBoss) && previousBoss.health > 0;
                 Put(seen, boss.id, "stronghold", boss.x, boss.z, boss.respawn > 0 ? Color.gray : red, boss.name + " · Tier " + boss.tier + (boss.respawn > 0 ? " · Reforms " + Mathf.CeilToInt(boss.respawn) + "s" : " · Guards " + Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth)), boss.health / Mathf.Max(1, boss.maxHealth), boss.tier.ToString());
                 pieces[boss.id].compactLabel="Tier "+boss.tier;pieces[boss.id].icon="camp";
-                pieces[boss.id].actor.ObserveCamp(new CampData { health = Mathf.CeilToInt(boss.guardHealth + boss.health) }, wasAlive && boss.respawn > 0);
+                if(!boss.lastKnown)pieces[boss.id].actor.ObserveCamp(new CampData { health = Mathf.CeilToInt(boss.guardHealth + boss.health) }, wasAlive && boss.respawn > 0);
             }
             foreach (var c in world.camps)
             {
                 bool wasAlive = pieces.TryGetValue(c.id, out var previous) && previous.health > 0;
                 Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : ""), (float)c.health / c.maxHealth, c.id);
                 pieces[c.id].compactLabel=c.health>0?"Lv "+c.level:"Reforming";pieces[c.id].icon="camp";
-                pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
+                if(!c.lastKnown)pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
             }
             foreach(var n in world.nodes)
             {
@@ -98,11 +99,18 @@ namespace ThronesOfMyth
                 Put(seen, f.id, "flag", f.x, f.z, f.connected ? (f.allianceId == allianceId ? blue : red) : Color.gray, name + state, f.health / Mathf.Max(1, f.maxHealth), variant);
             }
             foreach (var pin in world.markers) Put(seen, pin.id, "marker", pin.x, pin.z, new Color(0.85f, 0.45f, 0.8f), pin.name);
+            foreach(var n in world.nodes)if(n.lastKnown)Remembered(n.id);
+            foreach(var c in world.camps)if(c.lastKnown)Remembered(c.id);
+            foreach(var s in world.sites)if(s.lastKnown)Remembered(s.id);
+            foreach(var f in world.flags)if(f.lastKnown)Remembered(f.id);
+            foreach(var b in world.strongholds)if(b.lastKnown)Remembered(b.id);
+            foreach(var p in world.players)if(p.lastKnown&&p.mapVisible)Remembered("city-"+p.id);
             ObserveCompletedBattles(world,ownId);
             var removed = new List<string>();
             foreach (var pair in pieces) if (!seen.Contains(pair.Key)) { Destroy(pair.Value.root); removed.Add(pair.Key); }
             foreach (var id in removed) pieces.Remove(id);
         }
+        private void Remembered(string id){if(pieces.TryGetValue(id,out var piece)){piece.compactLabel="Last seen";piece.label="Last seen · "+piece.label;piece.health=-1;}}
         private void Update()
         {
             var camera = Camera.main;UpdateGroundCues();

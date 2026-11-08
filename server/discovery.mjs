@@ -1,0 +1,24 @@
+// Only static last-observed fields are retained. No enemy formations, cargo or garrisons.
+const fields={nodes:['id','name','resource','x','z','remaining','capacity'],camps:['id','name','level','x','z','health','maxHealth','respawn'],sites:['id','name','kind','description','x','z','allianceId','health','maxHealth'],flags:['id','x','z','allianceId','isRoot','connected','buildRemaining','health','maxHealth'],strongholds:['id','name','tier','x','z','health','maxHealth','guardHealth','maxGuardHealth','respawn'],cities:['id','name','civilization','homeX','homeZ','cityLevel','ageName','allianceId']};
+const position=(kind,t)=>kind==='cities'?{x:t.homeX,z:t.homeZ}:t;
+export function rememberStatics(w,p,seen){
+ p.discovery??=[];
+ const live={nodes:w.nodes,camps:w.camps,sites:w.sites,flags:w.flags,strongholds:w.strongholds,cities:[...w.players.values()]};
+ const cache=new Map(p.discovery.map(r=>[r.kind+':'+r.value.id,r]));
+ for(const [kind,items] of Object.entries(live)){
+  for(const item of items){if(!seen(position(kind,item)))continue;
+   const value=Object.fromEntries(fields[kind].filter(k=>item[k]!==undefined).map(k=>[k,item[k]]));
+   cache.set(kind+':'+item.id,{kind,observedAt:w.time,value});
+  }
+  for(const [key,record] of cache)if(record.kind===kind&&seen(position(kind,record.value))&&!items.some(t=>t.id===record.value.id)){cache.delete(key);}
+ }
+ p.discovery=[...cache.values()].slice(-1024);
+}
+export function recalled(p,kind){return p.discovery.filter(r=>r.kind===kind).map(r=>({...r.value,lastKnown:true,observedAt:r.observedAt}));}
+export function validateDiscovery(p){
+ if(!Array.isArray(p.discovery)||p.discovery.length>1024||new Set(p.discovery.map(r=>r.kind+':'+r.value?.id)).size!==p.discovery.length)throw new Error('Invalid saved discovery memory.');
+ for(const r of p.discovery){
+  const v=r?.value,at=v&&position(r.kind,v);
+  if(!fields[r.kind]||!v||typeof v.id!=='string'||!Number.isFinite(r.observedAt)||r.observedAt<0||!at||![at.x,at.z].every(n=>Number.isFinite(n)&&n>=0&&n<=80)||Object.keys(v).some(k=>!fields[r.kind].includes(k))||Object.values(v).some(v=>typeof v==='object'||typeof v==='number'&&(!Number.isFinite(v)||v<0)))throw new Error('Invalid saved static intelligence.');
+ }
+}

@@ -144,3 +144,10 @@ Protocol 14, save schema 13 and SQLite revision 2 remain unchanged. Existing sav
 work; use the [isolated-server Unity journey](gameplay-feel-0.27.md) for a fresh
 recording without modifying your main city. Native timing/rendering/input/FPS
 checks remain pending.
+
+## Build 0.28
+
+Bundle version 0.28.0 requires protocol 15 and world schema 14. Rebuild client and
+server together. JSON schema 13 saves are archived before migration; back up the
+SQLite kingdom using the existing backup workflow. See
+[core rules and exact Windows acceptance steps](core-corrections-0.28.md).

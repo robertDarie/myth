@@ -17,11 +17,11 @@ namespace ThronesOfMyth
         private static readonly OpeningCue Build=new OpeningCue(2,"Raise the Citadel","Advance an age; unlock a second march.","city","citadel");
         private static readonly OpeningCue Train=new OpeningCue(3,"Train reserves","Train two batches of five into reserves.","training");
         private static readonly OpeningCue Prepare=new OpeningCue(4,"Commander & troops","Edit at home; add your ready reserves.","prepare");
-        private static readonly OpeningCue Wood=new OpeningCue(5,"Gather timber","Select a grove, then choose Gather.","gather","wood");
-        private static readonly OpeningCue Food=new OpeningCue(6,"Gather food","Gather food while your city works.","gather","food");
+        private static readonly OpeningCue Wood=new OpeningCue(5,"Gather timber","Gather timber, then return cargo home.","gather","wood");
+        private static readonly OpeningCue Food=new OpeningCue(6,"Gather food","Gather food, then return cargo home.","gather","food");
         private static readonly OpeningCue Fight=new OpeningCue(7,"Challenge a camp","Inspect an available level 1 camp.","combat","opening-level-one");
         private static readonly OpeningCue Outcome=new OpeningCue(8,"Review the outcome","Review results, XP, treasury and wounds.","outcome");
-        private static readonly OpeningCue Home=new OpeningCue(9,"Return and grow","Return survivors home to recover.","return");
+        private static readonly OpeningCue Home=new OpeningCue(9,"Return and deliver","Deliver carried resources; recover at home.","return");
         private static readonly OpeningCue Recover=new OpeningCue(9,"Recover at home","Wait for recovery; city work can continue.","city","citadel");
         public static int Progress(ArmyData city,string id)
         {
@@ -42,6 +42,7 @@ namespace ThronesOfMyth
             int queued=0;if(city.trainingQueue!=null)foreach(var job in city.trainingQueue)if(job.type=="train")queued+=job.amount;
             if(trained+queued<10)return Train;
             if(!ArmyPrepared&&home&&wood==0&&food==0)return Prepare;
+            if(army.cargo!=null&&((wood<40&&army.cargo.wood>=40)||(wood>=40&&food<40&&army.cargo.food>=40)))return Home;
             if(wood<40)return Wood;if(food<40)return Food;return Fight;
         }
     }

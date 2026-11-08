@@ -16,7 +16,7 @@ namespace ThronesOfMyth
         public bool Observe(string id)
         {
             if(string.IsNullOrEmpty(id)||!seen.Add(id))return false;
-            order.Enqueue(id);while(order.Count>128)seen.Remove(order.Dequeue());return continuous;
+            order.Enqueue(id);while(order.Count>256)seen.Remove(order.Dequeue());return continuous;
         }
         public void Reset(){initialized=false;seen.Clear();order.Clear();}
     }

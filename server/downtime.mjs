@@ -2,7 +2,7 @@ import { activityClock, ensureActivity } from './activity.mjs';
 
 export const OFFLINE_PRODUCTION_CAP = 8 * 60 * 60;
 // Maintenance/crash recovery, not combat simulation. Existing deserialization
-// interrupts battles and pauses field orders; no offline victories are invented.
+// interrupts battles; safe field orders resume only after startup; no offline victories are invented.
 export function advanceDowntime(world, savedAt, now) {
   if (![savedAt, now].every(n => Number.isSafeInteger(n) && n >= 0)) throw new Error('Invalid kingdom timestamp.');
   const seconds = Math.max(0, (now - savedAt) / 1000);

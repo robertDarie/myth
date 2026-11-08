@@ -29,7 +29,7 @@ namespace ThronesOfMyth
         private readonly Queue<GameCommand> commands = new Queue<GameCommand>();
         private GUIStyle titleStyle, sectionStyle, noteStyle;
 
-        private ArmyData ActiveArmy => world == null || world.armies == null ? me : Array.Find(world.armies, a => a.id == activeMarchId) ?? me;
+        private ArmyData ActiveArmy => world == null || world.armies == null ? me : OwnMarches().Find(a => a.id == activeMarchId) ?? me;
         private static bool HasJob(QueueJob job) => job != null && !string.IsNullOrEmpty(job.id);
         private string SessionKey => "ThronesOfMyth.session." + serverUrl.TrimEnd('/') + "." + playerName.Trim();
         private void Awake()
@@ -87,7 +87,7 @@ namespace ThronesOfMyth
         private void DrawArmy()
         {
             GUILayout.Label(me.ageName + " · " + world.armies.Length + " armies in kingdom", sectionStyle);
-            foreach (var march in world.armies)
+            foreach (var march in OwnMarches())
             {
                 if (march.ownerId != playerId) continue;
                 if (GUILayout.Button((march.id == ActiveArmy.id ? "▶ " : "") + HeroName(march.commanderId) + " · " + march.state)) activeMarchId = march.id;
@@ -99,6 +99,8 @@ namespace ThronesOfMyth
             if (GUILayout.Button("Return & recover [R]")) Send("return");
             if (GUILayout.Button("Stop current order")) Send("stop");
             GUILayout.Label($"City reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", noteStyle);
+            GUILayout.Label("Cargo " + CargoLabel(ActiveArmy) + " · Delivered resources become spendable only at home.",noteStyle);
+            GUILayout.Label("Field: "+me.deployedTroops+" troops · Home formations: "+(me.assignedTroops-me.deployedTroops)+" troops · Unassigned reserves: "+me.reserveTroops,noteStyle);
             DrawReinforce();
             GUILayout.Label(UnitSummary(ActiveArmy.units), noteStyle);
             GUI.enabled = CanEditArmy && ActiveArmy.id != playerId && ActiveArmy.health >= ActiveArmy.maxHealth;
@@ -110,7 +112,7 @@ namespace ThronesOfMyth
                 if (GUILayout.Button($"Lv {camp.level} · {camp.name}")) { Select(camp.id, "camp"); interfacePage = InterfacePage.World; cameraControl?.Focus(camp.x, camp.z); }
             GUILayout.Label("Inspect a camp before attacking. High-level camps may require stronger armies or help from another player.", noteStyle);
         }
-        private bool CanEditArmy => me != null && Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2 && !ActiveArmy.hasOrder && ActiveArmy.recovery <= 0;
+        private bool CanEditArmy => me != null && !ActiveArmy.deployed && Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2 && !ActiveArmy.hasOrder && ActiveArmy.recovery <= 0;
         private void DrawReinforce()
         {
             GUI.enabled = CanEditArmy && !processing;
@@ -127,7 +129,7 @@ namespace ThronesOfMyth
             foreach (var job in me.trainingQueue)
                 if (job.type == "train"||job.type=="promote") queuedTroops += job.amount; else queuedMythic += job.amount;
             int cap = me.troopCapacity;
-            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.deployedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
+            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.assignedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
             DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
             GUILayout.Label("Infantry counters cavalry · Cavalry counters archers · Archers counter infantry. Tiers keep these roles.",noteStyle);
@@ -144,7 +146,7 @@ namespace ThronesOfMyth
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(troop.name + " · " + troop.role + " · T" + troop.tier, sectionStyle);
                 GUILayout.Label(troop.description + "  Base health " + troop.health + " · Damage " + troop.damage.ToString("F2") + " per troop", noteStyle);
-                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.deployedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+5>cap?"Increase troop capacity or finish current training.":!Afford(troop.cost)?"More resources required: "+Cost(troop.cost):"";
+                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.assignedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+5>cap?"Increase troop capacity or finish current training.":!Afford(troop.cost)?"More resources required: "+Cost(troop.cost):"";
                 float duration=me.trainingDuration*troop.duration/8;
                 if(theme.Action("Train 5 · "+Mathf.CeilToInt(duration)+"s · "+Cost(troop.cost),string.IsNullOrEmpty(reason),reason))Send("train",troop.id);
                 if(troop.tier==2)
@@ -160,7 +162,7 @@ namespace ThronesOfMyth
             }
             string mythic = "Mythic guardian";
             foreach (var civ in world.civilizations) if (civ.id == me.civilization) mythic = civ.mythic;
-            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.deployedMythic + me.reserveMythic + me.hospitalMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
+            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.assignedMythic + me.reserveMythic + me.hospitalMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
             if (GUILayout.Button(mythic + " · " + Mathf.CeilToInt(me.recruitDuration) + "s · 80 food / 100 gold")) Send("recruit");
             GUI.enabled = true;
             GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment needs Citadel 2 and Sanctuary of Beasts.", noteStyle);
@@ -195,7 +197,7 @@ namespace ThronesOfMyth
             if (cost.stone > 0) parts.Add(cost.stone + " stone");
             if (cost.gold > 0) parts.Add(cost.gold + " gold");
             if (cost.aether > 0) parts.Add(cost.aether + " aether");
-            return string.Join(" / ", parts);
+            return parts.Count==0?"none":string.Join(" / ", parts);
         }
         private bool Afford(ResourceAmounts c) => c != null && me.food >= c.food && me.wood >= c.wood && me.stone >= c.stone && me.gold >= c.gold && me.aether >= c.aether;
         private int BuildingLevel(string id)
@@ -307,7 +309,7 @@ namespace ThronesOfMyth
                 GUILayout.Label(world.persistence.enabled ? "Autosave: " + (string.IsNullOrEmpty(world.persistence.error) ? world.persistence.lastSaved : world.persistence.error) : "This server has persistence disabled.", noteStyle);
             GUILayout.Space(10); GUILayout.Label("Your city and queues are saved locally by the server. Return with the same name and local profile. Time pauses while the server is closed; field orders stop safely on reload.", noteStyle);
         }
-        private bool AssignedElsewhere(string heroId) => Array.Exists(world.armies, a => a.ownerId == playerId && a.id != ActiveArmy.id && a.commanderId == heroId);
+        private bool AssignedElsewhere(string heroId) => OwnMarches().Exists(a => a.id != ActiveArmy.id && a.commanderId == heroId);
         private void DrawConstructionJobs()
         {
             int count = (HasJob(me.construction) ? 1 : 0) + (HasJob(me.secondConstruction) ? 1 : 0);
@@ -414,13 +416,13 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 14) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != 15) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
                         {
                             cityProgress.Observe(serverUrl.TrimEnd('/')+"/"+playerId,me,Time.unscaledTime);
-                            if (!Array.Exists(world.armies, a => a.id == activeMarchId && a.ownerId == playerId)) activeMarchId = playerId;
+                            if (!OwnMarches().Exists(a => a.id == activeMarchId)) activeMarchId = playerId;
                             if (me.summonHistory.Length > 0 && me.summonHistory[0].id != lastDrawId)
                             {
                                 if (lastDrawId != null) revealUntil = Time.unscaledTime + 0.8f;
@@ -432,7 +434,7 @@ namespace ThronesOfMyth
                             worldReady = true; loadingError = "";RestorePendingOrder();
                             if (!string.IsNullOrEmpty(pendingFormationHero))
                             {
-                                var assembled = Array.Find(world.armies, a => a.ownerId == playerId && a.commanderId == pendingFormationHero);
+                                var assembled = OwnMarches().Find(a => a.commanderId == pendingFormationHero);
                                 if (assembled != null) { activeMarchId = assembled.id; Select(assembled.id, "army"); cameraControl?.Focus(assembled.x, assembled.z); pendingFormationHero = null; }
                             }
                             if (!focused) { cameraControl?.Focus(me.homeX, me.homeZ); focused = true; }

@@ -14,16 +14,17 @@ function deploy(w,p,id,troops=5) {
 test('five ages unlock exactly one through five real march slots', () => {
   const {w,p} = setup(); assert.equal(AGES.length,5);
   p.reserveTroops = 25;p.reserveUnits.infantry=25; unlock(w,p,'warden');
-  assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'warden',troops:5}),/next age/);
+  cmd(w,p,'move',{x:12,z:12});
   const ids=['warden','scout','atalanta','mulan'];
   for (let level=2;level<=5;level++) {
     p.cityLevel=level; assert.equal(age(p).marches,level);
     if (!p.ownedCommanders.includes(ids[level-2])) unlock(w,p,ids[level-2]);
     cmd(w,p,'deploy-march',{targetId:ids[level-2],troops:5});
     assert.equal(armyList(p).length,level);
+    const march=p.marches.at(-1);cmd(w,p,'move',{marchId:march.id,x:14,z:14});
   }
   assert.equal(p.reserveTroops,5); assert.equal(w.snapshot().armies.length,5);
-  assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'rune-seer',troops:5}),/maximum five/);
+  assert.throws(()=>cmd(w,p,'deploy-march',{targetId:'rune-seer',troops:5}),/Five prepared/);
 });
 
 test('march deployment consumes real reserves and rejects duplicate commanders, bad counts and unowned heroes', () => {
@@ -43,7 +44,7 @@ test('independent gathering marches contribute to one treasury; player tokens ca
   const wood=w.nodes[0], gold=w.nodes[1];p.x=wood.x;p.z=wood.z;a.x=gold.x;a.z=gold.z;
   cmd(w,p,'gather',{targetId:wood.id});cmd(w,p,'gather',{targetId:gold.id,marchId:a.id});
   const before={wood:p.wood,gold:p.gold};advance(w,3);
-  assert.ok(p.wood>before.wood);assert.ok(p.gold>before.gold);assert.equal(p.target.id,wood.id);assert.equal(a.target.id,gold.id);
+  assert.equal(p.wood,before.wood);assert.equal(p.gold,before.gold);assert.ok(p.cargo.wood>0);assert.ok(a.cargo.gold>0);assert.equal(p.target.id,wood.id);assert.equal(a.target.id,gold.id);
   const other=w.authenticate(w.join('Other').token);const position=a.x;
   assert.throws(()=>cmd(w,other,'move',{marchId:a.id,x:10,z:10}),/belong/);assert.equal(a.x,position);
   cmd(w,p,'return',{marchId:a.id});assert.equal(p.target.id,wood.id);assert.equal(a.target.type,'return');
@@ -123,14 +124,14 @@ test('rage triggers an automatic shield, damage, or bounded healing and expertis
   assert.ok(expertDamage>activeSkill(p,p,{damage:10,maxHealth:100}));
 });
 
-test('five-march positions, both construction jobs and commander skills survive schema-5 reload', () => {
+test('five formations, both construction jobs and accepted movement survive schema-14 reload', () => {
   const {w,p,session}=setup();p.cityLevel=5;p.buildings.builders=1;p.reserveTroops=20;p.reserveUnits.infantry=20;
   for(const id of['warden','scout','atalanta','mulan'])deploy(w,p,id);
   cmd(w,p,'building-upgrade',{targetId:'oracle'});cmd(w,p,'building-upgrade',{targetId:'quarry'});
   cmd(w,p,'move',{marchId:p.marches[0].id,x:20,z:20});advance(w,2);
   const position=p.marches[0].x, restored=World.fromSave(w.toSave()),q=restored.authenticate(session.token);
   assert.equal(armyList(q).length,5);assert.equal(constructionJobs(q).length,2);assert.equal(crews(q),2);
-  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target,null);assert.equal(restored.toSave().schema,13);
+  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target.type,'move');assert.equal(restored.toSave().schema,14);
   advance(restored,11);assert.equal(q.buildings.oracle,1);assert.equal(q.buildings.quarry,1);
 });
 

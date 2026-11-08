@@ -67,7 +67,7 @@ test('passive income pauses at the vault limit without deleting earned wealth; n
   p.wood = passiveCap(p) + 200; advance(w, 20); assert.equal(p.wood, passiveCap(p) + 200);
   for (const resource of ['stone', 'aether']) {
     const node = w.nodes.find(n => n.resource === resource); p.x = node.x; p.z = node.z;
-    const amount = p[resource]; cmd(w, p, 'gather', node.id); advance(w, 3); assert.ok(p[resource] > amount);
+    const amount = p[resource]; cmd(w, p, 'gather', node.id); advance(w, 3); cmd(w,p,'return'); advance(w,20); assert.ok(p[resource] > amount);
   }
 });
 
@@ -178,7 +178,7 @@ test('schema-1 saves migrate once without losing queues, resources, commanders o
   const migrated = World.fromSave(old), city = migrated.authenticate(s.token);
   assert.equal(city.gold, 1234); assert.equal(city.trainingQueue.length, 1); assert.equal(city.mythic, 1);
   assert.equal(city.buildings.menagerie, 1); assert.equal(city.stone, 150); assert.equal(city.sigils, 3);
-  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema, 13);
+  assert.equal(migrated.nodes.length, 18); assert.equal(migrated.toSave().schema,14);
   city.sigils = 0; const again = World.fromSave(migrated.toSave()); assert.equal(again.authenticate(s.token).sigils, 0);
 });
 

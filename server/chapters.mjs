@@ -2,8 +2,8 @@
 const task=(id,title,description,goal,guide,targetId,reward,read)=>({id,title,description,goal,guide,targetId,reward,read});
 export const CHAPTERS=[
  {id:'embers',title:'I · From the Embers',story:'A city survives on full granaries and willing defenders. Restore the foundations before seeking the gods.',reward:{wood:100,food:100,gold:75,stone:50},tasks:[
-  task('gather-wood','Gather 40 wood','March to a Sacred Grove. Only wood gathered in the field counts; gifts and passive income do not.',40,'gather','wood',{food:40,gold:20},p=>p.journey.metrics.wood),
-  task('gather-food','Gather 40 food','Gather from Harvest Fields while your city continues working.',40,'gather','food',{wood:40,gold:20},p=>p.journey.metrics.food),
+  task('gather-wood','Gather 40 wood','March to a Sacred Grove. Return your gathered wood home. Only delivered cargo counts; gifts and passive income do not.',40,'gather','wood',{food:40,gold:20},p=>p.journey.metrics.wood),
+  task('gather-food','Gather 40 food','Gather from Harvest Fields, then return cargo home while your city continues working.',40,'gather','food',{wood:40,gold:20},p=>p.journey.metrics.food),
   task('train-ten','Train 10 mortal troops','Complete two training orders. Recruits wait in reserves and do not require your field army to return.',10,'training','infantry',{food:80,gold:40},p=>p.journey.metrics.trained)]},
  {id:'oaths',title:'II · The Age of Oaths',story:'Build for a growing people. A second construction crew lets your city develop while your armies explore.',reward:{wood:150,food:100,gold:100,stone:100},tasks:[
   task('citadel-two','Reach Citadel level 2','Advance to the Age of Oaths and unlock a second march slot.',2,'city','citadel',{wood:80,stone:50},p=>p.cityLevel),

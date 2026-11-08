@@ -1,3 +1,4 @@
+import { loseCargo } from './field-logistics.mjs';
 import { randomUUID } from 'node:crypto';
 import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
 import { activeSkill, armyList } from './progression.mjs';
@@ -56,6 +57,7 @@ export function retreat(w, a, result) {
     remaining-=amount;
   }
   if (a.mythic > 0 && remaining > 1) { a.mythic--; p.woundedMythic++; result.woundedMythic++; }
+  loseCargo(w,a);a.deployed=false;
   a.troops = unitTotal(a.units); a.health = 1; a.recovery = 8; a.x = p.homeX; a.z = p.homeZ; a.target = null; a.state = 'Recovering'; a.rage = 0; a.shield = 0; a.shieldTime = 0;
 }
 export function applyDamage(a, incoming, result) {

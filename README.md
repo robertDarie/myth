@@ -4,8 +4,13 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.27
+## Playable slice 0.28
 
+- Core corrections: persistent last-known static map intelligence, home formations
+  distinct from deployed marches, composition-based cargo with delivery-only
+  resource credit, and unified private reports with filters/search.
+  [Rules, migration and Windows acceptance](docs/core-corrections-0.28.md).
+  [Next economy milestone proposal (design only)](docs/economy-plan-0.29.md).
 - Gameplay-feel milestone: replay-safe combat/arrival feedback, clearer routes and
   affiliations, optional first-session guidance and confirmed reward/outcome cues.
   [Exact Unity demonstration and verification](docs/gameplay-feel-0.27.md).

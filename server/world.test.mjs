@@ -30,6 +30,7 @@ test('five civilizations provide distinct functional bonuses; four commander rar
 });
 test('camp attacks approach, retaliate, reward once, and respawn', () => {
   const w = testWorld(), p = player(w), c = w.camps[0];
+  cmd(w,p,'move',{x:c.x-5,z:c.z});advance(w,3);
   cmd(w, p, 'attack', { targetId: c.id }); w.tick(0.1); assert.equal(c.health, c.maxHealth);
   advance(w, 20); assert.equal(c.health, 0); assert.equal(p.gold, 200); assert.equal(p.kills, 1);
   assert.ok(p.health < w.stats(p).maxHealth);
@@ -52,9 +53,9 @@ test('defeat returns home, blocks orders during recovery and heals afterward', (
   advance(w, 20); assert.equal(p.recovery, 0); assert.equal(p.health, w.stats(p).maxHealth);
 });
 test('gathering depletes finite shared resources and refills later', () => {
-  const w = testWorld(), p = player(w), n = w.nodes[0]; p.x = n.x; p.z = n.z; n.remaining = 9;
+  const w = testWorld(), p = player(w), n = w.nodes[0]; p.x = n.x; p.z = n.z; n.remaining = 9;p.buildings.lumber=0;
   const before = p.wood; cmd(w, p, 'gather', { targetId: n.id }); advance(w, 3);
-  assert.equal(n.remaining, 0); assert.equal(p.wood - before, 9);
+  assert.equal(n.remaining, 0); assert.equal(p.cargo.wood,9);assert.equal(p.wood,before);advance(w,5);assert.equal(p.wood-before,9);
   advance(w, 31); assert.equal(n.remaining, n.capacity);
 });
 test('city development continues while the army is gathering; recruits stay in reserves', () => {
@@ -169,12 +170,12 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version, 14);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version,15);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
-  await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(b.token);
-  assert.equal(after.version, 14); assert.equal(after.players.length, 2);
-  assert.ok(after.armies.find(p => p.id === a.playerId).x > before.armies.find(p => p.id === a.playerId).x);
+  await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(a.token);
+  assert.equal(after.version,15); assert.equal(after.players.length, 2);
+  assert.ok(after.armies.find(p => p.id === a.playerId).x > before.players.find(p=>p.id===a.playerId).homeX);
   assert.equal(after.players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);
   await post('/join', { name: 'Ignored', civilization: 'japanese', resumeToken: a.token }); assert.equal((await get(a.token)).players.length, 2);
@@ -187,7 +188,8 @@ test('economic and territory campaign reaches the sanctuary with opened-stage fi
   const w = testWorld(), p = player(w);
   // Advance actual marching and gathering; do not grant resources or teleport.
   for (const index of [0, 3, 1, 4, 2, 12]) {
-    cmd(w, p, 'gather', { targetId: w.nodes[index].id }); advance(w, 100);
+    cmd(w,p,'move',{x:w.nodes[index].x,z:w.nodes[index].z});advance(w,20);
+    for(let trip=0;trip<2;trip++){cmd(w, p, 'gather', { targetId: w.nodes[index].id }); advance(w, 100);}
   }
   cmd(w, p, 'return'); advance(w, 30);
   cmd(w, p, 'upgrade'); advance(w, 21);
@@ -211,7 +213,7 @@ test('economic and territory campaign reaches the sanctuary with opened-stage fi
 
 test('visual snapshots identify civilization and count real attacks without replaying idle time', () => {
   const w = testWorld(), p = player(w, 'Artist', 'egyptian'), c = w.camps[0];
-  let visual = w.snapshot().armies.find(a => a.id === p.id);
+  let visual = w.snapshot(p.id).players.find(a => a.id === p.id).homeFormations[0];
   assert.equal(visual.civilization, 'egyptian'); assert.equal(visual.attackSequence, 0);
   advance(w, 2); assert.equal(w.armySnapshot(p).attackSequence, 0);
   p.x = c.x - 1; p.z = c.z;

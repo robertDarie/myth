@@ -26,7 +26,7 @@ namespace ThronesOfMyth
             new NavigationEntry(InterfacePage.Hospital,"Healing","temple","Treat wounded troops",1),
             new NavigationEntry(InterfacePage.Warfare,"Rallies & garrisons","alliance","Coordinate alliance warfare",1),
             new NavigationEntry(InterfacePage.Exploration,"Scouts & discovery","chronicle","Survey unexplored territory",1),
-            new NavigationEntry(InterfacePage.Reports,"Battle reports","chronicle","Review troop losses and rewards",1),
+            new NavigationEntry(InterfacePage.Reports,"Reports","chronicle","Battles, deliveries, scouting and alliance events",1),
             new NavigationEntry(InterfacePage.Alliance,"Alliance","alliance","Members, territory and assistance · L",2),
             new NavigationEntry(InterfacePage.Campaign,"Campaign","chronicle","Follow the next chapter objective",2),
             new NavigationEntry(InterfacePage.Activity,"Daily & weekly","chronicle","Earn activity and contribution rewards",2),

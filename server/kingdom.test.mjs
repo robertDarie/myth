@@ -23,8 +23,8 @@ test('opening times alone or preparation alone cannot unlock gates; actual contr
 });
 
 test('a fresh city prepares kingdom gates through legal gathering, training, upgrade and camp commands',()=>{
- const e=setup(),{w,p}=e;cmd(w,p,'train');cmd(w,p,'train');cmd(w,p,'gather',{targetId:w.nodes[0].id});advance(w,60);cmd(w,p,'return');advance(w,20);cmd(w,p,'upgrade');advance(w,21);cmd(w,p,'reinforce');
- for(let i=0;i<4;i++){cmd(w,p,'attack',{targetId:w.camps[0].id});advance(w,30);cmd(w,p,'return');advance(w,50);}
+ const e=setup(),{w,p}=e;cmd(w,p,'train');cmd(w,p,'train');cmd(w,p,'gather',{targetId:w.nodes[0].id});advance(w,60);cmd(w,p,'return');advance(w,20);cmd(w,p,'gather',{targetId:w.nodes[0].id});advance(w,25);cmd(w,p,'return');advance(w,20);cmd(w,p,'upgrade');advance(w,21);cmd(w,p,'reinforce');
+ for(let i=0;i<4;i++){cmd(w,p,'move',{x:14,z:10});advance(w,10);cmd(w,p,'attack',{targetId:w.camps[0].id});advance(w,30);cmd(w,p,'return');advance(w,50);}
  assert.equal(w.kingdom.metrics.camps,4);assert.equal(w.kingdom.metrics.trained,10);assert.ok(w.kingdom.metrics.gather>=400);assert.equal(siteIsOpen(w,'gate-east'),false);
  e.setAge(600);assert.equal(siteIsOpen(w,'gate-east'),true);assert.ok(kingdomSnapshot(w,p).stages[1].canClaim);
 });
@@ -53,9 +53,9 @@ test('authenticated milestone claims enforce ownership and snapshot eligibility 
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port,sessions=await Promise.all(['HTTP Contributor','HTTP Observer'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json())),[p,q]=sessions.map(s=>w.authenticate(s.token));
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();
- assert.equal((await get(0)).sites.find(s=>s.id==='gate-east').locked,true);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates',count:999})).status,400);
+ assert.equal((await get(0)).sites.find(s=>s.id==='gate-east'),undefined);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates',count:999})).status,400);
  recordKingdomContribution(w,p,'gather',400);recordKingdomContribution(w,p,'trained',10);p.cityLevel=2;for(let i=0;i<4;i++)recordKingdomVictory(w,'camps');recordKingdomContribution(w,p,'camps',4);const future=w.kingdom.startedAtMs+600000;w.now=()=>future;
- let snapshot=await get(0);assert.equal(snapshot.version,14);assert.equal(snapshot.sites.find(s=>s.id==='gate-east').locked,false);assert.equal(snapshot.kingdom.stages[1].canClaim,true);
+ let snapshot=await get(0);assert.equal(snapshot.version,15);assert.equal(snapshot.kingdom.stages[1].completed,true);assert.equal(snapshot.kingdom.stages[1].canClaim,true);
  const gold=p.gold;assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates'})).status,200);assert.equal(p.gold,gold+100);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates'})).status,400);
  assert.equal((await post(1,{type:'kingdom-claim',targetId:'gates',playerId:p.id})).status,400);snapshot=await get(1);assert.equal(snapshot.players.find(p=>p.id===sessions[0].playerId).kingdomClaims,undefined);assert.equal(snapshot.kingdom.stages[1].eligible,false);assert.deepEqual(q.kingdomClaims,[]);
 });

@@ -14,6 +14,11 @@ namespace ThronesOfMyth
                 if(report.ended<=0||!reportGuard.Observe("field:"+report.id))continue;
                 RecordEncounter(report.outcome,"Field battle complete. Battle reports show real damage, surviving troops and wounded units. No plunder is awarded in field duels.");
             }
+            if(owner.reports!=null)foreach(var report in owner.reports)
+            {
+                if(report.type!="gathering"||!reportGuard.Observe("cargo:"+report.id))continue;
+                RecordEncounter(report.title,report.outcome=="Delivered"?"Cargo delivered to your city. Open Reports for quantities and source deposits.":"Carried resources were lost in defeat. Open Reports for the loss record.");
+            }
             if(owner.groupReports==null)return;
             foreach(var report in owner.groupReports)
             {

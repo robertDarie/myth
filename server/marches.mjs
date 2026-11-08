@@ -1,16 +1,18 @@
+import { initializeLogistics, cargoTotal } from './field-logistics.mjs';
+import { visible } from './exploration.mjs';
 import { siteIsOpen } from './kingdom.mjs';
 import { initializeFortification, territoryNear } from './campaign.mjs';
 import { allianceRole } from './social.mjs';
 import { TROOP_TYPES, selection, readyFor, transfer, unitTotal, countOf, changeUnits } from './troops.mjs';
 import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
-import { age, armyList, ensureHero } from './progression.mjs';
+import { armyList, ensureHero } from './progression.mjs';
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const point = c => [c.x, c.z].every(n => Number.isFinite(n) && n >= 1 && n <= 79);
 export function marchCommand(world, p, c, fail) {
   if (c.type === 'deploy-march') {
-    if (armyList(p).length >= age(p).marches) fail('Reach the next age to unlock another march (maximum five).');
     const chosen = selection(c, fail), { troops, mythic, units } = chosen;
+    if(armyList(p).length>=5)fail('Five prepared formations already exist. Edit or disband a home formation.');
     if (!readyFor(p, null, chosen)) fail('Not enough ready reserves of that troop type. Train units first.');
     if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
     const a = { id: randomUUID(), ownerId: p.id, name: p.name + ' · March ' + (p.nextMarchNumber++),
@@ -18,15 +20,16 @@ export function marchCommand(world, p, c, fail) {
       troops, mythic, units, health: 1, xp: 0, level: 1, rage: 0, shield: 0, shieldTime: 0, lastSkill: '', skillCasts: 0,
       target: null, state: 'Idle', cooldown: 0, gatherClock: 0, recovery: 0 };
     transfer(p, null, chosen);
-    ensureHero(p, c.targetId); p.marches.push(a); a.health = world.stats(a).maxHealth; return true;
+    ensureHero(p, c.targetId); p.marches.push(a);initializeLogistics(p);a.deployed=false; a.health = world.stats(a).maxHealth; return true;
   }
   const types = ['move', 'attack', 'gather', 'return', 'stop', 'commander', 'reinforce', 'flag', 'capture', 'equip-relic', 'unequip-relic', 'disband-march', 'configure-march'];
   if (!types.includes(c.type)) return false;
   const a = armyList(p).find(a => a.id === (c.marchId || p.id));
   if (!a) fail('That march does not belong to your city.');
-  if (c.type === 'return') { a.target = { type: 'return', x: p.homeX, z: p.homeZ }; a.state = 'Returning'; return true; }
+  if (c.type === 'return') { if(!a.deployed&&world.atHome(a)){a.target=null;a.state='Home';return true;}a.target = { type: 'return', x: p.homeX, z: p.homeZ }; a.state = 'Returning'; a.returnReason='Manual recall'; return true; }
   if (c.type === 'stop') { a.target = null; a.state = 'Idle'; return true; }
   if (a.health <= 0 || a.recovery > 0) fail('This army is recovering at home.');
+  if(['configure-march','commander','reinforce','disband-march','equip-relic','unequip-relic'].includes(c.type)&&cargoTotal(a))fail('Return home and deliver cargo before changing this formation.');
   switch (c.type) {
     case 'move':
       if (!point(c)) fail('Destination must be inside the map (1–79).');
@@ -34,12 +37,12 @@ export function marchCommand(world, p, c, fail) {
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
       const camp = world.camps.find(e => e.id === c.targetId && e.health > 0);
-      if (!camp || !world.canEnter(p, camp)) fail('Camp unavailable or behind a locked gate.');
+      if (!camp || !visible(world,p,camp)||!world.canEnter(p, camp)) fail('Camp unavailable or behind a locked gate.');
       a.target = { type: 'attack', id: camp.id }; break;
     }
     case 'gather': {
-      const node = world.nodes.find(n => n.id === c.targetId && n.remaining > 0);
-      if (!node || !world.canEnter(p, node)) fail('Resource unavailable.');
+      const node = world.nodes.find(n => n.id === c.targetId);
+      if (!node || (!visible(world,p,node)&&!p.discovery.some(r=>r.kind==='nodes'&&r.value.id===node.id))||!world.canEnter(p, node)) fail('Resource unavailable.');
       a.target = { type: 'gather', id: node.id }; a.gatherClock = 0; break;
     }
     case 'commander': {

@@ -25,7 +25,7 @@ test('only field gathering and completed training count; cancellation, gifts and
  const {w,p}=setup();p.gold=p.food=p.wood=5000;advance(w,10);assert.equal(p.journey.metrics.wood,0);assert.equal(p.journey.metrics.food,0);
  cmd(w,p,'train');const id=p.trainingQueue[0].id;advance(w,1);assert.equal(p.journey.metrics.trained,0);cmd(w,p,'cancel-job',{targetId:id});assert.equal(p.journey.metrics.trained,0);
  cmd(w,p,'train');advance(w,9);assert.equal(p.journey.metrics.trained,5);
- cmd(w,p,'gather',{targetId:w.nodes[0].id});advance(w,10);assert.ok(p.journey.metrics.wood>=40);const before=p.gold;cmd(w,p,'journey-claim',{targetId:'gather-wood'});assert.equal(p.gold,before+20);
+ cmd(w,p,'gather',{targetId:w.nodes[0].id});advance(w,10);cmd(w,p,'return');advance(w,10);assert.ok(p.journey.metrics.wood>=40);const before=p.gold;cmd(w,p,'journey-claim',{targetId:'gather-wood'});assert.equal(p.gold,before+20);
  assert.throws(()=>cmd(w,p,'journey-claim',{targetId:'gather-wood'}),/already claimed/);assert.equal(p.gold,before+20);
 });
 
@@ -46,14 +46,14 @@ test('a fresh city completes the entire opening campaign using legal economy, co
  const {w,p}=setup();
  // No grants, teleports, pre-completed objectives or forced victory: this is also a pacing/dependency smoke test.
  cmd(w,p,'train');cmd(w,p,'train');
- for(const index of[0,2,1]){cmd(w,p,'gather',{targetId:w.nodes[index].id});advance(w,100);claimReady(w,p);}
+ for(const index of[0,2,1]){cmd(w,p,'move',{x:w.nodes[index].x,z:w.nodes[index].z});advance(w,15);cmd(w,p,'gather',{targetId:w.nodes[index].id});advance(w,100);cmd(w,p,'return');advance(w,20);claimReady(w,p);}
  assert.equal(p.journey.chapters[0],'embers');cmd(w,p,'return');advance(w,30);
  cmd(w,p,'upgrade');advance(w,21);claimReady(w,p);
  cmd(w,p,'building-upgrade',{targetId:'farm'});advance(w,25);claimReady(w,p);
  cmd(w,p,'building-upgrade',{targetId:'builders'});advance(w,13);claimReady(w,p);assert.equal(journeySnapshot(w,p).activeId,'echoes');
  cmd(w,p,'building-upgrade',{targetId:'oracle'});advance(w,13);claimReady(w,p);cmd(w,p,'summon',{count:1});claimReady(w,p);
  cmd(w,p,'reinforce');
- for(let i=0;i<3;i++){cmd(w,p,'attack',{targetId:w.camps[0].id});advance(w,30);cmd(w,p,'return');advance(w,60);claimReady(w,p);}
+ for(let i=0;i<3;i++){cmd(w,p,'move',{x:14,z:10});advance(w,10);cmd(w,p,'attack',{targetId:w.camps[0].id});advance(w,30);cmd(w,p,'return');advance(w,60);claimReady(w,p);}
  assert.equal(p.questClaimed,true);assert.ok(p.ownedCommanders.includes('atalanta'));assert.equal(journeySnapshot(w,p).activeId,'veil');
  cmd(w,p,'scout-send',{x:30,z:30});advance(w,20);claimReady(w,p);
  cmd(w,p,'building-upgrade',{targetId:'academy'});advance(w,13);cmd(w,p,'research',{targetId:'logistics'});advance(w,13);claimReady(w,p);assert.equal(journeySnapshot(w,p).activeId,'banners');
@@ -108,5 +108,5 @@ test('authenticated claims expose only the owner campaign and reject repeated or
  assert.equal((await post(0,{type:'train'})).status,200);assert.equal((await post(0,{type:'train'})).status,200);advance(w,17);
  const gold=p.gold;assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,200);assert.equal(p.gold,gold+40);
  assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,400);assert.equal(p.gold,gold+40);
- const own=await get(0),outside=await get(1);assert.equal(own.version,14);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
+ const own=await get(0),outside=await get(1);assert.equal(own.version,15);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
 });

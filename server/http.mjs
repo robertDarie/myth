@@ -63,7 +63,7 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
       const ready = !persistence.error && performance.now() - lastTick < 5000;
-      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 14, kingdomId, accounts: identity.available, persistence: { ...persistence } });
+      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 15, kingdomId, accounts: identity.available, persistence: { ...persistence } });
       const address = trustProxy ? String(request.headers['x-forwarded-for'] ?? request.socket.remoteAddress).split(',').at(-1).trim() : request.socket.remoteAddress;
       allow('requests:' + address, 6000);
       if (path.startsWith('/auth/')) {
@@ -129,8 +129,13 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
   let previous = performance.now();
   const timer = setInterval(() => {
     const now = performance.now();
-    try { if (!persistence.error) { world.tick((now - previous) / 1000); world.expire(now); } lastTick = now; }
-    catch { simulationFailed = true; persistence.error = 'Simulation failed. Restart the kingdom after checking server logs.'; console.error(persistence.error); clearInterval(timer); }
+    const before=store&&!persistence.error?checkpoint(world):null;
+    try { if (!persistence.error) {
+      world.tick((now - previous) / 1000); world.expire(now);
+      // Commit node debit, cargo, delivery and report together before serving another request.
+      if(before&&before.logisticsRevision!==world.logisticsRevision&&!saveNow())Object.assign(world,before);
+    } lastTick = now; }
+    catch { if(before)Object.assign(world,before);simulationFailed = true; persistence.error = 'Simulation failed. Restart the kingdom after checking server logs.'; console.error(persistence.error); clearInterval(timer); }
     previous = now;
   }, 100); timer.unref();
   const autosave = setInterval(saveNow, 2000); autosave.unref();

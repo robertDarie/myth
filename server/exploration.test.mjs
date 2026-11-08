@@ -58,7 +58,7 @@ test('allied vision is shared live; leaving removes that vision without deleting
 
 test('fog excludes hidden armies, camp state, enemy orders, garrisons and global battle events',()=>{
  const {w,players:[p,,enemy]}=setup();enemy.x=30;enemy.z=30;enemy.target={type:'move',x:35,z:35};w.event('Secret battle at 30,30');
- let snap=w.snapshot(p.id);assert.equal(snap.armies.some(a=>a.id===enemy.id),false);assert.equal(snap.camps.length,0);assert.equal(snap.events.length,0);assert.equal(snap.sites.find(s=>s.id==='first-sanctuary').unknown,true);
+ let snap=w.snapshot(p.id);assert.equal(snap.armies.some(a=>a.id===enemy.id),false);assert.equal(snap.camps.length,0);assert.equal(snap.events.length,0);assert.equal(snap.sites.find(s=>s.id==='first-sanctuary'),undefined);
  assert.throws(()=>cmd(w,p,'attack-player',{targetId:enemy.id}),/vision/);
  p.x=30;p.z=30;snap=w.snapshot(p.id);const seen=snap.armies.find(a=>a.id===enemy.id);assert.equal(seen.hasOrder,false);assert.deepEqual(seen.route,[]);assert.equal(seen.targetX,enemy.x);
  assert.equal(snap.players.find(a=>a.id===enemy.id).x,enemy.homeX);
@@ -70,7 +70,7 @@ test('recall, gate loss and restart retain scouts safely without replaying rewar
  for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scout.phase,'Returning');advance(restored,10);assert.equal(q.scout,null);assert.equal(q.scoutReports.length,0);
  cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scout.id});advance(restored,0.1);assert.equal(q.scout,null);
  for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scout={id:'bad'},p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
- const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,13);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
+ const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,14);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
 });
 
 test('garrisons and rally centers obey the same gate corridors as ordinary marches',()=>{

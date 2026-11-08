@@ -53,7 +53,7 @@ namespace ThronesOfMyth
         }
         private void RenderFormationWindow(Rect r)
         {
-            var current = formationEditing ? Array.Find(world.armies, a => a.id == formationMarchId && a.ownerId == playerId) : null;
+            var current = formationEditing ? OwnMarches().Find(a => a.id == formationMarchId) : null;
             var ready = me.reserveUnits.Copy();
             if (current != null) foreach(var type in world.troopTypes) ready.Set(type.id,ready.Get(type.id)+current.units.Get(type.id));
             int readyMythic = me.reserveMythic + (current?.mythic ?? 0);
@@ -61,7 +61,7 @@ namespace ThronesOfMyth
             theme.Panel(left, false, true); theme.Panel(right, false, true);
             theme.Text(new Rect(left.x + 18, left.y + 12, left.width - 36, 25), "CHOOSE YOUR COMMANDER", theme.Eyebrow);
             foreach (var id in me.ownedCommanders)
-                if (string.IsNullOrEmpty(formationHeroId) && !Array.Exists(world.armies, a => a.ownerId == playerId && a.id != formationMarchId && a.commanderId == id)) formationHeroId = id;
+                if (string.IsNullOrEmpty(formationHeroId) && !OwnMarches().Exists(a => a.id != formationMarchId && a.commanderId == id)) formationHeroId = id;
             var hero = Array.Find(world.commanders, h => h.id == formationHeroId);
             float portraitHeight = Mathf.Clamp(left.height * 0.34f, 120, 200);
             if (hero != null)
@@ -74,7 +74,7 @@ namespace ThronesOfMyth
             for (int i = 0; i < me.ownedCommanders.Length; i++)
             {
                 string id = me.ownedCommanders[i]; var definition = Array.Find(world.commanders, h => h.id == id);
-                bool assigned = Array.Exists(world.armies, a => a.ownerId == playerId && a.id != formationMarchId && a.commanderId == id);
+                bool assigned = OwnMarches().Exists(a => a.id != formationMarchId && a.commanderId == id);
                 var cell = new Rect(2, i * 60, roster.width - 20, 54); theme.Panel(cell, id == formationHeroId);
                 theme.Portrait(new Rect(8, cell.y + 8, 38, 38), id, RarityColor(definition.color));
                 theme.Text(new Rect(56, cell.y + 5, cell.width - 65, 26), definition.name, theme.Body);
@@ -99,15 +99,15 @@ namespace ThronesOfMyth
             if (theme.Button(new Rect(footer.xMax - 190, footer.y, 90, 27), "CLEAR")) { formationUnits = new UnitCounts(); formationMythic = 0; formationEntries.Clear(); GUIUtility.keyboardControl = 0; }
             if (theme.Button(new Rect(footer.xMax - 92, footer.y, 92, 27), "ALL READY")) { formationUnits = ready.Copy(); formationMythic = readyMythic; formationEntries.Clear(); GUIUtility.keyboardControl = 0; }
             bool home = current != null && Vector2.Distance(new Vector2(current.x, current.z), new Vector2(me.homeX, me.homeZ)) < 2 && !current.hasOrder && current.recovery <= 0 && current.health >= current.maxHealth;
-            bool room = formationEditing ? home : OwnMarches().Count < me.marchSlots;
-            bool commanderAvailable = hero != null && !Array.Exists(world.armies, a => a.ownerId == playerId && a.id != formationMarchId && a.commanderId == formationHeroId);
-            string reason = formationEditing && !home ? "Return and recover fully before changing this formation." : !room ? "Reach the next age for another march slot." : !commanderAvailable ? "Choose a recruited, unassigned commander first." : formationUnits.Total + formationMythic == 0 ? "Choose at least one unit." : "";
+            bool room = formationEditing ? home : OwnMarches().Count < 5;
+            bool commanderAvailable = hero != null && !OwnMarches().Exists(a => a.id != formationMarchId && a.commanderId == formationHeroId);
+            string reason = formationEditing && !home ? "Return and recover fully before changing this formation." : !room ? "Five home formations already prepared. Edit or disband one." : !commanderAvailable ? "Choose a recruited, unassigned commander first." : formationUnits.Total + formationMythic == 0 ? "Choose at least one unit." : "";
             if (theme.Button(new Rect(footer.x, footer.y + 37, footer.width * 0.48f, 42), formationEditing ? "CONFIRM FORMATION" : "ASSEMBLE MARCH", true, room && commanderAvailable && formationUnits.Total + formationMythic > 0 && !processing))
             {
                 if (formationEditing) activeMarchId = formationMarchId;
                 Send(new GameCommand { type = formationEditing ? "configure-march" : "deploy-march", targetId = formationHeroId, units = formationUnits.Copy(), troops = formationUnits.Total, mythic = formationMythic });
             }
-            theme.Text(new Rect(footer.x + footer.width * 0.51f, footer.y + 36, footer.width * 0.49f, 46), string.IsNullOrEmpty(reason) ? "March slots " + OwnMarches().Count + " / " + me.marchSlots + " · Choose a map destination after assembling." : reason, theme.Small);
+            theme.Text(new Rect(footer.x + footer.width * 0.51f, footer.y + 36, footer.width * 0.49f, 46), string.IsNullOrEmpty(reason) ? "Deployed slots " + me.activeMarches + " / " + me.marchSlots + " · Choose a map destination after assembling." : reason, theme.Small);
         }
     }
 }

@@ -23,10 +23,13 @@ test('fresh-city first session legally builds, trains, assembles, gathers, defea
   for (const resource of ['wood', 'food']) {
     const node = w.nodes.find(n => n.resource === resource && n.x < 40 && n.z < 40);
     command('gather', { targetId: node.id });
-    until(() => progress('gather-' + resource) >= 40);
+    until(() => p.cargo[resource]>=40);
+    command('return');until(()=>!p.deployed);
+    assert.ok(progress('gather-'+resource)>=40);
   }
   const camp = w.camps.find(c => c.level === 1 && c.health > 0);
   const attackBefore = p.attackSequence ?? 0;
+  command('move',{x:camp.x-5,z:camp.z});until(()=>!p.target);
   command('attack', { targetId: camp.id });
   let rewardBefore;
   for (let i=0;i<2400&&p.kills<1;i++) {
@@ -48,7 +51,7 @@ test('fresh-city first session legally builds, trains, assembles, gathers, defea
   assert.throws(() => command('journey-claim', { targetId: woodTask.id }));
   command('return');
   until(() => !p.target && Math.hypot(p.x-p.homeX,p.z-p.homeZ) < .1);
-  assert.equal(p.state, 'Idle');
+  assert.equal(p.state, 'Home');
   const restored = World.fromSave(w.toSave());
   const resumed = restored.authenticate(joined.token);
   assert.equal(resumed.cityLevel, 2);

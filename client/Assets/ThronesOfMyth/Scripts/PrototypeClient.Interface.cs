@@ -34,6 +34,7 @@ namespace ThronesOfMyth
         {
             var list = new List<ArmyData>();
             if (world != null) foreach (var march in world.armies) if (march.ownerId == playerId) list.Add(march);
+            if (me?.homeFormations != null) list.AddRange(me.homeFormations);
             return list;
         }
         private void InitializeInterface()
@@ -115,7 +116,7 @@ namespace ThronesOfMyth
                 case "cancel-job": return "Work canceled. Resources returned to your treasury.";
                 case "reinforce": return "Your march has received its reinforcements.";
                 case "configure-march": return "Your formation is ready. Select a destination on the map.";
-                case "deploy-march": return "A new march awaits your command.";
+                case "deploy-march": return "Home formation prepared. Select a deposit or destination to deploy.";
                 case "disband-march": return "Your troops have returned to city reserves.";
                 case "research": return "The Athenaeum has begun its studies.";
                 case "summon": return "The Oracle has heard your invocation.";
@@ -226,7 +227,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.27  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.28  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -287,7 +288,7 @@ namespace ThronesOfMyth
         private void DrawMarchHud()
         {
             var own=OwnMarches();float x=MarchRail.x;
-            theme.OneLine(new Rect(x,100,168,22),"MARCHES  "+own.Count+" / "+me.marchSlots,theme.Eyebrow);
+            theme.OneLine(new Rect(x,100,168,22),"DEPLOYED  "+me.activeMarches+" / "+me.marchSlots,theme.Eyebrow);
             for(int i=0;i<5;i++)
             {
                 var r=new Rect(x,132+i*MarchStep,168,MarchStep-6);
@@ -297,7 +298,7 @@ namespace ThronesOfMyth
                     var definition=Array.Find(world.commanders,h=>h.id==army.commanderId);
                     theme.Portrait(new Rect(x+8,r.y+8,34,34),army.commanderId,RarityColor(definition.color));
                     theme.OneLine(new Rect(x+50,r.y+5,110,19),HeroName(army.commanderId),theme.Small);
-                    theme.OneLine(new Rect(x+50,r.y+24,110,17),ArmyPresentationState.Label(army),theme.Small);
+                    theme.OneLine(new Rect(x+50,r.y+24,110,17),(army.deployed?ArmyPresentationState.Label(army):"Home formation"),theme.Small);
                     theme.Bar(new Rect(x+50,r.yMax-13,108,4),(float)army.health/Mathf.Max(1,army.maxHealth),MythInterfaceTheme.Teal);
                     theme.Bar(new Rect(x+50,r.yMax-5,108,2),army.rage/1000f,MythInterfaceTheme.Gold);
                     if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;Select(army.id,"army");cameraControl?.Focus(army.x,army.z);}
@@ -306,7 +307,7 @@ namespace ThronesOfMyth
                 {
                     bool unlocked=i<me.marchSlots;theme.Panel(r,false,true);
                     theme.Icon(new Rect(x+12,r.y+15,22,24),unlocked?"army":"lock",unlocked?MythInterfaceTheme.Gold:MythInterfaceTheme.Muted);
-                    theme.OneLine(new Rect(x+46,r.y+8,112,19),unlocked?"+ Deploy march":"March "+(i+1),theme.Small);
+                    theme.OneLine(new Rect(x+46,r.y+8,112,19),unlocked?"+ Prepare formation":"March "+(i+1),theme.Small);
                     theme.OneLine(new Rect(x+46,r.y+29,112,18),unlocked?"Ready reserves":"Unlock in Age "+(i+1),theme.Small);
                     if(GUI.Button(r,GUIContent.none,GUIStyle.none)){if(unlocked)BeginFormation(false);else OpenInterface(InterfacePage.City);}
                 }
@@ -417,7 +418,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Marches) DrawArmy();
             if (interfacePage == InterfacePage.Training) DrawTraining();
             if (interfacePage == InterfacePage.Hospital) DrawHospital();
-            if (interfacePage == InterfacePage.Reports) DrawBattleReports();
+            if (interfacePage == InterfacePage.Reports) DrawUnifiedReports();
             if (interfacePage == InterfacePage.Chat) DrawChat();
             if (interfacePage == InterfacePage.Warfare) DrawWarfare();
             if (interfacePage == InterfacePage.Exploration) DrawExploration();

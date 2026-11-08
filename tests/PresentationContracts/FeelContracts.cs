@@ -36,6 +36,9 @@ static class FeelContracts
         reports.Begin("one",.4f);check(!reports.Observe("new"),"Report replay after polling");
         reports.Begin("two",.6f);check(!reports.Observe("new"),"Report replay after profile switch");
         reports.Begin("two",8);check(!reports.Observe("other"),"Historic report replay after reconnect");
+        reports.Begin("bounded archive",10);for(int i=0;i<220;i++)reports.Observe("entry-"+i);
+        reports.Begin("bounded archive",10.2f);bool replay=false;for(int i=0;i<220;i++)replay|=reports.Observe("entry-"+i);
+        check(!replay,"A full combined archive must not churn the replay guard and repeat notifications");
         var guide=new FirstSessionGuide();guide.Profile("city");
         var tasks=new[]{new JourneyTask{id="train-ten"},new JourneyTask{id="gather-wood"},new JourneyTask{id="gather-food"}};
         var city=new ArmyData{cityLevel=1,homeX=5,homeZ=5,trainingQueue=new QueueJob[0],journeyCampaign=new JourneyCampaign{chapters=new[]{new JourneyChapter{tasks=tasks}}}};
@@ -52,6 +55,16 @@ static class FeelContracts
         check(guide.Next(city,army)==null,"Opening advice should finish at home");
         army.recovery=8;check(guide.Next(city,army).Guide=="city","Recovery should guide city work rather than another attack");army.recovery=0;
         city.cityLevel=3;guide.Profile("another");check(guide.Next(city,army)==null,"Advanced cities must not be forced through intro");
+        city.cityLevel=2;city.kills=0;tasks[1].progress=0;tasks[2].progress=0;guide.CityViewed=true;guide.ArmyPrepared=true;army.x=12;army.cargo=new ResourceAmounts{wood=40};
+        check(guide.Next(city,army).Guide=="return","Cargo must be delivered before opening progress can advance");
+        army.cargo.wood=0;army.cargo.food=40;tasks[1].progress=40;
+        check(guide.Next(city,army).Guide=="return","Food cargo must guide home delivery");
+        army.cargo.food=0;check(guide.Next(city,army).Guide=="gather","Empty cargo must still guide food gathering");
+        var json="{\"id\":\"owner\",\"activeMarches\":0,\"homeFormations\":[{\"id\":\"march\",\"deployed\":false,\"carryCapacity\":320,\"cargo\":{\"wood\":12}}],\"reports\":[{\"type\":\"gathering\",\"outcome\":\"Delivered\",\"resources\":{\"wood\":12},\"sources\":[{\"nodeId\":\"grove\",\"amount\":12}]}]}";
+        var dto=System.Text.Json.JsonSerializer.Deserialize<ArmyData>(json,new System.Text.Json.JsonSerializerOptions{IncludeFields=true});
+        check(dto.homeFormations.Length==1&&!dto.homeFormations[0].deployed&&dto.activeMarches==0,"Protocol must distinguish home formations from active marches");
+        check(dto.homeFormations[0].carryCapacity==320&&dto.homeFormations[0].cargo.wood==12,"Cargo and capacity DTO fields missing");
+        check(dto.reports[0].resources.wood==12&&dto.reports[0].sources[0].nodeId=="grove","Delivery report attribution DTO missing");
         Console.WriteLine("Gameplay-feel contracts: "+checks+" passed.");return checks;
     }
 }

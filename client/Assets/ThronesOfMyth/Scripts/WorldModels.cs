@@ -29,13 +29,14 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ArmyData
     {
         public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
+        public bool deployed, mapVisible, lastKnown, protectedField; public float observedAt; public int activeMarches, carryCapacity; public ResourceAmounts cargo; public ArmyData[] homeFormations; public CoreReport[] reports;
         public InventoryData inventory; public PowerData powerBreakdown;
         public TroopTypeData[] trainingOptions;
         public RoutePoint[] route;
         public float x, z, homeX, homeZ, targetX, targetZ, attackX, attackZ, recovery, damage, speed, heal, gather, trainingDuration, recruitDuration;
         public int health, maxHealth, gold, wood, food, troops, mythic, cityLevel, level, kills;
         public float xp;
-        public int rage, shield, skillCasts, attackSequence, marchSlots, constructionSlots, deployedTroops, deployedMythic;
+        public int rage, shield, skillCasts, attackSequence, marchSlots, constructionSlots, deployedTroops, deployedMythic, assignedTroops, assignedMythic;
         public bool questClaimed, hasOrder, offline;
         public int reserveTroops, reserveMythic, stone, aether, sigils, troopCapacity, mythicCapacity, passiveLimit, epicPity, legendaryPity, offeringAmount;
         public bool offeringAvailable;
@@ -68,10 +69,12 @@ namespace ThronesOfMyth
     [Serializable] public sealed class TradeData { public string id, name; public ResourceAmounts cost, reward; }
     [Serializable] public sealed class SummonRules { public float common, rare, epic, legendary; public int epicPity, legendaryPity; }
     [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error, backend; }
-    [Serializable] public sealed class CampData { public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
-    [Serializable] public sealed class NodeData { public string id, name, resource; public float x, z; public int remaining, capacity; }
-    [Serializable] public sealed class SiteData { public bool unknown, locked; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
-    [Serializable] public sealed class FlagData { public string id, allianceId; public float x, z, health, maxHealth, buildRemaining; public bool isRoot, connected; }
+    [Serializable] public sealed class CoreReport { public string id,type,title,detail,outcome,armyId,commanderId,reason,sourceId; public float time,started; public ResourceAmounts resources,lost; public CargoSource[] sources; }
+    [Serializable] public sealed class CargoSource { public string nodeId,name,resource; public float x,z; public int amount; }
+    [Serializable] public sealed class CampData { public bool lastKnown; public float observedAt; public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
+    [Serializable] public sealed class NodeData { public bool lastKnown; public float observedAt; public string id, name, resource; public float x, z; public int remaining, capacity; }
+    [Serializable] public sealed class SiteData { public bool lastKnown; public float observedAt; public bool unknown, locked; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
+    [Serializable] public sealed class FlagData { public bool lastKnown; public float observedAt; public string id, allianceId; public float x, z, health, maxHealth, buildRemaining; public bool isRoot, connected; }
     [Serializable] public sealed class AllianceData { public string id, name, leaderId; public int members; public string[] officers; }
     [Serializable] public sealed class CommanderData { public string id, name, rarity, color, description, skillKind; public int cost; }
     [Serializable] public sealed class CivilizationData { public string id, name, specialty, mythic; }
@@ -96,7 +99,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JourneyTask { public string id, title, description, guide, targetId; public int goal, progress; public bool claimed, canClaim; public JourneyRewards reward; }
     [Serializable] public sealed class JourneyChapter { public string id, title, story, commanderReward; public bool claimed, locked, canClaim; public JourneyTask[] tasks; public JourneyRewards reward; }
     [Serializable] public sealed class JourneyCampaign { public string activeId; public bool complete; public JourneyChapter[] chapters; }
-    [Serializable] public sealed class StrongholdData { public string id, name, kind; public int tier, cycle, xp; public float x, z, health, maxHealth, guardHealth, maxGuardHealth, guardDamage, respawn; public UnitCounts units; public JourneyRewards reward; }
+    [Serializable] public sealed class StrongholdData { public bool lastKnown; public float observedAt; public string id, name, kind; public int tier, cycle, xp; public float x, z, health, maxHealth, guardHealth, maxGuardHealth, guardDamage, respawn; public UnitCounts units; public JourneyRewards reward; }
     [Serializable] public sealed class StrongholdRules { public int minMarches, roundLimit, respawnSeconds; }
     [Serializable] public sealed class StrongholdReward { public string playerId; public float contribution; public int xp; public JourneyRewards resources; }
     [Serializable] public sealed class ActivityTaskCard { public string id, title, description, guide, targetId; public int goal, progress, points; public bool claimed, canClaim; public JourneyRewards reward; }
