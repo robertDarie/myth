@@ -389,7 +389,7 @@ namespace ThronesOfMyth
         }
         private IEnumerator Join()
         {
-            joining = true; worldReady = false; loadingError = ""; loadingStage = "Opening the kingdom gates";
+            cityProgress.Reset();joining = true; worldReady = false; loadingError = ""; loadingStage = "Opening the kingdom gates";
             var body = new JoinRequest { name = playerName, civilization = civilizationIds[civilization], resumeToken = PlayerPrefs.GetString(SessionKey, ""), joinCode = kingdomJoinCode };
             using (var request = Request("/join", "POST", JsonUtility.ToJson(body)))
             {
@@ -422,6 +422,7 @@ namespace ThronesOfMyth
                         world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
                         {
+                            cityProgress.Observe(serverUrl.TrimEnd('/')+"/"+playerId,me,Time.unscaledTime);
                             if (!Array.Exists(world.armies, a => a.id == activeMarchId && a.ownerId == playerId)) activeMarchId = playerId;
                             if (me.summonHistory.Length > 0 && me.summonHistory[0].id != lastDrawId)
                             {
@@ -443,7 +444,7 @@ namespace ThronesOfMyth
                     }
                     else
                     {
-                        status = DescribeError(request); if (!worldReady) loadingError = status;
+                        cityProgress.Reset();status = DescribeError(request); if (!worldReady) loadingError = status;
                         if (request.responseCode == 401) { ReturnToAccountEntry(status); yield break; }
                     }
                 }

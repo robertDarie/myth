@@ -36,17 +36,21 @@ namespace ThronesOfMyth
                 float vein=Mathf.Abs(Mathf.PerlinNoise(p.x*.05f+12,p.y*.08f+21)-.5f);
                 meadow=Color.Lerp(meadow,new Color(.34f,.37f,.27f),Mathf.Clamp01((.07f-vein)*5)*.30f);
                 float road = 1 - Mathf.SmoothStep(0.65f, 1.9f, RoadDistance(p)); var earth = Color.Lerp(new Color(0.65f,0.56f,0.36f), new Color(0.81f,0.72f,0.49f), patch);
+                float shoulder=Mathf.Clamp01(1-Mathf.Abs(RoadDistance(p)-1.45f)*2)*.22f;
+                meadow=Color.Lerp(meadow,new Color(.36f,.37f,.25f),shoulder);
+                earth*=.96f+Mathf.Sin(RoadDistance(p)*6)*.035f;
                 pixels[y * 512 + x] = Color.Lerp(meadow, earth, road * 0.86f);
             }
             groundTexture.SetPixels(pixels); groundTexture.Apply(true, true); material.mainTexture = groundTexture; ground.GetComponent<Renderer>().enabled=false;BuildRelief(material);
-            RenderSettings.ambientLight = new Color(.53f,.59f,.57f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(.32f,.43f,.44f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
-            var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.cullingMask &= ~((1 << 30) | (1 << 31)); light.color = new Color(1,0.94f,0.79f); light.intensity = 1.15f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.5f; } }
+            RenderSettings.ambientLight = new Color(.48f,.55f,.59f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(.32f,.43f,.44f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
+            var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.cullingMask &= ~((1 << 30) | (1 << 31)); light.color = new Color(1,0.94f,0.79f); light.intensity = 1.12f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.58f; } }
             QualitySettings.shadowDistance = 110;
             var random = new System.Random(431);
             for (int cluster = 0; cluster < 85; cluster++)
             {
                 var center = new Vector2(3 + (float)random.NextDouble()*74, 3 + (float)random.NextDouble()*74);
-                for (int tree = 0; tree < 4; tree++)
+                int density=center.y>44?6:center.x>42?2:4;
+                for (int tree = 0; tree < density; tree++)
                 {
                     var p = center + new Vector2((float)random.NextDouble()*5-2.5f,(float)random.NextDouble()*5-2.5f); if (SceneryClearing(p)) continue;
                     bool pine = p.y > 40; var tint = pine ? new Color(0.24f,0.41f,0.34f) : p.x > 40 ? new Color(0.46f,0.52f,0.28f) : new Color(0.28f,0.48f,0.24f);
@@ -58,6 +62,14 @@ namespace ThronesOfMyth
                 if (Mathf.Abs(i-20)<5 || Mathf.Abs(i-60)<5) continue;
                 art.EnvironmentModel(scenery,"BorderRock",new Vector3(40,0,i),1.4f,new Color(0.48f,0.51f,0.43f),i*17);
                 art.EnvironmentModel(scenery,"BorderRock",new Vector3(i,0,40),1.4f,new Color(0.48f,0.51f,0.43f),i*23);
+            }
+            // Low vegetation punctuates meadows, without filling paths or site clearings.
+            for(int i=0;i<160;i++)
+            {
+                var p=new Vector2(2+(float)random.NextDouble()*76,2+(float)random.NextDouble()*76);
+                if(SceneryClearing(p)||p.x>44&&p.y<40)continue;
+                for(int blade=0;blade<3;blade++)
+                {var tuft=art.Shape(scenery,PrimitiveType.Cube,new Vector3(p.x+blade*.08f,TerrainHeight(p)+.09f,p.y),new Vector3(.035f,.18f,.06f),new Color(.39f,.48f,.28f));tuft.localRotation=Quaternion.Euler(0,i*31,(blade-1)*18);}
             }
             BuildRealmDressing();
             art.BatchEnvironment(scenery);

@@ -129,7 +129,7 @@ namespace ThronesOfMyth
                         if(pollRoutine!=null)StopCoroutine(pollRoutine);
                         commands.Clear();token=result.token;playerId=result.playerId;playerName=result.name;accountName=result.username;accountRegistered=true;accountEntryOpen=false;accountRecovering=false;
                         accountRecoveryDisplay=result.recoveryCode??"";accountMessage="City recovered. Keep your credentials private.";
-                        activeMarchId=playerId;focused=false;worldReady=false;world=null;me=null;map.Clear();pendingOrder=null;loadedOrderProfile="";
+                        cityProgress.Reset();activeMarchId=playerId;focused=false;worldReady=false;world=null;me=null;map.Clear();pendingOrder=null;loadedOrderProfile="";
                         loadingError="";loadingStage="Restoring your protected city";
                         PlayerPrefs.SetString(SessionKey,token);PlayerPrefs.SetString("ThronesOfMyth.name",playerName);PlayerPrefs.Save();
                         interfacePage=string.IsNullOrEmpty(accountRecoveryDisplay)?InterfacePage.World:InterfacePage.Account;

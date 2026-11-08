@@ -37,3 +37,7 @@ __pycache__/
 *.sqlite-wal
 *.sqlite-shm
 ops/kingdom/backups/
+
+# Portable presentation-contract build outputs
+tests/PresentationContracts/bin/
+tests/PresentationContracts/obj/

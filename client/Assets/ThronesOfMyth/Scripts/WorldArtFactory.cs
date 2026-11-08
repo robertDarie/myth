@@ -99,6 +99,8 @@ namespace ThronesOfMyth
                     Ring(root, 2.5f, team);
                 }
                 else Temple(root, team, variant != "shrine");
+                Box(root,0,.025f,-2.25f,2.1f,.05f,1.5f,new Color(.56f,.54f,.41f));
+                for(int side=-1;side<=1;side+=2){Pillar(root,side*1.3f,.35f,-2.5f,.32f,.65f,stone);Box(root,side*1.3f,.72f,-2.5f,.45f,.10f,.45f,bronze);}
             }
             else if (kind == "stronghold")
             {

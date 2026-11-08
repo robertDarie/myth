@@ -13,7 +13,7 @@ namespace ThronesOfMyth
         private float FogOpacity(int x, int z)
         {
             byte state = fogSectors[Mathf.Clamp(z, 0, 19) * 20 + Mathf.Clamp(x, 0, 19)];
-            return state == 2 ? 0 : state == 1 ? .42f : .97f;
+            return state == 2 ? 0 : state == 1 ? .50f : 1f;
         }
         private void UpdateFog(ExplorationData data)
         {
@@ -56,7 +56,10 @@ namespace ThronesOfMyth
                 int ix = Mathf.FloorToInt(sx), iz = Mathf.FloorToInt(sz);
                 float tx = Mathf.SmoothStep(0, 1, sx - ix), tz = Mathf.SmoothStep(0, 1, sz - iz);
                 float alpha = Mathf.Lerp(Mathf.Lerp(FogOpacity(ix, iz), FogOpacity(ix + 1, iz), tx), Mathf.Lerp(FogOpacity(ix, iz + 1), FogOpacity(ix + 1, iz + 1), tx), tz);
-                colors[z * (FogSteps + 1) + x] = new Color(.14f+Mathf.PerlinNoise(x*.055f,z*.055f)*.035f,.23f+Mathf.PerlinNoise(x*.055f,z*.055f)*.035f,.27f,alpha);
+                float cloud=Mathf.PerlinNoise(x*.055f,z*.055f)*.035f;
+                // Remembered land is a lighter, desaturated veil; unknown land is opaque slate.
+                var tint=Color.Lerp(new Color(.30f,.35f,.34f),new Color(.12f,.20f,.25f),Mathf.Clamp01((alpha-.50f)*2));
+                colors[z*(FogSteps+1)+x]=new Color(tint.r+cloud,tint.g+cloud,tint.b+cloud,alpha);
             }
             fogMesh.colors = colors;
         }

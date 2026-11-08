@@ -8,6 +8,7 @@ namespace ThronesOfMyth
     {
         private int inspectedTechnology;
         private CityDiorama cityDiorama;
+        private readonly CityProgressFeedback cityProgress=new CityProgressFeedback();
         private bool cityModelView = true;
         private CommanderPreview commanderPreview;
         private bool showCommanderModel;
@@ -25,7 +26,7 @@ namespace ThronesOfMyth
             if(cityModelView)
             {
                 if(cityDiorama==null)cityDiorama=new CityDiorama();
-                int before=selectedBuilding;selectedBuilding=cityDiorama.Draw(new Rect(grid.x,grid.y+42,grid.width,grid.height-42),me,selectedBuilding,theme,reducedMotion);
+                int before=selectedBuilding;selectedBuilding=cityDiorama.Draw(new Rect(grid.x,grid.y+42,grid.width,grid.height-42),me,selectedBuilding,theme,reducedMotion,cityProgress);
                 if(before!=selectedBuilding)contentScroll=Vector2.zero;
             }
             else

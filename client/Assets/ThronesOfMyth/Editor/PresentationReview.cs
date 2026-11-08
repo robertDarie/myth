@@ -58,6 +58,13 @@ namespace ThronesOfMyth.Editor
                     actor.SetSelected(false,true);Require(actor.selection.activeSelf,culture+": hover ring hidden",errors,ref checks);
                     actor.SetSelected(false);Require(!actor.selection.activeSelf,culture+": stale ring after deselection",errors,ref checks);
                 }
+                foreach(var culture in new[]{"greek","egyptian","norse","chinese","japanese"})foreach(var id in new[]{"academy","barracks","infirmary","forge","oracle","oathhall"})
+                {
+                    var root=new GameObject("Isolated institution review");root.transform.position=new Vector3(4000,0,4000);roots.Add(root);
+                    var district=art.Institution(root.transform,id,culture,5,MythInterfaceTheme.Teal);
+                    var renderers=district.GetComponentsInChildren<Renderer>();Require(renderers.Length>0,culture+" "+id+": empty institution",errors,ref checks);
+                    foreach(var renderer in renderers)Require(renderer.bounds.max.y<4.5f,culture+" "+id+": exceeds city/fog presentation budget",errors,ref checks);
+                }
                 foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1920,1080),new Vector2Int(2560,1440)})foreach(float scale in new[]{.85f,1f,1.15f})
                 {
                     var layout=new WorldLabelLayout();layout.Reset(new Rect(0,0,size.x,size.y));

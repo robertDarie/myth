@@ -13,6 +13,7 @@ namespace ThronesOfMyth
         private readonly WorldArtFactory art=new WorldArtFactory();
         private readonly Dictionary<string,Transform> districts=new Dictionary<string,Transform>(),cranes=new Dictionary<string,Transform>();
         private Transform[] guards;
+        private readonly Dictionary<string,GameObject> plotSeals=new Dictionary<string,GameObject>();
         private readonly Dictionary<string,LineRenderer> districtRings=new Dictionary<string,LineRenderer>();
         private readonly List<Vector3> framingPoints=new List<Vector3>();
         private string hoveredDistrict="";
@@ -76,7 +77,7 @@ namespace ThronesOfMyth
         private void Sync(ArmyData city)
         {
             string key=city.civilization;foreach(var b in city.cityBuildings)key+="|"+b.id+":"+b.level;
-            if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
+            if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();plotSeals.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
             art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.23f,0),new Vector3(16,.22f,16),new Color(.36f,.42f,.29f));
             art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.08f,0),new Vector3(15.5f,.08f,15.5f),new Color(.43f,.51f,.32f));
             foreach (var building in city.cityBuildings) Boulevard(DistrictPosition(building.id));
@@ -97,7 +98,19 @@ namespace ThronesOfMyth
             for(int i=0;i<city.cityBuildings.Length;i++)
             {
                 var b=city.cityBuildings[i];var district=art.Institution(content,b.id,city.civilization,b.level,MythInterfaceTheme.Teal);district.localPosition=DistrictPosition(b.id);
+                if(b.level==0)
+                {
+                    var seal=new GameObject("Unavailable foundation seal");seal.transform.SetParent(district,false);
+                    for(int sign=-1;sign<=1;sign+=2){var beam=art.Shape(seal.transform,PrimitiveType.Cube,new Vector3(0,.14f,0),new Vector3(1.25f,.10f,.10f),new Color(.42f,.37f,.27f));beam.localRotation=Quaternion.Euler(0,sign*40,0);}plotSeals[b.id]=seal;
+                }
                 var marker=district.gameObject.AddComponent<CityBuildingMarker>();marker.id=b.id;var collider=district.gameObject.AddComponent<BoxCollider>();collider.center=new Vector3(0,.7f,0);collider.size=b.id=="citadel"?new Vector3(3.3f,2.5f,3):new Vector3(1.6f,1.8f,1.5f);districts[b.id]=district;
+                var pickBounds=new Bounds(Vector3.up*.3f,new Vector3(1.4f,.6f,1.3f));
+                foreach(var renderer in district.GetComponentsInChildren<Renderer>())
+                {
+                    var local=renderer.localBounds;
+                    for(int corner=0;corner<8;corner++)pickBounds.Encapsulate(district.InverseTransformPoint(renderer.transform.TransformPoint(local.center+Vector3.Scale(local.extents,new Vector3((corner&1)==0?-1:1,(corner&2)==0?-1:1,(corner&4)==0?-1:1)))));
+                }
+                collider.center=pickBounds.center;collider.size=pickBounds.size+Vector3.one*.08f;
                 // Capture visual bounds before adding status rings and scaffold overlays.
                 foreach(var renderer in district.GetComponentsInChildren<Renderer>())
                 {
@@ -131,16 +144,18 @@ namespace ThronesOfMyth
             var job=Job(city,building.id);
             return job!=null&&!string.IsNullOrEmpty(job.id)?1:building.level>0?2:3;
         }
-        public int Draw(Rect rect,ArmyData city,int selected,MythInterfaceTheme theme,bool reducedMotion)
+        public int Draw(Rect rect,ArmyData city,int selected,MythInterfaceTheme theme,bool reducedMotion,CityProgressFeedback progress=null)
         {
             SetVisible(true);Sync(city);selected=Mathf.Clamp(selected,0,city.cityBuildings.Length-1);content.localRotation=Quaternion.Euler(0,yaw,0);
             foreach(var b in city.cityBuildings)
             {
                 var job=Job(city,b.id);bool active=job!=null&&!string.IsNullOrEmpty(job.id);
                 bool construction=active&&(job.type=="building"||job.type=="upgrade");cranes[b.id].gameObject.SetActive(construction);
+                if(plotSeals.TryGetValue(b.id,out var seal))seal.SetActive(!b.canUpgrade&&!construction);
                 var ring=districtRings[b.id];bool chosen=b.id==city.cityBuildings[selected].id;
-                Color status=chosen?MythInterfaceTheme.Gold:active?MythInterfaceTheme.Teal:b.canUpgrade?new Color(.62f,.55f,.31f):new Color(.32f,.38f,.39f);
-                ring.sharedMaterial=art.MaterialFor(status);ring.widthMultiplier=chosen ? .10f:b.id==hoveredDistrict ? .075f:.035f;
+                bool completed=progress!=null&&progress.IsRecent(b.id,Time.unscaledTime);
+                Color status=completed?MythInterfaceTheme.Cream:chosen?MythInterfaceTheme.Gold:active?MythInterfaceTheme.Teal:b.canUpgrade?new Color(.62f,.55f,.31f):new Color(.32f,.38f,.39f);
+                ring.sharedMaterial=art.MaterialFor(status);ring.widthMultiplier=completed ? (reducedMotion?.12f:.12f+Mathf.Sin(Time.unscaledTime*6)*.025f):chosen ? .10f:b.id==hoveredDistrict ? .075f:.035f;
                 // Construction stays readable with motion disabled; only the crane's idle sway stops.
                 cranes[b.id].localRotation=Quaternion.Euler(0,reducedMotion?0:Mathf.Sin(Time.unscaledTime*.8f)*5,0);
             }
@@ -167,12 +182,14 @@ namespace ThronesOfMyth
             foreach(var building in city.cityBuildings)
             {
                 var job=Job(city,building.id);bool active=job!=null&&!string.IsNullOrEmpty(job.id);
-                if(!active&&!building.canUpgrade&&building.level>0)continue;
+                bool complete=progress!=null&&progress.IsRecent(building.id,Time.unscaledTime);
+                if(!active&&!complete&&!building.canUpgrade&&building.level>0)continue;
                 var point=camera.WorldToViewportPoint(districts[building.id].position+Vector3.back*.8f+Vector3.up*.12f);
                 var badge=new Rect(image.x+point.x*image.width-9,image.y+(1-point.y)*image.height-9,18,18);
                 if(!image.Contains(badge.min)||!image.Contains(badge.max))continue;
                 theme.Circle(badge,new Color(.045f,.09f,.11f,.95f));
-                if(active||!building.canUpgrade)theme.Icon(new Rect(badge.x+3,badge.y+3,12,12),active?"builders":"lock",active?MythInterfaceTheme.Teal:MythInterfaceTheme.Muted);
+                if(complete)theme.Text(new Rect(badge.x-24,badge.y-2,66,22),"Ready",theme.Eyebrow);
+                else if(active||!building.canUpgrade)theme.Icon(new Rect(badge.x+3,badge.y+3,12,12),active?"builders":"lock",active?MythInterfaceTheme.Teal:MythInterfaceTheme.Muted);
                 else {MythInterfaceTheme.Line(new Vector2(badge.center.x,badge.y+4),new Vector2(badge.center.x,badge.yMax-4),2,MythInterfaceTheme.Gold);MythInterfaceTheme.Line(new Vector2(badge.x+4,badge.center.y),new Vector2(badge.xMax-4,badge.center.y),2,MythInterfaceTheme.Gold);}
                 GUI.Label(badge,new GUIContent("",building.name+" · "+(active?"Working":building.canUpgrade?building.level>0?"Upgrade available":"Ready to build":building.lockedReason)),GUIStyle.none);
             }
@@ -185,7 +202,8 @@ namespace ThronesOfMyth
             foreach(var b in labelOrder)
             {
                 var job=Job(city,b.id);bool active=job!=null&&!string.IsNullOrEmpty(job.id);bool chosen=b.id==selectedId;
-                if(!chosen&&!active&&b.id!=hoveredDistrict&&!showDistrictNames)continue;
+                bool completed=progress!=null&&progress.IsRecent(b.id,Time.unscaledTime);
+                if(!chosen&&!active&&!completed&&b.id!=hoveredDistrict&&!showDistrictNames)continue;
                 var point=camera.WorldToViewportPoint(districts[b.id].position+Vector3.up*1.55f);if(point.z<=0)continue;
                 var at=new Vector2(image.x+point.x*image.width,image.y+(1-point.y)*image.height);
                 var label=new Rect(at.x-90,at.y-22,180,42);
@@ -193,7 +211,7 @@ namespace ThronesOfMyth
                 if(!free||label.xMin<image.xMin||label.xMax>image.xMax||label.yMin<image.yMin||label.yMax>image.yMax)continue;
                 labelBounds.Add(label);MythInterfaceTheme.Fill(label,new Color(.035f,.075f,.085f,.90f));
                 theme.OneLine(new Rect(label.x+7,label.y+2,label.width-14,19),b.name,chosen?theme.Eyebrow:theme.Small);
-                string detail=(b.level>0?"Level "+b.level:"Foundation")+" · "+(active?"Working "+Mathf.CeilToInt(job.remaining)+"s":b.canUpgrade?b.level>0?"Upgrade ready":"Build ready":b.level>=b.maxLevel?"Complete":b.level==0?"Not yet buildable":"Upgrade unavailable");
+                string detail=completed?"Completed · Level "+b.level:(b.level>0?"Level "+b.level:"Foundation")+" · "+(active?"Working "+Mathf.CeilToInt(job.remaining)+"s":b.canUpgrade?b.level>0?"Upgrade ready":"Build ready":b.level>=b.maxLevel?"Complete":b.level==0?"Not yet buildable":"Upgrade unavailable");
                 theme.OneLine(new Rect(label.x+7,label.y+20,label.width-14,19),detail,theme.Small);
                 if(active&&job.duration>0)theme.Bar(new Rect(label.x+7,label.yMax-3,label.width-14,3),1-job.remaining/job.duration,MythInterfaceTheme.Teal);
             }
