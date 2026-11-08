@@ -23,6 +23,15 @@ namespace ThronesOfMyth
         private readonly List<BuildingCard> labelOrder=new List<BuildingCard>();
         private WorldActorAnimation[] guardActors;
         private float renderedAt=-1,yaw;
+        private readonly CityViewMotion motion=new CityViewMotion();
+        private float frameTime=-1;
+        private float fitSize=8;
+        private Vector3 cameraCenter;
+        private int physicsFrame=-1;
+        private void SyncPicking(){if(physicsFrame==Time.frameCount)return;Physics.SyncTransforms();physicsFrame=Time.frameCount;}
+        public void Rotate(float degrees)=>motion.Rotate(degrees);
+        public void Zoom(float delta)=>motion.Magnify(delta);
+        public void ResetView()=>motion.Reset();
         private bool showDistrictNames;
         private readonly List<Rect> labelBounds = new List<Rect>();
         private static Vector3 DistrictPosition(string id)
@@ -59,25 +68,30 @@ namespace ThronesOfMyth
         {
             stage=new GameObject("Living city overview"){hideFlags=HideFlags.HideAndDontSave};stage.transform.position=new Vector3(3200,0,3200);
             content=new GameObject("City districts").transform;content.SetParent(stage.transform,false);
-            var cameraObject=new GameObject("City overview camera");cameraObject.transform.SetParent(stage.transform,false);camera=cameraObject.AddComponent<Camera>();camera.enabled=false;camera.cullingMask=1<<30;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.10f,.17f,.21f);camera.orthographic=true;camera.orthographicSize=8.4f;camera.nearClipPlane=.1f;camera.farClipPlane=40;camera.transform.localPosition=new Vector3(11,15,-17);camera.transform.LookAt(stage.transform.position+Vector3.up*.3f);
-            texture=new RenderTexture(1024,640,16,RenderTextureFormat.ARGB32){name="City overview render"};texture.Create();camera.targetTexture=texture;
+            var cameraObject=new GameObject("City overview camera");cameraObject.transform.SetParent(stage.transform,false);camera=cameraObject.AddComponent<Camera>();camera.enabled=false;camera.cullingMask=1<<30;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.10f,.17f,.21f);camera.orthographic=true;camera.orthographicSize=8.4f;camera.nearClipPlane=.1f;camera.farClipPlane=80;camera.transform.localPosition=new Vector3(11,15,-17);camera.transform.LookAt(stage.transform.position+Vector3.up*.3f);
             var lightObject=new GameObject("City light");lightObject.transform.SetParent(stage.transform,false);var light=lightObject.AddComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<30;light.intensity=1.1f;light.color=new Color(1,.91f,.75f);lightObject.transform.localRotation=Quaternion.Euler(45,-25,0);
             var fillObject=new GameObject("City sky fill");fillObject.transform.SetParent(stage.transform,false);var fill=fillObject.AddComponent<Light>();fill.type=LightType.Directional;fill.cullingMask=1<<30;fill.intensity=.32f;fill.color=new Color(.64f,.79f,1);fillObject.transform.localRotation=Quaternion.Euler(35,145,0);
             ambient=stage.AddComponent<AudioSource>();ambient.playOnAwake=false;ambient.loop=true;ambient.spatialBlend=0;ambient.clip=Resources.Load<AudioClip>("Audio/CityAmbience");
         }
         private static void Layer(Transform root){root.gameObject.layer=30;foreach(Transform child in root)Layer(child);}
-        public void SetVisible(bool visible)
+        public void SetVisible(bool visible,float blend=1)
         {
+            if(stage==null)return;
             if(stage.activeSelf!=visible)stage.SetActive(visible);
             bool audio=Application.isPlaying&&visible&&BattlefieldAudio.Volume>0&&PlayerPrefs.GetInt("ThronesOfMyth.cityAmbience",1)==1&&ambient.clip!=null;
-            ambient.volume=BattlefieldAudio.Volume*.22f;if(audio&&!ambient.isPlaying)ambient.Play();if(!audio&&ambient.isPlaying)ambient.Stop();
+            ambient.volume=BattlefieldAudio.Volume*.22f*Mathf.Clamp01(blend);if(audio&&!ambient.isPlaying)ambient.Play();if(!audio&&ambient.isPlaying)ambient.Stop();
         }
+        public void Prepare(ArmyData city){if(city?.cityBuildings==null)return;Sync(city);SetVisible(false);}
         private QueueJob Job(ArmyData city,string id) => CityPresentationData.Job(city,id);
         private void Sync(ArmyData city)
         {
             if(ReferenceEquals(appearanceObserved,city))return;appearanceObserved=city;
             string key=city.civilization;foreach(var b in city.cityBuildings)key+="|"+b.id+":"+b.level;
             if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();plotSeals.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
+            // Designed city hinterland fills the viewport at every supported aspect.
+            art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.5f,0),new Vector3(128,.2f,128),new Color(.27f,.36f,.26f));
+            for(int i=0;i<24;i++){float angle=i*Mathf.PI*2/24;var at=new Vector3(Mathf.Sin(angle)*11,0,Mathf.Cos(angle)*11);art.EnvironmentModel(content,city.civilization=="norse"?"PineTree":"OakTree",at,.65f,new Color(.28f,.43f,.24f),i*37);}
+            art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.35f,-12),new Vector3(1.2f,.12f,12),new Color(.60f,.54f,.40f));
             art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.23f,0),new Vector3(16,.22f,16),new Color(.36f,.42f,.29f));
             art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.08f,0),new Vector3(15.5f,.08f,15.5f),new Color(.43f,.51f,.32f));
             foreach (var building in city.cityBuildings) Boulevard(DistrictPosition(building.id));
@@ -135,7 +149,7 @@ namespace ThronesOfMyth
                 halfHeight=Mathf.Max(halfHeight,Mathf.Abs(Vector3.Dot(relative,camera.transform.up)));
                 halfWidth=Mathf.Max(halfWidth,Mathf.Abs(Vector3.Dot(relative,camera.transform.right)));
             }
-            camera.orthographicSize=Mathf.Max(halfHeight,halfWidth/Mathf.Max(.1f,aspect))*1.08f;
+            fitSize=Mathf.Max(halfHeight,halfWidth/Mathf.Max(.1f,aspect))*1.08f;
             renderedAt=-1;
         }
         private int DistrictLabelPriority(ArmyData city,BuildingCard building,string selectedId)
@@ -144,9 +158,12 @@ namespace ThronesOfMyth
             var job=Job(city,building.id);
             return job!=null&&!string.IsNullOrEmpty(job.id)?1:building.level>0?2:3;
         }
-        public int Draw(Rect rect,ArmyData city,int selected,MythInterfaceTheme theme,bool reducedMotion,CityProgressFeedback progress=null)
+        public int Draw(Rect rect,ArmyData city,int selected,MythInterfaceTheme theme,bool reducedMotion,CityProgressFeedback progress=null,bool immersive=false,bool interactive=true,float entryBlend=1)
         {
-            SetVisible(true);Sync(city);selected=Mathf.Clamp(selected,0,city.cityBuildings.Length-1);content.localRotation=Quaternion.Euler(0,yaw,0);
+            SetVisible(true,entryBlend);Sync(city);selected=Mathf.Clamp(selected,0,city.cityBuildings.Length-1);
+            bool repaint=Event.current.type==EventType.Repaint;
+            if(repaint&&frameTime!=Time.unscaledTime){motion.Advance(Time.unscaledDeltaTime,reducedMotion);frameTime=Time.unscaledTime;}
+            content.localRotation=Quaternion.identity;
             foreach(var b in city.cityBuildings)
             {
                 var job=Job(city,b.id);bool active=job!=null&&!string.IsNullOrEmpty(job.id);
@@ -160,27 +177,38 @@ namespace ThronesOfMyth
                 cranes[b.id].localRotation=Quaternion.Euler(0,reducedMotion?0:Mathf.Sin(Time.unscaledTime*.8f)*5,0);
             }
             for(int i=0;i<guards.Length;i++){float t=reducedMotion?i*Mathf.PI:Time.unscaledTime*.16f+i*Mathf.PI;guards[i].localPosition=new Vector3(Mathf.Cos(t)*6.5f,0,Mathf.Sin(t)*6.5f);guards[i].localRotation=Quaternion.Euler(0,-t*Mathf.Rad2Deg,0);guardActors[i].reducedMotion=reducedMotion;}
-            var image=new Rect(rect.x+5,rect.y+5,rect.width-10,rect.height-45);
+            var image=immersive?rect:new Rect(rect.x+5,rect.y+5,rect.width-10,rect.height-45);
             // Match render density to UI scale, capped to keep this inset inexpensive.
-            int width=Mathf.Clamp(Mathf.CeilToInt(image.width*Mathf.Abs(GUI.matrix.m00)/16)*16,512,1600);
-            int height=Mathf.Clamp(Mathf.CeilToInt(image.height*Mathf.Abs(GUI.matrix.m11)/16)*16,320,1024);
-            if(texture.width!=width||texture.height!=height)
+            CityViewportPolicy.RenderSize(image.width*Mathf.Abs(GUI.matrix.m00),image.height*Mathf.Abs(GUI.matrix.m11),immersive,out int width,out int height);
+            if(texture==null||texture.width!=width||texture.height!=height)
             {
-                camera.targetTexture=null;texture.Release();UnityEngine.Object.Destroy(texture);
+                camera.targetTexture=null;if(texture!=null){texture.Release();UnityEngine.Object.Destroy(texture);}
                 texture=new RenderTexture(width,height,16,RenderTextureFormat.ARGB32){name="City overview render"};texture.Create();camera.targetTexture=texture;renderedAt=-1;
             }
-            camera.aspect=image.width/Mathf.Max(1,image.height);FitCity(camera.aspect);
+            if(repaint){
+                float oldSize=camera.orthographicSize;var oldPosition=camera.transform.position;
+                yaw=motion.Yaw;
+                var destination=Vector3.ClampMagnitude(DistrictPosition(city.cityBuildings[selected].id)*Mathf.Clamp01((motion.Zoom-1)/.45f)*.45f,3.2f);
+                if((cameraCenter-destination).sqrMagnitude<.000001f)cameraCenter=destination;
+                cameraCenter=Vector3.Lerp(cameraCenter,destination,reducedMotion?1:1-Mathf.Exp(-12*Time.unscaledDeltaTime));
+                var center=stage.transform.position+cameraCenter+Vector3.up*.4f;
+                camera.transform.position=center+Quaternion.Euler(0,yaw,0)*new Vector3(11,15,-17);camera.transform.LookAt(center);
+                camera.aspect=image.width/Mathf.Max(1,image.height);FitCity(camera.aspect);
+                camera.orthographicSize=fitSize/motion.Zoom*(1+.22f*(1-Mathf.Clamp01(entryBlend)));
+                if(oldSize!=camera.orthographicSize||oldPosition!=camera.transform.position)renderedAt=-1;
+            }
             hoveredDistrict="";
-            if(image.Contains(Event.current.mousePosition))
+            if(interactive&&image.Contains(Event.current.mousePosition))
             {
                 var pointer=Event.current.mousePosition;
                 var hoverRay=camera.ViewportPointToRay(new Vector3((pointer.x-image.x)/image.width,1-(pointer.y-image.y)/image.height,0));
-                Physics.SyncTransforms();if(Physics.Raycast(hoverRay,out var hoverHit,40,1<<30))hoveredDistrict=hoverHit.collider.GetComponentInParent<CityBuildingMarker>()?.id??"";
+                SyncPicking();if(Physics.Raycast(hoverRay,out var hoverHit,40,1<<30))hoveredDistrict=hoverHit.collider.GetComponentInParent<CityBuildingMarker>()?.id??"";
             }
-            if(Event.current.type==EventType.Repaint&&(renderedAt<0||Time.unscaledTime-renderedAt>=1/20f)){camera.Render();renderedAt=Time.unscaledTime;}
+            if(Event.current.type==EventType.Repaint&&(renderedAt<0||Time.unscaledTime-renderedAt>=1/(immersive?30f:20f))){camera.Render();renderedAt=Time.unscaledTime;}
             GUI.DrawTexture(image,texture,ScaleMode.StretchToFill,false);
             foreach(var building in city.cityBuildings)
             {
+                if(immersive&&entryBlend<.98f)continue;
                 var job=Job(city,building.id);bool active=job!=null&&!string.IsNullOrEmpty(job.id);
                 bool complete=progress!=null&&progress.IsRecent(building.id,Time.unscaledTime);
                 if(!active&&!complete&&!building.canUpgrade&&building.level>0)continue;
@@ -201,6 +229,7 @@ namespace ThronesOfMyth
             labelOrder.Sort((a,b)=>DistrictLabelPriority(city,a,selectedId).CompareTo(DistrictLabelPriority(city,b,selectedId)));
             foreach(var b in labelOrder)
             {
+                if(immersive&&entryBlend<.98f)continue;
                 var job=Job(city,b.id);bool active=job!=null&&!string.IsNullOrEmpty(job.id);bool chosen=b.id==selectedId;
                 bool completed=progress!=null&&progress.IsRecent(b.id,Time.unscaledTime);
                 if(!chosen&&!active&&!completed&&b.id!=hoveredDistrict&&!showDistrictNames)continue;
@@ -215,16 +244,20 @@ namespace ThronesOfMyth
                 theme.OneLine(new Rect(label.x+7,label.y+20,label.width-14,19),detail,theme.Small);
                 if(active&&job.duration>0)theme.Bar(new Rect(label.x+7,label.yMax-3,label.width-14,3),1-job.remaining/job.duration,MythInterfaceTheme.Teal);
             }
-            if(Event.current.type==EventType.MouseDown&&Event.current.button==0&&image.Contains(Event.current.mousePosition))
+            if(interactive&&Event.current.type==EventType.MouseDown&&Event.current.button==0&&image.Contains(Event.current.mousePosition))
             {
-                var p=Event.current.mousePosition;var ray=camera.ViewportPointToRay(new Vector3((p.x-image.x)/image.width,1-(p.y-image.y)/image.height,0));
-                Physics.SyncTransforms();if(Physics.Raycast(ray,out var hit,40,1<<30)){var marker=hit.collider.GetComponentInParent<CityBuildingMarker>();if(marker!=null)selected=Mathf.Max(0,Array.FindIndex(city.cityBuildings,b=>b.id==marker.id));}Event.current.Use();
+                GUIUtility.keyboardControl=0;var p=Event.current.mousePosition;var ray=camera.ViewportPointToRay(new Vector3((p.x-image.x)/image.width,1-(p.y-image.y)/image.height,0));
+                SyncPicking();if(Physics.Raycast(ray,out var hit,40,1<<30)){var marker=hit.collider.GetComponentInParent<CityBuildingMarker>();if(marker!=null)selected=CitySelection.Find(city.cityBuildings,marker.id,selected);}Event.current.Use();
             }
-            if(theme.Button(new Rect(rect.x+10,rect.yMax-34,70,26),"Rotate ↶"))yaw-=30;
-            if(theme.Button(new Rect(rect.x+86,rect.yMax-34,70,26),"Rotate ↷"))yaw+=30;
+            if(immersive){
+                if(interactive&&image.Contains(Event.current.mousePosition)&&Event.current.type==EventType.ScrollWheel){motion.Magnify(-Event.current.delta.y*.06f);Event.current.Use();}
+                return selected;
+            }
+            if(theme.Button(new Rect(rect.x+10,rect.yMax-34,70,26),"Rotate ↶"))motion.Rotate(-30);
+            if(theme.Button(new Rect(rect.x+86,rect.yMax-34,70,26),"Rotate ↷"))motion.Rotate(30);
             if(theme.Button(new Rect(rect.x+162,rect.yMax-34,120,26),showDistrictNames?"Hide names":"District names"))showDistrictNames=!showDistrictNames;
             theme.OneLine(new Rect(rect.x+294,rect.yMax-33,rect.width-304,27),"Select a building · live queues",theme.Small);return selected;
         }
-        public void Dispose(){ambient.Stop();camera.targetTexture=null;texture.Release();UnityEngine.Object.Destroy(texture);UnityEngine.Object.Destroy(stage);art.Dispose();}
+        public void Dispose(){if(ambient!=null)ambient.Stop();if(camera!=null)camera.targetTexture=null;if(texture!=null){texture.Release();UnityEngine.Object.Destroy(texture);}if(stage!=null)UnityEngine.Object.Destroy(stage);art.Dispose();}
     }
 }

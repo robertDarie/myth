@@ -47,7 +47,9 @@ namespace ThronesOfMyth
         private void OpenInterface(InterfacePage page)
         {
             placeBeacon = false; chooseScoutDestination = false;
-            interfacePage = interfacePage == page ? InterfacePage.World : page;
+            if(page==InterfacePage.City){if(interfacePage==InterfacePage.City&&cityExperience.TargetCity)ExitCity();else BeginCity();}
+            else if(page==InterfacePage.World){if(cityExperience.BlocksWorld)ExitCity();else interfacePage=InterfacePage.World;}
+            else interfacePage=interfacePage==page?(cityExperience.TargetCity?InterfacePage.City:InterfacePage.World):page;
             pageOpenedAt=Time.unscaledTime;
             contentScroll = Vector2.zero; rosterScroll = Vector2.zero;
             GUIUtility.keyboardControl = 0;
@@ -56,13 +58,14 @@ namespace ThronesOfMyth
         private void CloseInterface()
         {
             GUIUtility.keyboardControl = 0; chooseScoutDestination = false;
+            if(cityExperience.BlocksWorld){if(cityExperience.CloseDestination(interfacePage,!cityModelView)==InterfacePage.City){interfacePage=InterfacePage.City;cityModelView=true;}else ExitCity();return;}
             if (interfacePage != InterfacePage.World) { interfacePage = InterfacePage.World; PlayerPrefs.Save(); }
             else if (placeBeacon) placeBeacon = false;
             else { selectedId = ""; map.selectedId = ""; }
         }
         private bool InterfaceBlocksPoint(Vector3 screenPoint)
         {
-            if (LoadingActive || string.IsNullOrEmpty(token) || interfacePage != InterfacePage.World) return true;
+            if (LoadingActive || cityExperience.BlocksWorld || string.IsNullOrEmpty(token) || interfacePage != InterfacePage.World) return true;
             var p = new Vector2(screenPoint.x / InterfaceScale, (Screen.height - screenPoint.y) / InterfaceScale);
             if (p.y < 88 || p.y > ViewHeight - 84) return true;
             if(NotificationVisible&&NotificationRect.Contains(p))return true;
@@ -159,27 +162,29 @@ namespace ThronesOfMyth
             var skinBefore = GUI.skin; var matrixBefore = GUI.matrix; var colorBefore = GUI.color;
             GUI.skin = theme.Skin;
             theme.ReducedMotion = reducedMotion;theme.ApplyScale(InterfaceScale);
-            cityDiorama?.SetVisible(interfacePage == InterfacePage.City && cityModelView && !LoadingActive);
+            cityDiorama?.SetVisible(cityExperience.BlocksWorld && !LoadingActive && me!=null,cityExperience.Blend);
             commanderPreview?.SetVisible(interfacePage == InterfacePage.Heroes && !LoadingActive && showCommanderModel);
             if (map != null) map.reducedMotion = reducedMotion;
             if(cameraControl!=null)cameraControl.reducedMotion=reducedMotion;
-            if (!LoadingActive && world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main,theme); }
+            if (!LoadingActive && world != null && interfacePage == InterfacePage.World && !cityExperience.BlocksWorld) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main,theme); }
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(InterfaceScale, InterfaceScale, 1));
             GUI.color = Color.white;
             if (LoadingActive) RenderLoadingScreen();
             else if (string.IsNullOrEmpty(token)) { if(accountEntryOpen) RenderAccountEntry(); else RenderKingdomEntry(); }
             else
             {
+                DrawCityScene();
                 DrawTopHud();
                 if (me != null)
                 {
-                    if (interfacePage == InterfacePage.World)
+                    if (interfacePage == InterfacePage.City && cityModelView) DrawImmersiveCity();
+                    else if (interfacePage == InterfacePage.World && !cityExperience.BlocksWorld)
                     {
                         DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();
                         if (theme.Button(CityShortcutRect, "City [C]", true)) OpenInterface(InterfacePage.City);
                         theme.OneLine(new Rect(18,ViewHeight-194,242,24),"THRONES OF MYTH",theme.Eyebrow);
                     }
-                    else DrawInterfaceWindow();
+                    else if(interfacePage!=InterfacePage.World)DrawInterfaceWindow();
                     DrawBottomNavigation();
                     DrawInterfaceToast();
                 }
@@ -228,7 +233,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.29  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.30  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -376,6 +381,7 @@ namespace ThronesOfMyth
             string title=interfacePage==InterfacePage.City?"Your civilization":interfacePage==InterfacePage.Heroes?"Hall of Commanders":interfacePage==InterfacePage.Formation?"Assemble your march":GameNavigation.Title(interfacePage);
             theme.OneLine(new Rect(r.x+25,r.y+16,320,38),title,theme.Title);
             if(interfacePage!=InterfacePage.Menu&&theme.Button(new Rect(r.xMax-152,r.y+16,84,34),"Menu"))OpenInterface(InterfacePage.Menu);
+            if(cityExperience.TargetCity){if(theme.Button(new Rect(r.x+350,r.y+16,100,34),"Kingdom")){ExitCity();return;}theme.OneLine(new Rect(r.x+465,r.y+21,280,25),"× / Esc returns to your city",theme.Small);}
             if (theme.Button(new Rect(r.xMax - 57, r.y + 14, 38, 38), "×")) { CloseInterface(); return; }
             var inner = new Rect(r.x + 20, r.y + 70, r.width - 40, r.height - 90);
             var before=GUI.color;

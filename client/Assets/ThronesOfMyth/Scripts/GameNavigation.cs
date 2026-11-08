@@ -18,7 +18,7 @@ namespace ThronesOfMyth
             new NavigationEntry(InterfacePage.Research,"Research","research","Choose an Athenaeum technology",0),
             new NavigationEntry(InterfacePage.Temple,"Temple of Echoes","temple","Offer sigils and invoke commanders",0),
             new NavigationEntry(InterfacePage.Forge,"Forge","forge","Craft and equip relics",0),
-            new NavigationEntry(InterfacePage.Market,"Market","gold","Exchange resources",0),
+            new NavigationEntry(InterfacePage.Market,"Market","gold","Send resources to alliance members",0),
             new NavigationEntry(InterfacePage.Inventory,"Inventory","inventory","Supplies and earned speedups",0),
             new NavigationEntry(InterfacePage.Marches,"Marches & reserves","army","Manage field armies and ready troops",1),
             new NavigationEntry(InterfacePage.Formation,"Prepare a march","army","Choose commander and troop quantities",1),

@@ -23,12 +23,7 @@ namespace ThronesOfMyth
             theme.Panel(grid, false, true); theme.Panel(detail, false, true);
             if(theme.Button(new Rect(grid.x+10,grid.y+8,150,28),"Living city",cityModelView))cityModelView=true;
             if(theme.Button(new Rect(grid.x+168,grid.y+8,150,28),"District list",!cityModelView))cityModelView=false;
-            if(cityModelView)
-            {
-                if(cityDiorama==null)cityDiorama=new CityDiorama();
-                int before=selectedBuilding;selectedBuilding=cityDiorama.Draw(new Rect(grid.x,grid.y+42,grid.width,grid.height-42),me,selectedBuilding,theme,reducedMotion,cityProgress);
-                if(before!=selectedBuilding)contentScroll=Vector2.zero;
-            }
+            if(cityModelView)return;
             else
             {
                 int columns = grid.width < 650 ? 3 : 4;

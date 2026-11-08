@@ -43,17 +43,21 @@ namespace ThronesOfMyth
             var camera = Camera.main;
             if (camera != null)
             {
+                kingdomView=camera;kingdomLayers=camera.cullingMask;
                 cameraControl = camera.GetComponent<StrategyCamera>() ?? camera.gameObject.AddComponent<StrategyCamera>();
-                cameraControl.inputBlocked = () => string.IsNullOrEmpty(token) || PointerOverUI();
+                cameraControl.inputBlocked = () => string.IsNullOrEmpty(token) || cityExperience.BlocksWorld || PointerOverUI();
             }
         }
         private void Update()
         {
+            TickCityExperience();
             if(map!=null)map.hoveredId="";
-            if (cameraControl != null) cameraControl.blockInput = string.IsNullOrEmpty(token) || PointerOverUI();
+            if (cameraControl != null) cameraControl.blockInput = string.IsNullOrEmpty(token) || cityExperience.BlocksWorld || PointerOverUI();
             if (me == null || LoadingActive) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { CloseInterface(); return; }
+            if (HandleCityKeys()) return;
             if (HandleInterfaceKeys()) return;
+            if(!cityExperience.AllowsWorldInput(interfacePage==InterfacePage.World,false,GUIUtility.keyboardControl!=0))return;
             if (interfacePage != InterfacePage.World) return;
             if (Input.GetKeyDown(KeyCode.H)) cameraControl?.Focus(me.homeX, me.homeZ);
             if (Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
@@ -73,6 +77,7 @@ namespace ThronesOfMyth
             if (marker != null)
             {
                 Select(marker.id,marker.kind);
+                if(marker.kind=="city"&&marker.id=="city-"+playerId&&Input.GetMouseButtonDown(0)){BeginCity();return;}
                 if (marker.kind == "army" && Array.Exists(world.armies, a => a.id == marker.id && a.ownerId == playerId)) activeMarchId = marker.id;
                 if (Input.GetMouseButtonDown(1)) ActOnSelection();
             }
@@ -442,7 +447,7 @@ namespace ThronesOfMyth
                                 lastDrawId = me.summonHistory[0].id;
                             }
                             else if (lastDrawId == null) lastDrawId = "";
-                            if (!worldReady) { loadingStage = "Preparing the kingdom map"; yield return null; }
+                            if (!worldReady) { loadingStage = "Preparing your civilization";if(cityDiorama==null)cityDiorama=new CityDiorama();cityDiorama.Prepare(me);yield return null; }
                             map.Sync(world, playerId, me.allianceId);ObserveSessionFeel();
                             worldReady = true; loadingError = "";RestorePendingOrder();
                             if (!string.IsNullOrEmpty(pendingFormationHero))
@@ -507,6 +512,6 @@ namespace ThronesOfMyth
             }
             commands.Clear(); processing = false;
         }
-        private void OnDestroy() { StopAllCoroutines(); commands.Clear(); commanderPreview?.Dispose(); cityDiorama?.Dispose(); theme?.Dispose(); PlayerPrefs.Save(); }
+        private void OnDestroy() { ResetCityExperience();StopAllCoroutines(); commands.Clear(); commanderPreview?.Dispose(); cityDiorama?.Dispose(); theme?.Dispose(); PlayerPrefs.Save(); }
     }
 }

@@ -3,6 +3,8 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="FeelContracts.cs" />
+    <Compile Include="CityExperienceContracts.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/CityExperienceState.cs" Link="CityExperienceState.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ArmyPresentationState.cs" Link="ArmyPresentationState.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ReportReplayGuard.cs" Link="ReportReplayGuard.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/FirstSessionGuide.cs" Link="FirstSessionGuide.cs" />

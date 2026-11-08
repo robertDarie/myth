@@ -158,3 +158,9 @@ Bundle 0.29.0 requires protocol 16 and world schema 15. The server bundle includ
 `economy.mjs`. Back up the previous kingdom, rebuild both client and server, then
 follow [the economy acceptance checklist](playtest-economy-0.29.md). Earned legacy
 Aether becomes Mana; current premium starts at zero. No paid store is included.
+
+## Build 0.30
+
+Bundle 0.30.0 adds the main-viewport city experience. Protocol 16 and schema 15
+remain compatible with v0.29; no economy migration is added. Rebuild the Unity
+client and follow [the city acceptance checklist](playtest-city-0.30.md).

@@ -4,8 +4,13 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.29
+## Playable slice 0.30
 
+- Kingdom-to-city presentation: camera approach and reversible city blend, direct
+  building picking in the main viewport, contextual construction/institution
+  actions, bounded orbit/zoom and retained district-list access.
+  [Implementation and limits](docs/city-experience-0.30.md) ·
+  [Windows acceptance](docs/playtest-city-0.30.md).
 - Economy redesign: ordinary Mana separated from earned premium Aether, shard/
   summon/progression commander acquisition, transactional alliance transfers,
   categorized consumables, real-time AP and authoritative timed combat oaths.

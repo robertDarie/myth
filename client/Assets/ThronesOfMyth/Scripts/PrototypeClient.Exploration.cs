@@ -30,7 +30,7 @@ namespace ThronesOfMyth
                 GUILayout.Label("One dedicated scout per city · no army slot or troop cost · gate access required", noteStyle);
                 GUILayout.BeginHorizontal();GUILayout.Label("X", GUILayout.Width(20));scoutX = GUILayout.TextField(scoutX, 4);GUILayout.Label("Z", GUILayout.Width(20));scoutZ = GUILayout.TextField(scoutZ, 4);GUILayout.EndHorizontal();
                 GUI.enabled = !processing;
-                if (GUILayout.Button("Choose destination on the map", theme.Primary)) { OpenInterface(InterfacePage.Exploration); chooseScoutDestination = true; status = "Left-click a map location to send your scout. Esc cancels."; }
+                if (GUILayout.Button("Choose destination on the map", theme.Primary)) { ShowKingdomForTarget(); chooseScoutDestination = true; status = "Left-click a map location to send your scout. Esc cancels."; }
                 bool validX = float.TryParse(scoutX, out float x); bool validZ = float.TryParse(scoutZ, out float z);
                 GUI.enabled = validX && validZ && !processing;
                 if (GUILayout.Button("Send scout to coordinates")) ScoutAt(x, z);
@@ -47,7 +47,7 @@ namespace ThronesOfMyth
                 foreach (var enemy in report.armies) GUILayout.Label(enemy.name + " · " + enemy.troops + " mortals / " + enemy.mythic + " mythic · " + enemy.health + " HP", new GUIStyle(noteStyle) { richText = false });
                 foreach (var site in report.sites) GUILayout.Label(site.name + " · " + AllianceName(site.allianceId) + " · " + Mathf.CeilToInt(site.health) + " structure HP", theme.Small);
                 foreach (var g in report.garrisons) GUILayout.Label(WarTargetName(g.targetId) + " garrison · " + g.marches + " marches / " + g.troops + " mortals / " + g.mythic + " mythic", theme.Small);
-                if (GUILayout.Button("Focus surveyed area")) { cameraControl?.Focus(report.x, report.z); OpenInterface(InterfacePage.Exploration); }
+                if (GUILayout.Button("Focus surveyed area")) { cameraControl?.Focus(report.x, report.z); ShowKingdomForTarget(); }
                 GUILayout.EndVertical();
             }
         }

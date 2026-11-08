@@ -84,6 +84,7 @@ class Program
         string folder=Path.Combine("work","presentation-checks");Directory.CreateDirectory(folder);
         File.WriteAllText(Path.Combine(folder,"microbench.json"),System.Text.Json.JsonSerializer.Serialize(new {runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,iterations=10000,text=new{legacyMs=baseline.ms,legacyBytes=baseline.bytes,optimizedMs=optimized.ms,optimizedBytes=optimized.bytes},cityJob=new{legacyMs=baselineJobs.ms,legacyBytes=baselineJobs.bytes,optimizedMs=optimizedJobs.ms,optimizedBytes=optimizedJobs.bytes},limitation=".NET CLR microbenchmark of production pure C# helpers; not Unity/Windows rendering, input, GUI font measurement or FPS."},new System.Text.Json.JsonSerializerOptions{WriteIndented=true}));
         checks+=FeelContracts.Run();
+        checks+=CityExperienceContracts.Run();
         Console.WriteLine("Presentation contracts: "+checks+" passed (production C# state/model sources; no Unity rendering).");
     }
 }
