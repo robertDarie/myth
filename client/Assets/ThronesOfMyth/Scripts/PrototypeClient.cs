@@ -49,6 +49,7 @@ namespace ThronesOfMyth
         }
         private void Update()
         {
+            if(map!=null)map.hoveredId="";
             if (cameraControl != null) cameraControl.blockInput = string.IsNullOrEmpty(token) || PointerOverUI();
             if (me == null || LoadingActive) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { CloseInterface(); return; }
@@ -58,10 +59,11 @@ namespace ThronesOfMyth
             if (Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
             if (Input.GetKeyDown(KeyCode.R)) Send("return");
             if (PointerOverUI() || Camera.main == null) return;
-            if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1)) return;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 300)) return;
-            GUIUtility.keyboardControl = 0;
             var marker = hit.collider.GetComponentInParent<MapMarker>();
+            map.hoveredId=marker==null?"":marker.id;
+            if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1)) return;
+            GUIUtility.keyboardControl = 0;
             if (chooseScoutDestination && Input.GetMouseButtonDown(0))
             { ScoutAt(hit.point.x, hit.point.z); chooseScoutDestination = false; return; }
             if (placeBeacon && Input.GetMouseButtonDown(0))
@@ -417,7 +419,7 @@ namespace ThronesOfMyth
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
                         if (next.version != 14) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
-                        world = next; me = Array.Find(world.players, p => p.id == playerId);
+                        world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId);
                         if (me != null)
                         {
                             if (!Array.Exists(world.armies, a => a.id == activeMarchId && a.ownerId == playerId)) activeMarchId = playerId;

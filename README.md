@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.21
+## Playable slice 0.22
 
+- Viewport-aware world camera limits and aspect-aware zoom; compact HUD, regional
+  terrain/scenery and city framing/status feedback. Native visual acceptance is
+  pending; see [changes and Windows validation](docs/visual-camera-0.22.md).
 - Playable veteran progression: research-gated Tier II infantry/archers/cavalry,
   direct training or reserve promotion, tier-preserving formations/wounds/healing
   and visible rank markers; existing class counters remain active.

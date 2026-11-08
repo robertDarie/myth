@@ -56,7 +56,7 @@ namespace ThronesOfMyth
                 int ix = Mathf.FloorToInt(sx), iz = Mathf.FloorToInt(sz);
                 float tx = Mathf.SmoothStep(0, 1, sx - ix), tz = Mathf.SmoothStep(0, 1, sz - iz);
                 float alpha = Mathf.Lerp(Mathf.Lerp(FogOpacity(ix, iz), FogOpacity(ix + 1, iz), tx), Mathf.Lerp(FogOpacity(ix, iz + 1), FogOpacity(ix + 1, iz + 1), tx), tz);
-                colors[z * (FogSteps + 1) + x] = new Color(.20f, .29f, .33f, alpha);
+                colors[z * (FogSteps + 1) + x] = new Color(.14f+Mathf.PerlinNoise(x*.055f,z*.055f)*.035f,.23f+Mathf.PerlinNoise(x*.055f,z*.055f)*.035f,.27f,alpha);
             }
             fogMesh.colors = colors;
         }

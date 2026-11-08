@@ -19,9 +19,18 @@ namespace ThronesOfMyth
         private float InterfaceScale => Mathf.Min(Mathf.Min(Screen.width / 1600f, Screen.height / 900f) * interfaceScalePreference, Mathf.Min(Screen.width / 1280f, Screen.height / 720f));
         private float ViewWidth => Screen.width / Mathf.Max(0.01f, InterfaceScale);
         private float ViewHeight => Screen.height / Mathf.Max(0.01f, InterfaceScale);
-        private Rect WindowRect => new Rect((ViewWidth - Mathf.Min(1320, ViewWidth - 72)) / 2, 104, Mathf.Min(1320, ViewWidth - 72), ViewHeight - 216);
-        private Rect MinimapRect => new Rect(ViewWidth - 238, ViewHeight - 278, 218, 174);
-        private Rect ContextRect => new Rect((ViewWidth - 640) / 2, ViewHeight - 272, 640, 166);
+        private Rect WindowRect => new Rect((ViewWidth - Mathf.Min(1320, ViewWidth - 72)) / 2, 92, Mathf.Min(1320, ViewWidth - 72), ViewHeight - 184);
+        private Rect MinimapRect => new Rect(ViewWidth - 202, ViewHeight - 246, 184, 152);
+        private Rect ContextRect => new Rect((ViewWidth - 620) / 2, ViewHeight - 228, 620, 138);
+        private Rect QuestRect => new Rect(18,138,242,142);
+        private Rect ActivityRect => new Rect(18,100,242,28);
+        private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);
+        private Rect NotificationRect => new Rect((ViewWidth-620)/2,96,620,46);
+        private float MarchStep => Mathf.Min(72,(ViewHeight-390)/5);
+        private Rect MarchRail => new Rect(ViewWidth-186,100,168,32+5*MarchStep);
+        private string hoveredTooltip="";
+        private float tooltipSince;
+        private bool NotificationVisible => (!string.IsNullOrEmpty(status)&&status!=previousToast)||pendingOrder!=null||Time.unscaledTime<toastUntil||Time.unscaledTime-lastSnapshotAt>6||!string.IsNullOrEmpty(world?.persistence?.error)||placeBeacon;
         private List<ArmyData> OwnMarches()
         {
             var list = new List<ArmyData>();
@@ -53,19 +62,18 @@ namespace ThronesOfMyth
         {
             if (LoadingActive || string.IsNullOrEmpty(token) || interfacePage != InterfacePage.World) return true;
             var p = new Vector2(screenPoint.x / InterfaceScale, (Screen.height - screenPoint.y) / InterfaceScale);
-            if (p.y < 112 || p.y > ViewHeight - 94) return true;
-            if(pendingOrder!=null&&new Rect((ViewWidth-660)/2,112,660,60).Contains(p))return true;
-            if (new Rect(20, 132, 282, 32).Contains(p)) return true;
-            if (!compactHud)
+            if (p.y < 88 || p.y > ViewHeight - 84) return true;
+            if(NotificationVisible&&NotificationRect.Contains(p))return true;
+            if(ActivityRect.Contains(p))return true;
+            if(!compactHud)
             {
-                if (new Rect(20, 172, 282, 164).Contains(p)) return true;
-                int jobs = (HasJob(me?.construction) ? 1 : 0) + (HasJob(me?.secondConstruction) ? 1 : 0) + (HasJob(me?.research) ? 1 : 0);
-                float step = Mathf.Min(65, Mathf.Max(46, (ViewHeight - 550) / 3)) + 8;
-                if (jobs > 0 && new Rect(20, 350, 282, jobs * step - 8).Contains(p)) return true;
+                if(QuestRect.Contains(p))return true;
+                int jobs=(HasJob(me?.construction)?1:0)+(HasJob(me?.secondConstruction)?1:0)+(HasJob(me?.research)?1:0);
+                if(jobs>0&&new Rect(18,290,242,jobs*52-6).Contains(p))return true;
             }
-            if (new Rect(ViewWidth - 202, 126, 182, 475).Contains(p) || MinimapRect.Contains(p)) return true;
-            if (!string.IsNullOrEmpty(selectedId) && ContextRect.Contains(p)) return true;
-            return new Rect(20, ViewHeight - 176, 116, 74).Contains(p);
+            if(MarchRail.Contains(p)||MinimapRect.Contains(p))return true;
+            if(!string.IsNullOrEmpty(selectedId)&&ContextRect.Contains(p))return true;
+            return CityShortcutRect.Contains(p);
         }
         private bool HandleInterfaceKeys()
         {
@@ -151,6 +159,7 @@ namespace ThronesOfMyth
             cityDiorama?.SetVisible(interfacePage == InterfacePage.City && cityModelView && !LoadingActive);
             commanderPreview?.SetVisible(interfacePage == InterfacePage.Heroes && !LoadingActive && showCommanderModel);
             if (map != null) map.reducedMotion = reducedMotion;
+            if(cameraControl!=null)cameraControl.reducedMotion=reducedMotion;
             if (!LoadingActive && world != null && interfacePage == InterfacePage.World) { DrawMarchRoute(); map.labelScale = InterfaceScale; if (labelsEnabled) map.DrawLabels(Camera.main); }
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(InterfaceScale, InterfaceScale, 1));
             GUI.color = Color.white;
@@ -164,8 +173,8 @@ namespace ThronesOfMyth
                     if (interfacePage == InterfacePage.World)
                     {
                         DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();
-                        if (theme.Button(new Rect(20, ViewHeight - 176, 116, 74), "ENTER CITY\n[C]", true)) OpenInterface(InterfacePage.City);
-                        theme.Text(new Rect(154, ViewHeight - 132, 250, 24), "KINGDOM OF THE FALLEN", theme.Eyebrow);
+                        if (theme.Button(CityShortcutRect, "City [C]", true)) OpenInterface(InterfacePage.City);
+                        theme.OneLine(new Rect(18,ViewHeight-194,242,24),"THRONES OF MYTH",theme.Eyebrow);
                     }
                     else DrawInterfaceWindow();
                     DrawBottomNavigation();
@@ -173,7 +182,8 @@ namespace ThronesOfMyth
                 }
                 else theme.Text(new Rect(ViewWidth / 2 - 180, ViewHeight / 2, 360, 50), "Entering your kingdom…", theme.Center);
             }
-            if (!string.IsNullOrEmpty(GUI.tooltip))
+            if(Event.current.type==EventType.Repaint&&GUI.tooltip!=hoveredTooltip){hoveredTooltip=GUI.tooltip;tooltipSince=Time.unscaledTime;}
+            if (!string.IsNullOrEmpty(GUI.tooltip)&&Time.unscaledTime-tooltipSince>.35f)
             {
                 var point = Event.current.mousePosition;
                 float tipHeight = Mathf.Clamp(theme.Small.CalcHeight(new GUIContent(GUI.tooltip), 274) + 18, 42, 160);
@@ -215,102 +225,88 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.21  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.22  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
         {
-            var profile = new Rect(20, 18, 280, 88); theme.Panel(profile);
-            theme.Circle(new Rect(31, 28, 64, 64), MythInterfaceTheme.Gold);
-            theme.Circle(new Rect(34, 31, 58, 58), new Color(0.09f, 0.17f, 0.2f)); theme.Icon(new Rect(48, 44, 30, 30), "citadel", MythInterfaceTheme.Cream);
-            if (me != null)
+            MythInterfaceTheme.Fill(new Rect(0,0,ViewWidth,88),new Color(.025f,.055f,.075f,.78f));
+            var profile=new Rect(18,16,236,62);theme.Panel(profile);
+            theme.Circle(new Rect(29,25,44,44),MythInterfaceTheme.Gold);theme.Circle(new Rect(31,27,40,40),new Color(.09f,.17f,.20f));theme.Icon(new Rect(40,36,23,23),"citadel",MythInterfaceTheme.Cream);
+            theme.OneLine(new Rect(85,22,157,23),me==null?"THRONES OF MYTH":me.name,theme.Heading);
+            theme.OneLine(new Rect(85,49,157,19),me==null?"Age of Fallen Gods":me.ageName+" · Citadel "+me.cityLevel,theme.Small);
+            if(me!=null)
             {
-                theme.Text(new Rect(108, 29, 180, 26), me.name, theme.Heading);
-                theme.Text(new Rect(108, 57, 180, 38), me.ageName + " · Citadel " + me.cityLevel, theme.Small);
-            }
-            else theme.Text(new Rect(108, 36, 160, 40), "THRONES OF MYTH", theme.Heading);
-            if (me != null)
-            {
-                string[] ids = { "food", "wood", "stone", "gold", "aether", "sigil" };
-                string[] names = { "FOOD", "WOOD", "STONE", "GOLD", "AETHER", "SIGILS" };
-                int[] values = { me.food, me.wood, me.stone, me.gold, me.aether, me.sigils };
-                float width = Mathf.Min(144, (ViewWidth - 574) / 6 - 8);
-                for (int i = 0; i < 6; i++)
+                string[] ids={"food","wood","stone","gold","aether","sigil"};string[] names={"FOOD","WOOD","STONE","GOLD","AETHER","SIGILS"};
+                int[] values={me.food,me.wood,me.stone,me.gold,me.aether,me.sigils};float width=Mathf.Min(126,(ViewWidth-436)/6-6);
+                for(int i=0;i<ids.Length;i++)
                 {
-                    var rect = new Rect(318 + i * (width + 8), 25, width, 70); theme.Panel(rect, false, true);
-                    theme.Icon(new Rect(rect.x + 10, rect.y + 21, 24, 24), ids[i], i == 4 ? new Color(0.7f, 0.6f, 0.95f) : MythInterfaceTheme.Gold);
-                    theme.OneLine(new Rect(rect.x + 43, rect.y + 6, width - 47, 20), names[i], theme.Eyebrow);
-                    theme.Text(new Rect(rect.x + 43, rect.y + 29, width - 47, 32), ShortNumber(values[i]), theme.Number);
-                    if (GUI.Button(rect, new GUIContent("", values[i].ToString("N0") + " " + names[i].ToLowerInvariant()), GUIStyle.none))
-                        OpenInterface(i == 5 ? InterfacePage.Temple : InterfacePage.Market);
+                    var rect=new Rect(266+i*(width+6),20,width,54);theme.Panel(rect,false,true);
+                    theme.Icon(new Rect(rect.x+9,rect.y+18,19,22),ids[i],i==4?new Color(.70f,.60f,.95f):MythInterfaceTheme.Gold);
+                    theme.OneLine(new Rect(rect.x+36,rect.y+4,width-43,18),names[i],theme.Eyebrow);
+                    theme.OneLine(new Rect(rect.x+36,rect.y+23,width-43,27),ShortNumber(values[i]),theme.Number);
+                    if(GUI.Button(rect,new GUIContent("",values[i].ToString("N0")+" "+names[i].ToLowerInvariant()),GUIStyle.none))OpenInterface(i==5?InterfacePage.Temple:InterfacePage.Market);
                 }
             }
-            bool stale = Time.unscaledTime - lastSnapshotAt > 6;
-            theme.Circle(new Rect(ViewWidth - 208, 39, 8, 8), stale ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
-            theme.Text(new Rect(ViewWidth - 191, 33, 120, 24), stale ? "RECONNECTING" : "KINGDOM ONLINE", theme.Small);
-            if (theme.Button(new Rect(ViewWidth - 67, 31, 47, 46), "•••")) OpenInterface(InterfacePage.Settings);
+            bool stale=Time.unscaledTime-lastSnapshotAt>6;theme.Circle(new Rect(ViewWidth-156,37,7,7),stale?MythInterfaceTheme.Red:MythInterfaceTheme.Teal);
+            theme.OneLine(new Rect(ViewWidth-143,27,88,24),stale?"Reconnecting":"Connected",theme.Small);
+            if(theme.Button(new Rect(ViewWidth-49,24,32,34),"•••"))OpenInterface(InterfacePage.Settings);
         }
         private void DrawQuestHud()
         {
-            if (theme.Button(new Rect(20, 132, 158, 32), compactHud ? "Activity  +" : "Activity  −")) compactHud = !compactHud;
-            var daily = world.activity == null ? null : world.activity.daily;
-            bool readyDaily = daily != null && (Array.Exists(daily.chests, c => c.canClaim) || Array.Exists(daily.tasks, t => t.canClaim));
-            if (theme.Button(new Rect(186, 132, 116, 32), readyDaily ? "Daily · Claim" : "Daily · " + (daily == null ? 0 : Mathf.Min(100, daily.points)) + "/100", readyDaily)) OpenActivity();
-            if (compactHud) return;
-            var panel = new Rect(20, 172, 282, 164); theme.Panel(panel);
-            var chapter = CurrentChapter; var task = NextTask(chapter);
-            theme.Text(new Rect(36, 185, 240, 20), chapter == null ? "OPENING CAMPAIGN COMPLETE" : chapter.title, theme.Eyebrow);
-            theme.Text(new Rect(36, 213, 240, 49), task == null ? chapter == null ? "Write the next legend." : "Your chapter reward awaits." : task.title, theme.Heading);
-            theme.Text(new Rect(36, 264, 154, 23), task == null ? "Open your campaign" : task.progress + " / " + task.goal + (task.canClaim ? " · READY" : ""), theme.Small);
-            theme.Bar(new Rect(36, 302, 154, 8), task == null ? 1 : (float)task.progress / Mathf.Max(1, task.goal), MythInterfaceTheme.Gold);
-            bool ready = chapter != null && (chapter.canClaim || task != null && task.canClaim);
-            if (theme.Button(new Rect(204, 274, 82, 38), ready ? "Claim" : task == null ? "View" : "Go", ready))
+            if(theme.Button(new Rect(ActivityRect.x,ActivityRect.y,116,28),compactHud?"Activity +":"Activity −"))compactHud=!compactHud;
+            var daily=world.activity?.daily;bool readyDaily=daily!=null&&(Array.Exists(daily.chests,c=>c.canClaim)||Array.Exists(daily.tasks,t=>t.canClaim));
+            if(theme.Button(new Rect(ActivityRect.x+124,ActivityRect.y,118,28),readyDaily?"Daily · Claim":"Daily · "+(daily==null?0:Mathf.Min(100,daily.points))+"/100",readyDaily))OpenActivity();
+            if(compactHud)return;
+            var r=QuestRect;theme.Panel(r);var chapter=CurrentChapter;var task=NextTask(chapter);
+            theme.OneLine(new Rect(r.x+12,r.y+9,r.width-24,20),chapter==null?"CAMPAIGN COMPLETE":chapter.title,theme.Eyebrow);
+            theme.Text(new Rect(r.x+12,r.y+36,r.width-24,44),task==null?chapter==null?"Write the next legend.":"Your chapter reward awaits.":task.title,new GUIStyle(theme.Heading){fontSize=17});
+            theme.OneLine(new Rect(r.x+12,r.y+88,126,20),task==null?"Open campaign":task.progress+" / "+task.goal+(task.canClaim?" · READY":""),theme.Small);
+            theme.Bar(new Rect(r.x+12,r.y+119,126,5),task==null?1:(float)task.progress/Mathf.Max(1,task.goal),MythInterfaceTheme.Gold);
+            bool ready=chapter!=null&&(chapter.canClaim||task!=null&&task.canClaim);
+            if(theme.Button(new Rect(r.xMax-90,r.y+91,78,34),ready?"Claim":task==null?"View":"Go",ready))
             {
-                if (chapter != null && chapter.canClaim) Send("chapter-claim", chapter.id);
-                else if (task != null && task.canClaim) Send("journey-claim", task.id);
-                else if (task != null) GuideObjective(task); else GuidePage(InterfacePage.Campaign);
+                if(chapter!=null&&chapter.canClaim)Send("chapter-claim",chapter.id);
+                else if(task!=null&&task.canClaim)Send("journey-claim",task.id);
+                else if(task!=null)GuideObjective(task);else GuidePage(InterfacePage.Campaign);
             }
-            if (GUI.Button(new Rect(20, 172, 282, 92), GUIContent.none, GUIStyle.none)) GuidePage(InterfacePage.Campaign);
-            float y = 350;
-            float jobHeight = Mathf.Min(65, Mathf.Max(46, (ViewHeight - 550) / 3));
-            foreach (var job in new[] { me.construction, me.secondConstruction, me.research })
+            if(GUI.Button(new Rect(r.x,r.y,r.width,80),GUIContent.none,GUIStyle.none))GuidePage(InterfacePage.Campaign);
+            float y=290;
+            foreach(var job in new[]{me.construction,me.secondConstruction,me.research})
             {
-                if (!HasJob(job)) continue;
-                var r = new Rect(20, y, 282, jobHeight); theme.Panel(r, false, true);
-                theme.Icon(new Rect(r.x + 12, r.y + 15, 26, 26), job.type == "research" ? "research" : "builders", MythInterfaceTheme.Gold);
-                theme.Text(new Rect(r.x + 49, r.y + 7, 190, 23), JobName(job), theme.Small);
-                theme.Bar(new Rect(r.x + 49, r.y + 39, 154, 6), 1 - job.remaining / job.duration, MythInterfaceTheme.Teal);
-                theme.Text(new Rect(r.x + 211, r.y + 30, 55, 24), Mathf.CeilToInt(job.remaining) + "s", theme.Small);
-                if (GUI.Button(r, GUIContent.none, GUIStyle.none)) OpenInterface(job.type == "research" ? InterfacePage.Research : InterfacePage.City);
-                y += jobHeight + 8;
+                if(!HasJob(job))continue;
+                var row=new Rect(18,y,242,46);theme.Panel(row,false,true);theme.Icon(new Rect(row.x+10,row.y+10,21,24),job.type=="research"?"research":"builders",MythInterfaceTheme.Gold);
+                theme.OneLine(new Rect(row.x+40,row.y+5,150,19),JobName(job),theme.Small);
+                theme.OneLine(new Rect(row.xMax-47,row.y+5,38,19),Mathf.CeilToInt(job.remaining)+"s",theme.Small);
+                theme.Bar(new Rect(row.x+40,row.y+32,190,4),1-job.remaining/job.duration,MythInterfaceTheme.Teal);
+                if(GUI.Button(row,GUIContent.none,GUIStyle.none))OpenInterface(job.type=="research"?InterfacePage.Research:InterfacePage.City);y+=52;
             }
         }
         private void DrawMarchHud()
         {
-            var own = OwnMarches(); float x = ViewWidth - 202;
-            float step = Mathf.Min(84, (ViewHeight - 450) / 5);
-            theme.Text(new Rect(x, 128, 182, 24), "MARCHES  " + own.Count + "/" + me.marchSlots, theme.Eyebrow);
-            for (int i = 0; i < 5; i++)
+            var own=OwnMarches();float x=MarchRail.x;
+            theme.OneLine(new Rect(x,100,168,22),"MARCHES  "+own.Count+" / "+me.marchSlots,theme.Eyebrow);
+            for(int i=0;i<5;i++)
             {
-                var r = new Rect(x, 160 + i * step, 182, step - 8);
-                if (i < own.Count)
+                var r=new Rect(x,132+i*MarchStep,168,MarchStep-6);
+                if(i<own.Count)
                 {
-                    var army = own[i]; theme.Panel(r, army.id == ActiveArmy.id);
-                    var definition = Array.Find(world.commanders, h => h.id == army.commanderId);
-                    theme.Portrait(new Rect(x + 10, r.y + 8, Mathf.Min(44, r.height - 16), Mathf.Min(44, r.height - 16)), army.commanderId, RarityColor(definition.color));
-                    theme.OneLine(new Rect(x + 63, r.y + 7, 112, 22), HeroName(army.commanderId), theme.Small);
-                    if (r.height > 60) theme.OneLine(new Rect(x + 63, r.y + 27, 112, 20), army.state, theme.Small);
-                    theme.Bar(new Rect(x + 63, r.yMax - 18, 108, 5), (float)army.health / Mathf.Max(1, army.maxHealth), MythInterfaceTheme.Teal);
-                    theme.Bar(new Rect(x + 63, r.yMax - 8, 108, 3), army.rage / 1000f, MythInterfaceTheme.Gold);
-                    if (GUI.Button(r, new GUIContent("", "Select and focus " + HeroName(army.commanderId)), GUIStyle.none))
-                    { activeMarchId = army.id; Select(army.id, "army"); cameraControl?.Focus(army.x, army.z); }
+                    var army=own[i];theme.Panel(r,army.id==ActiveArmy.id);
+                    var definition=Array.Find(world.commanders,h=>h.id==army.commanderId);
+                    theme.Portrait(new Rect(x+8,r.y+8,34,34),army.commanderId,RarityColor(definition.color));
+                    theme.OneLine(new Rect(x+50,r.y+5,110,19),HeroName(army.commanderId),theme.Small);
+                    theme.OneLine(new Rect(x+50,r.y+24,110,17),army.state,theme.Small);
+                    theme.Bar(new Rect(x+50,r.yMax-13,108,4),(float)army.health/Mathf.Max(1,army.maxHealth),MythInterfaceTheme.Teal);
+                    theme.Bar(new Rect(x+50,r.yMax-5,108,2),army.rage/1000f,MythInterfaceTheme.Gold);
+                    if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;Select(army.id,"army");cameraControl?.Focus(army.x,army.z);}
                 }
                 else
                 {
-                    bool unlocked = i < me.marchSlots; theme.Panel(r, false, true);
-                    theme.Icon(new Rect(x + 15, r.y + (r.height - 25) / 2, 25, 25), unlocked ? "army" : "lock", unlocked ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted);
-                    theme.Text(new Rect(x + 57, r.y + 5, 115, r.height - 10), unlocked ? "+ Deploy march\nReady reserves" : "March " + (i + 1) + "\nUnlock in Age " + (i + 1), theme.Small);
-                    if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { if (unlocked) BeginFormation(false); else OpenInterface(InterfacePage.City); }
+                    bool unlocked=i<me.marchSlots;theme.Panel(r,false,true);
+                    theme.Icon(new Rect(x+12,r.y+15,22,24),unlocked?"army":"lock",unlocked?MythInterfaceTheme.Gold:MythInterfaceTheme.Muted);
+                    theme.OneLine(new Rect(x+46,r.y+8,112,19),unlocked?"+ Deploy march":"March "+(i+1),theme.Small);
+                    theme.OneLine(new Rect(x+46,r.y+29,112,18),unlocked?"Ready reserves":"Unlock in Age "+(i+1),theme.Small);
+                    if(GUI.Button(r,GUIContent.none,GUIStyle.none)){if(unlocked)BeginFormation(false);else OpenInterface(InterfacePage.City);}
                 }
             }
         }
@@ -341,17 +337,19 @@ namespace ThronesOfMyth
             string[] labels = { "CITY", "COMMANDERS", "ALLIANCE", "TEMPLE", "INVENTORY", "CHAT", "CHRONICLE" };
             string[] icons = { "city", "heroes", "alliance", "temple", "inventory", "chronicle", "chronicle" };
             InterfacePage[] pages = { InterfacePage.City, InterfacePage.Heroes, InterfacePage.Alliance, InterfacePage.Temple, InterfacePage.Inventory, InterfacePage.Chat, InterfacePage.Chronicle };
-            float width = 132, start = ViewWidth / 2 - (width * labels.Length + 8 * (labels.Length - 1)) / 2;
+            float width = 116, start = ViewWidth / 2 - (width * labels.Length + 6 * (labels.Length - 1)) / 2;
             for (int i = 0; i < labels.Length; i++)
             {
-                var r = new Rect(start + i * (width + 8), ViewHeight - 88, width, 70); theme.Panel(r, interfacePage == pages[i]);
-                theme.Circle(new Rect(r.center.x - 19, r.y + 4, 38, 38), MythInterfaceTheme.Gold);
-                theme.Circle(new Rect(r.center.x - 17, r.y + 6, 34, 34), new Color(0.13f,0.27f,0.34f));
-                theme.Icon(new Rect(r.center.x - 12, r.y + 10, 24, 24), icons[i], interfacePage == pages[i] ? MythInterfaceTheme.Cream : MythInterfaceTheme.Gold);
-                theme.OneLine(new Rect(r.x + 5, r.y + 43, width - 10, 22), labels[i], theme.Tab);
+                var r = new Rect(start + i * (width + 6), ViewHeight - 76, width, 58); theme.Panel(r, interfacePage == pages[i]);
+                theme.Circle(new Rect(r.center.x - 15, r.y + 4, 30, 30), MythInterfaceTheme.Gold);
+                theme.Circle(new Rect(r.center.x - 13, r.y + 6, 26, 26), new Color(0.13f,0.27f,0.34f));
+                theme.Icon(new Rect(r.center.x - 9, r.y + 9, 18, 18), icons[i], interfacePage == pages[i] ? MythInterfaceTheme.Cream : MythInterfaceTheme.Gold);
+                theme.OneLine(new Rect(r.x + 5, r.y + 35, width - 10, 19), labels[i], theme.Tab);
+                if(interfacePage==pages[i])MythInterfaceTheme.Fill(new Rect(r.x+12,r.yMax-3,r.width-24,2),MythInterfaceTheme.Gold);
+                else if(r.Contains(Event.current.mousePosition))MythInterfaceTheme.Fill(new Rect(r.x+12,r.yMax-3,r.width-24,2),MythInterfaceTheme.Teal);
                 if (GUI.Button(r, GUIContent.none, GUIStyle.none)) { if (interfacePage != pages[i]) OpenInterface(pages[i]); }
             }
-            if (interfacePage == InterfacePage.World) theme.Text(new Rect(20, ViewHeight - 44, 380, 26), "WASD pan · Wheel zoom · Right-click orders", theme.Small);
+            if(interfacePage==InterfacePage.World&&theme.Button(new Rect(18,ViewHeight-34,160,22),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);
         }
         private void DrawInterfaceToast()
         {
@@ -360,7 +358,7 @@ namespace ThronesOfMyth
                 : Time.unscaledTime - lastSnapshotAt > 6 ? "Connection interrupted. Retrying your kingdom server…"
                 : placeBeacon ? "PLACE BEACON · Click near the selected march. Esc cancels." : Time.unscaledTime < toastUntil ? status : "";
             if (string.IsNullOrEmpty(message)) return;
-            var r = new Rect((ViewWidth - 660) / 2, 112, 660, 46); theme.Panel(r);
+            var r = NotificationRect; theme.Panel(r);
             if(pendingOrder!=null)
             {
                 theme.OneLine(new Rect(r.x+16,r.y+9,r.width-140,30),message,theme.Small);
@@ -370,7 +368,7 @@ namespace ThronesOfMyth
         }
         private void DrawInterfaceWindow()
         {
-            MythInterfaceTheme.Fill(new Rect(0, 112, ViewWidth, ViewHeight - 212), new Color(0.015f, 0.03f, 0.045f, 0.72f));
+            MythInterfaceTheme.Fill(new Rect(0, 88, ViewWidth, ViewHeight - 172), new Color(0.015f, 0.03f, 0.045f, 0.72f));
             var r = WindowRect; theme.Panel(r);
             string title = interfacePage == InterfacePage.City ? "Your civilization" : interfacePage == InterfacePage.Heroes ? "Hall of Commanders" : interfacePage == InterfacePage.Temple ? "Temple of Echoes" : interfacePage == InterfacePage.Formation ? "Assemble your march" : interfacePage == InterfacePage.Marches ? "March command" : interfacePage.ToString();
             theme.Text(new Rect(r.x + 25, r.y + 16, 650, 38), title, theme.Title);

@@ -349,17 +349,17 @@ namespace ThronesOfMyth
             }
             else if (pin != null) { title = pin.name; subtitle = "ALLIANCE MARKER · " + Mathf.CeilToInt(pin.expires - world.time) + "s"; action = "Focus marker"; perform = () => cameraControl?.Focus(pin.x, pin.z); }
             else { selectedId = ""; return; }
-            theme.Panel(r); theme.Icon(new Rect(r.x + 22, r.y + 33, 40, 40), emblem, MythInterfaceTheme.Gold);
-            theme.Text(new Rect(r.x + 83, r.y + 16, 490, 32), title, theme.Heading);
-            theme.Text(new Rect(r.x + 83, r.y + 55, 450, 27), subtitle, theme.Small);
-            if (health >= 0) theme.Bar(new Rect(r.x + 83, r.y + 89, 290, 8), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
-            if (city == null || city.id != playerId) theme.Text(new Rect(r.x + 83, r.y + 113, 320, 37), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
+            theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
+            theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
+            theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);
+            if (health >= 0) theme.Bar(new Rect(r.x + 68, r.y + 78, 220, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
+            if (city == null || city.id != playerId) theme.OneLine(new Rect(r.x + 18, r.y + 100, 370, 24), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
             if (theme.Button(new Rect(r.xMax - 38, r.y + 7, 28, 27), "×")) { selectedId = ""; map.selectedId = ""; }
             if (city != null && city.id == playerId)
             {
-                if (theme.Button(new Rect(r.x + 18, r.y + 112, 140, 36), "Prepare march")) PrepareCityMarch();
+                if (theme.Button(new Rect(r.x + 18, r.y + 94, 140, 32), "Prepare march")) PrepareCityMarch();
             }
-            if (theme.Button(new Rect(r.xMax - 208, r.y + 102, 190, 46), action, true, enabled)) perform?.Invoke();
+            if (theme.Button(new Rect(r.xMax - 208, r.y + 91, 190, 35), action, true, enabled)) perform?.Invoke();
         }
     }
 }

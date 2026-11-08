@@ -114,3 +114,10 @@ normal launcher JSON play supports inventory/rankings. See
 Bundle 0.21.0 requires protocol 14 and save schema 13 for tiered troops. Stop the
 old local game/server and rebuild after pulling; the launcher rejects protocol 13.
 SQLite revision remains 2. See [veteran unlocks and upgrade instructions](veteran-troops-0.21.md).
+
+## Build 0.22
+
+Bundle 0.22.0 contains the camera/world/HUD/city presentation pass. Protocol 14,
+save schema 13 and SQLite revision 2 are unchanged. Pull main and rebuild; existing
+executables retain their old presentation. Before visual acceptance, run the new
+Unity camera validation menu and [Windows matrix](visual-camera-0.22.md).

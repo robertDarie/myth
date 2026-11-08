@@ -101,3 +101,10 @@ A complete Tier I→II loop: legal city/research unlocks, direct veteran trainin
 reserve promotion/refunds, class counters, exact formations, tiered wounds/healing,
 rallies and persistence. Protocol 14/save schema 13; older saves migrate.
 206 tests pass; native Unity review remains pending. See [the playable guide](veteran-troops-0.21.md).
+
+## Visual gameplay and camera 0.22
+
+Implemented viewport-footprint camera constraints and fit zoom, regional map
+presentation, compact HUD and city framing/selection/status improvements.
+206 server tests pass; native Unity compilation, geometry validation and rendered
+Windows acceptance remain pending. See [the validation guide](visual-camera-0.22.md).

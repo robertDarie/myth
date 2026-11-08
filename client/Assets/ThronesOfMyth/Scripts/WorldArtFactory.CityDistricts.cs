@@ -27,6 +27,12 @@ namespace ThronesOfMyth
                 Color roof=id=="infirmary"?new Color(.25f,.52f,.43f):culture=="japanese"?new Color(.23f,.31f,.47f):culture=="chinese"?new Color(.22f,.46f,.35f):new Color(.62f,.28f,.18f);
                 Box(root,0,.52f,0,1.03f,.80f,.88f,id=="forge"?darkStone:stone);Roof(root,1.02f,1.33f,1.12f,roof);Box(root,0,.40f,-.47f,.26f,.50f,.06f,timber);
                 if(id=="academy") { for(int side=-1;side<=1;side+=2)Pillar(root,side*.43f,.64f,-.60f,.11f,1.0f,stone);Box(root,0,.98f,-.6f,1.1f,.18f,.25f,bronze); }
+                if(id=="infirmary") { // Open healing courtyard and a relief emblem, legible without animation.
+                    Box(root,0,.55f,-.56f,.48f,.12f,.08f,team);Box(root,0,.55f,-.57f,.12f,.45f,.08f,team);
+                    for(int side=-1;side<=1;side+=2){Pillar(root,side*.66f,.35f,-.25f,.13f,.60f,stone);Ball(root,side*.66f,.68f,-.25f,.23f,.23f,.23f,new Color(.30f,.55f,.35f));}
+                }
+                if(id=="vault") { Box(root,0,.50f,-.55f,.58f,.66f,.12f,darkStone);Pillar(root,0,.52f,-.65f,.24f,.10f,bronze).localRotation=Quaternion.Euler(90,0,0); }
+                if(id=="academy") { Box(root,0,.36f,-.84f,.60f,.10f,.30f,timber);var book=Box(root,0,.44f,-.84f,.40f,.05f,.25f,new Color(.89f,.82f,.62f));book.localRotation=Quaternion.Euler(0,0,-8); }
                 if(id=="barracks")for(int i=-1;i<=1;i++){Pillar(root,i*.30f,.54f,-.73f,.035f,.83f,bronze);Ball(root,i*.30f,.40f,-.75f,.19f,.23f,.06f,team);}
                 if(id=="menagerie") { for(int i=-2;i<=2;i++)Box(root,i*.28f,.44f,-.64f,.06f,.64f,.06f,timber);Ball(root,0,.47f,-.35f,.40f,.40f,.40f,bronze); }
                 if(id=="market") { for(int i=-1;i<=1;i++)Box(root,i*.35f,.75f,-.63f,.33f,.10f,.60f,i==0?team:bronze); }

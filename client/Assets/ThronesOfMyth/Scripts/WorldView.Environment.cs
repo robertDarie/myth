@@ -30,14 +30,16 @@ namespace ThronesOfMyth
             for (int y = 0; y < 512; y++) for (int x = 0; x < 512; x++)
             {
                 var p = new Vector2(x / 511f * 80, y / 511f * 80); float patch = Mathf.PerlinNoise(p.x * 0.12f + 43, p.y * 0.12f + 17), grain = Mathf.PerlinNoise(p.x * 2.1f, p.y * 2.1f);
-                var south = Color.Lerp(new Color(0.44f,0.60f,0.29f), new Color(0.71f,0.68f,0.40f), Mathf.SmoothStep(0,1,(p.x-34)/30));
-                var north = Color.Lerp(new Color(0.38f,0.52f,0.39f), new Color(0.50f,0.62f,0.53f), p.x/80);
+                var south = Color.Lerp(new Color(.35f,.48f,.26f),new Color(.69f,.57f,.32f), Mathf.SmoothStep(0,1,(p.x-34)/30));
+                var north = Color.Lerp(new Color(.25f,.39f,.35f),new Color(.47f,.55f,.37f), p.x/80);
                 var meadow = Color.Lerp(south, north, Mathf.SmoothStep(0,1,(p.y-34)/22)); meadow *= 0.86f + patch * 0.24f + grain * 0.055f;
+                float vein=Mathf.Abs(Mathf.PerlinNoise(p.x*.05f+12,p.y*.08f+21)-.5f);
+                meadow=Color.Lerp(meadow,new Color(.34f,.37f,.27f),Mathf.Clamp01((.07f-vein)*5)*.30f);
                 float road = 1 - Mathf.SmoothStep(0.65f, 1.9f, RoadDistance(p)); var earth = Color.Lerp(new Color(0.65f,0.56f,0.36f), new Color(0.81f,0.72f,0.49f), patch);
                 pixels[y * 512 + x] = Color.Lerp(meadow, earth, road * 0.86f);
             }
-            groundTexture.SetPixels(pixels); groundTexture.Apply(true, true); material.mainTexture = groundTexture; ground.GetComponent<Renderer>().sharedMaterial = material;
-            RenderSettings.ambientLight = new Color(0.65f,0.68f,0.66f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(0.68f,0.76f,0.77f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
+            groundTexture.SetPixels(pixels); groundTexture.Apply(true, true); material.mainTexture = groundTexture; ground.GetComponent<Renderer>().enabled=false;BuildRelief(material);
+            RenderSettings.ambientLight = new Color(.53f,.59f,.57f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(.32f,.43f,.44f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
             var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.cullingMask &= ~((1 << 30) | (1 << 31)); light.color = new Color(1,0.94f,0.79f); light.intensity = 1.15f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.5f; } }
             QualitySettings.shadowDistance = 110;
             var random = new System.Random(431);
@@ -48,7 +50,7 @@ namespace ThronesOfMyth
                 {
                     var p = center + new Vector2((float)random.NextDouble()*5-2.5f,(float)random.NextDouble()*5-2.5f); if (SceneryClearing(p)) continue;
                     bool pine = p.y > 40; var tint = pine ? new Color(0.24f,0.41f,0.34f) : p.x > 40 ? new Color(0.46f,0.52f,0.28f) : new Color(0.28f,0.48f,0.24f);
-                    art.EnvironmentModel(scenery, pine ? "PineTree" : "OakTree", new Vector3(p.x,0,p.y), 0.75f + (float)random.NextDouble()*0.40f, tint, (float)random.NextDouble()*360);
+                    art.EnvironmentModel(scenery, pine ? "PineTree" : "OakTree", new Vector3(p.x,TerrainHeight(p),p.y), 0.75f + (float)random.NextDouble()*0.40f, tint, (float)random.NextDouble()*360);
                 }
             }
             for (int i = 4; i < 80; i += 4)
@@ -57,6 +59,7 @@ namespace ThronesOfMyth
                 art.EnvironmentModel(scenery,"BorderRock",new Vector3(40,0,i),1.4f,new Color(0.48f,0.51f,0.43f),i*17);
                 art.EnvironmentModel(scenery,"BorderRock",new Vector3(i,0,40),1.4f,new Color(0.48f,0.51f,0.43f),i*23);
             }
+            BuildRealmDressing();
             art.BatchEnvironment(scenery);
         }
     }

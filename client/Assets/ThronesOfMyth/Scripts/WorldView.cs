@@ -12,7 +12,7 @@ namespace ThronesOfMyth
         private readonly Color blue = new Color(0.2f, 0.7f, 1f), gold = new Color(0.9f, 0.7f, 0.3f), red = new Color(0.85f, 0.3f, 0.23f);
         private Transform scenery;
         private Texture2D groundTexture;
-        public string selectedId;
+        public string selectedId,hoveredId;
         public bool labels = true;
         public float labelScale = 1;
         public System.Func<Vector2, bool> occluded;
@@ -99,7 +99,7 @@ namespace ThronesOfMyth
                 if (piece.moving && (piece.root.transform.position - piece.destination).sqrMagnitude > 144)
                 { piece.root.transform.position = piece.destination; piece.actor.RebaseMotion(); }
                 piece.root.transform.position = piece.moving ? Vector3.Lerp(piece.root.transform.position, piece.destination, 1 - Mathf.Exp(-14 * Time.deltaTime)) : piece.destination;
-                if (piece.actor != null) { piece.actor.reducedMotion = reducedMotion; piece.actor.SetSelected(pair.Key == selectedId); piece.actor.SetWideView(wide); }
+                if (piece.actor != null) { piece.actor.reducedMotion = reducedMotion; piece.actor.SetSelected(pair.Key == selectedId,pair.Key==hoveredId); piece.actor.SetWideView(wide); }
             }
         }
         private readonly List<Rect> labelBounds = new List<Rect>();
@@ -117,8 +117,8 @@ namespace ThronesOfMyth
                 if (piece.actor != null) piece.actor.DrawCaption(camera, labelScale, occluded);
                 var point = camera.WorldToScreenPoint(piece.root.transform.position + Vector3.up * (piece.kind == "army" ? 2.8f : 3.7f));
                 if (point.z <= 0 || point.x < 0 || point.x > Screen.width || point.y < 0 || point.y > Screen.height) continue;
-                if (piece.kind == "node" && camera.orthographicSize > 20 && id != selectedId) continue;
-                if (piece.kind == "camp" && camera.orthographicSize > 34 && id != selectedId) continue;
+                if (piece.kind == "node" && camera.orthographicSize > 20 && id != selectedId && id != hoveredId) continue;
+                if (piece.kind == "camp" && camera.orthographicSize > 34 && id != selectedId && id != hoveredId) continue;
                 float width = Mathf.Clamp(style.CalcSize(new GUIContent(piece.label)).x, 70 * labelScale, 210 * labelScale);
                 var rect = new Rect(point.x - width / 2, Screen.height - point.y - 10 * labelScale, width, 22 * labelScale);
                 bool placed = false;
@@ -146,6 +146,7 @@ namespace ThronesOfMyth
         private int LabelPriority(string id)
         {
             if (id == selectedId) return 0;
+            if (id == hoveredId) return 1;
             string kind = pieces[id].kind;
             return kind == "city" ? 1 : kind == "army" ? 2 : kind == "site" ? 3 : kind == "camp" ? 4 : 5;
         }
@@ -155,7 +156,7 @@ namespace ThronesOfMyth
         }
         private void OnDestroy()
         {
-            Clear(); DisposeFog(); if (scenery != null) Destroy(scenery.gameObject);
+            Clear(); DisposeFog();if(realmMesh!=null)Destroy(realmMesh); if (scenery != null) Destroy(scenery.gameObject);
             art.Dispose(); if (terrainMaterial != null) Destroy(terrainMaterial); if (groundTexture != null) Destroy(groundTexture);
         }
     }

@@ -114,7 +114,11 @@ namespace ThronesOfMyth
                 bool show=!wide||i==0||special;if(soldiers[i].activeSelf!=show)soldiers[i].SetActive(show);
             }
         }
-        public void SetSelected(bool chosen) { if (selection != null) selection.SetActive(chosen); }
+        public void SetSelected(bool chosen,bool hovered=false)
+        {
+            if(selection==null)return;selection.SetActive(chosen||hovered);
+            var line=selection.GetComponent<LineRenderer>();if(line!=null)line.widthMultiplier=chosen ? .09f:.045f;
+        }
         private void LateUpdate()
         {
             Vector3 position = transform.parent.position, movement = position - lastPosition; lastPosition = position;
