@@ -1,22 +1,27 @@
 using System;
-using System.Collections.Generic;
+using UnityEngine;
 namespace ThronesOfMyth
 {
     public sealed partial class WorldView
     {
-        private string reportOwner;
-        private HashSet<string> completedReports=new HashSet<string>();
+        private readonly ReportReplayGuard reportGuard=new ReportReplayGuard();
         private void ObserveCompletedBattles(WorldSnapshot world,string ownId)
         {
-            var owner=Array.Find(world.players,p=>p.id==ownId);if(owner==null||owner.groupReports==null)return;
-            bool initial=reportOwner!=ownId;reportOwner=ownId;var current=new HashSet<string>();
+            var owner=Array.Find(world.players,p=>p.id==ownId);if(owner==null)return;
+            reportGuard.Begin(ownId,Time.unscaledTime);
+            if(owner.battleReports!=null)foreach(var report in owner.battleReports)
+            {
+                if(report.ended<=0||!reportGuard.Observe("field:"+report.id))continue;
+                RecordEncounter(report.outcome,"Field battle complete. Battle reports show real damage, surviving troops and wounded units. No plunder is awarded in field duels.");
+            }
+            if(owner.groupReports==null)return;
             foreach(var report in owner.groupReports)
             {
-                if(report.ended<=0)continue;current.Add(report.id);
-                if(initial||completedReports.Contains(report.id)||report.outcome!="Stronghold defeated")continue;
+                if(report.ended<=0||!reportGuard.Observe("group:"+report.id))continue;
+                RecordEncounter(report.outcome,report.targetName+" · Review contribution, wounds and credited rewards in Battle reports.");
+                if(report.outcome!="Stronghold defeated")continue;
                 foreach(var entry in report.participants)if(entry.playerId==ownId&&entry.result=="Survived"&&pieces.TryGetValue(entry.armyId,out var piece)&&piece.actor!=null)piece.actor.ObserveVictory();
             }
-            completedReports=current;
         }
     }
 }

@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.26
+## Playable slice 0.27
 
+- Gameplay-feel milestone: replay-safe combat/arrival feedback, clearer routes and
+  affiliations, optional first-session guidance and confirmed reward/outcome cues.
+  [Exact Unity demonstration and verification](docs/gameplay-feel-0.27.md).
 - Composed regions, distinct culture institutions and confirmed city completion
   feedback; grouped navigation, readable controls and clearer action states.
   [Phases 2–4 delivery, verification and rebuild guide](docs/visual-quality-delivery-0.26.md).

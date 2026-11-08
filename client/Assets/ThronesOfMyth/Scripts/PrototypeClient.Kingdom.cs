@@ -56,7 +56,10 @@ namespace ThronesOfMyth
         }
         private void DrawBattleReports()
         {
-            GUILayout.Label("WAR ARCHIVE", theme.Eyebrow); GUILayout.Label("Your battles", sectionStyle);
+            GUILayout.Label("WAR ARCHIVE",theme.Eyebrow);GUILayout.Label("Your battles",sectionStyle);
+            if(!string.IsNullOrEmpty(map.LatestEncounterTitle)){GUILayout.Label(map.LatestEncounterTitle,theme.Heading);GUILayout.Label(map.LatestEncounterDetail,theme.Body);}
+            GUILayout.Label("Camp victories: "+me.kills+" · Current treasury: "+me.gold+" gold / "+me.food+" food / "+me.stone+" stone / "+me.aether+" aether / "+me.sigils+" sigils",theme.Small);
+            GUILayout.Label("Camp rewards are credited directly. These are current totals, not an attributed reward breakdown. Field and alliance reports below contain their own confirmed outcomes.",theme.Small);
             DrawGroupReports();
             GUILayout.Space(14); GUILayout.Label("FIELD DUELS", theme.Eyebrow);
             GUILayout.Label("Reports include live engagements and your latest 30 completed battles. Damage totals count actual health removed; shield absorption is separate. This field-war version has no permanent troop deaths or plunder rewards.", noteStyle);

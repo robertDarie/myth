@@ -43,6 +43,8 @@ namespace ThronesOfMyth
         }
         private IEnumerator TransmitOrder(GameCommand command,string body,PendingOrder retained)
         {
+            string originPlayer=playerId,originServer=serverUrl;
+            string claimReward=ClaimRewardPreview(command);
             int attempts=retained==null?1:2;
             for(int attempt=0;attempt<attempts;attempt++)
             {
@@ -55,6 +57,12 @@ namespace ThronesOfMyth
                     bool rejected=request.responseCode==400||request.responseCode==403||request.responseCode==404||request.responseCode==413||request.responseCode==422;
                     if(retained!=null&&(success||rejected))ClearPendingOrder(retained);
                     status=success?OrderFeedback(command):DescribeError(request);lastOrderFailed=!success;orderNoticeAt=Time.unscaledTime;
+                    if(success&&playerId==originPlayer&&serverUrl==originServer&&me!=null)
+                    {
+                        OnConfirmedCommand(command);
+                        if(!string.IsNullOrEmpty(claimReward)&&claimedFeedback.Add(command.type+":"+command.targetId))
+                        {status="Reward claimed · "+claimReward;BattlefieldAudio.UiCue("reward");}
+                    }
                     if(success&&(command.type=="deploy-march"||command.type=="configure-march")){pendingFormationHero=command.targetId;interfacePage=InterfacePage.World;}
                     if(success&&command.type=="chat-send"&&chatDraft==command.name)chatDraft="";
                     retry=retained!=null&&!success&&(request.result==UnityWebRequest.Result.ConnectionError||request.responseCode>=500)&&attempt+1<attempts&&!string.IsNullOrEmpty(token);

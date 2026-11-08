@@ -136,3 +136,11 @@ save schema 13 and SQLite revision 2 remain unchanged. The [combined delivery gu
 includes the Windows validation script, 120-case acceptance matrix, native review
 menus, unique screenshots and opt-in F8 standalone performance recording. Native
 execution is pending; the cloud results are not rendered Windows acceptance.
+
+## Build 0.27
+
+Pull main and rebuild bundle 0.27.0 for gameplay-feel/first-session improvements.
+Protocol 14, save schema 13 and SQLite revision 2 remain unchanged. Existing saves
+work; use the [isolated-server Unity journey](gameplay-feel-0.27.md) for a fresh
+recording without modifying your main city. Native timing/rendering/input/FPS
+checks remain pending.

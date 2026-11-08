@@ -2,6 +2,10 @@
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems><Nullable>disable</Nullable><RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources></PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="FeelContracts.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ArmyPresentationState.cs" Link="ArmyPresentationState.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ReportReplayGuard.cs" Link="ReportReplayGuard.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/FirstSessionGuide.cs" Link="FirstSessionGuide.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/TextElision.cs" Link="TextElision.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/CityPresentationData.cs" Link="CityPresentationData.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/FogVisibilityGrid.cs" Link="FogVisibilityGrid.cs" />

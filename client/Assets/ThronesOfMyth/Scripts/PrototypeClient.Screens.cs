@@ -274,10 +274,11 @@ namespace ThronesOfMyth
             if(GUILayout.Button("Account and recovery",GUILayout.Height(36)))OpenAccount();
             if(GUILayout.Button("Kingdom power rankings",GUILayout.Height(36)))OpenInterface(InterfacePage.Rankings);
             GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
+            openingEnabled=GUILayout.Toggle(openingEnabled,"Show optional first-session guidance");PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",openingEnabled?1:0);
             GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
             GUILayout.Space(18); GUILayout.Label("Connected to " + serverUrl, theme.Small);
             GUILayout.Label(world.persistence != null && world.persistence.enabled ? world.persistence.backend=="sqlite"?"SQLite kingdom · progress saves on the server; downtime job recovery is enabled.":"Local JSON kingdom · progress saves on this PC." : "This server is not saving world progress.", theme.Small);
-            if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
+            if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; openingEnabled=true;PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",1); PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }
         private void DrawContextActions()
@@ -330,7 +331,7 @@ namespace ThronesOfMyth
             }
             else if (army != null)
             {
-                title = HeroName(army.commanderId); subtitle = army.name + " · " + army.state + " · " + army.troops + " TROOPS"; health = (float)army.health / Mathf.Max(1, army.maxHealth);
+                title = HeroName(army.commanderId); subtitle = army.name + " · " + ArmyPresentationState.Label(army) + " · " + army.troops + " TROOPS"; health = (float)army.health / Mathf.Max(1, army.maxHealth);
                 bool allied = !string.IsNullOrEmpty(me.allianceId) && army.allianceId == me.allianceId;
                 var owner = Array.Find(world.players, p => p.id == army.ownerId);
                 bool ownCity = Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2;

@@ -124,3 +124,11 @@ adds readable theme controls and standardizes core action/notice states. Phase 4
 adds measured CLR allocation improvements, cached presentation data and native
 acceptance/performance tools. 206 server tests and 146 pure-C# contracts pass;
 native compilation/rendering/input/FPS remain pending. See [delivery and acceptance](visual-quality-delivery-0.26.md).
+
+## Gameplay feel and first session — 0.27
+
+Movement settling, imported formation motion, confirmed destination/arrival and
+combat feedback; fixed victory transitions, report replay guard and clearer
+first-session advice through an actual camp fight and return. Protocol/save
+compatibility is unchanged. 207 server tests and 182 production-C# checks pass;
+Unity rendering/input/audio timing/FPS remain pending. See [the demonstration](gameplay-feel-0.27.md).

@@ -21,7 +21,7 @@ namespace ThronesOfMyth
         private Rect WindowRect => new Rect((ViewWidth - Mathf.Min(1320, ViewWidth - 72)) / 2, 92, Mathf.Min(1320, ViewWidth - 72), ViewHeight - 184);
         private Rect MinimapRect => new Rect(ViewWidth - 202, ViewHeight - 246, 184, 152);
         private Rect ContextRect => new Rect((ViewWidth - 620) / 2, ViewHeight - 228, 620, 138);
-        private Rect QuestRect => new Rect(18,138,242,142);
+        private Rect QuestRect => new Rect(18,138,242,Opening==null?142:200);
         private Rect ActivityRect => new Rect(18,100,242,28);
         private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);
         private Rect NotificationRect => new Rect((ViewWidth-560)/2,90,560,72);
@@ -29,7 +29,7 @@ namespace ThronesOfMyth
         private Rect MarchRail => new Rect(ViewWidth-186,100,168,32+5*MarchStep);
         private string hoveredTooltip="";
         private float tooltipSince;
-        private bool NotificationVisible => (!string.IsNullOrEmpty(status)&&status!=previousToast)||pendingOrder!=null||Time.unscaledTime<toastUntil||Time.unscaledTime-lastSnapshotAt>6||!string.IsNullOrEmpty(world?.persistence?.error)||placeBeacon;
+        private bool NotificationVisible => processing||(!string.IsNullOrEmpty(status)&&status!=previousToast)||pendingOrder!=null||Time.unscaledTime<toastUntil||Time.unscaledTime-lastSnapshotAt>6||!string.IsNullOrEmpty(world?.persistence?.error)||placeBeacon;
         private List<ArmyData> OwnMarches()
         {
             var list = new List<ArmyData>();
@@ -41,6 +41,7 @@ namespace ThronesOfMyth
             interfaceScalePreference = Mathf.Clamp(PlayerPrefs.GetFloat("ThronesOfMyth.uiScale", 1), 0.85f, 1.15f);
             reducedMotion = PlayerPrefs.GetInt("ThronesOfMyth.reducedMotion", 0) == 1;
             labelsEnabled = PlayerPrefs.GetInt("ThronesOfMyth.labels", 1) == 1;
+            openingEnabled=PlayerPrefs.GetInt("ThronesOfMyth.openingGuidance",1)==1;
         }
         private void OpenInterface(InterfacePage page)
         {
@@ -69,7 +70,7 @@ namespace ThronesOfMyth
             {
                 if(QuestRect.Contains(p))return true;
                 int jobs=(HasJob(me?.construction)?1:0)+(HasJob(me?.secondConstruction)?1:0)+(HasJob(me?.research)?1:0);
-                if(jobs>0&&new Rect(18,290,242,jobs*52-6).Contains(p))return true;
+                if(jobs>0&&new Rect(18,QuestRect.yMax+10,242,jobs*52-6).Contains(p))return true;
             }
             if(MarchRail.Contains(p)||MinimapRect.Contains(p))return true;
             if(!string.IsNullOrEmpty(selectedId)&&ContextRect.Contains(p))return true;
@@ -225,7 +226,7 @@ namespace ThronesOfMyth
             if (advancedConnection) { GUILayout.Label("Server address", theme.Small); serverUrl = GUILayout.TextField(serverUrl, 160, GUILayout.Height(30)); GUILayout.Label("Kingdom invitation code (private tests)", theme.Small); kingdomJoinCode = GUILayout.PasswordField(kingdomJoinCode, '*', 128, GUILayout.Height(30)); }
             if (status != previousToast || !string.IsNullOrEmpty(status)) GUILayout.Label(status, theme.Small);
             GUILayout.EndArea();
-            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.26  ·  THRONES OF MYTH", theme.Eyebrow);
+            theme.Text(new Rect(120, ViewHeight - 55, 600, 25), "WINDOWS PLAYTEST 0.27  ·  THRONES OF MYTH", theme.Eyebrow);
         }
         private static string ShortNumber(int value) => value >= 1000000 ? (value / 1000000f).ToString("0.##") + "M" : value >= 10000 ? (value / 1000f).ToString("0.#") + "K" : value.ToString("N0");
         private void DrawTopHud()
@@ -259,19 +260,20 @@ namespace ThronesOfMyth
             if(theme.Button(new Rect(ActivityRect.x+124,ActivityRect.y,118,28),readyDaily?"Daily · Claim":"Daily · "+(daily==null?0:Mathf.Min(100,daily.points))+"/100",readyDaily))OpenActivity();
             if(compactHud)return;
             var r=QuestRect;theme.Panel(r);var chapter=CurrentChapter;var task=NextTask(chapter);
-            theme.OneLine(new Rect(r.x+12,r.y+9,r.width-24,20),chapter==null?"CAMPAIGN COMPLETE":chapter.title,theme.Eyebrow);
-            theme.Text(new Rect(r.x+12,r.y+36,r.width-24,44),task==null?chapter==null?"Write the next legend.":"Your chapter reward awaits.":task.title,new GUIStyle(theme.Heading){fontSize=17});
-            theme.OneLine(new Rect(r.x+12,r.y+88,126,20),task==null?"Open campaign":task.progress+" / "+task.goal+(task.canClaim?" · READY":""),theme.Small);
-            theme.Bar(new Rect(r.x+12,r.y+119,126,5),task==null?1:(float)task.progress/Mathf.Max(1,task.goal),MythInterfaceTheme.Gold);
-            bool ready=chapter!=null&&(chapter.canClaim||task!=null&&task.canClaim);
-            if(theme.Button(new Rect(r.xMax-90,r.y+91,78,34),ready?"Claim":task==null?"View":"Go",ready))
+            bool ready=chapter!=null&&(chapter.canClaim||task!=null&&task.canClaim);var intro=ready?null:Opening;
+            theme.OneLine(new Rect(r.x+12,r.y+9,r.width-24,20),intro!=null?"FIRST STEPS · "+intro.Number+" / 9":chapter==null?"CAMPAIGN COMPLETE":chapter.title,theme.Eyebrow);
+            theme.Text(new Rect(r.x+12,r.y+36,r.width-24,44),intro!=null?intro.Title:task==null?chapter==null?"Write the next legend.":"Your chapter reward awaits.":task.title,new GUIStyle(theme.Heading){fontSize=Mathf.Max(17,Mathf.CeilToInt(14/InterfaceScale))});
+            theme.OneLine(new Rect(r.x+12,r.yMax-54,126,20),intro!=null?"Suggested next step":task==null?"Open campaign":task.progress+" / "+task.goal+(task.canClaim?" · READY":""),theme.Small);
+            if(intro==null)theme.Bar(new Rect(r.x+12,r.yMax-23,126,5),task==null?1:(float)task.progress/Mathf.Max(1,task.goal),MythInterfaceTheme.Gold);
+            if(intro!=null)theme.Text(new Rect(r.x+12,r.y+82,r.width-24,50),intro.Hint,theme.Small);
+            if(theme.Button(new Rect(r.xMax-90,r.yMax-51,78,34),ready?"Claim":intro!=null?"Show":task==null?"View":"Go",ready))
             {
                 if(chapter!=null&&chapter.canClaim)Send("chapter-claim",chapter.id);
                 else if(task!=null&&task.canClaim)Send("journey-claim",task.id);
-                else if(task!=null)GuideObjective(task);else GuidePage(InterfacePage.Campaign);
+                else if(intro!=null)GuideOpening(intro);else if(task!=null)GuideObjective(task);else GuidePage(InterfacePage.Campaign);
             }
             if(GUI.Button(new Rect(r.x,r.y,r.width,80),GUIContent.none,GUIStyle.none))GuidePage(InterfacePage.Campaign);
-            float y=290;
+            float y=r.yMax+10;
             foreach(var job in new[]{me.construction,me.secondConstruction,me.research})
             {
                 if(!HasJob(job))continue;
@@ -295,7 +297,7 @@ namespace ThronesOfMyth
                     var definition=Array.Find(world.commanders,h=>h.id==army.commanderId);
                     theme.Portrait(new Rect(x+8,r.y+8,34,34),army.commanderId,RarityColor(definition.color));
                     theme.OneLine(new Rect(x+50,r.y+5,110,19),HeroName(army.commanderId),theme.Small);
-                    theme.OneLine(new Rect(x+50,r.y+24,110,17),army.state,theme.Small);
+                    theme.OneLine(new Rect(x+50,r.y+24,110,17),ArmyPresentationState.Label(army),theme.Small);
                     theme.Bar(new Rect(x+50,r.yMax-13,108,4),(float)army.health/Mathf.Max(1,army.maxHealth),MythInterfaceTheme.Teal);
                     theme.Bar(new Rect(x+50,r.yMax-5,108,2),army.rage/1000f,MythInterfaceTheme.Gold);
                     if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;Select(army.id,"army");cameraControl?.Focus(army.x,army.z);}
@@ -327,7 +329,7 @@ namespace ThronesOfMyth
             }
             foreach (var boss in world.strongholds) Dot(mapArea, boss.x, boss.z, MythInterfaceTheme.Red, 6);
             foreach (var site in world.sites) Dot(mapArea, site.x, site.z, new Color(0.85f, 0.72f, 0.95f), 5);
-            foreach (var army in world.armies) Dot(mapArea, army.x, army.z, army.ownerId == playerId ? MythInterfaceTheme.Teal : MythInterfaceTheme.Gold, army.id == ActiveArmy.id ? 6 : 3);
+            foreach (var army in world.armies) Dot(mapArea, army.x, army.z, army.ownerId==playerId?MythInterfaceTheme.Teal:!string.IsNullOrEmpty(me.allianceId)&&army.allianceId==me.allianceId?new Color(.4f,.85f,.6f):MythInterfaceTheme.Red, army.id == ActiveArmy.id ? 6 : 3);
             Dot(mapArea, me.homeX, me.homeZ, Color.white, 5);
             if (Event.current.type == EventType.MouseDown && mapArea.Contains(Event.current.mousePosition))
             { cameraControl?.Focus((Event.current.mousePosition.x - mapArea.x) / mapArea.width * 80, (1 - (Event.current.mousePosition.y - mapArea.y) / mapArea.height) * 80); Event.current.Use(); }
@@ -346,15 +348,15 @@ namespace ThronesOfMyth
         private void DrawInterfaceToast()
         {
             if (status != previousToast) { previousToast = status; toastUntil = Time.unscaledTime + 5; }
-            string message = pendingOrder!=null ? string.IsNullOrEmpty(pendingOrder.key)?"Check your last order, then open Settings to clear its unreadable record.":"Confirm your last order before sending another." : world.persistence != null && !string.IsNullOrEmpty(world.persistence.error) ? world.persistence.error
+            string message = processing?"Waiting for the kingdom server…":pendingOrder!=null ? string.IsNullOrEmpty(pendingOrder.key)?"Check your last order, then open Settings to clear its unreadable record.":"Confirm your last order before sending another." : world.persistence != null && !string.IsNullOrEmpty(world.persistence.error) ? world.persistence.error
                 : Time.unscaledTime - lastSnapshotAt > 6 ? "Connection interrupted. Retrying your kingdom server…"
                 : placeBeacon ? "PLACE BEACON · Click near the selected march. Esc cancels." : Time.unscaledTime < toastUntil ? status : "";
             if (string.IsNullOrEmpty(message)) return;
             var r=NotificationRect;
             bool interrupted=Time.unscaledTime-lastSnapshotAt>6;
             bool persistenceError=world.persistence!=null&&!string.IsNullOrEmpty(world.persistence.error);
-            string heading=pendingOrder!=null?"CONFIRM YOUR ORDER":interrupted?"RECONNECTING":persistenceError||lastOrderFailed&&Time.unscaledTime-orderNoticeAt<6?"ACTION NEEDS ATTENTION":placeBeacon?"PLACE ALLIANCE BEACON":Time.unscaledTime-orderNoticeAt<6?"ORDER ACCEPTED":"KINGDOM UPDATE";
-            var accent=interrupted||persistenceError||lastOrderFailed&&Time.unscaledTime-orderNoticeAt<6?MythInterfaceTheme.Red:pendingOrder!=null?MythInterfaceTheme.Gold:MythInterfaceTheme.Teal;
+            string heading=processing?"ORDER PENDING":pendingOrder!=null?"CONFIRM YOUR ORDER":interrupted?"RECONNECTING":persistenceError||lastOrderFailed&&Time.unscaledTime-orderNoticeAt<6?"ACTION NEEDS ATTENTION":placeBeacon?"PLACE ALLIANCE BEACON":Time.unscaledTime-orderNoticeAt<6?"ORDER ACCEPTED":"KINGDOM UPDATE";
+            var accent=processing&&!interrupted&&!persistenceError?MythInterfaceTheme.Gold:interrupted||persistenceError||lastOrderFailed&&Time.unscaledTime-orderNoticeAt<6?MythInterfaceTheme.Red:pendingOrder!=null?MythInterfaceTheme.Gold:MythInterfaceTheme.Teal;
             if(pendingOrder!=null)
             {
                 theme.Panel(r);MythInterfaceTheme.Fill(new Rect(r.x,r.y+5,3,r.height-10),accent);
@@ -375,6 +377,8 @@ namespace ThronesOfMyth
             var inner = new Rect(r.x + 20, r.y + 70, r.width - 40, r.height - 90);
             var before=GUI.color;
             if(!reducedMotion){float alpha=Mathf.Clamp01((Time.unscaledTime-pageOpenedAt)/.13f);GUI.color=new Color(before.r,before.g,before.b,before.a*(.70f+.30f*alpha));}
+            if(interfacePage==InterfacePage.City)opening.CityViewed=true;
+            if(interfacePage==InterfacePage.Reports)opening.OutcomeViewed=true;
             if(interfacePage==InterfacePage.Menu)DrawMenuWindow(inner);
             else if (interfacePage == InterfacePage.Formation) RenderFormationWindow(inner);
             else if (interfacePage == InterfacePage.City) RenderCityWindow(inner);
@@ -426,18 +430,20 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Chronicle) DrawJournal();
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }
+        private int routeDashBudget;
         private void DrawMarchRoute()
         {
             if (ActiveArmy == null || !ActiveArmy.hasOrder || Camera.main == null) return;
+            routeDashBudget=160;
             var points = ActiveArmy.route;
             var start = new Vector3(ActiveArmy.x, 0.3f, ActiveArmy.z);
-            if (points != null && points.Length > 0) foreach (var point in points)
+            if(points!=null&&points.Length>0)for(int index=0;index<points.Length;index++)
             {
-                var end = new Vector3(point.x, 0.3f, point.z); DrawRouteSegment(start, end); start = end;
+                var point=points[index];var end=new Vector3(point.x,.3f,point.z);DrawRouteSegment(start,end,index==points.Length-1);start=end;
             }
-            else DrawRouteSegment(start, new Vector3(ActiveArmy.targetX, 0.3f, ActiveArmy.targetZ));
+            else DrawRouteSegment(start,new Vector3(ActiveArmy.targetX,.3f,ActiveArmy.targetZ),true);
         }
-        private void DrawRouteSegment(Vector3 origin, Vector3 destination)
+        private void DrawRouteSegment(Vector3 origin, Vector3 destination,bool endpoint)
         {
             var from = Camera.main.WorldToScreenPoint(origin);
             var to = Camera.main.WorldToScreenPoint(destination);
@@ -445,13 +451,13 @@ namespace ThronesOfMyth
             var start = new Vector2(from.x, Screen.height - from.y); var end = new Vector2(to.x, Screen.height - to.y);
             var direction = (end - start).normalized; float distance = Vector2.Distance(start, end);
             Color color = (ActiveArmy.state == "Attacking" || ActiveArmy.state == "Siege fighting") ? MythInterfaceTheme.Red : ActiveArmy.state == "Gathering" ? MythInterfaceTheme.Teal : ActiveArmy.state == "Returning" ? new Color(0.5f, 0.8f, 1) : MythInterfaceTheme.Gold;
-            float offset = reducedMotion ? 0 : Time.unscaledTime * 16 % 18;
-            for (float d = offset; d < distance; d += 18)
+            float offset = reducedMotion ? 0 : Time.unscaledTime * 12 % 24;
+            for (float d = offset; d < distance&&routeDashBudget>0; d += 24)
             {
-                var a = start + direction * d; var b = start + direction * Mathf.Min(distance, d + 10); var middle = (a + b) / 2;
-                if (!InterfaceBlocksPoint(new Vector3(middle.x, Screen.height - middle.y, 0))) MythInterfaceTheme.Line(a, b, 2, color);
+                var a = start + direction * d; var b = start + direction * Mathf.Min(distance, d + 12); var middle = (a + b) / 2;
+                if(!InterfaceBlocksPoint(new Vector3(middle.x,Screen.height-middle.y,0))){MythInterfaceTheme.Line(a,b,2,color);routeDashBudget--;}
             }
-            if (!InterfaceBlocksPoint(new Vector3(end.x, Screen.height - end.y, 0)))
+            if (endpoint&&!InterfaceBlocksPoint(new Vector3(end.x, Screen.height - end.y, 0)))
             {
                 var across = new Vector2(-direction.y, direction.x);
                 MythInterfaceTheme.Line(end, end - direction * 12 + across * 6, 2, color);

@@ -25,12 +25,12 @@ namespace ThronesOfMyth
         public Material healMaterial, shieldMaterial, damageMaterial;
         public bool previewWalking;
         private bool gathering, hasTarget, initialized, rangedAttack;
-        private int lastHealth, lastCasts, lastAttack;
+        private int lastHealth;
         private float attackUntil, castUntil, captionUntil, phase;
         private string caption, skillKind;
         private Color captionColor;
         public bool reducedMotion, allowAudio;
-        private bool mountedArmy, arrowReleasePending;
+        private bool mountedArmy, arrowReleasePending,combat,mythicAttack;
         private bool woundedReturning;
         private bool recovering, campDead, impactSoundPending, wasFlashing;
         private string previewPose;
@@ -48,10 +48,12 @@ namespace ThronesOfMyth
         private readonly HashSet<string> visibleRoles=new HashSet<string>();
         public bool IsGathering => gathering;
         public bool IsWorking => gathering&&!recovering;
+        private float turnLean;
         private float walkBlend, recoilUntil, victoryUntil, impactAt, impactUntil, footstepAt;
         private Renderer[] flashRenderers;
         private Color[][] flashColors;
         private MaterialPropertyBlock flashBlock;
+        private GUIStyle captionStyle;
         private void Start()
         {
             lastPosition = transform.parent.position; phase = Mathf.Abs(transform.parent.position.x * 1.7f + transform.parent.position.z);
@@ -65,42 +67,45 @@ namespace ThronesOfMyth
         {
             if (initialized && camp.health < lastHealth) recoilUntil = Time.unscaledTime + 0.28f;
             campDead = camp.health <= 0;
-            if (defeatedNow) { caption = "DEFEATED"; captionColor = new Color(1, 0.8f, 0.4f); captionUntil = Time.unscaledTime + 1.2f; recoilUntil = Time.unscaledTime + 0.28f; BattlefieldAudio.Cue("victory", transform.parent.position); }
+            if (defeatedNow) { caption = "CAMP CLEARED"; captionColor = new Color(1, 0.8f, 0.4f); captionUntil = Time.unscaledTime + 1.2f; recoilUntil = Time.unscaledTime + 0.28f; }
             initialized = true; lastHealth = camp.health;
         }
-        public void Observe(ArmyData army)
+        public void Observe(ArmyData army,ArmyObservation observation)
         {
             mountedArmy=army.units!=null&&army.units.Cavalry>0;
             woundedReturning=army.state=="Returning"&&army.health<army.maxHealth*.5f;
-            gathering = army.state == "Gathering"; hasTarget = army.hasOrder;
-            targetPosition = new Vector3(army.targetX, 0, army.targetZ); skillKind = army.skillKind;
-            rangedAttack = army.units != null && army.units.Archers > 0 || authored.Exists(u => u.commander && u.ranged);
-            if (shield != null) shield.SetActive(army.shield > 0);
-            if (initialized)
+            gathering=ArmyPresentationState.IsGathering(army);hasTarget=army.hasOrder;
+            targetPosition=new Vector3(army.targetX,0,army.targetZ);skillKind=army.skillKind;
+            rangedAttack=army.units!=null&&army.units.Archers>0||authored.Exists(u=>u.commander&&u.ranged);
+            mythicAttack=army.mythic>0;combat=ArmyPresentationState.IsEngaged(army)||observation.Has(ArmyCue.Attack);if(combat)attackTarget=new Vector3(army.attackX,0,army.attackZ);
+            if(shield!=null)shield.SetActive(army.shield>0);
+            if(observation.Has(ArmyCue.Attack))
             {
-                if (army.attackSequence > lastAttack) { foreach(var unit in authored) unit.Restart("Attack"); attackUntil = Time.unscaledTime + 0.65f; attackTarget = new Vector3(army.attackX, 0, army.attackZ); impactAt = Time.unscaledTime + 0.35f; impactUntil = impactAt + 0.22f; impactSoundPending = true; arrowReleasePending=rangedAttack; }
-                if (army.skillCasts > lastCasts)
-                {
-                    castUntil = Time.unscaledTime + 0.9f; foreach(var unit in authored)unit.Restart("Skill");
-                    BattlefieldFeedback.Emit("skill",transform.parent.position,army.skillKind=="heal"?new Color(.4f,.9f,.6f):army.skillKind=="shield"?new Color(.4f,.7f,1):new Color(1,.7f,.25f),reducedMotion); caption = army.lastSkill;
-                    captionColor = skillKind == "heal" ? new Color(0.5f, 1, 0.72f) : skillKind == "shield" ? new Color(0.65f, 0.9f, 1) : new Color(1, 0.8f, 0.35f);
-                    captionUntil = Time.unscaledTime + 1.5f;
-                    if (allowAudio) BattlefieldAudio.Cue("skill", transform.parent.position);
-                }
-                else if (army.health != lastHealth)
-                {
-                    int delta = army.health - lastHealth; if(delta<0) { foreach(var unit in authored)unit.Restart("Hit"); BattlefieldFeedback.Emit("hit",new Vector3(army.x,0,army.z),new Color(1,.55f,.3f),reducedMotion); } if (delta < 0) recoilUntil = Time.unscaledTime + 0.28f; caption = delta > 0 ? "+" + delta : delta.ToString();
-                    captionColor = delta > 0 ? new Color(0.55f, 1, 0.7f) : new Color(1, 0.65f, 0.5f); captionUntil = Time.unscaledTime + 0.85f;
-                }
+                foreach(var unit in authored)unit.Restart("Attack");attackUntil=Time.unscaledTime+.65f;
+                attackTarget=new Vector3(army.attackX,0,army.attackZ);impactAt=Time.unscaledTime+.35f;impactUntil=impactAt+.22f;impactSoundPending=true;arrowReleasePending=rangedAttack;
             }
-            if (initialized && army.recovery > 0 && !recovering)
-            { caption = "RETREAT · RECOVERING"; captionColor = new Color(1, 0.65f, 0.4f); captionUntil = Time.unscaledTime + 1.5f; if (allowAudio) BattlefieldAudio.Cue("retreat", new Vector3(army.x, 0, army.z)); }
-            if (initialized && army.state == "Victorious" && lastAttack != army.attackSequence)
-            { victoryUntil = Time.unscaledTime + 1.1f; if (allowAudio) BattlefieldAudio.Cue("victory", transform.parent.position); }
-            recovering = army.recovery > 0;
-            if (skillLine != null) skillLine.sharedMaterial = skillKind == "heal" ? healMaterial : skillKind == "shield" ? shieldMaterial : damageMaterial;
-            initialized = true; lastHealth = army.health; lastCasts = army.skillCasts; lastAttack = army.attackSequence;
+            if(observation.Has(ArmyCue.Health))
+            {
+                if(observation.HealthDelta<0){foreach(var unit in authored)unit.Restart("Hit");recoilUntil=Time.unscaledTime+.20f;BattlefieldFeedback.Emit("hit",new Vector3(army.x,0,army.z),new Color(1,.55f,.3f),reducedMotion);}
+                caption=(observation.HealthDelta>0?"+":"")+observation.HealthDelta+" HP";captionColor=observation.HealthDelta>0?new Color(.55f,1,.7f):new Color(1,.65f,.5f);captionUntil=Time.unscaledTime+.85f;
+            }
+            if(observation.Has(ArmyCue.Skill))
+            {
+                castUntil=Time.unscaledTime+.9f;foreach(var unit in authored)if(unit.commander)unit.Restart("Skill");
+                var color=skillKind=="heal"?new Color(.4f,.9f,.6f):skillKind=="shield"?new Color(.4f,.7f,1):new Color(1,.7f,.25f);
+                BattlefieldFeedback.Emit("skill",transform.parent.position,color,reducedMotion);caption=army.lastSkill+(observation.Has(ArmyCue.Health)?" · "+(observation.HealthDelta>0?"+":"")+observation.HealthDelta+" HP":"");captionColor=color;captionUntil=Time.unscaledTime+1.4f;
+                if(allowAudio)BattlefieldAudio.Cue("skill",transform.parent.position);
+            }
+            if(observation.Has(ArmyCue.Retreat)){attackUntil=castUntil=impactUntil=0;arrowReleasePending=impactSoundPending=false;SetCaption("RETREAT · RECOVERING",new Color(1,.65f,.4f),1.6f);if(allowAudio)BattlefieldAudio.UiCue("retreat");}
+            else if(observation.Has(ArmyCue.Victory))ObserveVictory();
+            else if(observation.Has(ArmyCue.Arrival)){SetCaption("AT HOME"+(army.health<army.maxHealth?" · RECOVERING":""),MythInterfaceTheme.Teal,.9f);if(Vector2.Distance(new Vector2(army.x,army.z),new Vector2(army.homeX,army.homeZ))>2)SetCaption("ARRIVED",MythInterfaceTheme.Teal,.9f);if(allowAudio)BattlefieldAudio.Cue("arrival",transform.parent.position);}
+            else if(observation.Has(ArmyCue.Gather))SetCaption("GATHERING",MythInterfaceTheme.Teal,1);
+            else if(observation.Has(ArmyCue.Returning))SetCaption(woundedReturning?"RETURNING · WOUNDED":"RETURNING HOME",new Color(.55f,.8f,1),1.2f);
+            else if(observation.Has(ArmyCue.Combat))SetCaption("ENGAGING",MythInterfaceTheme.Red,.8f);
+            recovering=army.recovery>0;
+            if(skillLine!=null)skillLine.sharedMaterial=skillKind=="heal"?healMaterial:skillKind=="shield"?shieldMaterial:damageMaterial;
         }
+        private void SetCaption(string text,Color color,float duration){caption=text;captionColor=color;captionUntil=Time.unscaledTime+duration;}
         public void PreviewPose(string state)
         {
             previewWalking=state=="March";previewPose=state;previewPoseUntil=state=="Idle"||state=="March"?float.PositiveInfinity:Time.unscaledTime+(state=="Attack"?.65f:state=="Victory"?1.1f:.9f);
@@ -109,8 +114,8 @@ namespace ThronesOfMyth
         }
         public void ObserveVictory()
         {
-            victoryUntil=Time.unscaledTime+1.1f;caption="VICTORY";captionColor=new Color(1,.82f,.40f);captionUntil=Time.unscaledTime+1.3f;
-            foreach(var unit in authored)unit.Restart("Victory");if(allowAudio)BattlefieldAudio.Cue("victory",transform.parent.position);
+            victoryUntil=Time.unscaledTime+1.4f;caption="VICTORY";captionColor=new Color(1,.82f,.40f);captionUntil=Time.unscaledTime+1.3f;
+            foreach(var unit in authored)unit.Restart("Victory");if(allowAudio)BattlefieldAudio.UiCue("victory");
         }
         public void RebaseMotion() { lastPosition = transform.parent.position; }
         public void PreviewSkill(string kind)
@@ -182,13 +187,19 @@ namespace ThronesOfMyth
             Vector3 position = transform.parent.position, movement = position - lastPosition; lastPosition = position;
             // A defeat return is a server teleport, never a sprint across the map.
             bool walking = previewWalking || (movement.sqrMagnitude > 0.000003f && movement.sqrMagnitude < 9);
-            Vector3 facing = walking ? movement : hasTarget ? targetPosition - position : Vector3.zero; facing.y = 0;
-            string pose=Time.unscaledTime<castUntil?"Skill":Time.unscaledTime<recoilUntil?"Hit":Time.unscaledTime<attackUntil?"Attack":Time.unscaledTime<victoryUntil?"Victory":walking&&!recovering?(woundedReturning?"Retreat":"March"):gathering?"Gather":"Idle";
+            Vector3 facing = walking ? movement : combat ? targetPosition-position : hasTarget ? targetPosition-position : Vector3.zero; facing.y = 0;
+            string pose=Time.unscaledTime<castUntil?"Skill":Time.unscaledTime<attackUntil?"Attack":Time.unscaledTime<recoilUntil?"Hit":Time.unscaledTime<victoryUntil?"Victory":walking&&!recovering?(woundedReturning?"Retreat":"March"):gathering?"Gather":"Idle";
             if(Time.unscaledTime<previewPoseUntil&&!string.IsNullOrEmpty(previewPose))pose=previewPose;
-            foreach(var unit in authored)if(unit.gameObject.activeInHierarchy)unit.Pose(pose,reducedMotion);
+            foreach(var unit in authored)if(unit.gameObject.activeInHierarchy)
+            {
+                string unitPose=pose=="Skill"&&!unit.commander?(Time.unscaledTime<attackUntil?"Attack":"Idle"):pose;
+                unit.Pose(unitPose,reducedMotion);
+                unit.FormationMotion(turnLean,walkBlend,reducedMotion);
+            }
             float previousYaw = transform.localEulerAngles.y;
             if (facing.sqrMagnitude > 0.001f) transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.LookRotation(facing), 210 * Time.deltaTime);
             float turn = Mathf.Clamp(Mathf.DeltaAngle(previousYaw, transform.localEulerAngles.y) / Mathf.Max(0.001f, Time.deltaTime), -210, 210);
+            turnLean=turn/210;
             walkBlend = Mathf.MoveTowards(walkBlend, walking && !recovering ? 1 : 0, Time.deltaTime * 5);
             phase += previewWalking ? Time.deltaTime * 9 : walking ? movement.magnitude * 4.5f : 0;
             float progress = Mathf.Clamp01(1 - (attackUntil - Time.unscaledTime) / 0.65f);
@@ -245,7 +256,7 @@ namespace ThronesOfMyth
                 impact.gameObject.SetActive(impacting);
                 if (impacting) { impact.position = attackTarget + Vector3.up * 0.12f; impact.localScale = Vector3.one * (reducedMotion ? 1 : 0.5f + (Time.unscaledTime - impactAt) * 4); }
             }
-            if (impacting && impactSoundPending) { impactSoundPending = false; BattlefieldFeedback.Emit("impact",attackTarget,new Color(1,.79f,.35f),reducedMotion); if (allowAudio) BattlefieldAudio.Cue(rangedAttack ? "impact" : "strike", attackTarget); }
+            if (impacting && impactSoundPending) { impactSoundPending = false; BattlefieldFeedback.Emit(mythicAttack?"mythic":"impact",attackTarget,mythicAttack?new Color(.55f,.75f,1):new Color(1,.79f,.35f),reducedMotion); if (allowAudio) BattlefieldAudio.Cue(rangedAttack ? "impact" : "strike", attackTarget); }
             RefreshPickingBounds();
             if(gathering&&!walking&&!recovering&&Time.unscaledTime>=workAt)
             {workAt=Time.unscaledTime+1.2f;BattlefieldFeedback.Emit("gather",targetPosition,workColor,reducedMotion);}
@@ -275,7 +286,9 @@ namespace ThronesOfMyth
             if (point.z <= 0 || (occluded != null && occluded(xy))) return;
             if (!reducedMotion) xy.y -= (1 - Mathf.Clamp01(captionUntil - Time.unscaledTime)) * 20 * scale;
             var before = GUI.color; GUI.color = captionColor;
-            GUI.Label(new Rect(xy.x - 130 * scale, xy.y, 260 * scale, 30 * scale), caption, new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = Mathf.RoundToInt(13 * scale), fontStyle = FontStyle.Bold });
+            if(captionStyle==null)captionStyle=new GUIStyle(GUI.skin.label){alignment=TextAnchor.MiddleCenter,fontStyle=FontStyle.Bold,wordWrap=false,clipping=TextClipping.Clip};
+            captionStyle.fontSize=Mathf.Max(12,Mathf.RoundToInt(13*scale));
+            GUI.Label(new Rect(xy.x-160*scale,xy.y,320*scale,30*scale),caption,captionStyle);
             GUI.color = before;
         }
     }

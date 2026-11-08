@@ -5,7 +5,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class WorldView : MonoBehaviour
     {
-        private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public string kind, visualKey,compactLabel,icon; public bool owned,working,compactFormation; public ResourceSiteVisual resource; public WorldActorAnimation actor; }
+        private sealed class Piece { public GameObject root; public Vector3 destination; public string label; public Color color; public float health = -1; public bool moving; public string kind, visualKey,compactLabel,icon; public bool owned,working,compactFormation; public ResourceSiteVisual resource; public WorldActorAnimation actor; public readonly ArmyPresentationState presentation=new ArmyPresentationState(); }
         private readonly Dictionary<string, Piece> pieces = new Dictionary<string, Piece>();
         private readonly WorldArtFactory art = new WorldArtFactory();
         public bool reducedMotion;
@@ -51,11 +51,16 @@ namespace ThronesOfMyth
             if (world.exploration != null) foreach (var scout in world.exploration.scouts) Put(seen, scout.id, "scout", scout.x, scout.z, Color.cyan, "Scout · " + scout.phase);
             foreach (var p in world.armies)
             {
-                var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : gold;
+                var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : red;
                 Put(seen, p.id, "army", p.x, p.z, color, p.name + " · Lv " + p.level + (p.units.Veterans>0?" · T2: "+p.units.Veterans:"") + (p.mythic > 0 ? " + Mythic " + p.mythic : ""), (float)p.health / Mathf.Max(1, p.maxHealth), p.civilization, p.mythic, p.units, p.commanderId);
-                pieces[p.id].owned=p.ownerId==ownId;pieces[p.id].compactLabel=p.name;pieces[p.id].icon="army";pieces[p.id].working=p.state=="Gathering";
+                pieces[p.id].owned=p.ownerId==ownId;pieces[p.id].compactLabel=(p.ownerId==ownId?"[YOU] ":p.allianceId==allianceId&&!string.IsNullOrEmpty(allianceId)?"[ALLY] ":"[OTHER] ")+p.name;pieces[p.id].icon="army";pieces[p.id].working=ArmyPresentationState.IsGathering(p);
                 pieces[p.id].actor.allowAudio = p.ownerId == ownId;
-                pieces[p.id].actor.Observe(p);
+                var observation=pieces[p.id].presentation.Observe(p,Time.unscaledTime);
+                if(observation.Has(ArmyCue.Retreat)){pieces[p.id].root.transform.position=pieces[p.id].destination;pieces[p.id].actor.RebaseMotion();}
+                pieces[p.id].actor.Observe(p,observation);
+                if(observation.Has(ArmyCue.Arrival)&&p.ownerId==ownId)GroundPulse(new Vector3(p.x,0,p.z),MythInterfaceTheme.Teal);
+                if(p.ownerId==ownId&&observation.Has(ArmyCue.Victory))RecordEncounter(p.name+" · Victory","Health "+p.health+" / "+p.maxHealth+" · Commander XP "+p.xp.ToString("0")+". Check your resource totals and campaign rewards.");
+                if(p.ownerId==ownId&&observation.Has(ArmyCue.Retreat))RecordEncounter(p.name+" · Retreat","Recover health at home. Healing lists any wounded units from field battles.");
             }
             foreach (var p in world.players)
             {
@@ -100,14 +105,15 @@ namespace ThronesOfMyth
         }
         private void Update()
         {
-            var camera = Camera.main;
+            var camera = Camera.main;UpdateGroundCues();
 
             foreach (var pair in pieces)
             {
                 var piece = pair.Value;
                 if (piece.moving && (piece.root.transform.position - piece.destination).sqrMagnitude > 144)
                 { piece.root.transform.position = piece.destination; piece.actor.RebaseMotion(); }
-                piece.root.transform.position = piece.moving ? Vector3.Lerp(piece.root.transform.position, piece.destination, 1 - Mathf.Exp(-14 * Time.deltaTime)) : piece.destination;
+                piece.root.transform.position = piece.moving ? Vector3.Lerp(piece.root.transform.position, piece.destination, reducedMotion?1:1-Mathf.Exp(-18*Time.deltaTime)) : piece.destination;
+                if((piece.root.transform.position-piece.destination).sqrMagnitude<.0001f)piece.root.transform.position=piece.destination;
                 if(piece.actor!=null)
                 {
                     piece.actor.reducedMotion=reducedMotion;piece.actor.SetSelected(pair.Key==selectedId,pair.Key==hoveredId);
@@ -147,7 +153,7 @@ namespace ThronesOfMyth
                 if(detailed&&(rect.center-desired.center).sqrMagnitude>1)MythInterfaceTheme.Line(new Vector2(screen.x,Screen.height-screen.y),new Vector2(rect.center.x,rect.yMax),scale,new Color(.90f,.74f,.43f,.65f));
                 theme.WorldMarker(rect,text,icon,detailed?MythInterfaceTheme.Gold:piece.color,selected,markerText,scale);
                 if(piece.working)theme.WorldStatus(new Rect(rect.xMax-11*scale,rect.y-5*scale,14*scale,14*scale),"Gathering",MythInterfaceTheme.Teal,scale);
-                if(piece.health>=0&&(detailed||piece.health<.999f))theme.Bar(new Rect(rect.x+7*scale,rect.yMax+2*scale,rect.width-14*scale,3*scale),piece.health,piece.color);
+                if(piece.health>=0&&(detailed||piece.health<.999f))theme.Bar(new Rect(rect.x+7*scale,rect.yMax+2*scale,rect.width-14*scale,4*scale),piece.health,piece.health<.3f?MythInterfaceTheme.Red:piece.color);
             }
         }
         private int LabelPriority(string id)
@@ -158,7 +164,7 @@ namespace ThronesOfMyth
         }
         public void Clear()
         {
-            foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();fogGrid.Reset();
+            foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();fogGrid.Reset();reportGuard.Reset();ClearInteraction();
         }
         private void OnDestroy()
         {

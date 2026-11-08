@@ -10,6 +10,7 @@ namespace ThronesOfMyth
         private Material material;
         private MaterialPropertyBlock tintBlock;
         private int cursor;
+        private float nextAmbient;
         public static bool Enabled { get => PlayerPrefs.GetInt("ThronesOfMyth.combatEffects",1)==1; set => PlayerPrefs.SetInt("ThronesOfMyth.combatEffects",value?1:0); }
         private void Awake()
         {
@@ -23,23 +24,30 @@ namespace ThronesOfMyth
         }
         public static void Emit(string kind,Vector3 point,Color color,bool reducedMotion)
         {
-            if(current==null||!Enabled||reducedMotion||Camera.main==null)return;
+            if(current==null||!Enabled||reducedMotion||PlayerPrefs.GetInt("ThronesOfMyth.reducedMotion",0)==1||Camera.main==null)return;
             var view=Camera.main.WorldToViewportPoint(point);if(view.z<=0||view.x<0||view.x>1||view.y<0||view.y>1)return;
-            int count=kind=="gather"?3:kind=="dust"?2:kind=="skill"?12:7;
+            bool ambient=kind=="gather"||kind=="dust";
+            if(ambient&&Time.unscaledTime<current.nextAmbient)return;
+            if(ambient)current.nextAmbient=Time.unscaledTime+.10f;
+            int count=kind=="mythic"?9:kind=="gather"?3:kind=="dust"?2:kind=="skill"?12:7;
             for(int i=0;i<count;i++)
             {
-                var spark=current.pool[current.cursor++%current.pool.Length];float angle=i*Mathf.PI*2/count;
-                spark.duration=kind=="gather" ? .6f:kind=="dust"?.30f:kind=="skill"?.65f:.26f;spark.life=spark.duration;spark.size=kind=="gather" ? .045f:kind=="dust"?.08f:.06f;
+                Spark spark=null;
+                for(int slot=0;slot<current.pool.Length;slot++){var candidate=current.pool[current.cursor];current.cursor=(current.cursor+1)%current.pool.Length;if(candidate.life<=0){spark=candidate;break;}}
+                if(spark==null){if(ambient)return;spark=current.pool[current.cursor];current.cursor=(current.cursor+1)%current.pool.Length;}
+                float angle=i*Mathf.PI*2/count;
+                spark.duration=kind=="mythic"?.4f:kind=="gather" ? .6f:kind=="dust"?.30f:kind=="skill"?.65f:.26f;spark.life=spark.duration;spark.size=kind=="mythic"?.10f:kind=="gather" ? .045f:kind=="dust"?.08f:.06f;
                 spark.root.position=point+Vector3.up*(kind=="dust"?.07f:.5f);spark.velocity=new Vector3(Mathf.Cos(angle),kind=="skill"?1.6f:.8f,Mathf.Sin(angle))*(kind=="skill"?1.1f:.65f);
                 if(kind=="gather"){spark.root.position=point+Vector3.up*.25f;spark.velocity=new Vector3(Mathf.Cos(angle)*.2f,.65f,Mathf.Sin(angle)*.2f);}
-                spark.root.gameObject.SetActive(true);current.tintBlock.SetColor("_Color",color);spark.renderer.SetPropertyBlock(current.tintBlock);
+                spark.root.localScale=Vector3.one*spark.size;spark.root.gameObject.SetActive(true);current.tintBlock.SetColor("_Color",color);spark.renderer.SetPropertyBlock(current.tintBlock);
             }
         }
         private void Update()
         {
+            bool enabled=Enabled&&PlayerPrefs.GetInt("ThronesOfMyth.reducedMotion",0)==0;
             foreach(var spark in pool)if(spark.life>0)
             {
-                spark.life-=Time.deltaTime;if(spark.life<=0||!Enabled){spark.root.gameObject.SetActive(false);spark.life=0;continue;}
+                spark.life-=Time.deltaTime;if(spark.life<=0||!enabled){spark.root.gameObject.SetActive(false);spark.life=0;continue;}
                 spark.velocity+=Vector3.down*Time.deltaTime*1.5f;spark.root.position+=spark.velocity*Time.deltaTime;spark.root.localScale=Vector3.one*spark.size*Mathf.Clamp01(spark.life/spark.duration);
             }
         }

@@ -72,7 +72,7 @@ namespace ThronesOfMyth
             }
             if (marker != null)
             {
-                selectedId = marker.id; selectedKind = marker.kind; map.selectedId = selectedId;
+                Select(marker.id,marker.kind);
                 if (marker.kind == "army" && Array.Exists(world.armies, a => a.id == marker.id && a.ownerId == playerId)) activeMarchId = marker.id;
                 if (Input.GetMouseButtonDown(1)) ActOnSelection();
             }
@@ -357,7 +357,7 @@ namespace ThronesOfMyth
         {
             GUI.color = color; GUI.DrawTexture(new Rect(area.x + x / 80 * area.width - size / 2f, area.y + (1 - z / 80) * area.height - size / 2f, size, size), Texture2D.whiteTexture); GUI.color = Color.white;
         }
-        private void Select(string id, string kind) { selectedId = id; selectedKind = kind; map.selectedId = id; }
+        private void Select(string id, string kind) { if(selectedId!=id)map.SelectionFeedback(id);selectedId=id;selectedKind=kind;map.selectedId=id; }
         private void ActOnSelection()
         {
             if (selectedKind == "army") { var enemy = Array.Find(world.armies, a => a.id == selectedId); if (enemy != null && enemy.ownerId != playerId) Send("attack-player", selectedId); }
@@ -428,7 +428,7 @@ namespace ThronesOfMyth
                             }
                             else if (lastDrawId == null) lastDrawId = "";
                             if (!worldReady) { loadingStage = "Preparing the kingdom map"; yield return null; }
-                            map.Sync(world, playerId, me.allianceId);
+                            map.Sync(world, playerId, me.allianceId);ObserveSessionFeel();
                             worldReady = true; loadingError = "";RestorePendingOrder();
                             if (!string.IsNullOrEmpty(pendingFormationHero))
                             {
