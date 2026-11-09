@@ -16,7 +16,7 @@ namespace ThronesOfMyth
         private readonly string[] specialties = { "+12% army damage · Minotaur", "+35% recovery · Sphinx Guardian", "+15% health · Frost Giant", "+25% gathering · Qilin Guardian", "+15% march speed · Tengu" };
         private string playerName, token, playerId, allianceName = "Dawnkeepers";
         private string status = "Your kingdom will be saved on this PC.";
-        private bool joining, processing, placeBeacon, focused;
+        private bool joining, processing, placeBeacon, focused,freshGuest;
         private int civilization, selectedBuilding;
         private string activeMarchId, inspectedHeroId = "captain";
         private string lastDrawId;
@@ -35,6 +35,7 @@ namespace ThronesOfMyth
         private void Awake()
         {
             Application.runInBackground = true;
+            var args=Environment.GetCommandLineArgs();for(int i=0;i<args.Length-1;i++)if(args[i]=="--thrones-server"&&Uri.TryCreate(args[i+1],UriKind.Absolute,out var address)&&(address.Scheme=="http"||address.Scheme=="https"))serverUrl=address.AbsoluteUri.TrimEnd('/');
             StartCoroutine(PreloadPresentation());
             InitializeInterface();
             playerName = PlayerPrefs.GetString("ThronesOfMyth.name", "Commander");
@@ -60,7 +61,7 @@ namespace ThronesOfMyth
             if(!cityExperience.AllowsWorldInput(interfacePage==InterfacePage.World,false,GUIUtility.keyboardControl!=0))return;
             if (interfacePage != InterfacePage.World) return;
             if (Input.GetKeyDown(KeyCode.H)) cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);
-            if (Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
+            if (Input.GetKeyDown(KeyCode.Space)) FocusGameplay(ActiveArmy.x,ActiveArmy.z);
             if (Input.GetKeyDown(KeyCode.R)) Send("return");
             if (PointerOverUI() || Camera.main == null) return;
             if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 300)) return;
@@ -100,7 +101,7 @@ namespace ThronesOfMyth
             if (GUILayout.Button("Alliance warfare · rallies and garrisons")) OpenInterface(InterfacePage.Warfare);
             GUILayout.Label("Selected march", sectionStyle);
             GUILayout.Label($"{ActiveArmy.troops} mortal troops · {ActiveArmy.mythic} mythic units\nDamage {ActiveArmy.damage:F1} · March {ActiveArmy.speed:F1}\nRage {ActiveArmy.rage}/1000 · Shield {ActiveArmy.shield}\nLast skill: {ActiveArmy.lastSkill}", noteStyle);
-            if (GUILayout.Button("Focus army [Space]")) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
+            if (GUILayout.Button("Focus army [Space]")) FocusGameplay(ActiveArmy.x,ActiveArmy.z);
             if (GUILayout.Button("Return & recover [R]")) Send("return");
             if (GUILayout.Button("Stop current order")) Send("stop");
             GUILayout.Label($"City reserves: {me.reserveTroops} troops · {me.reserveMythic} mythic", noteStyle);
@@ -114,7 +115,7 @@ namespace ThronesOfMyth
             DrawDeployment();
             GUILayout.Space(8); GUILayout.Label("Nearby threats", sectionStyle);
             foreach (var camp in world.camps)
-                if (GUILayout.Button($"Lv {camp.level} · {camp.name}")) { Select(camp.id, "camp"); interfacePage = InterfacePage.World; cameraControl?.Focus(camp.x, camp.z); }
+                if (GUILayout.Button($"Lv {camp.level} · {camp.name}")) { Select(camp.id, "camp"); interfacePage = InterfacePage.World; FocusGameplay(camp.x,camp.z); }
             GUILayout.Label("Inspect a camp before attacking. High-level camps may require stronger armies or help from another player.", noteStyle);
         }
         private bool CanEditArmy => me != null && !ActiveArmy.deployed && Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(me.homeX, me.homeZ)) < 2 && !ActiveArmy.hasOrder && ActiveArmy.recovery <= 0;
@@ -178,7 +179,7 @@ namespace ThronesOfMyth
             if (!CanEditArmy) GUILayout.Label("Keep working here while your army is away. Return only to reinforce, change commander, or recover.", noteStyle);
             GUILayout.Space(10); GUILayout.Label("Resource sites", sectionStyle);
             foreach (var node in world.nodes)
-                if (GUILayout.Button(node.name + " · " + node.remaining)) { Select(node.id, "node"); interfacePage = InterfacePage.World; cameraControl?.Focus(node.x, node.z); }
+                if (GUILayout.Button(node.name + " · " + node.remaining)) { Select(node.id, "node"); interfacePage = InterfacePage.World; FocusGameplay(node.x,node.z); }
         }
         private void DrawJob(QueueJob job, string label, bool waiting)
         {
@@ -296,7 +297,7 @@ namespace ThronesOfMyth
             GUILayout.Label("Bring territory within 12 units of a site, then send your army to capture it. Uncontested occupation takes 15 seconds.", noteStyle);
             foreach (var site in world.sites)
             {
-                if (GUILayout.Button(site.name + (site.allianceId == me.allianceId ? " ✓" : ""))) { Select(site.id, "site"); cameraControl?.Focus(site.x, site.z); }
+                if (GUILayout.Button(site.name + (site.allianceId == me.allianceId ? " ✓" : ""))) { Select(site.id, "site"); FocusGameplay(site.x,site.z); }
             }
             if (BuildingLevel("oathhall") > 0)
             {
@@ -342,6 +343,8 @@ namespace ThronesOfMyth
         }
         private void DrawHeroSkills(CommanderData hero, HeroProgress progress)
         {
+            if(heroDetailTab==1)
+            {
             GUILayout.Label($"Level {progress.heroLevel}/{progress.stars * 10} · {progress.stars} stars · XP {progress.xp:F0}", sectionStyle);
             var experience = GUILayoutUtility.GetRect(80, 9, GUILayout.ExpandWidth(true));
             theme.Bar(experience, progress.heroLevel >= progress.stars * 10 ? 1 : progress.xp % 100 / 100f, MythInterfaceTheme.Teal);
@@ -351,6 +354,8 @@ namespace ThronesOfMyth
             GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.mana >= progress.stars * 10 && !processing;
             if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana")) Send("promote-commander", hero.id);
             GUI.enabled = true;
+                return;
+            }
             foreach (var skill in progress.skills)
             {
                 GUILayout.Space(10); GUILayout.BeginVertical(GUI.skin.box);
@@ -414,6 +419,7 @@ namespace ThronesOfMyth
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     var session = JsonUtility.FromJson<JoinResponse>(request.downloadHandler.text);
+                    freshGuest=string.IsNullOrEmpty(body.resumeToken);
                     token = session.token; playerId = session.playerId; activeMarchId = playerId; focused = false; lastSnapshotAt = Time.unscaledTime; interfacePage = InterfacePage.World;
                     PlayerPrefs.SetString(SessionKey, token); PlayerPrefs.SetString("ThronesOfMyth.name", playerName); PlayerPrefs.Save();
                     status = "Connected. Right-click ground to march; left-click objects to inspect.";
@@ -453,9 +459,15 @@ namespace ThronesOfMyth
                             if (!string.IsNullOrEmpty(pendingFormationHero))
                             {
                                 var assembled = OwnMarches().Find(a => a.commanderId == pendingFormationHero);
-                                if (assembled != null) { activeMarchId = assembled.id; Select(assembled.id, "army"); cameraControl?.Focus(assembled.x, assembled.z); pendingFormationHero = null; }
+                                if (assembled != null) { activeMarchId = assembled.id; Select(assembled.id, "army"); FocusGameplay(assembled.x,assembled.z); pendingFormationHero = null; }
                             }
-                            if (!focused) { cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10); focused = true; }
+                            if (!focused)
+                            {
+                                cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);focused=true;
+                                string introKey="ThronesOfMyth.intro."+serverUrl.TrimEnd('/')+"."+playerId;
+                                if(openingEnabled&&freshGuest&&me.cityLevel==1&&me.kills==0&&PlayerPrefs.GetInt(introKey,0)==0){BeginCity();PlayerPrefs.SetInt(introKey,1);PlayerPrefs.Save();}
+                                freshGuest=false;
+                            }
                         }
                         else { loadingError = "Your city was not present in the kingdom snapshot. Return to entry and reconnect."; status = loadingError; worldReady = false; token = null; }
                     }

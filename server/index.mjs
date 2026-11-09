@@ -3,7 +3,9 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 
 const localPlaytest = process.argv.includes('--local-playtest');
-const port = localPlaytest ? 8080 : Number(process.env.PORT ?? 8080);
+const localPort = process.argv.find(a=>a.startsWith('--local-port='))?.slice(13) ?? '8080';
+const port = localPlaytest ? Number(localPort) : Number(process.env.PORT ?? 8080);
+if(!Number.isInteger(port)||port<(localPlaytest?1:0)||port>65535)throw new Error('Invalid listening port.');
 const host = localPlaytest ? '127.0.0.1' : process.env.HOST ?? '127.0.0.1';
 const savePath = process.env.THRONES_SAVE_PATH ?? join(process.env.LOCALAPPDATA ?? join(homedir(), '.local', 'share'), 'ThronesOfMyth', 'Saves', 'world.json');
 const databasePath = !localPlaytest ? process.env.THRONES_DB_PATH : null;

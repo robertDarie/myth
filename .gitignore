@@ -41,3 +41,7 @@ ops/kingdom/backups/
 # Portable presentation-contract build outputs
 tests/PresentationContracts/bin/
 tests/PresentationContracts/obj/
+
+# Generated and restored by native playtest builders
+client/Assets/ThronesOfMyth/Resources/BuildIdentity.json
+client/Assets/ThronesOfMyth/Resources/BuildIdentity.json.meta

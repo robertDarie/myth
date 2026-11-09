@@ -16,7 +16,8 @@ namespace ThronesOfMyth
         public GUIStyle Title, Heading, Body, Small, Eyebrow, Number, Center, Primary, Danger, Tab, Card;
         private GUIStyle panel, inset, selected, compactPrimary,noticeText;
         private float appliedScale=-1;
-        private GUIStyle navigationText;
+        private GUIStyle navigationText,wrappedTabs;
+        private readonly Dictionary<GUIStyle,GUIStyle> wrappingButtons=new Dictionary<GUIStyle,GUIStyle>();
         public string TooltipCandidate {get;private set;}="";
         public void BeginTooltips(){TooltipCandidate="";}
         public void Hint(Rect rect,string hint){if(!string.IsNullOrEmpty(hint)&&rect.Contains(Event.current.mousePosition))TooltipCandidate=hint;}
@@ -52,7 +53,7 @@ namespace ThronesOfMyth
             var normal = Rounded(new Color(0.12f, 0.23f, 0.29f), new Color(0.3f, 0.37f, 0.36f));
             var hover = Rounded(new Color(0.15f, 0.25f, 0.27f), Gold);
             var active = Rounded(new Color(0.27f, 0.29f, 0.21f), Gold);
-            Skin.button = new GUIStyle(original.button) { fontSize = 15, fixedHeight = 0, padding = new RectOffset(12, 12, 9, 9), margin = new RectOffset(2, 2, 4, 4), border = new RectOffset(10, 10, 10, 10), wordWrap = false };
+            Skin.button = new GUIStyle(original.button) { fontSize = 15, fixedHeight = 0, padding = new RectOffset(12, 12, 9, 9), margin = new RectOffset(2, 2, 4, 4), border = new RectOffset(10, 10, 10, 10), wordWrap = true };
             Set(Skin.button.normal, normal, Cream); Set(Skin.button.hover, hover, Color.white); Set(Skin.button.active, active, Color.white);
             Set(Skin.button.onNormal, active, Cream); Set(Skin.button.onHover, hover, Color.white); Set(Skin.button.onActive, active, Cream);
             Skin.label = new GUIStyle(original.label) { fontSize = 15, wordWrap = true, padding = new RectOffset(0, 0, 3, 3) };
@@ -185,11 +186,23 @@ namespace ThronesOfMyth
             bool wasEnabled=GUI.enabled;GUI.enabled=wasEnabled&&enabled;
             var style=primary?(rect.height<=36?compactPrimary:Primary):(rect.height<=36?Tab:Skin.button);
             measureStyle=style;string shown=TextElision.Fit(text,rect.width,measureWidth);
+            if(shown!=text&&rect.height>=40)
+            {
+                if(!wrappingButtons.TryGetValue(style,out var wrap)){wrap=new GUIStyle(style){wordWrap=true,padding=new RectOffset(8,8,3,3)};wrappingButtons[style]=wrap;}
+                wrap.fontSize=style.fontSize;if(wrap.CalcHeight(new GUIContent(text),rect.width)<=rect.height){style=wrap;shown=text;}
+            }
             string tip=!enabled&&!string.IsNullOrEmpty(disabledReason)?disabledReason:shown!=text?text:"";
             Hint(rect,tip);bool result=GUI.Button(rect,new GUIContent(shown,tip),style);GUI.enabled=wasEnabled;
             if(!enabled&&!string.IsNullOrEmpty(tip))GUI.Label(rect,new GUIContent("",tip),GUIStyle.none);
             return result;
         }
+        public int Tabs(int selected,string[] titles,float width)
+        {
+            int columns=InterfaceLayout.TabColumns(width,titles.Length);if(wrappedTabs==null)wrappedTabs=new GUIStyle(Tab){wordWrap=true};wrappedTabs.fontSize=Tab.fontSize;var style=wrappedTabs;
+            return GUILayout.SelectionGrid(selected,titles,columns,style,GUILayout.MinHeight(Mathf.CeilToInt(titles.Length/(float)columns)*36));
+        }
+        public void Section(string title,string subtitle="")
+        {GUILayout.Space(8);GUILayout.Label(title,Heading);if(!string.IsNullOrEmpty(subtitle))GUILayout.Label(subtitle,Small);GUILayout.Space(5);}
         public bool Action(string title,bool available,string reason,bool primary=true)
         {
             bool before=GUI.enabled;GUI.enabled=before&&available;

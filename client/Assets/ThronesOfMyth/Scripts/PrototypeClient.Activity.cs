@@ -25,7 +25,7 @@ namespace ThronesOfMyth
             GUILayout.Label("Day " + daily.period + " · Resets at 00:00 UTC in " + ActivityResetText(daily.resetSeconds), noteStyle);
             GUILayout.Label(daily.points + " activity points · Final chest at " + daily.maxChestPoints, sectionStyle);
             theme.Bar(GUILayoutUtility.GetRect(80, 10, GUILayout.ExpandWidth(true)), (float)daily.points / daily.maxChestPoints, MythInterfaceTheme.Gold);
-            GUILayout.Label("Choose your activities. Completing a task makes it claimable; claiming adds its points. Chests have fixed rewards and do not spend your points. You do not need every task or alliance play to reach 100.", noteStyle);
+            GUILayout.Label("Complete tasks, claim their points, then open unlocked chests. Points are not spent; solo activities can reach the final chest.", noteStyle);
             GUILayout.BeginHorizontal();
             foreach (var chest in daily.chests)
             {

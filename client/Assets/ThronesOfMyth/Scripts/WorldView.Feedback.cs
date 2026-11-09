@@ -16,8 +16,10 @@ namespace ThronesOfMyth
             }
             if(owner.reports!=null)foreach(var report in owner.reports)
             {
+                if(report.type=="pve")
+                {if(reportGuard.Observe("pve:"+report.id))RecordEncounter(report.title,OutcomeSummary.Credited(report.resources));continue;}
                 if(report.type!="gathering"||!reportGuard.Observe("cargo:"+report.id))continue;
-                RecordEncounter(report.title,report.outcome=="Delivered"?"Cargo delivered to your city. Open Reports for quantities and source deposits.":"Carried resources were lost in defeat. Open Reports for the loss record.");
+                RecordEncounter(report.title,report.outcome=="Delivered"?OutcomeSummary.Credited(report.resources)+" · Open Reports for source deposits.":"Carried resources were lost in defeat. Open Reports for the loss record.");
             }
             if(owner.groupReports==null)return;
             foreach(var report in owner.groupReports)

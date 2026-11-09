@@ -6,7 +6,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private int inspectedTechnology;
+        private int inspectedTechnology,heroDetailTab;
         private CityDiorama cityDiorama;
         private readonly CityProgressFeedback cityProgress=new CityProgressFeedback();
         private bool cityModelView = true;
@@ -70,7 +70,7 @@ namespace ThronesOfMyth
             theme.Panel(roster, false, true); theme.Panel(detail, false, true);
             heroSearch = GUI.TextField(new Rect(roster.x + 14, roster.y + 14, roster.width - 28, 38), heroSearch, 32);
             if (string.IsNullOrEmpty(heroSearch)) theme.Text(new Rect(roster.x + 27, roster.y + 22, roster.width - 52, 24), "Search commanders…", theme.Small);
-            string[] filters = { "ALL", "COMMON", "RARE", "EPIC", "LEGEND" };
+            string[] filters = { "All", "Green", "Blue", "Epic", "Gold" };
             for (int i = 0; i < filters.Length; i++)
                 if (GUI.Toggle(new Rect(roster.x + 12 + i * 64, roster.y + 62, 60, 30), heroFilter == i, filters[i], theme.Tab) && heroFilter != i) { heroFilter = i; rosterScroll = Vector2.zero; }
             onlyOwnedHeroes = GUI.Toggle(new Rect(roster.x + 15, roster.y + 103, 300, 27), onlyOwnedHeroes, "Recruited commanders only");
@@ -106,7 +106,7 @@ namespace ThronesOfMyth
                 commanderPreview.Draw(portrait, selected, theme, reducedMotion);
             }
             else theme.PortraitCard(portrait, selected.id, RarityColor(selected.color));
-            if (theme.Button(new Rect(detail.x + 24, detail.y + 237, 156, 27), showCommanderModel ? "Painted portrait" : "Animation preview")) showCommanderModel = !showCommanderModel;
+            if (theme.Button(new Rect(detail.x + 24, detail.y + 237, 156, 27), showCommanderModel ? "Painted portrait" : "Pose preview")) showCommanderModel = !showCommanderModel;
             theme.Text(new Rect(detail.x + 205, detail.y + 20, detail.width - 229, 22), selected.rarity.ToUpperInvariant() + " COMMANDER", theme.Eyebrow);
             theme.Text(new Rect(detail.x + 205, detail.y + 50, detail.width - 229, 42), selected.name, theme.Title);
             theme.Text(new Rect(detail.x + 205, detail.y + 98, detail.width - 229, 54), selected.description, theme.Body);
@@ -128,11 +128,12 @@ namespace ThronesOfMyth
             contentScroll = GUILayout.BeginScrollView(contentScroll);
             if (recruited && progress != null)
             {
+                heroDetailTab=theme.Tabs(heroDetailTab,new[]{"Skills","Development"},detail.width-48);
                 DrawHeroSkills(selected, progress);
-                GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
+                if(heroDetailTab==1){GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
                 GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.", theme.Small);
                 string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";
-                if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);
+                if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);}
             }
             else
             {
@@ -231,6 +232,7 @@ namespace ThronesOfMyth
             inspectedTechnology = Mathf.Clamp(inspectedTechnology, 0, me.researchOptions.Length - 1); var selected = me.researchOptions[inspectedTechnology];
             GUILayout.BeginArea(new Rect(detail.x + 20, detail.y + 16, detail.width - 40, detail.height - 32));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
+            if(HasJob(me.research)){theme.Section("Research in progress");DrawJob(me.research,JobName(me.research),false);}
             GUILayout.Label(selected.branch.ToUpperInvariant(), theme.Eyebrow); GUILayout.Label(selected.name, theme.Title);
             GUILayout.Label("Rank " + selected.level + " / " + selected.maxLevel, theme.Heading); GUILayout.Space(12);
             GUILayout.Label(selected.description, theme.Body); GUILayout.Space(16);
@@ -240,7 +242,7 @@ namespace ThronesOfMyth
                 string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":selected.lockedReason;
                 if(theme.Action("Research rank "+(selected.level+1),selected.canResearch&&!processing&&pendingOrder==null,reason))Send("research",selected.id);
             }
-            if (HasJob(me.research)) { GUILayout.Space(18); DrawJob(me.research, JobName(me.research), false); }
+
             GUILayout.Label("Research continues independently of city construction and troop training.", theme.Small);
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }
@@ -266,12 +268,14 @@ namespace ThronesOfMyth
                 GUILayout.Label("Check your city and queues before clearing the unreadable last-order record. Clearing it cannot undo an accepted order.",theme.Small);
                 if(GUILayout.Button("I checked my city · clear unreadable record",GUILayout.Height(36)))ClearPendingOrder(pendingOrder);
             }
+            if(!accountRegistered&&theme.Action("Return to guest profile selection",!processing&&!accountBusy&&pendingOrder==null&&commands.Count==0,"Finish pending orders or account requests before switching profiles."))
+            {ReturnToAccountEntry("Guest cities and their saved sessions stay on this device.");accountEntryOpen=false;}
             if(GUILayout.Button("Account and recovery",GUILayout.Height(36)))OpenAccount();
             if(GUILayout.Button("Kingdom power rankings",GUILayout.Height(36)))OpenInterface(InterfacePage.Rankings);
             GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
             openingEnabled=GUILayout.Toggle(openingEnabled,"Show optional first-session guidance");PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",openingEnabled?1:0);
             GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
-            GUILayout.Space(18); GUILayout.Label("Connected to " + serverUrl, theme.Small);
+            GUILayout.Space(18); GUILayout.Label("Build "+ReleaseIdentity.Label,theme.Small);GUILayout.Label("Connected to " + serverUrl, theme.Small);
             GUILayout.Label(world.persistence != null && world.persistence.enabled ? world.persistence.backend=="sqlite"?"SQLite kingdom · progress saves on the server; downtime job recovery is enabled.":"Local JSON kingdom · progress saves on this PC." : "This server is not saving world progress.", theme.Small);
             if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; openingEnabled=true;PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",1); PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
             GUILayout.EndScrollView(); GUILayout.EndArea();

@@ -23,34 +23,34 @@ namespace ThronesOfMyth
             switch (task.guide)
             {
                 case "city": selectedBuilding = Mathf.Max(0, Array.FindIndex(me.cityBuildings, b => b.id == task.targetId)); GuidePage(InterfacePage.City); break;
-                case "training": GuidePage(InterfacePage.Training); break;
+                case "training": trainingTier=0;GuidePage(InterfacePage.Training); break;
                 case "temple": GuidePage(InterfacePage.Temple); break;
                 case "exploration": GuidePage(InterfacePage.Exploration); break;
                 case "research":
                     if (BuildingLevel("academy") < 1) { selectedBuilding = Mathf.Max(0, Array.FindIndex(me.cityBuildings, b => b.id == "academy")); GuidePage(InterfacePage.City); }
                     else { GuidePage(InterfacePage.Research); inspectedTechnology = Mathf.Max(0, Array.FindIndex(me.researchOptions, t => t.id == task.targetId)); rosterScroll.y = task.targetId == "drill" ? 360 : 240; }
                     break;
-                case "heroes": GuidePage(InterfacePage.Heroes); inspectedHeroId = ActiveArmy.commanderId; break;
+                case "heroes": GuidePage(InterfacePage.Heroes); inspectedHeroId = string.IsNullOrEmpty(task.targetId)?ActiveArmy.commanderId:task.targetId; break;
                 case "marches": GuidePage(InterfacePage.Marches); break;
                 case "alliance": GuidePage(InterfacePage.Alliance); break;
                 case "warfare": GuidePage(InterfacePage.Warfare); break;
                 case "territory":
                     var shrine = Array.Find(world.sites, s => s.kind == "shrine" && s.x <= 40 && s.z <= 40);
-                    if (shrine != null) { interfacePage = InterfacePage.World; Select(shrine.id, "site"); cameraControl?.Focus(shrine.x, shrine.z); }
+                    if (shrine != null) { interfacePage = InterfacePage.World; Select(shrine.id, "site"); FocusGameplay(shrine.x,shrine.z); }
                     break;
                 case "gather":
                     NodeData node = null; float closest = float.MaxValue;
                     foreach (var n in world.nodes) if (n.resource == task.targetId && n.remaining > 0)
                     { float d = Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(n.x, n.z)); if (d < closest) { closest = d; node = n; } }
-                    if (node != null) { interfacePage = InterfacePage.World; Select(node.id, "node"); cameraControl?.Focus(node.x, node.z); }
+                    if (node != null) { interfacePage = InterfacePage.World; Select(node.id, "node"); FocusGameplay(node.x,node.z); }
                     else { GuidePage(InterfacePage.Exploration); status = "Scout nearby land to reveal a " + task.targetId + " gathering site."; }
                     break;
-                case "patrol": interfacePage = InterfacePage.World; cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z); status = "Right-click accessible ground to march. Scout travel and forced retreats do not count as army patrol distance."; break;
+                case "patrol": interfacePage = InterfacePage.World; FocusGameplay(ActiveArmy.x,ActiveArmy.z); status = "Right-click accessible ground to march. Scout travel and forced retreats do not count as army patrol distance."; break;
                 case "combat":
                     CampData camp = null; float distance = float.MaxValue;
                     foreach (var c in world.camps) if (c.health > 0 && c.x <= 40 && c.z <= 40 && (task.targetId!="opening-level-one"||c.level==1))
                     { float d = c.level * 100 + Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(c.x, c.z)); if (d < distance) { distance = d; camp = c; } }
-                    if (camp != null) { interfacePage = InterfacePage.World; Select(camp.id, "camp"); cameraControl?.Focus(camp.x, camp.z); }
+                    if (camp != null) { interfacePage = InterfacePage.World; Select(camp.id, "camp"); FocusGameplay(camp.x,camp.z); }
                     else { GuidePage(InterfacePage.Exploration); status = "Send a scout toward the frontier to reveal a Forsaken camp."; }
                     break;
             }
@@ -63,9 +63,9 @@ namespace ThronesOfMyth
             GUILayout.Label("CHRONICLES OF THE FALLEN GODS", theme.Eyebrow);
             GUILayout.Label(campaign.complete ? "Opening campaign complete" : "Your path through the fallen world", theme.Heading);
             GUILayout.Label("Tasks track your actions even before their chapter unlocks. Claim each objective, then its chapter reward. City work continues while armies and scouts are away.", noteStyle);
-            foreach (var c in campaign.chapters)
-                if (GUILayout.Toggle(selectedChapterId == c.id, c.title + (c.claimed ? " · COMPLETE" : c.locked ? " · LOCKED" : " · CURRENT"), theme.Tab)) selectedChapterId = c.id;
-            var chapter = Array.Find(campaign.chapters, c => c.id == selectedChapterId) ?? CurrentChapter ?? campaign.chapters[campaign.chapters.Length - 1];
+            var chapterTitles=new string[campaign.chapters.Length];int selectedIndex=0;
+            for(int i=0;i<chapterTitles.Length;i++){var c=campaign.chapters[i];chapterTitles[i]=c.title+(c.claimed?" · Complete":c.locked?" · Locked":"");if(c.id==selectedChapterId)selectedIndex=i;}
+            selectedIndex=theme.Tabs(selectedIndex,chapterTitles,WindowRect.width-280);selectedChapterId=campaign.chapters[selectedIndex].id;
             GUILayout.Space(12); GUILayout.Label(chapter.title, sectionStyle); GUILayout.Label(chapter.story, noteStyle);
             if (chapter.locked) GUILayout.Label("Finish and claim earlier chapters to unlock these rewards. Progress made early is remembered.", theme.Small);
             foreach (var task in chapter.tasks)

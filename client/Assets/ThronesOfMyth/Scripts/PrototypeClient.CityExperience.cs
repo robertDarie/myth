@@ -80,6 +80,7 @@ namespace ThronesOfMyth
             if(theme.Button(new Rect(ViewWidth-CitySideWidth-18,106,CitySideWidth,32),"Return to kingdom [C / Esc]",true)){ExitCity();return;}
             var detail=new Rect(ViewWidth-CitySideWidth-18,154,CitySideWidth,ViewHeight-292);theme.Panel(detail,false,true);
             GUILayout.BeginArea(new Rect(detail.x+14,detail.y+12,detail.width-28,detail.height-24));contentScroll=GUILayout.BeginScrollView(contentScroll);
+            var cue=Opening;if(cue!=null){GUILayout.Label("FIRST STEPS · "+cue.Number+" / 8",theme.Eyebrow);GUILayout.Label(cue.Title,theme.Heading);GUILayout.Label(cue.Hint,theme.Small);if(theme.Action("Show next step",!processing,"Sending your order…"))GuideOpening(cue);GUILayout.Space(12);}
             selectedBuilding=Mathf.Clamp(selectedBuilding,0,me.cityBuildings.Length-1);var selected=me.cityBuildings[selectedBuilding];
             GUILayout.Label(selected.category.ToUpperInvariant(),theme.Eyebrow);GUILayout.Label(selected.name,theme.Heading);GUILayout.Label("Level "+selected.level+" / "+selected.maxLevel,theme.Small);
             GUILayout.Label(selected.description,theme.Body);

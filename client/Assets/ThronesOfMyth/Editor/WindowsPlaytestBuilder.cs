@@ -58,7 +58,7 @@ namespace ThronesOfMyth.Editor
             if (!File.Exists(ScenePath)) throw new BuildFailedException("Prototype scene could not be created.");
             PlayerSettings.companyName = "ThronesOfMyth";
             PlayerSettings.productName = "Thrones of Myth";
-            PlayerSettings.bundleVersion = "0.33.0";
+            PlayerSettings.bundleVersion = ReleaseVersion.Current;
             PlayerSettings.defaultScreenWidth = 1280;
             PlayerSettings.defaultScreenHeight = 800;
             PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
@@ -68,6 +68,7 @@ namespace ThronesOfMyth.Editor
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
             AssetDatabase.SaveAssets();
 
+            using var identity=new PlaytestIdentity(repository,"windows-x86_64");
             string dist = Path.Combine(repository, "dist");
             string package = Path.Combine(dist, "Windows");
             // Rebuild only our generated output folder, never project sources.
@@ -94,6 +95,7 @@ namespace ThronesOfMyth.Editor
                 File.Copy(Path.Combine(repository, "server", file), Path.Combine(server, file), true);
             foreach (string file in new[] { "Launcher.ps1", "Start Thrones of Myth.cmd", "README.txt" })
                 File.Copy(Path.Combine(packaging, file), Path.Combine(package, file), true);
+            identity.WriteManifest(package);
             string zip = Path.Combine(dist, "Thrones-of-Myth-Windows.zip");
             if (File.Exists(zip)) File.Delete(zip);
             ZipFile.CreateFromDirectory(package, zip, System.IO.Compression.CompressionLevel.Optimal, false);

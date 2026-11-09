@@ -4,8 +4,13 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.33
+## Playable slice 0.34
 
+- UI and first session: AP gauge, readable march rail, inventory/report layouts,
+  Skills/Development, campaign tabs, minimap exploration and optional city/Captain
+  introduction. [Batch delivery](docs/visual-batch-0.32-0.34.md) ·
+  [Build and record the Linux playtest](docs/playtest-linux-0.34.md).
+  **No Linux Unity binary or native visual/FPS pass was produced in the cloud.**
 - Combat spectacle: shared bounded commander effect styles, coordinated attack
   envelopes, shield/readable loss traces and original skill audio.
   [Implementation and verification](docs/combat-release-0.33.md).

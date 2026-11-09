@@ -6,6 +6,8 @@ namespace ThronesOfMyth
     {
         private Mesh fogMesh;
         private Material fogMaterial;
+        public Texture2D MinimapTerrain {get;private set;}
+        private readonly Color[] minimapColors=new Color[400];
         private GameObject fogObject;
         private readonly FogVisibilityGrid fogGrid=new FogVisibilityGrid();
         private Color[] fogColors;
@@ -37,6 +39,9 @@ namespace ThronesOfMyth
             }
             fogMaterial.SetFloat("_Drift",reducedMotion?0:1);
             if(!fogGrid.Update(data))return;
+            if(MinimapTerrain==null)MinimapTerrain=new Texture2D(20,20,TextureFormat.RGB24,false){name="Surveyed kingdom minimap",filterMode=FilterMode.Point};
+            for(int i=0;i<400;i++){float opacity=FogOpacity(i%20,i/20);minimapColors[i]=opacity<.25f?new Color(.29f,.43f,.31f):opacity<.75f?new Color(.24f,.29f,.29f):new Color(.07f,.12f,.17f);}
+            MinimapTerrain.SetPixels(minimapColors);MinimapTerrain.Apply(false,false);
             for (int z = 0; z <= FogSteps; z++) for (int x = 0; x <= FogSteps; x++)
             {
                 // Interpolate the presentation only. Server discovery and entity filtering
@@ -55,6 +60,7 @@ namespace ThronesOfMyth
         private void DisposeFog()
         {
             if (fogObject != null) Destroy(fogObject); if (fogMesh != null) Destroy(fogMesh); if (fogMaterial != null) Destroy(fogMaterial);
+            if(MinimapTerrain!=null)Destroy(MinimapTerrain);MinimapTerrain=null;
             fogGrid.Reset();fogColors=null;fogCloud=null;
         }
     }

@@ -32,7 +32,7 @@ namespace ThronesOfMyth
             if(bounds==value)return;
             bounds=value;ConstrainNow(false);
         }
-        public void Focus(float x,float z){SetView(new Vector3(x,0,z),wantedZoom,false);}
+        public void Focus(float x,float z){SetView(new Vector3(x,0,z),Mathf.Min(wantedZoom,12),false);}
         public void SetView(Vector3 point,float zoom,bool immediate=false)
         {
             Initialize();wantedFocus=point;wantedZoom=zoom;ConstrainNow(immediate);
