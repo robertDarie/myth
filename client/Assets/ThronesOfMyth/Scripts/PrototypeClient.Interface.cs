@@ -152,6 +152,7 @@ namespace ThronesOfMyth
                 default: return "Your orders have been received.";
             }
         }
+        private readonly MarchJourneyCache marchStatus=new MarchJourneyCache();
         private void RenderStrategyInterface()
         {
             if (theme == null)
@@ -161,7 +162,7 @@ namespace ThronesOfMyth
             }
             var skinBefore = GUI.skin; var matrixBefore = GUI.matrix; var colorBefore = GUI.color;
             GUI.skin = theme.Skin;
-            theme.BeginTooltips();theme.ReducedMotion = reducedMotion;theme.ApplyScale(InterfaceScale);
+            marchStatus.Begin(world);theme.BeginTooltips();theme.ReducedMotion = reducedMotion;theme.ApplyScale(InterfaceScale);
             cityDiorama?.SetVisible(cityExperience.BlocksWorld && !LoadingActive && me!=null,cityExperience.Blend);
             commanderPreview?.SetVisible(interfacePage == InterfacePage.Heroes && !LoadingActive && showCommanderModel);
             if (map != null) map.reducedMotion = reducedMotion;
@@ -308,7 +309,7 @@ namespace ThronesOfMyth
                     theme.OneLine(new Rect(x+50,r.y+26,156,17),(army.deployed?ArmyPresentationState.Label(army):"Home formation"),theme.Small);
                     theme.Bar(new Rect(x+50,r.yMax-13,156,4),(float)army.health/Mathf.Max(1,army.maxHealth),MythInterfaceTheme.Teal);
                     theme.Bar(new Rect(x+50,r.yMax-5,156,2),army.rage/1000f,MythInterfaceTheme.Gold);
-                    theme.Hint(r,MarchJourney.Status(army)+"\nHP "+army.health+" / "+army.maxHealth);if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;if(!army.deployed)BeginFormation(true);else{Select(army.id,"army");FocusGameplay(army.x,army.z);}}
+                    theme.Hint(r,marchStatus.Status(army)+"\nHP "+army.health+" / "+army.maxHealth);if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;if(!army.deployed)BeginFormation(true);else{Select(army.id,"army");FocusGameplay(army.x,army.z);}}
                 }
                 else
                 {

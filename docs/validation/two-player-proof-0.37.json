@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "steps": [
+    "Real fresh-player patrol, remembered camp, signature cast, victory and report",
+    "Real alliance, live roster, officer role, private chat/marker, exactly-once taxed delivery and one-time help",
+    "Completed root fort, real second-player garrison, authoritative recall",
+    "Two real march rally assembly and leader recall; no forced stronghold outcome",
+    "Persisted partial cargo, guest reconnect, alliance roles and real delivery after SQLite restart"
+  ],
+  "players": 2,
+  "privacyObserver": 1,
+  "storage": "real SQLite",
+  "transport": "real HTTP",
+  "time": "accelerated production simulation ticks",
+  "nativeUnity": "NOT RUN"
+}

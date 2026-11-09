@@ -110,19 +110,20 @@ namespace ThronesOfMyth
         {
             bool leader = me.allianceRole == "Leader", officer = leader || me.allianceRole == "Officer";
             GUILayout.Label("Members and command", sectionStyle);
-            foreach (var member in world.players)
+            foreach (var member in world.allianceRoster??Array.Empty<AllianceMemberCard>())
             {
-                if (member.allianceId != me.allianceId) continue;
-                GUILayout.BeginVertical(GUI.skin.box); GUILayout.Label(member.name + " · " + member.allianceRole, new GUIStyle(noteStyle) { richText = false });
+                GUILayout.BeginVertical(GUI.skin.box); GUILayout.Label(member.name + " · " + member.role, new GUIStyle(noteStyle) { richText = false });
                 if (member.id != playerId)
                 {
+                    if(theme.Button(GUILayoutUtility.GetRect(80,32),"Send resources",false,!processing)){tradeMember=Mathf.Max(0,Array.FindIndex(me.economy.members,m=>m.id==member.id));OpenInterface(InterfacePage.Market);}
+                    foreach(var job in member.jobs??Array.Empty<AllianceJobCard>())if(theme.Action("Help "+job.type+" · "+InterfaceLayout.Duration(job.remaining),job.canHelp&&!processing,job.canHelp?"Sending your order…":"Build both Oathbound Halls, or this job has already received your help."))Send("alliance-help",job.id);
                     GUI.enabled = !processing;
                     if (leader)
                     {
-                        if (GUILayout.Button(member.allianceRole == "Officer" ? "Demote to member" : "Promote to officer")) Send(member.allianceRole == "Officer" ? "alliance-demote" : "alliance-promote", member.id);
+                        if (GUILayout.Button(member.role == "Officer" ? "Demote to member" : "Promote to officer")) Send(member.role == "Officer" ? "alliance-demote" : "alliance-promote", member.id);
                         AllianceAction("transfer leadership", "alliance-transfer", member.id);
                     }
-                    if (officer && member.allianceRole != "Leader" && (leader || member.allianceRole == "Member")) AllianceAction("remove member", "alliance-kick", member.id);
+                    if (officer && member.role != "Leader" && (leader || member.role == "Member")) AllianceAction("remove member", "alliance-kick", member.id);
                     GUI.enabled = true;
                 }
                 GUILayout.EndVertical();

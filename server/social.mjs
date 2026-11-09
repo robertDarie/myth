@@ -56,3 +56,9 @@ export function validateSocial(w) {
   for(const m of w.markers)if(!m||typeof m.id!=='string'||typeof m.name!=='string'||m.name.length>40||!w.alliances.has(m.allianceId)||!w.players.has(m.authorId)||![m.x,m.z].every(v=>Number.isFinite(v)&&v>=1&&v<=79)||!Number.isFinite(m.expires))throw new Error('Invalid saved marker.');
   for(const a of w.alliances.values())if(!Array.isArray(a.officers)||new Set(a.officers).size!==a.officers.length||a.officers.some(id=>id===a.leaderId||w.players.get(id)?.allianceId!==a.id)||w.players.get(a.leaderId)?.allianceId!==a.id)throw new Error('Invalid saved alliance roles.');
 }
+
+// Alliance membership/assistance is live social data, separate from frozen city intelligence.
+export function allianceRoster(w,p){
+ if(!p?.allianceId)return [];
+ return [...w.players.values()].filter(q=>q.allianceId===p.allianceId).map(q=>({id:q.id,name:q.name,role:allianceRole(w,q),jobs:[q.construction,q.secondConstruction,q.research].filter(j=>j&&j.id&&q.buildings.oathhall).map(j=>({id:j.id,type:j.type,remaining:j.remaining,duration:j.duration,canHelp:q.id!==p.id&&p.buildings.oathhall>0&&!(j.helpedBy??[]).includes(p.id)&&(j.helpedBy??[]).length<Math.min(5,1+q.buildings.oathhall)}))}));
+}

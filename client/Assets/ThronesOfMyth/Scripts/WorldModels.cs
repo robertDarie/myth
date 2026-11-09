@@ -122,8 +122,11 @@ namespace ThronesOfMyth
     [Serializable] public sealed class EconomyBuff { public string kind; public float percent; public int remaining; }
     [Serializable] public sealed class EconomyData { public int ap,apCap,nextAPSeconds,fullAPSeconds,tradeRemaining,tradeResetSeconds,nextTransfer; public EconomyRules rules; public EconomyMember[] members; public EconomyBuff[] buffs; }
     [Serializable] public sealed class RewardGrant { public string id,name; public int count; }
+    [Serializable] public sealed class AllianceJobCard {public string id,type;public float remaining,duration;public bool canHelp;}
+    [Serializable] public sealed class AllianceMemberCard {public string id,name,role;public AllianceJobCard[] jobs;}
     [Serializable] public sealed class WorldSnapshot
     {
+        public AllianceMemberCard[] allianceRoster;
         public int version, size;
         public KingdomChronicle kingdom;
         public ActivityState activity;

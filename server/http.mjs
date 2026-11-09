@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import {resolve} from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { World, GameError } from './world.mjs';
@@ -22,7 +23,9 @@ const equalSecret = (a, b) => timingSafeEqual(Buffer.from(hash(String(a ?? '')))
 // restart recovery and therefore must not be used as an in-process rollback.
 const checkpoint = world => structuredClone(Object.fromEntries(Object.entries(world).filter(([, value]) => typeof value !== 'function')));
 
-export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null } = {}) {
+export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null,telemetry=null,buildIdentity=null } = {}) {
+  const measure=(name,fn)=>telemetry?telemetry.measure(name,fn):fn();
+  if(telemetry?.path&&[savePath,savePath&&savePath+'.bak',savePath&&savePath+'.'+process.pid+'.tmp',databasePath,databasePath&&databasePath+'-wal',databasePath&&databasePath+'-shm'].filter(Boolean).some(p=>[telemetry.path,telemetry.path+'.tmp'].some(m=>resolve(p)===resolve(m))))throw new Error('Metrics must use a separate file from game storage.');
   if (savePath && databasePath) throw new Error('Choose JSON or SQLite storage, not both. Use legacyPath for explicit migration.');
   const store = suppliedStore ?? (databasePath ? new KingdomDatabase(databasePath) : savePath ? new WorldStore(savePath) : null);
   let world;
@@ -33,14 +36,14 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
   const saveNow = options => {
     if (closed || simulationFailed) return false;
     if (!store) return true;
-    try { store.save(world, options); persistence.lastSaved = new Date().toISOString(); if (!simulationFailed) persistence.error = ''; return true; }
+    try { measure('persist',()=>store.save(world, options)); persistence.lastSaved = new Date().toISOString(); if (!simulationFailed) persistence.error = ''; return true; }
     catch { persistence.error = 'Progress could not be saved. The kingdom is paused until storage recovers.'; console.error(persistence.error); return false; }
   };
   const mutate = (action, receipt = null, options = {}) => {
     if (persistence.error) throw new GameError(persistence.error, 503);
-    const before = store ? checkpoint(world) : null;
+    const before = store ? measure('checkpoint',()=>checkpoint(world)) : null;
     try {
-      const result = action();
+      const result = measure('command',action);
       if (!saveNow({ ...options, ...(receipt ? { receipt: { ...receipt, response: result } } : {}) })) throw new GameError(persistence.error, 503);
       return result;
     } catch (error) { if (before) Object.assign(world, before); throw error; }
@@ -58,12 +61,12 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
   };
   const server = createServer(async (request, response) => {
     const send = (status, data) => {
-      response.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); response.end(JSON.stringify(data));
+      const body=measure('encode',()=>JSON.stringify(data));telemetry?.response(Buffer.byteLength(body));response.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); response.end(body);
     };
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
       const ready = !persistence.error && performance.now() - lastTick < 5000;
-      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 16, kingdomId, accounts: identity.available, persistence: { ...persistence } });
+      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 16, build:buildIdentity,kingdomId, accounts: identity.available, persistence: { ...persistence } });
       const address = trustProxy ? String(request.headers['x-forwarded-for'] ?? request.socket.remoteAddress).split(',').at(-1).trim() : request.socket.remoteAddress;
       allow('requests:' + address, 6000);
       if (path.startsWith('/auth/')) {
@@ -101,7 +104,7 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
         if(path==='/commander-comparison'){const p=identity.authenticate(token);const query=new URL(request.url,'http://localhost').searchParams;return send(200,world.compareCommanders(p,query.get('marchId'),query.get('candidateId')));}
         if (path === '/world') {
           const player = identity.authenticate(token); player.lastSeen = performance.now(); player.offline = false;
-          return send(200, { ...world.snapshot(player.id), persistence: { ...persistence } });
+          return send(200, { ...measure('snapshot',()=>world.snapshot(player.id)), persistence: { ...persistence } });
         }
         const body = await readJson(request);
         // Authenticate after awaiting the body: another command may have rolled back.
@@ -130,9 +133,9 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
   let previous = performance.now();
   const timer = setInterval(() => {
     const now = performance.now();
-    const before=store&&!persistence.error?checkpoint(world):null;
+    const before=store&&!persistence.error?measure('checkpoint',()=>checkpoint(world)):null;
     try { if (!persistence.error) {
-      world.tick((now - previous) / 1000); world.expire(now);
+      measure('tick',()=>world.tick((now - previous) / 1000)); world.expire(now);
       // Commit node debit, cargo, delivery and report together before serving another request.
       if(before&&before.logisticsRevision!==world.logisticsRevision&&!saveNow())Object.assign(world,before);
     } lastTick = now; }
@@ -140,7 +143,8 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
     previous = now;
   }, 100); timer.unref();
   const autosave = setInterval(saveNow, 2000); autosave.unref();
-  const cleanup = () => { if (closed) return; clearInterval(timer); clearInterval(autosave); saveNow(); store?.close?.(); closed = true; };
+  const metricsTimer=telemetry?setInterval(()=>telemetry.flush(),10000):null;metricsTimer?.unref();
+  const cleanup = () => { if (closed) return; clearInterval(timer); clearInterval(autosave);if(metricsTimer)clearInterval(metricsTimer); saveNow();telemetry?.flush(); store?.close?.(); closed = true; };
   server.on('listening', saveNow); server.on('close', cleanup); server.on('error', cleanup);
   return { server, world, saveNow, persistence };
 }

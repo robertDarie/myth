@@ -299,17 +299,6 @@ namespace ThronesOfMyth
             {
                 if (GUILayout.Button(site.name + (site.allianceId == me.allianceId ? " ✓" : ""))) { Select(site.id, "site"); FocusGameplay(site.x,site.z); }
             }
-            if (BuildingLevel("oathhall") > 0)
-            {
-                GUILayout.Label("Alliance assistance", sectionStyle);
-                foreach (var ally in world.players)
-                {
-                    if (ally.id == playerId || ally.allianceId != me.allianceId) continue;
-                    foreach (var job in new[] { ally.construction, ally.secondConstruction, ally.research })
-                        if (job != null && !string.IsNullOrEmpty(job.id) && GUILayout.Button("Help " + ally.name + " · " + job.type)) Send("alliance-help", job.id);
-                }
-            }
-            GUILayout.Label("Eastern gate unlocks x > 40; northern gate unlocks z > 40. The central sanctuary requires both.", noteStyle);
         }
         private void DrawJournal()
         {

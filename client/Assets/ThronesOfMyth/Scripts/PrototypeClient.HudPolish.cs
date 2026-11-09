@@ -26,7 +26,7 @@ namespace ThronesOfMyth
         private void DrawMarchOrders()
         {
             var a=ActiveArmy;if(a==null||!a.deployed)return;var r=MarchOrdersRect;theme.Panel(r,false,true);
-            theme.Text(new Rect(r.x+12,r.y+5,392,36),MarchJourney.Status(a),theme.Small);
+            theme.Text(new Rect(r.x+12,r.y+5,392,36),marchStatus.Status(a),theme.Small);
             bool ready=!processing&&pendingOrder==null;
             if(theme.Button(new Rect(r.xMax-202,r.y+7,88,32),"Stop",false,ready&&a.hasOrder&&string.IsNullOrEmpty(a.assignmentKind),"Use Recall to leave an alliance assignment."))Send(new GameCommand{type="stop",marchId=a.id});
             if(theme.Button(new Rect(r.xMax-106,r.y+7,96,32),"Recall [R]",false,ready))Send(new GameCommand{type="return",marchId=a.id});

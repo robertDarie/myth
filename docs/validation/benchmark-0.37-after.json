@@ -1,0 +1,74 @@
+{
+  "node": "v24.22.1",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "synthetic": true,
+  "note": "Production World tick/snapshot and SQLite save code with authored load fixtures. Not a gameplay/FPS, network latency or capacity guarantee.",
+  "reports": [
+    {
+      "deployedMarches": 159,
+      "conservationAndPrivacyAssertions": "passed",
+      "scenario": "32 independent players",
+      "players": 32,
+      "marches": 160,
+      "visible": 17,
+      "encodedBytes": 77577,
+      "tick": {
+        "samples": 25,
+        "p50Ms": 6.934414000000061,
+        "p95Ms": 11.33084800000006,
+        "maxMs": 11.673348000000033
+      },
+      "snapshot": {
+        "samples": 25,
+        "p50Ms": 1.1631479999999783,
+        "p95Ms": 1.8105150000000094,
+        "maxMs": 1.865856000000008
+      },
+      "encode": {
+        "samples": 25,
+        "p50Ms": 0.4648969999999508,
+        "p95Ms": 0.7942530000000261,
+        "maxMs": 1.0223699999999099
+      },
+      "sqliteSave": {
+        "samples": 10,
+        "p50Ms": 2.2853959999999915,
+        "p95Ms": 2.9039189999999735,
+        "maxMs": 2.9039189999999735
+      }
+    },
+    {
+      "deployedMarches": 159,
+      "conservationAndPrivacyAssertions": "passed",
+      "scenario": "32 allied players",
+      "players": 32,
+      "marches": 160,
+      "visible": 159,
+      "encodedBytes": 192448,
+      "tick": {
+        "samples": 25,
+        "p50Ms": 43.6699279999998,
+        "p95Ms": 61.546808000000055,
+        "maxMs": 66.398866
+      },
+      "snapshot": {
+        "samples": 25,
+        "p50Ms": 2.9732020000001285,
+        "p95Ms": 3.5924459999998817,
+        "maxMs": 3.7351869999999963
+      },
+      "encode": {
+        "samples": 25,
+        "p50Ms": 0.8424760000002607,
+        "p95Ms": 1.1049219999999877,
+        "maxMs": 1.1341349999997874
+      },
+      "sqliteSave": {
+        "samples": 10,
+        "p50Ms": 3.7501940000001923,
+        "p95Ms": 7.81844000000001,
+        "maxMs": 7.81844000000001
+      }
+    }
+  ]
+}

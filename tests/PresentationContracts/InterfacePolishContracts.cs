@@ -14,7 +14,7 @@ static class InterfacePolishContracts
   }
   Check(InterfaceLayout.Duration(61)=="1m 1s"&&InterfaceLayout.Duration(3601)=="1h 0m","Duration format");Check(InterfaceLayout.Duration(-1)=="0s","Duration clamp");
   Check(InterfaceLayout.Countdown(2,4)==0&&InterfaceLayout.Countdown(10,100)==7,"Countdown must not extrapolate beyond short snapshot window");
-  Check(ReleaseVersion.Current=="0.36.0"&&ReleaseVersion.Protocol==16,"One release identity without protocol change");
+  Check(ReleaseVersion.Current=="0.37.0"&&ReleaseVersion.Protocol==16,"One release identity without protocol change");
   Check(OutcomeSummary.Credited(new ResourceAmounts{gold=50,food=30,mana=5})=="Credited · 50 gold · 30 food · 5 Mana","Reward presentation must use exact report values");
   Check(!OutcomeSummary.Credited(new ResourceAmounts()).Contains("Credited")&&!OutcomeSummary.Credited(null).Contains("Credited"),"No fabricated reward for missing or empty report");
   Console.WriteLine("UI layout/identity contracts: "+n+" passed; font rendering pending.");return n;

@@ -15,9 +15,10 @@ function Get-LocalServer {
     catch { return $null }
 }
 function Is-Compatible($health) {
-    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 16
+    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 16 -and $health.build.version -eq $manifest.version -and $health.build.commit -eq $manifest.commit -and $health.build.serverDigest -eq $manifest.serverDigest
 }
 try {
+    $manifest = Get-Content -LiteralPath (Join-Path $packageRoot 'manifest.json') -Raw | ConvertFrom-Json
     try { $lockTaken = $launcherMutex.WaitOne(0) }
     catch [System.Threading.AbandonedMutexException] { $lockTaken = $true }
     if (-not $lockTaken) { throw 'The packaged playtest is already running. Switch to its game window.' }
@@ -29,16 +30,22 @@ try {
     }
     $health = Get-LocalServer
     if ($null -ne $health -and -not (Is-Compatible $health)) {
-        throw 'Port 8080 is used by an incompatible server. Stop the older prototype server and launch again.'
+        throw 'Port 8080 is used by a different or unstamped server build. Stop that server and launch this complete package again.'
     }
     if (-not (Is-Compatible $health)) {
         $logDirectory = Join-Path $env:LOCALAPPDATA 'ThronesOfMyth\Logs'
         New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
         $previousToken = $env:THRONES_LAUNCH_TOKEN
+        $previousVersion = $env:THRONES_BUILD_VERSION
+        $previousCommit = $env:THRONES_BUILD_COMMIT
+        $previousDigest = $env:THRONES_SERVER_DIGEST
         try {
             $env:THRONES_LAUNCH_TOKEN = $shutdownToken
+            $env:THRONES_BUILD_VERSION = $manifest.version
+            $env:THRONES_BUILD_COMMIT = $manifest.commit
+            $env:THRONES_SERVER_DIGEST = $manifest.serverDigest
         $ownedServer = Start-Process -FilePath $nodeExe -ArgumentList @(('"' + $serverEntry + '"'), '--local-playtest') -WorkingDirectory $packageRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $logDirectory 'server.log') -RedirectStandardError (Join-Path $logDirectory 'server-error.log')
-        } finally { $env:THRONES_LAUNCH_TOKEN = $previousToken }
+        } finally { $env:THRONES_LAUNCH_TOKEN = $previousToken; $env:THRONES_BUILD_VERSION = $previousVersion; $env:THRONES_BUILD_COMMIT = $previousCommit; $env:THRONES_SERVER_DIGEST = $previousDigest }
 
         for ($attempt = 0; $attempt -lt 80; $attempt++) {
             if ($ownedServer.HasExited) { throw "The local server could not start. Check $logDirectory\server-error.log. Another program may be using port 8080." }

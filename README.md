@@ -4,7 +4,13 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.36
+## Playable slice 0.37
+
+- Multiplayer reliability: live alliance membership/help independent of remembered
+  map intelligence, matching-build client-only Linux join, bounded opt-in server
+  metrics and measured visibility reuse. [v0.37 verification](docs/multiplayer-0.37.md).
+  [v0.35–v0.37 delivery](docs/gameplay-batch-0.35-0.37.md) ·
+  [Current Linux build and native checklist](docs/playtest-linux-0.37.md).
 
 - Progression: clickable building/research prerequisites, private same-march
   commander comparisons, item icons and period-aware reward feedback.

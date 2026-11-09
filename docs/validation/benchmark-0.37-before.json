@@ -1,0 +1,74 @@
+{
+  "node": "v24.22.1",
+  "cpu": "AMD EPYC 9V74 80-Core Processor",
+  "synthetic": true,
+  "note": "Production World tick/snapshot and SQLite save code with authored load fixtures. Not a gameplay/FPS, network latency or capacity guarantee.",
+  "reports": [
+    {
+      "deployedMarches": 159,
+      "conservationAndPrivacyAssertions": "passed",
+      "scenario": "32 independent players",
+      "players": 32,
+      "marches": 160,
+      "visible": 17,
+      "encodedBytes": 77557,
+      "tick": {
+        "samples": 25,
+        "p50Ms": 35.8682660000004,
+        "p95Ms": 43.855154000000766,
+        "maxMs": 49.00481900000068
+      },
+      "snapshot": {
+        "samples": 25,
+        "p50Ms": 4.674300000000585,
+        "p95Ms": 7.249196999999185,
+        "maxMs": 7.32798399999956
+      },
+      "encode": {
+        "samples": 25,
+        "p50Ms": 0.4593089999998483,
+        "p95Ms": 0.6561600000004546,
+        "maxMs": 0.6591040000002977
+      },
+      "sqliteSave": {
+        "samples": 10,
+        "p50Ms": 2.4276190000000497,
+        "p95Ms": 4.349170000000413,
+        "maxMs": 4.349170000000413
+      }
+    },
+    {
+      "deployedMarches": 159,
+      "conservationAndPrivacyAssertions": "passed",
+      "scenario": "32 allied players",
+      "players": 32,
+      "marches": 160,
+      "visible": 159,
+      "encodedBytes": 189591,
+      "tick": {
+        "samples": 25,
+        "p50Ms": 1291.392528999997,
+        "p95Ms": 1848.399827000001,
+        "maxMs": 1910.1611510000002
+      },
+      "snapshot": {
+        "samples": 25,
+        "p50Ms": 61.44720600000073,
+        "p95Ms": 101.53773499999807,
+        "maxMs": 105.54318400000193
+      },
+      "encode": {
+        "samples": 25,
+        "p50Ms": 0.9846250000045984,
+        "p95Ms": 1.7958749999997963,
+        "maxMs": 4.00368900000467
+      },
+      "sqliteSave": {
+        "samples": 10,
+        "p50Ms": 3.776542999999947,
+        "p95Ms": 7.130761000000348,
+        "maxMs": 7.130761000000348
+      }
+    }
+  ]
+}

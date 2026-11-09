@@ -8,9 +8,9 @@ import { activityClock, initializeActivity, ensureActivity, recordActivity, acti
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
 import { route, travel } from './navigation.mjs';
-import { initializeExploration, explorationTick, explorationCommand, filterFog, visible, validateExploration } from './exploration.mjs';
+import { initializeExploration, explorationTick, explorationCommand, filterFog, visible, visionContext, validateExploration } from './exploration.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
-import { socialCommand, allianceRole, initializeSocial, validateSocial } from './social.mjs';
+import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
 import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, countOf, changeUnits, tierLock, promotionCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
@@ -411,9 +411,10 @@ export class World {
   }
   snapshot(viewerId = null) {
     this.normalizeDeployment();
+    const viewer=this.players.get(viewerId),vision=viewer?visionContext(this,viewer):null;
     const activity = viewerId && this.players.has(viewerId) ? activitySnapshot(this, this.players.get(viewerId)) : null;
     const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
-    const snapshot = { version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
+    const snapshot = { allianceRoster:allianceRoster(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
       players: [...this.players.values()].map(p => {
         const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, ...visible } = p;
         if (viewerId && viewerId !== p.id) {
@@ -426,6 +427,6 @@ export class World {
       nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s, locked: !siteIsOpen(this,s.id) })), flags: this.flags.map(f => ({ ...f })),
       alliances: [...this.alliances.values()].map(({weekly,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
       commanders: COMMANDERS.map(c => ({ ...c, skillKind: activeKind(c.id) })), civilizations: CIVILIZATIONS, events: this.events.map(e => ({ ...e })) };
-    return viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId)) : snapshot;
+    return viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId),vision) : snapshot;
   }
 }

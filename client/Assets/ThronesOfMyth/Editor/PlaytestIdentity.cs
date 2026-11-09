@@ -9,7 +9,7 @@ namespace ThronesOfMyth.Editor
     // Same identity is baked into the player and packaged beside the matching server.
     public sealed class PlaytestIdentity : IDisposable
     {
-        [Serializable] public sealed class Stamp {public string version,commit,unity,platform;public int protocol;public bool dirty;public FileHash[] files;}
+        [Serializable] public sealed class Stamp {public string version,commit,unity,platform,serverDigest;public int protocol;public bool dirty;public FileHash[] files;}
         [Serializable] public sealed class FileHash {public string path,sha256;}
         private readonly string assetPath="Assets/ThronesOfMyth/Resources/BuildIdentity.json";
         private readonly byte[] before,metaBefore;
@@ -31,6 +31,7 @@ namespace ThronesOfMyth.Editor
             var paths=Directory.GetFiles(package,"*",SearchOption.AllDirectories);Array.Sort(paths,StringComparer.Ordinal);var hashes=new System.Collections.Generic.List<FileHash>();
             foreach(var path in paths)
             {if(Path.GetFileName(path)=="manifest.json")continue;using(var sha=SHA256.Create())using(var stream=File.OpenRead(path))hashes.Add(new FileHash{path=path.Substring(package.Length+1).Replace('\\','/'),sha256=BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant()});}
+            var text=new System.Text.StringBuilder();foreach(var f in hashes)if(f.path.StartsWith("Server/",StringComparison.Ordinal))text.Append(f.path).Append('\0').Append(f.sha256).Append('\n');using(var sha=SHA256.Create())Data.serverDigest=BitConverter.ToString(sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(text.ToString()))).Replace("-","").ToLowerInvariant();
             Data.files=hashes.ToArray();File.WriteAllText(Path.Combine(package,"manifest.json"),JsonUtility.ToJson(Data,true));
         }
         public void Dispose()

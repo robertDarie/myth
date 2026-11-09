@@ -9,10 +9,12 @@ const point=p=>p&&[p.x,p.z].every(n=>Number.isFinite(n)&&n>=1&&n<=79);
 const allied=(p,q)=>p.id===q.id||!!p.allianceId&&p.allianceId===q.allianceId;
 export function initializeExploration(p){p.explored=[];p.scout=null;p.scoutReports=[];}
 export function sources(w,p){
- const members=[...w.players.values()].filter(q=>allied(p,q));
- return members.flatMap(q=>[{x:q.homeX,z:q.homeZ,radius:FOG.cityRadius},...w.armies().filter(a=>(a.deployed||a.target||dist(a,{x:q.homeX,z:q.homeZ})>=2)&&w.owner(a).id===q.id).map(a=>({x:a.x,z:a.z,radius:FOG.armyRadius})),...(q.scout?[{...q.scout,radius:FOG.scoutRadius}]:[])]);
+ const members=[...w.players.values()].filter(q=>allied(p,q)),ids=new Set(members.map(q=>q.id));
+ const eyes=members.flatMap(q=>[{x:q.homeX,z:q.homeZ,radius:FOG.cityRadius},...(q.scout?[{x:q.scout.x,z:q.scout.z,radius:FOG.scoutRadius}]:[])]);
+ for(const a of w.armies()){const owner=w.owner(a);if(ids.has(owner.id)&&(a.deployed||a.target||dist(a,{x:owner.homeX,z:owner.homeZ})>=2))eyes.push({x:a.x,z:a.z,radius:FOG.armyRadius});}return eyes;
 }
-export const visible=(w,p,target)=>sources(w,p).some(s=>dist(s,target)<=s.radius);
+export function visionContext(w,p){const eyes=sources(w,p);return {eyes,seen:target=>eyes.some(s=>dist(s,target)<=s.radius)};}
+export const visible=(w,p,target)=>visionContext(w,p).seen(target);
 export const cellIndex=t=>Math.min(19,Math.max(0,Math.floor(t.z/4)))*20+Math.min(19,Math.max(0,Math.floor(t.x/4)));
 export function explorationTick(w,dt){
  for(const p of w.players.values()){
@@ -30,10 +32,12 @@ export function explorationTick(w,dt){
    journeyMetric(p,'surveys',1);recordActivity(w,p,'scouts',1);p.scoutReports.unshift(report);p.scoutReports.length=Math.min(20,p.scoutReports.length);s.phase='Returning';
   }
  }
+ const contexts=new Map();
  for(const p of w.players.values()){
-  const known=new Set(p.explored),eyes=sources(w,p);
+  const key=p.allianceId?"alliance:"+p.allianceId:"player:"+p.id;if(!contexts.has(key))contexts.set(key,visionContext(w,p));const context=contexts.get(key);
+  const known=new Set(p.explored),eyes=context.eyes;
   for(let z=0;z<20;z++)for(let x=0;x<20;x++)if(eyes.some(s=>dist(s,{x:x*4+2,z:z*4+2})<=s.radius))known.add(z*20+x);
-  p.explored=[...known].sort((a,b)=>a-b);rememberStatics(w,p,t=>visible(w,p,t));
+  p.explored=[...known].sort((a,b)=>a-b);rememberStatics(w,p,context.seen);
  }
 }
 export function explorationCommand(w,p,c,fail){
@@ -51,13 +55,13 @@ export function explorationCommand(w,p,c,fail){
  }
  return false;
 }
-export function fogSnapshot(w,p){
- const eyes=sources(w,p),cells=[];for(let z=0;z<20;z++)for(let x=0;x<20;x++)if(eyes.some(s=>dist(s,{x:x*4+2,z:z*4+2})<=s.radius))cells.push(z*20+x);
+export function fogSnapshot(w,p,context=visionContext(w,p)){
+ const eyes=context.eyes,cells=[];for(let z=0;z<20;z++)for(let x=0;x<20;x++)if(eyes.some(s=>dist(s,{x:x*4+2,z:z*4+2})<=s.radius))cells.push(z*20+x);
  return {cellSize:4,width:20,explored:[...new Set([...p.explored,...cells])],visible:cells,scouts:[...w.players.values()].filter(q=>allied(p,q)&&q.scout).map(q=>({...q.scout})),reports:p.scoutReports};
 }
-export function filterFog(w,snapshot,p){
- const seen=t=>visible(w,p,t),friendly=a=>a.ownerId===p.id||!!p.allianceId&&a.allianceId===p.allianceId;
- snapshot.exploration=fogSnapshot(w,p);rememberStatics(w,p,seen);
+export function filterFog(w,snapshot,p,context=visionContext(w,p)){
+ const seen=context.seen,friendly=a=>a.ownerId===p.id||!!p.allianceId&&a.allianceId===p.allianceId;
+ snapshot.exploration=fogSnapshot(w,p,context);rememberStatics(w,p,seen);
  snapshot.armies=snapshot.armies.filter(a=>friendly(a)||seen(a)).map(a=>a.ownerId===p.id?a:{...a,cargo:undefined,cargoSources:undefined,carryCapacity:undefined,homeX:undefined,homeZ:undefined,hasOrder:false,targetId:'',targetX:a.x,targetZ:a.z,route:[]});
  for(const q of snapshot.players)if(q.id!==p.id){q.x=q.homeX;q.z=q.homeZ;delete q.explored;delete q.scout;delete q.scoutReports;}
  for(const kind of ['strongholds','camps','nodes','flags','sites']){

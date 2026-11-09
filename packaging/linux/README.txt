@@ -1,4 +1,4 @@
-THRONES OF MYTH — LINUX x86_64 PLAYTEST 0.36.0
+THRONES OF MYTH — LINUX x86_64 PLAYTEST 0.37.0
 
 Requires a desktop Linux x86_64 system, a compatible graphics driver and host
 Node.js 24 LTS or later. Node is NOT bundled in this package. Use the official
@@ -42,3 +42,14 @@ baked client identity. A modified checkout is labeled, not claimed as a clean
 release. Hashes detect accidental mismatch; they are not a publisher signature.
 
 No native Linux gameplay/FPS result is claimed merely because this package built.
+
+TWO PLAYERS / MEASUREMENTS (optional)
+Host: node Launch.mjs --server-profile --thrones-profile
+Join the SAME matching build without starting/stopping another server:
+  node Launch.mjs --join=http://127.0.0.1:8080 --thrones-profile
+Join checks game, protocol, version, source commit and packaged server digest.
+Use separate OS user accounts/devices for durable Unity preferences/profiles.
+The local host binds loopback by default; this does not enable public/LAN hosting.
+F8 captures native frames only with --thrones-profile; the Unity log prints the
+VisualReview path. --server-profile writes bounded CPU/JSON metrics to Logs.
+Neither measurement alone proves multiplayer capacity or rendering quality.

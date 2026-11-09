@@ -6,6 +6,7 @@ import {dirname,join,resolve,relative} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {homedir} from 'node:os';
 import {setTimeout as pause} from 'node:timers/promises';
+export function serverDigest(manifest){return createHash('sha256').update(manifest.files.filter(f=>f.path.startsWith('Server/')).sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0).map(f=>f.path+'\0'+f.sha256+'\n').join('')).digest('hex');}
 export async function verifyPackage(root){
  const m=JSON.parse(await readFile(join(root,'manifest.json'),'utf8'));
  if(m.platform!=='linux-x86_64'||m.protocol!==16||!/^\d+\.\d+\.\d+$/.test(m.version)||!/^[a-f0-9]{40,64}$/.test(m.commit)||!Array.isArray(m.files))throw Error('Invalid Linux package identity. Rebuild the entire package.');
@@ -17,12 +18,21 @@ export async function verifyPackage(root){
   const hash=createHash('sha256');for await(const chunk of createReadStream(file))hash.update(chunk);if(hash.digest('hex')!==entry.sha256)throw Error('Package file changed: '+entry.path+'. Extract a fresh complete ZIP.');
  }
  for(const required of ['Game/ThronesOfMyth.x86_64','Server/index.mjs','Launch.mjs'])if(!seen.has(required))throw Error('Incomplete package: '+required);
- return m;
+ const digest=serverDigest(m);if(m.serverDigest&&m.serverDigest!==digest)throw Error('Server digest mismatch.');m.serverDigest=digest;return m;
+}
+export async function joinClient(root,m,address,args){
+ const url=new URL(address);if(!['http:','https:'].includes(url.protocol)||url.username||url.password||url.search||url.hash)throw Error('Use a plain HTTP(S) kingdom base address.');const endpoint=url.href.replace(/\/$/,'');
+ const response=await fetch(endpoint+'/health',{signal:AbortSignal.timeout(4000)}),h=await response.json();if(!response.ok||h.game!=='thrones-of-myth'||h.version!==m.protocol||h.build?.version!==m.version||h.build?.commit!==m.commit||h.build?.serverDigest!==m.serverDigest)throw Error('Host build does not match this package. Use the same release/commit and server payload.');
+ console.log('Client-only mode · host remains independently managed.');
+ const data=join(process.env.XDG_DATA_HOME||join(homedir(),'.local/share'),'ThronesOfMyth/Logs');await mkdir(data,{recursive:true});const exe=join(root,'Game/ThronesOfMyth.x86_64');await chmod(exe,0o755);
+ const game=spawn(exe,['--thrones-server',endpoint,'-logFile',join(data,'player-join-'+process.pid+'.log'),...args.filter(a=>!a.startsWith('--join='))],{cwd:join(root,'Game'),stdio:'inherit'});let interrupted=false;const stop=()=>{interrupted=true;game.kill('SIGTERM');};process.once('SIGINT',stop);process.once('SIGTERM',stop);
+ try{await new Promise((resolve,reject)=>{game.once('error',reject);game.once('exit',(code,sig)=>code===0||sig&&interrupted?resolve():reject(Error('Client exited with '+(sig||code))));});}finally{process.removeListener('SIGINT',stop);process.removeListener('SIGTERM',stop);}
 }
 export async function launch(root,args=process.argv.slice(2)){
  if(Number(process.versions.node.split('.')[0])<24)throw Error('Node.js 24 LTS or later is required on the Linux playtest PC.');
  const flag=args.find(a=>a.startsWith('--port='));const port=flag?Number(flag.slice(7)):8080;if(!Number.isInteger(port)||port<1024||port>65535)throw Error('Use --port=1024..65535.');
  const m=await verifyPackage(root);console.log('Thrones of Myth '+m.version+' · '+m.commit+(m.dirty?' · MODIFIED SOURCE CHECKOUT':''));
+ const connect=args.find(a=>a.startsWith('--join='));if(connect){if(flag||args.includes('--server-profile'))throw Error('Client-only join cannot start or profile a server.');return joinClient(root,m,connect.slice(7),args);}
  const data=join(process.env.XDG_DATA_HOME||join(homedir(),'.local/share'),'ThronesOfMyth');await mkdir(join(data,'Logs'),{recursive:true});await mkdir(join(data,'Saves'),{recursive:true});
  const lockPath=join(data,'launcher-'+port+'.lock'),token=randomBytes(24).toString('hex');let lock,server,game,stopping=false,stopPromise;
  try{lock=await open(lockPath,'wx');await lock.writeFile(JSON.stringify({pid:process.pid,token}));}catch(e){if(e.code==='EEXIST')throw Error('A launcher lock already exists: '+lockPath+'. If no launcher is running, inspect its PID before removing the stale lock.');throw e;}
@@ -32,12 +42,12 @@ export async function launch(root,args=process.argv.slice(2)){
  try{
   try{await fetch(endpoint+'/health',{signal:AbortSignal.timeout(700)});throw Error('Port '+port+' is already in use. This launcher never reuses or stops another server. Use --port=8081 for a separate test world.');}catch(e){if(e.message.startsWith('Port '))throw e;}
   const log=await open(join(data,'Logs','server-'+port+'.log'),'a');
-  server=spawn(process.execPath,[join(root,'Server/index.mjs'),'--local-playtest','--local-port='+port],{cwd:root,env:{...process.env,THRONES_LAUNCH_TOKEN:token,THRONES_SAVE_PATH:join(data,'Saves',port===8080?'world.json':'world-'+port+'.json')},stdio:['ignore',log.fd,log.fd]});await log.close();
+  server=spawn(process.execPath,[join(root,'Server/index.mjs'),'--local-playtest','--local-port='+port],{cwd:root,env:{...process.env,THRONES_LAUNCH_TOKEN:token,THRONES_BUILD_VERSION:m.version,THRONES_BUILD_COMMIT:m.commit,THRONES_SERVER_DIGEST:m.serverDigest,...(args.includes('--server-profile')?{THRONES_METRICS_PATH:join(data,'Logs','server-metrics-'+port+'.json')}:{ }),THRONES_SAVE_PATH:join(data,'Saves',port===8080?'world.json':'world-'+port+'.json')},stdio:['ignore',log.fd,log.fd]});await log.close();
   let spawnError;server.once('error',e=>{spawnError=e;});let ready=false;
   for(let i=0;i<100;i++){if(stopping)throw Error('Launch interrupted.');if(spawnError)throw spawnError;if(server.exitCode!==null)throw Error('Local server exited. Check '+join(data,'Logs','server-'+port+'.log'));try{const response=await fetch(endpoint+'/health',{signal:AbortSignal.timeout(400)});const h=await response.json();if(response.ok&&h.game==='thrones-of-myth'&&h.version===m.protocol){ready=true;break;}}catch{}await pause(100);}
   if(!ready)throw Error('Local server did not become ready.');if(stopping)throw Error('Launch interrupted.');
   const exe=join(root,'Game/ThronesOfMyth.x86_64');await chmod(exe,0o755);
-  const clientArgs=['--thrones-server',endpoint,'-logFile',join(data,'Logs','player-'+port+'.log'),...args.filter(a=>!a.startsWith('--port='))];
+  const clientArgs=['--thrones-server',endpoint,'-logFile',join(data,'Logs','player-'+port+'.log'),...args.filter(a=>!a.startsWith('--port=')&&a!=='--server-profile')];
   if(stopping)throw Error('Launch interrupted.');
   game=spawn(exe,clientArgs,{cwd:join(root,'Game'),stdio:'inherit'});
   await new Promise((resolve,reject)=>{game.once('error',reject);game.once('exit',(code,sig)=>code===0||sig&&stopping?resolve():reject(Error('Client exited with '+(sig||code)+'. Inspect player log.')));});

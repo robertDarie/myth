@@ -1,0 +1,9 @@
+using System;
+using ThronesOfMyth;
+static class ReadinessContracts
+{
+ public static int Run(){int n=0;void Check(bool v,string why){n++;if(!v)throw new Exception(why);}
+ var cache=new MarchJourneyCache();var snapshot=new object();cache.Begin(snapshot);var a=new ArmyData{state="Attacking",deployed=true,hasOrder=true,x=5,z=5,targetX=25,targetZ=20,speed=4,route=new[]{new RoutePoint{x=20,z=20},new RoutePoint{x=25,z=20}}};Check(cache.Status(a)==MarchJourney.Status(a),"Cached result must preserve actual route advice");cache.Begin(snapshot);Check(cache.Count==1,"Repeated GUI passes must reuse same snapshot");cache.Begin(new object());Check(cache.Count==0,"New world/profile must clear advice");for(int i=0;i<30;i++)cache.Status(new ArmyData());Check(cache.Count<=5,"Advice cache must remain bounded");
+ cache.Begin(new object());cache.Status(a);long before=GC.GetAllocatedBytesForCurrentThread();int sum=0;for(int i=0;i<10000;i++)sum+=MarchJourney.Status(a).Length;long uncached=GC.GetAllocatedBytesForCurrentThread()-before;before=GC.GetAllocatedBytesForCurrentThread();for(int i=0;i<10000;i++)sum+=cache.Status(a).Length;long cached=GC.GetAllocatedBytesForCurrentThread()-before;Check(cached<uncached/10,"Snapshot reuse should remove measured route/status allocations");Console.WriteLine("CLR advice allocation measurement: uncached="+uncached+" bytes; cached="+cached+" bytes / 10000; checksum="+sum+". Not Unity FPS.");
+ var roster=System.Text.Json.JsonSerializer.Deserialize<WorldSnapshot>("{\"allianceRoster\":[{\"id\":\"ally\",\"role\":\"Officer\",\"jobs\":[{\"id\":\"job\",\"canHelp\":true}]}]}",new System.Text.Json.JsonSerializerOptions{IncludeFields=true});Check(roster.allianceRoster[0].role=="Officer"&&roster.allianceRoster[0].jobs[0].canHelp,"Live roster/jobs DTO");Console.WriteLine("Readiness contracts: "+n+" passed.");return n;}
+}
