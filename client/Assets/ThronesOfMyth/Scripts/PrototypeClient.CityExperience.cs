@@ -92,6 +92,7 @@ namespace ThronesOfMyth
                 string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm the previous order first.":!cityExperience.CanPickCity?"Entering your city…":selected.lockedReason;
                 if(theme.Action(selected.level==0?"Construct":"Upgrade to level "+(selected.level+1),selected.canUpgrade&&!processing&&pendingOrder==null&&cityExperience.CanPickCity,reason))Send("building-upgrade",selected.id);
             }
+            if(selected.level<selected.maxLevel)DrawPrerequisites(selected.prerequisites);
             var destination=CitySelection.Institution(selected.id);
             if(destination!=InterfacePage.City&&theme.Action("Open "+GameNavigation.Title(destination),selected.level>0,selected.level>0?"":"Construct this institution first."))OpenInterface(destination);
             GUILayout.Space(10);int busy=(HasJob(me.construction)?1:0)+(HasJob(me.secondConstruction)?1:0);

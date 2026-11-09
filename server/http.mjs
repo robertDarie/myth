@@ -96,8 +96,9 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
         });
         return send(201, session);
       }
-      if ((request.method === 'GET' && path === '/world') || (request.method === 'POST' && path === '/command')) {
+      if ((request.method === 'GET' && ['/world','/commander-comparison'].includes(path)) || (request.method === 'POST' && path === '/command')) {
         const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
+        if(path==='/commander-comparison'){const p=identity.authenticate(token);const query=new URL(request.url,'http://localhost').searchParams;return send(200,world.compareCommanders(p,query.get('marchId'),query.get('candidateId')));}
         if (path === '/world') {
           const player = identity.authenticate(token); player.lastSeen = performance.now(); player.offline = false;
           return send(200, { ...world.snapshot(player.id), persistence: { ...persistence } });

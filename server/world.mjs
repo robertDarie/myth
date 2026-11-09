@@ -394,6 +394,11 @@ export class World {
     for (const p of world.players.values()) refreshJourney(world, p);
     return world;
   }
+  compareCommanders(p,marchId,candidateId){
+    const a=armyList(p).find(a=>a.id===marchId);if(!a||!p.ownedCommanders.includes(candidateId))throw new GameError('Choose an owned march and recruited commander.',403);
+    const pick=stats=>Object.fromEntries(['maxHealth','damage','speed','gather','heal','mitigation','level'].map(k=>[k,stats[k]]));
+    return {marchId:a.id,candidateId,currentId:a.commanderId,current:pick(this.stats(a)),candidate:pick(this.stats({...a,commanderId:candidateId})),available:!armyList(p).some(other=>other.id!==a.id&&other.commanderId===candidateId)};
+  }
   armySnapshot(a) {
     const p = this.owner(a);
     const destination = campaignDestination(this, a) ?? (a.target?.type === 'pvp' ? this.army(a.target.id) : a.target?.id ? [...this.camps, ...this.nodes, ...this.sites].find(item => item.id === a.target.id) : a.target);

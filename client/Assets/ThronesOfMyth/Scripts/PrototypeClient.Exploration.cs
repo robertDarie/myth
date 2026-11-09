@@ -27,6 +27,7 @@ namespace ThronesOfMyth
             }
             else
             {
+                if(Opening?.Guide=="combat"&&!Array.Exists(world.camps,c=>c.level==1&&c.health>0)&&theme.Action("Survey the nearby frontier",!processing&&pendingOrder==null,"Confirm your pending order first."))ScoutAt(20,20);
                 GUILayout.Label("One dedicated scout per city · no army slot or troop cost · gate access required", noteStyle);
                 GUILayout.BeginHorizontal();GUILayout.Label("X", GUILayout.Width(20));scoutX = GUILayout.TextField(scoutX, 4);GUILayout.Label("Z", GUILayout.Width(20));scoutZ = GUILayout.TextField(scoutZ, 4);GUILayout.EndHorizontal();
                 GUI.enabled = !processing;

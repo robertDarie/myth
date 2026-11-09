@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.35
+## Playable slice 0.36
 
+- Progression: clickable building/research prerequisites, private same-march
+  commander comparisons, item icons and period-aware reward feedback.
+  [v0.36 verification](docs/progression-0.36.md).
 - Army control: route/arrival estimates, engagement-radius paths, Stop/Recall,
   explicit interrupted states, real home-arrival feedback and bounded original volleys.
   [v0.35 verification](docs/army-control-0.35.md).

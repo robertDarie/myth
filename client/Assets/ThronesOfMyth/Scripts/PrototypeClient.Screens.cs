@@ -55,7 +55,7 @@ namespace ThronesOfMyth
             if (selected.level < selected.maxLevel)
             {
                 GUILayout.Space(16); GUILayout.Label("NEXT DEVELOPMENT", theme.Eyebrow);
-                GUILayout.Label(Cost(selected.nextCost), theme.Body);
+                DrawPrerequisites(selected.prerequisites);GUILayout.Label(Cost(selected.nextCost), theme.Body);
                 GUILayout.Label("Build time · " + Mathf.CeilToInt(selected.nextDuration) + " seconds", theme.Small);
                 string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":selected.lockedReason;
                 if(theme.Action(selected.level==0?"Build institution":"Upgrade to level "+(selected.level+1),selected.canUpgrade&&!processing&&pendingOrder==null,reason))Send("building-upgrade",selected.id);
@@ -128,6 +128,8 @@ namespace ThronesOfMyth
             contentScroll = GUILayout.BeginScrollView(contentScroll);
             if (recruited && progress != null)
             {
+                if(Opening?.Guide=="training"&&theme.Action("Next · Train five archers",!processing,"Wait for your order.")){trainingTier=0;GuidePage(InterfacePage.Training);}
+                DrawCommanderComparison(selected,recruited);
                 heroDetailTab=theme.Tabs(heroDetailTab,new[]{"Skills","Development"},detail.width-48);
                 DrawHeroSkills(selected, progress);
                 if(heroDetailTab==1){GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
@@ -238,7 +240,7 @@ namespace ThronesOfMyth
             GUILayout.Label(selected.description, theme.Body); GUILayout.Space(16);
             if (selected.level < selected.maxLevel)
             {
-                GUILayout.Label(Cost(selected.cost), theme.Body); GUILayout.Label(Mathf.CeilToInt(selected.duration) + " seconds", theme.Small);
+                DrawPrerequisites(selected.prerequisites);GUILayout.Label(Cost(selected.cost), theme.Body); GUILayout.Label(Mathf.CeilToInt(selected.duration) + " seconds", theme.Small);
                 string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":selected.lockedReason;
                 if(theme.Action("Research rank "+(selected.level+1),selected.canResearch&&!processing&&pendingOrder==null,reason))Send("research",selected.id);
             }

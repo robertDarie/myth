@@ -2,6 +2,8 @@
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems><Nullable>disable</Nullable><RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources></PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressionContracts.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ActivityRewardPreview.cs" Link="ActivityRewardPreview.cs" />
     <Compile Include="ArmyControlContracts.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/MarchJourney.cs" Link="MarchJourney.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/OutcomeSummary.cs" Link="OutcomeSummary.cs" />

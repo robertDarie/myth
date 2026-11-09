@@ -28,7 +28,8 @@ namespace ThronesOfMyth
             for(int i=0;i<filtered.Length;i++)
             {
                 var entry=filtered[i];bool chosen=i==selectedItem;
-                if(GUILayout.Button(entry.name+"\n× "+entry.count,chosen?theme.Primary:theme.Skin.button,GUILayout.MinHeight(64))){selectedItem=i;selectedInventoryId=entry.id;itemDetailScroll=Vector2.zero;}
+                GUILayout.BeginHorizontal();var itemIcon=GUILayoutUtility.GetRect(28,34,GUILayout.Width(28));theme.Icon(itemIcon,entry.kind=="resource"?entry.resource:entry.kind=="speedup"?"research":entry.kind=="energy"?"aether":entry.kind=="buff"?"infantry":"heroes",MythInterfaceTheme.Gold);
+                if(GUILayout.Button(entry.name+"\n× "+entry.count,chosen?theme.Primary:theme.Skin.button,GUILayout.MinHeight(64))){selectedItem=i;selectedInventoryId=entry.id;itemDetailScroll=Vector2.zero;}GUILayout.EndHorizontal();
             }
             if(filtered.Length==0)GUILayout.Label("No stored items in this category.",theme.Small);
             GUILayout.EndScrollView();GUILayout.EndArea();

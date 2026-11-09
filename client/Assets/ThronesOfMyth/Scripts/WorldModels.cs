@@ -61,8 +61,11 @@ namespace ThronesOfMyth
     }
     [Serializable] public sealed class QueueJob { public string id, type; public float remaining, duration; public int amount; public string targetId,sourceId; public ResourceAmounts cost; }
     [Serializable] public sealed class ResourceAmounts { public int food, wood, stone, gold, mana, aether; }
-    [Serializable] public sealed class BuildingCard { public string id, name, category, description, lockedReason; public int level, maxLevel; public bool canUpgrade; public ResourceAmounts nextCost; public float nextDuration; }
-    [Serializable] public sealed class ResearchCard { public string id, name, branch, description, lockedReason, prerequisite; public int level, maxLevel; public bool canResearch; public ResourceAmounts cost; public float duration; }
+    [Serializable] public sealed class RequirementCard {public string kind,id,name;public int level,current;public bool met;}
+    [Serializable] public sealed class ComparisonStats {public float maxHealth,damage,speed,gather,heal,mitigation,level;}
+    [Serializable] public sealed class CommanderComparison {public string marchId,candidateId,currentId;public bool available;public ComparisonStats current,candidate;}
+    [Serializable] public sealed class BuildingCard { public RequirementCard[] prerequisites;public string id, name, category, description, lockedReason; public int level, maxLevel; public bool canUpgrade; public ResourceAmounts nextCost; public float nextDuration; }
+    [Serializable] public sealed class ResearchCard { public RequirementCard[] prerequisites; public string id, name, branch, description, lockedReason, prerequisite; public int level, maxLevel; public bool canResearch; public ResourceAmounts cost; public float duration; }
     [Serializable] public sealed class HeroProgress { public string id, expertiseDescription; public int rank, shards, nextShards, nextGold, heroLevel, stars; public float xp; public bool expertise; public HeroSkill[] skills; }
     [Serializable] public sealed class HeroSkill { public int index, level, unlockStar; public string name, kind, description; }
     [Serializable] public sealed class DrawResult { public string id, commanderId, rarity; public bool duplicate; public int shards, number; }

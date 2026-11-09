@@ -143,6 +143,7 @@ namespace ThronesOfMyth
         private void ReturnToAccountEntry(string message)
         {
             if(pollRoutine!=null){StopCoroutine(pollRoutine);pollRoutine=null;}
+            comparisonRequest++;comparison=null;comparisonBusy=false;comparisonError="";
             ResetCityExperience();focused=false;token=null;world=null;me=null;worldReady=false;commands.Clear();processing=false;map.Clear();loadingError="";
             accountEntryOpen=true;accountRegistered=false;accountRecoveryDisplay="";accountMessage=message;
             accountPassword="";accountPasswordConfirm="";accountRecoveryInput="";pendingOrder=null;loadedOrderProfile="";

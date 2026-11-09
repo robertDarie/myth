@@ -37,6 +37,7 @@ namespace ThronesOfMyth
         }
         private string ClaimRewardPreview(GameCommand command)
         {
+            var activityReward=ActivityRewardPreview.Find(command,world?.activity);if(activityReward!=null)return JourneyRewardText(activityReward);
             if(me?.journeyCampaign?.chapters==null)return null;
             foreach(var chapter in me.journeyCampaign.chapters)
             {

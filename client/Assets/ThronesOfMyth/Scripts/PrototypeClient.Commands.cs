@@ -60,7 +60,7 @@ namespace ThronesOfMyth
                     if(success&&playerId==originPlayer&&serverUrl==originServer&&me!=null)
                     {
                         OnConfirmedCommand(command);
-                        if(!string.IsNullOrEmpty(claimReward)&&claimedFeedback.Add(command.type+":"+command.targetId))
+                        if(!string.IsNullOrEmpty(claimReward)&&claimedFeedback.Add(command.type+":"+command.targetId+":"+command.period))
                         {status="Reward claimed · "+claimReward;BattlefieldAudio.UiCue("reward");}
                     }
                     if(success&&(command.type=="deploy-march"||command.type=="configure-march")){pendingFormationHero=command.targetId;interfacePage=InterfacePage.World;}

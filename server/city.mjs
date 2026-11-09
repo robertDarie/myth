@@ -22,6 +22,7 @@ export const capacity = p => p.cityLevel * 20 + 20 + Math.max(0, p.buildings.bar
 export const mythicCapacity = p => p.cityLevel + Math.max(0, p.buildings.menagerie - 1);
 export const passiveCap = p => 500 + p.buildings.vault * 250 + p.cityLevel * 50;
 const scaled = (cost, factor) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * factor)]));
+const requirement=(p,r,kind='building')=>({kind,id:r.id,name:(kind==='building'?BUILDINGS:TECHNOLOGIES).find(v=>v.id===r.id).name,level:r.level,current:kind==='building'?buildingLevel(p,r.id):p.technologies[r.id],met:(kind==='building'?buildingLevel(p,r.id):p.technologies[r.id])>=r.level});
 const affordable = (p, cost) => Object.entries(cost).every(([id, value]) => p[id] >= value);
 function missing(p, requirements) {
   for (const r of requirements ?? []) if (buildingLevel(p, r.id) < r.level) return `${BUILDINGS.find(b => b.id === r.id).name} level ${r.level} required.`;
@@ -39,7 +40,9 @@ export function buildingCard(p, b) {
   else if (b.id !== 'citadel' && next > p.cityLevel) lockedReason = 'Upgrade the Citadel first.';
   else lockedReason = missing(p, b.id === 'citadel' ? CITADEL_REQUIREMENTS[next] : b.requirements);
   if (!lockedReason && !affordable(p, nextCost)) lockedReason = 'Not enough resources.';
-  return { ...b, level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason };
+  const dependencies=[...(b.id==='citadel'?CITADEL_REQUIREMENTS[next]??[]:b.requirements??[])];
+  if(b.id!=='citadel')dependencies.unshift({id:'citadel',level:Math.max(b.unlock,next)});
+  return { ...b, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason };
 }
 export function technologyCard(p, t) {
   const level = p.technologies[t.id], next = level + 1, cost = scaled(t.base, next * next);
@@ -51,7 +54,8 @@ export function technologyCard(p, t) {
   else if (t.prerequisite && p.technologies[t.prerequisite] < 1) lockedReason = `${TECHNOLOGIES.find(k => k.id === t.prerequisite).name} rank 1 required.`;
   else if (t.building && !p.buildings[t.building]) lockedReason = `${BUILDINGS.find(b => b.id === t.building).name} required.`;
   else if (!affordable(p, cost)) lockedReason = 'Not enough resources.';
-  return { ...t, level, maxLevel: t.maxLevel??3, cost, duration, canResearch: !lockedReason, lockedReason };
+  const dependencies=[requirement(p,{id:'academy',level:Math.max(t.academy,next)})];if(t.prerequisite)dependencies.push(requirement(p,{id:t.prerequisite,level:1},'research'));if(t.building)dependencies.push(requirement(p,{id:t.building,level:1}));
+  return { ...t, prerequisites:level>=(t.maxLevel??3)?[]:dependencies,level, maxLevel: t.maxLevel??3, cost, duration, canResearch: !lockedReason, lockedReason };
 }
 export function citySnapshot(world, p) {
   return { trainingOptions: trainingOptions(p), ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), assignedTroops:totalTroops(p),assignedMythic:totalMythic(p),deployedTroops:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.troops,0),deployedMythic:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.mythic,0), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
