@@ -23,6 +23,11 @@ namespace ThronesOfMyth
         {string key="roof-"+culture;return Craft(parent,key,craftMeshes.ContainsKey(key)?null:CraftGeometry.Roof(culture),at,new Vector3(width,1,depth),RoofMaterial(color));}
         public void Meadow(Transform parent,Vector3 at,int variant,float scale,Color tint)
         {string key="meadow-"+(variant%4);Craft(parent,key,craftMeshes.ContainsKey(key)?null:CraftGeometry.Meadow(variant%4),at,Vector3.one*scale,MaterialFor(tint));}
+        private Transform ArrowVolley(Transform parent,int count)
+        {
+            var root=new GameObject("Bounded formation volley").transform;root.SetParent(parent,false);
+            for(int i=0;i<count;i++)Craft(root,"arrow",craftMeshes.ContainsKey("arrow")?null:CraftGeometry.Arrow(),new Vector3((i-(count-1)*.5f)*.22f,(i%2)*.06f,0),Vector3.one,MaterialFor(bronze));return root;
+        }
         private Transform Vessel(Transform parent,Vector3 at,float scale,Color tint)
         {return Craft(parent,"vessel",craftMeshes.ContainsKey("vessel")?null:CraftGeometry.Vessel(),at,Vector3.one*scale,MaterialFor(tint));}
         public void CivicDressing(Transform parent,string culture)

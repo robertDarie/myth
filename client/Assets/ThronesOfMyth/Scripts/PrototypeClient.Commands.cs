@@ -54,7 +54,7 @@ namespace ThronesOfMyth
                     if(retained!=null)request.SetRequestHeader("Idempotency-Key",retained.key);
                     yield return request.SendWebRequest();
                     bool success=request.result==UnityWebRequest.Result.Success;
-                    bool rejected=request.responseCode==400||request.responseCode==403||request.responseCode==404||request.responseCode==413||request.responseCode==422;
+                    bool rejected=MarchJourney.DefinitiveRejection(request.responseCode);
                     if(retained!=null&&(success||rejected))ClearPendingOrder(retained);
                     status=success?OrderFeedback(command):DescribeError(request);lastOrderFailed=!success;orderNoticeAt=Time.unscaledTime;
                     if(success&&playerId==originPlayer&&serverUrl==originServer&&me!=null)

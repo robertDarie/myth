@@ -44,6 +44,12 @@ namespace ThronesOfMyth
             }
             return g;
         }
+        public static CraftGeometry Arrow()
+        {
+            var g=new CraftGeometry();
+            foreach(var v in new[]{new CraftVertex(-.02f,-.02f,0),new CraftVertex(.02f,-.02f,0),new CraftVertex(.02f,.02f,0),new CraftVertex(-.02f,.02f,0),new CraftVertex(-.02f,-.02f,.46f),new CraftVertex(.02f,-.02f,.46f),new CraftVertex(.02f,.02f,.46f),new CraftVertex(-.02f,.02f,.46f),new CraftVertex(-.10f,0,.42f),new CraftVertex(.10f,0,.42f),new CraftVertex(0,0,.65f),new CraftVertex(0,.08f,.42f),new CraftVertex(0,-.08f,.42f)})g.Vertices.Add(v);
+            g.Quad(0,3,2,1);g.Quad(4,5,6,7);g.Quad(0,1,5,4);g.Quad(1,2,6,5);g.Quad(2,3,7,6);g.Quad(3,0,4,7);g.Triangle(8,9,10);g.Triangle(10,9,8);g.Triangle(11,12,10);g.Triangle(10,12,11);return g;
+        }
         public static CraftGeometry Vessel()
         {
             var g=new CraftGeometry();float[] radius={.28f,.35f,.44f,.42f,.23f,.25f};

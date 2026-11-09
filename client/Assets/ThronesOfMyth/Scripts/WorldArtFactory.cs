@@ -64,7 +64,7 @@ namespace ThronesOfMyth
             {
                 units = units ?? new UnitCounts { infantry = 3 };
                 Formation(root,variant,team,units,commanderId,mythic,actor);
-                actor.projectile = Box(root, 0, 1.4f, 0, 0.06f, 0.06f, 0.5f, bronze); actor.projectile.name = "Arrow visual"; actor.projectile.gameObject.SetActive(false);
+                actor.projectile = ArrowVolley(root,Mathf.Clamp(units.Archers,1,3)); actor.projectile.name = "Arrow visual"; actor.projectile.gameObject.SetActive(false);
                 actor.selection = Ring(root, 2.2f, team, 0.08f).gameObject; actor.selection.SetActive(false);
                 actor.skillLine = Ring(root, 1.7f, new Color(1, 0.72f, 0.3f), 0.15f); actor.skill = actor.skillLine.gameObject; actor.skill.SetActive(false);
                 actor.damageMaterial = actor.skillLine.sharedMaterial; actor.healMaterial = MaterialFor(new Color(0.4f, 0.9f, 0.65f)); actor.shieldMaterial = MaterialFor(new Color(0.5f, 0.8f, 1));

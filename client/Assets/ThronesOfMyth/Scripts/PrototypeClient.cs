@@ -502,7 +502,7 @@ namespace ThronesOfMyth
         private void Send(GameCommand command)
         {
             if (string.IsNullOrEmpty(token) || LoadingActive || commands.Count >= 8 || pendingOrder != null || accountBusy) return;
-            command.marchId = activeMarchId;
+            if(string.IsNullOrEmpty(command.marchId))command.marchId = activeMarchId;
             commands.Enqueue(command); if (!processing) StartCoroutine(ProcessCommands());
         }
         private IEnumerator ProcessCommands()

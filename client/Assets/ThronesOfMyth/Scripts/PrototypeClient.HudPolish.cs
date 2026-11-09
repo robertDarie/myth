@@ -22,6 +22,15 @@ namespace ThronesOfMyth
             theme.Hint(r,details);if(GUI.Button(r,GUIContent.none,GUIStyle.none))OpenInterface(InterfacePage.Inventory);
             float x=r.xMax-196;foreach(var buff in e.buffs)if(buff.remaining>0){var badge=new Rect(x,r.y,94,22);theme.Panel(badge,false,true);theme.OneLine(new Rect(x+5,r.y,84,22),(buff.kind=="attack"?"ATK":"DEF")+" +"+(buff.percent*100).ToString("F0")+"%",theme.Eyebrow);theme.Hint(badge,buff.kind+" oath · "+InterfaceLayout.Duration(buff.remaining));x+=100;}
         }
+        private Rect MarchOrdersRect=>new Rect((ViewWidth-620)/2,ViewHeight-284,620,46);
+        private void DrawMarchOrders()
+        {
+            var a=ActiveArmy;if(a==null||!a.deployed)return;var r=MarchOrdersRect;theme.Panel(r,false,true);
+            theme.Text(new Rect(r.x+12,r.y+5,392,36),MarchJourney.Status(a),theme.Small);
+            bool ready=!processing&&pendingOrder==null;
+            if(theme.Button(new Rect(r.xMax-202,r.y+7,88,32),"Stop",false,ready&&a.hasOrder&&string.IsNullOrEmpty(a.assignmentKind),"Use Recall to leave an alliance assignment."))Send(new GameCommand{type="stop",marchId=a.id});
+            if(theme.Button(new Rect(r.xMax-106,r.y+7,96,32),"Recall [R]",false,ready))Send(new GameCommand{type="return",marchId=a.id});
+        }
         private void FocusGameplay(float x,float z,float zoom=10)
         {cameraControl?.SetView(new Vector3(x,0,z),zoom);ShowKingdomForTarget();}
     }

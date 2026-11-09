@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.34
+## Playable slice 0.35
 
+- Army control: route/arrival estimates, engagement-radius paths, Stop/Recall,
+  explicit interrupted states, real home-arrival feedback and bounded original volleys.
+  [v0.35 verification](docs/army-control-0.35.md).
 - UI and first session: AP gauge, readable march rail, inventory/report layouts,
   Skills/Development, campaign tabs, minimap exploration and optional city/Captain
   introduction. [Batch delivery](docs/visual-batch-0.32-0.34.md) ·

@@ -76,7 +76,7 @@ namespace ThronesOfMyth
                 int jobs=(HasJob(me?.construction)?1:0)+(HasJob(me?.secondConstruction)?1:0)+(HasJob(me?.research)?1:0);
                 if(jobs>0&&new Rect(18,QuestRect.yMax+10,242,jobs*52-6).Contains(p))return true;
             }
-            if(MarchRail.Contains(p)||MinimapRect.Contains(p))return true;
+            if(MarchRail.Contains(p)||MinimapRect.Contains(p)||ActiveArmy!=null&&ActiveArmy.deployed&&MarchOrdersRect.Contains(p))return true;
             if(!string.IsNullOrEmpty(selectedId)&&ContextRect.Contains(p))return true;
             return CityShortcutRect.Contains(p);
         }
@@ -180,7 +180,7 @@ namespace ThronesOfMyth
                     if (interfacePage == InterfacePage.City && cityModelView) DrawImmersiveCity();
                     else if (interfacePage == InterfacePage.World && !cityExperience.BlocksWorld)
                     {
-                        DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();
+                        DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
                         if (theme.Button(CityShortcutRect, "City [C]", true)) OpenInterface(InterfacePage.City);
                         theme.OneLine(new Rect(18,ViewHeight-194,242,24),"THRONES OF MYTH",theme.Eyebrow);
                     }
@@ -308,7 +308,7 @@ namespace ThronesOfMyth
                     theme.OneLine(new Rect(x+50,r.y+26,156,17),(army.deployed?ArmyPresentationState.Label(army):"Home formation"),theme.Small);
                     theme.Bar(new Rect(x+50,r.yMax-13,156,4),(float)army.health/Mathf.Max(1,army.maxHealth),MythInterfaceTheme.Teal);
                     theme.Bar(new Rect(x+50,r.yMax-5,156,2),army.rage/1000f,MythInterfaceTheme.Gold);
-                    theme.Hint(r,army.deployed?"Select and focus "+HeroName(army.commanderId):"Edit home formation · "+HeroName(army.commanderId));if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;if(!army.deployed)BeginFormation(true);else{Select(army.id,"army");FocusGameplay(army.x,army.z);}}
+                    theme.Hint(r,MarchJourney.Status(army)+"\nHP "+army.health+" / "+army.maxHealth);if(GUI.Button(r,new GUIContent("","Select and focus "+HeroName(army.commanderId)),GUIStyle.none)){activeMarchId=army.id;if(!army.deployed)BeginFormation(true);else{Select(army.id,"army");FocusGameplay(army.x,army.z);}}
                 }
                 else
                 {
@@ -448,11 +448,13 @@ namespace ThronesOfMyth
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }
         private int routeDashBudget;
+        private ArmyData drawnRouteArmy;private RoutePoint[] drawnRoute;
         private void DrawMarchRoute()
         {
             if (ActiveArmy == null || !ActiveArmy.hasOrder || Camera.main == null) return;
             routeDashBudget=160;
-            var points = ActiveArmy.route;
+            if(!ReferenceEquals(drawnRouteArmy,ActiveArmy)){drawnRouteArmy=ActiveArmy;drawnRoute=MarchJourney.DisplayRoute(ActiveArmy);}
+            var points = drawnRoute;
             var start = new Vector3(ActiveArmy.x, 0.3f, ActiveArmy.z);
             if(points!=null&&points.Length>0)for(int index=0;index<points.Length;index++)
             {

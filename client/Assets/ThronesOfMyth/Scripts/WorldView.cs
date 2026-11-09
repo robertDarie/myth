@@ -114,6 +114,7 @@ namespace ThronesOfMyth
                 {
                     var city=System.Array.Find(world.players,p=>p.id==ownId);
                     var recovered=city?.homeFormations==null?null:System.Array.Find(city.homeFormations,a=>a.id==pair.Key&&a.recovery>0);
+                    if(recovered==null&&city?.homeFormations!=null&&System.Array.Exists(city.homeFormations,a=>a.id==pair.Key&&!a.deployed)){GroundPulse(new Vector3(city.homeX,0,city.homeZ),MythInterfaceTheme.Teal);RecordEncounter("March arrived home","Deployment slot released. Formation and reserves are available in your city.");BattlefieldAudio.UiCue("arrival");}
                     if(recovered!=null){GroundPulse(pair.Value.root.transform.position,MythInterfaceTheme.Red);BattlefieldFeedback.Emit("defeat",pair.Value.root.transform.position,MythInterfaceTheme.Red,reducedMotion);RecordEncounter("Forced retreat","Your march is recovering at home. Review Reports and the House of Renewal.");BattlefieldAudio.UiCue("retreat");}
                 }
                 Destroy(pair.Value.root);removed.Add(pair.Key);
