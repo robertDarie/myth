@@ -4,8 +4,14 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.30
+## Playable slice 0.31
 
+- Starting-region / Captain showcase: original sculpted vegetation and architecture,
+  painted surfaces, bounded Rallying Cry VFX/audio, mixed patrol preset, real
+  remembered-camp attacks, opening guidance and shared UI readability fixes.
+  [Implementation, checks and limits](docs/visual-showcase-0.31.md) ·
+  [Windows rebuild and showcase](docs/playtest-showcase-0.31.md).
+  **Native visual/input/audio/FPS acceptance remains pending.**
 - Kingdom-to-city presentation: camera approach and reversible city blend, direct
   building picking in the main viewport, contextual construction/institution
   actions, bounded orbit/zoom and retained district-list access.

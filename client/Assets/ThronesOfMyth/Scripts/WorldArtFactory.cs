@@ -4,9 +4,10 @@ using UnityEngine;
 namespace ThronesOfMyth
 {
     // Shared materials and inexpensive, original strategy-scale silhouettes.
-    // Models are deliberately stylized proxies, ready to be replaced by rigged art.
+    // Authored rigs and original modular architecture share a restrained painted palette.
     public sealed partial class WorldArtFactory
     {
+        private Texture2D brushwork;
         private readonly Dictionary<Color, Material> materials = new Dictionary<Color, Material>();
         private readonly Color stone = new Color(0.72f, 0.69f, 0.57f), darkStone = new Color(0.35f, 0.39f, 0.36f), bronze = new Color(0.64f, 0.43f, 0.19f), timber = new Color(0.29f, 0.18f, 0.10f);
         public Material MaterialFor(Color color)
@@ -14,7 +15,7 @@ namespace ThronesOfMyth
             if (!materials.TryGetValue(color, out var material))
             {
                 material = new Material(Shader.Find("Standard")) { color = color };
-                material.SetFloat("_Glossiness", 0.06f); materials.Add(color, material);
+                material.SetFloat("_Glossiness", 0.06f);material.mainTexture=brushwork??(brushwork=Resources.Load<Texture2D>("Art/MythBrushwork"));material.enableInstancing=true; materials.Add(color, material);
             }
             return material;
         }
@@ -56,6 +57,7 @@ namespace ThronesOfMyth
             Box(p, 0, 1.25f, 0.15f, 1.7f, 1.8f, 1.6f, stone);
             Box(p, 0, 1.1f, -0.68f, 0.7f, 1.3f, 0.06f, team * 0.5f);
             Roof(p, 2.9f, 3.6f, 3.4f, bronze);
+            Sculpt(p,"arch",new Vector3(0,.75f,-1.04f),new Vector3(.65f,.85f,.55f),bronze);
             if (grand) { Pillar(p, 0, 3.6f, 0, 0.5f, 0.8f, bronze); Ball(p, 0, 4.1f, 0, 0.7f, 0.7f, 0.7f, team); }
         }
         public WorldActorAnimation Build(Transform parent, string kind, string variant, Color team, int mythic = 0, UnitCounts units = null, string commanderId = "")
@@ -126,12 +128,7 @@ namespace ThronesOfMyth
                 if (variant == "forsaken-4" || variant == "forsaken-6") Beast(root, Vector3.zero, variant == "forsaken-6" ? "norse" : "greek", team);
                 else
                 {
-                    for (int i = -1; i <= 1; i += 2)
-                    {
-                        var tent = new GameObject("War tent").transform; tent.SetParent(root, false); tent.localPosition = new Vector3(i * 0.95f, 0, 0.35f);
-                        Roof(tent, 0.8f, 1.8f, 1.9f, team * 0.75f); Box(tent, 0, 0.4f, -0.85f, 0.7f, 0.8f, 0.06f, timber);
-                    }
-                    for (int i = -2; i <= 2; i++) Pillar(root, i * 0.8f, 0.5f, 1.65f, 0.20f, 1, timber);
+                    ShowcaseCamp(root, team);
                 }
                 Pillar(root, 0, 0.15f, -1.3f, 0.9f, 0.3f, darkStone);
                 actor.fire = Ball(root, 0, 0.48f, -1.3f, 0.4f, 0.6f, 0.4f, new Color(1, 0.54f, 0.16f));
@@ -146,7 +143,7 @@ namespace ThronesOfMyth
         private void City(Transform root, string culture, Color team)
         {
             string title = string.IsNullOrEmpty(culture) ? "Greek" : char.ToUpperInvariant(culture[0]) + culture.Substring(1);
-            if (Imported(root, "City" + title, team, culture)) return;
+            if (Imported(root, "City" + title, team, culture)) {ShowcaseDistrict(root,"citadel",culture,1,team);return;}
             if (culture == "greek" || string.IsNullOrEmpty(culture)) { Temple(root, team, false); return; }
             Box(root, 0, 0.12f, 0, 4, 0.24f, 3.5f, darkStone);
             if (culture == "egyptian")
@@ -282,6 +279,6 @@ namespace ThronesOfMyth
             if (culture == "greek") MinotaurKit(bodyRoot, rig);
             if (culture == "egyptian") Box(bodyRoot, 0, 1.95f, 0.65f, 0.85f, 0.25f, 0.65f, bronze);
         }
-        public void Dispose() { foreach (var mesh in authoredMeshes) Object.Destroy(mesh); authoredMeshes.Clear(); equipmentMeshes.Clear(); foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
+        public void Dispose() { foreach (var mesh in authoredMeshes) Object.Destroy(mesh); authoredMeshes.Clear(); equipmentMeshes.Clear();showcaseMeshes.Clear(); foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
     }
 }

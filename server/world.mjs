@@ -200,7 +200,7 @@ export class World {
         : target.type === 'capture' ? this.sites.find(s => s.id === target.id) : target;
       if (target.type === 'pvp' && (!destination || campaignFor(this, destination.id) || !visible(this, owner, destination) || attackReason(this, p, destination))) { const battle = combatFor(this, p.id); if (battle) finishBattle(this, battle, 'Protected / unavailable'); p.target = null; p.state = 'Idle'; continue; }
       if(target.type==='gather'&&(!destination||visible(this,owner,destination)&&destination.remaining<=0)){returnCargo(this,p,'Deposit exhausted');continue;}
-      if (!destination || (target.type === 'attack' && destination.health <= 0)) { p.target = null; p.state = 'Idle'; continue; }
+      if (!destination || (target.type === 'attack' && visible(this, owner, destination) && destination.health <= 0)) { p.target = null; p.state = 'Idle'; continue; }
       // Ownership can change while an army is marching. Returning home always remains possible.
       if (target.type !== 'return' && !route(this, p, destination)) { p.target = null; p.state = 'Route locked'; continue; }
       const stop = ['move', 'return'].includes(target.type) ? 0 : 2;

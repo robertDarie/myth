@@ -47,7 +47,7 @@ namespace ThronesOfMyth
                 foreach (var enemy in report.armies) GUILayout.Label(enemy.name + " · " + enemy.troops + " mortals / " + enemy.mythic + " mythic · " + enemy.health + " HP", new GUIStyle(noteStyle) { richText = false });
                 foreach (var site in report.sites) GUILayout.Label(site.name + " · " + AllianceName(site.allianceId) + " · " + Mathf.CeilToInt(site.health) + " structure HP", theme.Small);
                 foreach (var g in report.garrisons) GUILayout.Label(WarTargetName(g.targetId) + " garrison · " + g.marches + " marches / " + g.troops + " mortals / " + g.mythic + " mythic", theme.Small);
-                if (GUILayout.Button("Focus surveyed area")) { cameraControl?.Focus(report.x, report.z); ShowKingdomForTarget(); }
+                if (GUILayout.Button("Focus surveyed area")) { cameraControl?.SetView(new Vector3(report.x,0,report.z),10); ShowKingdomForTarget(); }
                 GUILayout.EndVertical();
             }
         }

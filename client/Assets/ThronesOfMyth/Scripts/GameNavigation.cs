@@ -11,6 +11,10 @@ namespace ThronesOfMyth
     }
     public static class GameNavigation
     {
+        public static string CompactTitle(string title)
+        {
+            switch(title){case "Marches & reserves":return "Marches";case "Scouts & discovery":return "Scouting";case "Rallies & garrisons":return "Rallies";case "Kingdom milestones":return "Milestones";case "Temple of Echoes":return "Temple";case "Prepare a march":return "Prepare march";case "Train & promote":return "Training";default:return title;}
+        }
         public static readonly string[] Groups={"CIVILIZATION","ARMIES & HEROES","KINGDOM & COMMUNITY"};
         public static readonly NavigationEntry[] Entries={
             new NavigationEntry(InterfacePage.City,"City","city","Build and upgrade institutions · C",0),

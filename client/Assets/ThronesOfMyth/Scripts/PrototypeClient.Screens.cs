@@ -40,7 +40,7 @@ namespace ThronesOfMyth
                     var name = new GUIStyle(theme.Center) { fontSize = 14 };
                     theme.Text(new Rect(cell.x + 7, cell.y + 52, cell.width - 14, 40), building.name, name);
                     theme.Text(new Rect(cell.x + 8, cell.y + 93, cell.width - 16, 22), building.level > 0 ? "LEVEL " + building.level + " / " + building.maxLevel : "FOUNDATION", theme.Eyebrow);
-                    if (GUI.Button(cell, new GUIContent("", building.description), GUIStyle.none)) { selectedBuilding = i; contentScroll = Vector2.zero; }
+                    theme.Hint(cell,building.description);if (GUI.Button(cell, new GUIContent("", building.description), GUIStyle.none)) { selectedBuilding = i; contentScroll = Vector2.zero; }
                 }
                 GUI.EndScrollView();
             }
@@ -346,6 +346,7 @@ namespace ThronesOfMyth
             else { selectedId = ""; return; }
             bool remembered=boss?.lastKnown==true||camp?.lastKnown==true||node?.lastKnown==true||site?.lastKnown==true||beacon?.lastKnown==true||city?.lastKnown==true;
             if(remembered){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
+            if(remembered&&camp!=null){action="March & attack";subtitle="LAST SEEN · Approach to verify; AP charged only on engagement";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
             theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);

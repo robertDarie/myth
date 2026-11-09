@@ -28,6 +28,8 @@ namespace ThronesOfMyth
         public void EnvironmentModel(Transform parent, string model, Vector3 position, float scale, Color tint, float yaw)
         {
             var root = new GameObject(model).transform; root.SetParent(parent, false); root.localPosition = position; root.localScale = Vector3.one * scale; root.localRotation = Quaternion.Euler(0, yaw, 0);
+            if(model=="OakTree"||model=="PineTree"){PainterTree(root,model=="PineTree",tint,Mathf.Abs(Mathf.RoundToInt(yaw))%4);return;}
+            if(model=="BorderRock"){Sculpt(root,"rock"+(Mathf.Abs(Mathf.RoundToInt(yaw))%3),Vector3.zero,Vector3.one,tint);return;}
             if (!Imported(root, model, tint))
             {
                 if (model == "BorderRock") Shape(root, PrimitiveType.Sphere, new Vector3(0, 0.7f, 0), new Vector3(2, 1.4f, 1.5f), tint);

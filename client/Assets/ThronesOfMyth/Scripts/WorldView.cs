@@ -154,7 +154,7 @@ namespace ThronesOfMyth
                 if(screen.z<=0||screen.x<0||screen.x>Screen.width||screen.y<0||screen.y>Screen.height)continue;
                 string text=detailed?piece.label:piece.compactLabel??piece.label;
                 string icon=piece.icon??(piece.kind=="site"?"temple":piece.kind=="flag"?"alliance":piece.kind=="scout"?"army":"chronicle");
-                float width=Mathf.Clamp(markerText.CalcSize(new GUIContent(text)).x+34*scale,58*scale,(detailed?300:160)*scale);
+                float width=Mathf.Clamp(markerText.CalcSize(new GUIContent(text)).x+42*scale,58*scale,(detailed?300:160)*scale);
                 float height=(detailed?30:26)*scale;
                 var desired=new Rect(screen.x-width/2,Screen.height-screen.y-height/2,width,height);
                 if(!labelLayout.TryPlace(desired,4*scale,occluded,out var rect))continue;

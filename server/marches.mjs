@@ -36,8 +36,9 @@ export function marchCommand(world, p, c, fail) {
       if (!world.canEnter(p, c)) fail('Your alliance must capture the corresponding Divine Gate first.');
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
-      const camp = world.camps.find(e => e.id === c.targetId && e.health > 0);
-      if (!camp || !visible(world,p,camp)||!world.canEnter(p, camp)) fail('Camp unavailable or behind a locked gate.');
+      const camp = world.camps.find(e => e.id === c.targetId);
+      const known = camp && (visible(world,p,camp) || p.discovery.some(r=>r.kind==='camps'&&r.value.id===camp.id));
+      if (!known || (visible(world,p,camp)&&camp.health<=0)||!world.canEnter(p, camp)) fail('Camp unavailable or behind a locked gate.');
       a.target = { type: 'attack', id: camp.id }; break;
     }
     case 'gather': {

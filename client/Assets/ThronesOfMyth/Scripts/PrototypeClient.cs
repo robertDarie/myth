@@ -59,7 +59,7 @@ namespace ThronesOfMyth
             if (HandleInterfaceKeys()) return;
             if(!cityExperience.AllowsWorldInput(interfacePage==InterfacePage.World,false,GUIUtility.keyboardControl!=0))return;
             if (interfacePage != InterfacePage.World) return;
-            if (Input.GetKeyDown(KeyCode.H)) cameraControl?.Focus(me.homeX, me.homeZ);
+            if (Input.GetKeyDown(KeyCode.H)) cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);
             if (Input.GetKeyDown(KeyCode.Space)) cameraControl?.Focus(ActiveArmy.x, ActiveArmy.z);
             if (Input.GetKeyDown(KeyCode.R)) Send("return");
             if (PointerOverUI() || Camera.main == null) return;
@@ -455,7 +455,7 @@ namespace ThronesOfMyth
                                 var assembled = OwnMarches().Find(a => a.commanderId == pendingFormationHero);
                                 if (assembled != null) { activeMarchId = assembled.id; Select(assembled.id, "army"); cameraControl?.Focus(assembled.x, assembled.z); pendingFormationHero = null; }
                             }
-                            if (!focused) { cameraControl?.Focus(me.homeX, me.homeZ); focused = true; }
+                            if (!focused) { cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10); focused = true; }
                         }
                         else { loadingError = "Your city was not present in the kingdom snapshot. Return to entry and reconnect."; status = loadingError; worldReady = false; token = null; }
                     }

@@ -13,7 +13,14 @@ namespace ThronesOfMyth
                 return root;
             }
             Box(root,0,.045f,0,1.5f,.09f,1.3f,stone);
-            if(id=="citadel") { City(root,culture,team);root.localScale=Vector3.one*.55f;return root; }
+            if(id=="citadel")
+            {
+                City(root,culture,team);
+                if(level>=2)for(int side=-1;side<=1;side+=2)
+                {Box(root,side*1.9f,1.5f,.6f,.65f,2.8f,.75f,stone);DistrictRoof(root,culture,new Vector3(side*1.9f,3.05f,.6f),1.0f,1.0f,bronze);Pillar(root,side*1.9f,3.6f,.6f,.06f,1.0f,bronze);Box(root,side*1.9f+.17f,3.85f,.6f,.34f,.32f,.04f,team);}
+                if(level>=3)Sculpt(root,"arch",new Vector3(0,3.1f,-.2f),new Vector3(.8f,.75f,1.5f),stone);
+                root.localScale=Vector3.one*.55f;return root;
+            }
             if(id=="farm")
             {
                 for(int x=-2;x<=2;x++)for(int z=-1;z<=1;z++){Pillar(root,x*.24f,.28f,z*.34f,.035f,.42f,bronze);Ball(root,x*.24f,.49f,z*.34f,.10f,.25f,.10f,new Color(.85f,.71f,.32f));}
@@ -67,7 +74,7 @@ namespace ThronesOfMyth
             if(level>=4)for(int side=-1;side<=1;side+=2)Pillar(root,side*.78f,.39f,.62f,.16f,.70f,stone);
             if(level>=5){Pillar(root,0,.32f,-.81f,.20f,.35f,bronze);Ball(root,0,.59f,-.81f,.24f,.24f,.24f,team);}
             if(level>=3)Ball(root,.55f,1.18f,.35f,.16f,.21f,.16f,bronze);
-            return root;
+            ShowcaseDistrict(root,id,culture,level,team);return root;
         }
         private void DistrictRoof(Transform parent,string culture,Vector3 position,float width,float depth,Color color)
         {

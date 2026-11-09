@@ -69,7 +69,7 @@ namespace ThronesOfMyth
             stage=new GameObject("Living city overview"){hideFlags=HideFlags.HideAndDontSave};stage.transform.position=new Vector3(3200,0,3200);
             content=new GameObject("City districts").transform;content.SetParent(stage.transform,false);
             var cameraObject=new GameObject("City overview camera");cameraObject.transform.SetParent(stage.transform,false);camera=cameraObject.AddComponent<Camera>();camera.enabled=false;camera.cullingMask=1<<30;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.10f,.17f,.21f);camera.orthographic=true;camera.orthographicSize=8.4f;camera.nearClipPlane=.1f;camera.farClipPlane=80;camera.transform.localPosition=new Vector3(11,15,-17);camera.transform.LookAt(stage.transform.position+Vector3.up*.3f);
-            var lightObject=new GameObject("City light");lightObject.transform.SetParent(stage.transform,false);var light=lightObject.AddComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<30;light.intensity=1.1f;light.color=new Color(1,.91f,.75f);lightObject.transform.localRotation=Quaternion.Euler(45,-25,0);
+            var lightObject=new GameObject("City light");lightObject.transform.SetParent(stage.transform,false);var light=lightObject.AddComponent<Light>();light.type=LightType.Directional;light.cullingMask=1<<30;light.intensity=1.1f;light.shadows=LightShadows.Soft;light.shadowStrength=.5f;light.color=new Color(1,.91f,.75f);lightObject.transform.localRotation=Quaternion.Euler(45,-25,0);
             var fillObject=new GameObject("City sky fill");fillObject.transform.SetParent(stage.transform,false);var fill=fillObject.AddComponent<Light>();fill.type=LightType.Directional;fill.cullingMask=1<<30;fill.intensity=.32f;fill.color=new Color(.64f,.79f,1);fillObject.transform.localRotation=Quaternion.Euler(35,145,0);
             ambient=stage.AddComponent<AudioSource>();ambient.playOnAwake=false;ambient.loop=true;ambient.spatialBlend=0;ambient.clip=Resources.Load<AudioClip>("Audio/CityAmbience");
         }
@@ -92,18 +92,23 @@ namespace ThronesOfMyth
             art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.5f,0),new Vector3(128,.2f,128),new Color(.27f,.36f,.26f));
             for(int i=0;i<24;i++){float angle=i*Mathf.PI*2/24;var at=new Vector3(Mathf.Sin(angle)*11,0,Mathf.Cos(angle)*11);art.EnvironmentModel(content,city.civilization=="norse"?"PineTree":"OakTree",at,.65f,new Color(.28f,.43f,.24f),i*37);}
             art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.35f,-12),new Vector3(1.2f,.12f,12),new Color(.60f,.54f,.40f));
-            art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.23f,0),new Vector3(16,.22f,16),new Color(.36f,.42f,.29f));
-            art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,-.08f,0),new Vector3(15.5f,.08f,15.5f),new Color(.43f,.51f,.32f));
+            art.CityTerrace(content,new Vector3(0,-.45f,0),new Vector3(7.8f,.28f,7.8f),new Color(.36f,.42f,.29f));
+            art.CityTerrace(content,new Vector3(0,-.17f,0),new Vector3(7.5f,.17f,7.5f),new Color(.43f,.51f,.32f));
             foreach (var building in city.cityBuildings) Boulevard(DistrictPosition(building.id));
+            // Repeated pavers and roadside gardens establish human scale without labels.
+            for(int side=-1;side<=1;side+=2)for(int i=-6;i<=6;i++)
+            {art.Shape(content,PrimitiveType.Cube,new Vector3(side*.46f,.045f,i),new Vector3(.12f,.07f,.84f),new Color(.73f,.68f,.53f));}
+            for(int side=-1;side<=1;side+=2)for(int row=0;row<3;row++)
+            {var at=new Vector3(side*6.4f,0,-4+row*2.2f);art.EnvironmentModel(content,"OakTree",at,.26f,new Color(.40f,.52f,.28f),row*57);art.Shape(content,PrimitiveType.Cube,at+new Vector3(0,.03f,0),new Vector3(.8f,.1f,.8f),new Color(.61f,.59f,.45f));}
             Boulevard(new Vector3(0,0,-7.6f));
-            art.Shape(content,PrimitiveType.Cylinder,new Vector3(0,.025f,0),new Vector3(4.2f,.045f,4.2f),new Color(.75f,.69f,.55f));
+            art.CityTerrace(content,new Vector3(0,.005f,0),new Vector3(2.2f,.05f,2.2f),new Color(.75f,.69f,.55f));
             // Civic edge and open southern gate are presentation, not city defenses.
-            for(int edge=0;edge<28;edge++)
+            for(int side=0;side<4;side++)for(int segment=-3;segment<=3;segment++)
             {
-                float angle=edge*Mathf.PI*2/28;if(edge>=12&&edge<=15)continue;
-                var at=new Vector3(Mathf.Sin(angle)*7.1f,.30f,Mathf.Cos(angle)*7.1f);
-                var wall=art.Shape(content,PrimitiveType.Cube,at,new Vector3(1.55f,.55f,.30f),new Color(.66f,.62f,.51f));wall.localRotation=Quaternion.Euler(0,angle*Mathf.Rad2Deg,0);
-                if(edge%3==0)art.Shape(content,PrimitiveType.Cylinder,at+Vector3.up*.20f,new Vector3(.52f,.53f,.52f),new Color(.74f,.69f,.57f));
+                if(side==2&&segment==0)continue;
+                Vector3 at=Quaternion.Euler(0,side*90,0)*new Vector3(segment*1.8f,.30f,7.05f);
+                var wall=art.Shape(content,PrimitiveType.Cube,at,new Vector3(1.68f,.55f,.30f),new Color(.66f,.62f,.51f));wall.localRotation=Quaternion.Euler(0,side*90,0);
+                for(int cap=-1;cap<=1;cap+=2)art.Shape(wall,PrimitiveType.Cube,new Vector3(cap*.38f,.65f,0),new Vector3(.16f,.3f,1.2f),new Color(.74f,.69f,.57f));
             }
             foreach(var at in new[]{new Vector3(-4,0,-.6f),new Vector3(4,0,-.6f),new Vector3(-.8f,0,4),new Vector3(.8f,0,-4)})
                 art.EnvironmentModel(content,city.civilization=="norse"?"PineTree":"OakTree",at,.42f,new Color(.30f,.47f,.25f),35);
@@ -133,6 +138,8 @@ namespace ThronesOfMyth
                 }
                 var ring=art.Ring(district,(b.id=="citadel"?1.8f:1.02f)/district.localScale.x,MythInterfaceTheme.Gold,.04f);districtRings[b.id]=ring;
                 var crane=new GameObject("Active construction scaffold").transform;crane.SetParent(district,false);art.Shape(crane,PrimitiveType.Cube,new Vector3(-.7f,.8f,.3f),new Vector3(.07f,1.6f,.07f),new Color(.49f,.34f,.18f));art.Shape(crane,PrimitiveType.Cube,new Vector3(-.20f,1.55f,.3f),new Vector3(1.1f,.06f,.06f),new Color(.49f,.34f,.18f));cranes[b.id]=crane;
+                for(int stack=0;stack<3;stack++)art.Shape(crane,PrimitiveType.Cube,new Vector3(.65f,.08f+stack*.10f,.42f),new Vector3(.5f,.08f,.24f),new Color(.62f,.54f,.39f));
+                art.Shape(crane,PrimitiveType.Cube,new Vector3(.25f,1.15f,.3f),new Vector3(.018f,.7f,.018f),new Color(.27f,.22f,.15f));
             }
             for(int edge=0;edge<32;edge++){float angle=edge*Mathf.PI*2/32;framingPoints.Add(new Vector3(Mathf.Sin(angle)*8,-.45f,Mathf.Cos(angle)*8));}
             guards=new[]{art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization)};guardActors=new[]{guards[0].GetComponent<WorldActorAnimation>(),guards[1].GetComponent<WorldActorAnimation>()};Layer(content);renderedAt=-1;
@@ -219,7 +226,7 @@ namespace ThronesOfMyth
                 if(complete)theme.Text(new Rect(badge.x-24,badge.y-2,66,22),"Ready",theme.Eyebrow);
                 else if(active||!building.canUpgrade)theme.Icon(new Rect(badge.x+3,badge.y+3,12,12),active?"builders":"lock",active?MythInterfaceTheme.Teal:MythInterfaceTheme.Muted);
                 else {MythInterfaceTheme.Line(new Vector2(badge.center.x,badge.y+4),new Vector2(badge.center.x,badge.yMax-4),2,MythInterfaceTheme.Gold);MythInterfaceTheme.Line(new Vector2(badge.x+4,badge.center.y),new Vector2(badge.xMax-4,badge.center.y),2,MythInterfaceTheme.Gold);}
-                GUI.Label(badge,new GUIContent("",building.name+" · "+(active?"Working":building.canUpgrade?building.level>0?"Upgrade available":"Ready to build":building.lockedReason)),GUIStyle.none);
+                theme.Hint(badge,building.name+" · "+(active?"Working":building.canUpgrade?building.level>0?"Upgrade available":"Ready to build":building.lockedReason));GUI.Label(badge,new GUIContent("",building.name+" · "+(active?"Working":building.canUpgrade?building.level>0?"Upgrade available":"Ready to build":building.lockedReason)),GUIStyle.none);
             }
             labelBounds.Clear();
             // Selected and working districts get labels first. Unbuilt plots stay quiet

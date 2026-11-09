@@ -13,16 +13,14 @@ namespace ThronesOfMyth
         public bool CityViewed,ArmyPrepared,OutcomeViewed;
         private string profile;
         public void Profile(string identity){if(profile==identity)return;profile=identity;CityViewed=ArmyPrepared=OutcomeViewed=false;}
-        private static readonly OpeningCue City=new OpeningCue(1,"Discover your city","Select a district to inspect and upgrade.","city","citadel");
-        private static readonly OpeningCue Build=new OpeningCue(2,"Raise the Citadel","Advance an age; unlock a second march.","city","citadel");
-        private static readonly OpeningCue Train=new OpeningCue(3,"Train reserves","Train two batches of five into reserves.","training");
-        private static readonly OpeningCue Prepare=new OpeningCue(4,"Commander & troops","Edit at home; add your ready reserves.","prepare");
-        private static readonly OpeningCue Wood=new OpeningCue(5,"Gather timber","Gather timber, then return cargo home.","gather","wood");
-        private static readonly OpeningCue Food=new OpeningCue(6,"Gather food","Gather food, then return cargo home.","gather","food");
-        private static readonly OpeningCue Fight=new OpeningCue(7,"Challenge a camp","Inspect an available level 1 camp.","combat","opening-level-one");
-        private static readonly OpeningCue Outcome=new OpeningCue(8,"Review the outcome","Review results, XP, treasury and wounds.","outcome");
-        private static readonly OpeningCue Home=new OpeningCue(9,"Return and deliver","Deliver carried resources; recover at home.","return");
-        private static readonly OpeningCue Recover=new OpeningCue(9,"Recover at home","Wait for recovery; city work can continue.","city","citadel");
+        private static readonly OpeningCue City=new OpeningCue(1,"Discover your city","Meet your Captain and inspect a district.","city","citadel");
+        private static readonly OpeningCue Train=new OpeningCue(2,"Train five archers","One archer batch completes the starting patrol.","training");
+        private static readonly OpeningCue Prepare=new OpeningCue(3,"Prepare a Scout patrol","Captain, 15 infantry, 5 archers; select the patrol preset.","prepare");
+        private static readonly OpeningCue Fight=new OpeningCue(4,"Challenge Forsaken Scouts","Scout toward (20, 20), then select the remembered level 1 camp.","combat","opening-level-one");
+        private static readonly OpeningCue Outcome=new OpeningCue(5,"Review your victory","See the real battle reward and commander progress.","outcome");
+        private static readonly OpeningCue Home=new OpeningCue(6,"Return to your civilization","Recall the patrol; its deployment slot clears on arrival.","return");
+        private static readonly OpeningCue Build=new OpeningCue(7,"Raise the Citadel","Return to the city and advance your first age.","city","citadel");
+        private static readonly OpeningCue Recover=new OpeningCue(6,"Recover at home","Wait for recovery; city work can continue.","city","citadel");
         public static int Progress(ArmyData city,string id)
         {
             if(city?.journeyCampaign?.chapters==null)return 0;
@@ -34,16 +32,12 @@ namespace ThronesOfMyth
             if(city?.journeyCampaign==null||city.journeyCampaign.complete||city.cityLevel>=3||city.kills>=3||army==null)return null;
             float dx=army.x-city.homeX,dz=army.z-city.homeZ;bool home=dx*dx+dz*dz<4;
             if(army.recovery>0||home&&army.health<army.maxHealth)return Recover;
-            if(city.kills>0){if(!OutcomeViewed)return Outcome;return !home&&army.recovery<=0?Home:null;}
-            int trained=Progress(city,"train-ten"),wood=Progress(city,"gather-wood"),food=Progress(city,"gather-food");
-            if(!CityViewed&&city.cityLevel==1&&trained==0&&wood==0&&food==0)return City;
-            bool building=city.construction!=null&&!string.IsNullOrEmpty(city.construction.id)||city.secondConstruction!=null&&!string.IsNullOrEmpty(city.secondConstruction.id);
-            if(city.cityLevel<2&&!building&&wood==0)return Build;
-            int queued=0;if(city.trainingQueue!=null)foreach(var job in city.trainingQueue)if(job.type=="train")queued+=job.amount;
-            if(trained+queued<10)return Train;
-            if(!ArmyPrepared&&home&&wood==0&&food==0)return Prepare;
-            if(army.cargo!=null&&((wood<40&&army.cargo.wood>=40)||(wood>=40&&food<40&&army.cargo.food>=40)))return Home;
-            if(wood<40)return Wood;if(food<40)return Food;return Fight;
+            if(city.kills>0){if(!OutcomeViewed)return Outcome;if(!home)return Home;return city.cityLevel<2?Build:null;}
+            if(!CityViewed&&city.cityLevel==1)return City;
+            int archers=(city.reserveUnits?.Archers??0)+(army.units?.Archers??0);
+            if(archers<5)return Train;
+            if(!ArmyPrepared&&home)return Prepare;
+            return Fight;
         }
     }
 }

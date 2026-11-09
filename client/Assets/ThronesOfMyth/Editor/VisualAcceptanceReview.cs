@@ -19,6 +19,11 @@ namespace ThronesOfMyth.Editor
         {
             if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode before running headless contracts.");
             CameraReview.ValidateCameraBoundaries();ArtReview.ValidateAssets(false);
+            foreach(string name in new[]{"MythBrushwork","MeadowDetail"})
+            {var texture=Resources.Load<Texture2D>("Art/"+name);if(texture==null||texture.width!=256||texture.height!=256||texture.mipmapCount<2)throw new InvalidOperationException("Showcase texture import/mipmaps: "+name);}
+            var gold=Resources.Load<Shader>("Art/RallyGold");if(gold==null||ShaderUtil.ShaderHasError(gold))throw new InvalidOperationException("RallyGold shader import/compilation failed.");
+            foreach(string name in new[]{"RallyCharge","RallyRelease"})
+            {var clip=Resources.Load<AudioClip>("Audio/"+name);if(clip==null||clip.channels!=1||clip.length<=0||clip.length>1)throw new InvalidOperationException("Showcase audio import: "+name);}
             var pages=new HashSet<InterfacePage>();foreach(var entry in GameNavigation.Entries)if(!pages.Add(entry.Page))throw new InvalidOperationException("Duplicate navigation destination: "+entry.Page);
             foreach(InterfacePage page in Enum.GetValues(typeof(InterfacePage)))if(page!=InterfacePage.World&&page!=InterfacePage.Menu&&!pages.Contains(page))throw new InvalidOperationException("Unreachable screen: "+page);
             string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../..","work/native-visual-review"));Directory.CreateDirectory(folder);

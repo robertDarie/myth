@@ -16,6 +16,10 @@ namespace ThronesOfMyth
         public GUIStyle Title, Heading, Body, Small, Eyebrow, Number, Center, Primary, Danger, Tab, Card;
         private GUIStyle panel, inset, selected, compactPrimary,noticeText;
         private float appliedScale=-1;
+        private GUIStyle navigationText;
+        public string TooltipCandidate {get;private set;}="";
+        public void BeginTooltips(){TooltipCandidate="";}
+        public void Hint(Rect rect,string hint){if(!string.IsNullOrEmpty(hint)&&rect.Contains(Event.current.mousePosition))TooltipCandidate=hint;}
         private GUIStyle measureStyle;
         private readonly GUIContent measuringContent=new GUIContent();
         private readonly Func<string,float> measureWidth;
@@ -137,7 +141,8 @@ namespace ThronesOfMyth
             line.alignment = style.alignment == TextAnchor.MiddleCenter ? TextAnchor.MiddleCenter : TextAnchor.MiddleLeft;
             line.normal.textColor=style.normal.textColor;line.fontSize=style.fontSize;
             measureStyle=line;string shown=TextElision.Fit(text,rect.width,measureWidth);
-            GUI.Label(rect, new GUIContent(shown, shown == text ? "" : text), line);
+            Hint(rect,shown==text?"":text);
+            GUI.Label(rect, shown, line);
         }
         public void WorldMarker(Rect rect,string text,string icon,Color accent,bool chosen,GUIStyle textStyle,float scale)
         {
@@ -153,7 +158,7 @@ namespace ThronesOfMyth
         {
             Circle(rect,new Color(.025f,.06f,.07f));
             Circle(new Rect(rect.x+3*scale,rect.y+3*scale,rect.width-6*scale,rect.height-6*scale),accent);
-            GUI.Label(rect,new GUIContent("",tooltip),GUIStyle.none);
+            Hint(rect,tooltip);GUI.Label(rect,GUIContent.none,GUIStyle.none);
         }
         public bool NavigationButton(Rect rect,string title,string icon,bool chosen,string hint="")
         {
@@ -162,12 +167,15 @@ namespace ThronesOfMyth
             if(chosen)Fill(new Rect(rect.x,rect.y,3,rect.height),Gold);
             float inset=string.IsNullOrEmpty(icon)?10:38;
             if(!string.IsNullOrEmpty(icon))Icon(new Rect(rect.x+11,rect.center.y-10,20,20),icon,chosen?Gold:Muted);
-            OneLine(new Rect(rect.x+inset,rect.y,rect.width-inset-8,rect.height),title,Tab);
+            if(navigationText==null)navigationText=new GUIStyle(Body){wordWrap=true,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(0,0,0,0)};
+            navigationText.fontSize=Tab.fontSize;
+            GUI.Label(new Rect(rect.x+inset,rect.y+2,rect.width-inset-8,rect.height-4),GameNavigation.CompactTitle(title),navigationText);
+            Hint(rect,string.IsNullOrEmpty(hint)?title:hint);
             return GUI.Button(rect,new GUIContent("",hint),GUIStyle.none);
         }
         public void Notice(Rect rect,string title,string message,Color accent,float animationAge)
         {
-            Panel(rect);Fill(new Rect(rect.x,rect.y+5,3,rect.height-10),accent);
+            Hint(rect,message);Panel(rect);Fill(new Rect(rect.x,rect.y+5,3,rect.height-10),accent);
             if(!ReducedMotion&&animationAge>=0&&animationAge<.35f)Fill(new Rect(rect.x,rect.yMax-2,rect.width*(1-animationAge/.35f),2),accent);
             OneLine(new Rect(rect.x+14,rect.y+4,rect.width-28,22),title,Eyebrow);
             GUI.Label(new Rect(rect.x+14,rect.y+27,rect.width-28,rect.height-30),new GUIContent(message,message),noticeText??Small);
@@ -178,14 +186,14 @@ namespace ThronesOfMyth
             var style=primary?(rect.height<=36?compactPrimary:Primary):(rect.height<=36?Tab:Skin.button);
             measureStyle=style;string shown=TextElision.Fit(text,rect.width,measureWidth);
             string tip=!enabled&&!string.IsNullOrEmpty(disabledReason)?disabledReason:shown!=text?text:"";
-            bool result=GUI.Button(rect,new GUIContent(shown,tip),style);GUI.enabled=wasEnabled;
+            Hint(rect,tip);bool result=GUI.Button(rect,new GUIContent(shown,tip),style);GUI.enabled=wasEnabled;
             if(!enabled&&!string.IsNullOrEmpty(tip))GUI.Label(rect,new GUIContent("",tip),GUIStyle.none);
             return result;
         }
         public bool Action(string title,bool available,string reason,bool primary=true)
         {
             bool before=GUI.enabled;GUI.enabled=before&&available;
-            bool pressed=GUILayout.Button(new GUIContent(title,available?"":reason),primary?Primary:Skin.button,GUILayout.MinHeight(42));GUI.enabled=before;
+            bool pressed=GUILayout.Button(new GUIContent(title,available?"":reason),primary?Primary:Skin.button,GUILayout.MinHeight(42));GUI.enabled=before;Hint(GUILayoutUtility.GetLastRect(),available?"":reason);
             if(!available&&!string.IsNullOrEmpty(reason))GUILayout.Label(reason,Small);
             return pressed;
         }

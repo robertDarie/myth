@@ -83,8 +83,12 @@ namespace ThronesOfMyth
             }
             GUI.EndScrollView();
             theme.Text(new Rect(right.x + 18, right.y + 12, right.width - 36, 26), formationEditing ? "REFORM AT YOUR CITY" : "TROOPS LEAVING YOUR CITY", theme.Eyebrow);
-            theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), "Choose each troop type and exact count. Unselected units stay home.", theme.Small);
-            var viewport = new Rect(right.x + 10, right.y + 85, right.width - 20, right.height - 187);
+            theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), "Choose a patrol or set exact counts. Unselected units stay home.", theme.Small);
+            bool captainFree=Array.IndexOf(me.ownedCommanders,"captain")>=0&&!OwnMarches().Exists(a=>a.id!=formationMarchId&&a.commanderId=="captain");
+            bool patrolReady=captainFree&&ready.Get("infantry")>=15&&ready.Get("archers")>=5;
+            if(theme.Button(new Rect(right.x+18,right.y+80,right.width-36,34),"Scout patrol · Captain · 15 infantry + 5 archers",false,patrolReady,"Needs the Captain, 15 ready infantry and 5 archers. Train archers in your city."))
+            {formationHeroId="captain";formationUnits=new UnitCounts();formationUnits.Set("infantry",15);formationUnits.Set("archers",5);formationMythic=0;formationEntries.Clear();GUIUtility.keyboardControl=0;}
+            var viewport = new Rect(right.x + 10, right.y + 121, right.width - 20, right.height - 223);
             formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, (world.troopTypes.Length+1) * 98));
             for (int i = 0; i < world.troopTypes.Length; i++)
             {

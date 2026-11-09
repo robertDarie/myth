@@ -35,8 +35,8 @@ try {
     }
     $matrix = Join-Path $reports 'acceptance-matrix.csv'
     if (-not (Test-Path $matrix)) {
-        $cases = @('World edges/corners and zoom', 'Boundary focus and ground picking', 'Fog and hidden-object privacy', 'Worksites/mixed formations/gathering', 'City rotation/building states/completion', 'Menu and every destination', 'Training/research/commanders/inventory', 'Errors/retry/reduced motion')
-        $rows = foreach ($resolution in @('1280x720','1920x1080','2560x1440','1024x768','2560x1080')) {
+        $cases = @('World edges/corners and zoom', 'Boundary focus and ground picking', 'Fog and hidden-object privacy', 'Worksites/mixed formations/gathering', 'City rotation/building states/completion', 'Menu and every destination', 'Training/research/commanders/inventory', 'Errors/retry/reduced motion', 'Captain mixed patrol and real Forsaken Scouts skill', 'Known camp approach and fog privacy', 'Rally shield exhaustion and pooling', 'Navigation labels and tooltip dismissal')
+        $rows = foreach ($resolution in @('1200x720','1280x720','1366x768','1600x900','1920x1080','2560x1440','1024x768','2560x1080')) {
             foreach ($scale in @(85,100,115)) {
                 foreach ($case in $cases) { [pscustomobject]@{resolution=$resolution;uiScale=$scale;scenario=$case;status='PENDING';notes=''} }
             }

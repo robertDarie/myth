@@ -22,9 +22,9 @@ namespace ThronesOfMyth
         {
             volume = PlayerPrefs.GetFloat("ThronesOfMyth.effectsVolume", 0.35f); current = this; source = gameObject.AddComponent<AudioSource>(); source.playOnAwake = false; source.spatialBlend = 0; source.volume = volume;
             if (Camera.main != null && FindFirstObjectByType<AudioListener>() == null) Camera.main.gameObject.AddComponent<AudioListener>();
-            foreach (var id in new[] { "step", "hoof", "strike", "impact", "arrow", "skill", "retreat", "victory", "select", "confirm", "arrival", "reward" })
+            foreach (var id in new[] { "step", "hoof", "strike", "impact", "arrow", "skill", "retreat", "victory", "select", "confirm", "arrival", "reward", "rally-charge", "rally-release" })
             {
-                string name=id=="step"?"Footstep":id=="hoof"?"HorseHoof":id=="arrow"?"BowRelease":id=="strike"||id=="impact"?"MetalImpact":id=="skill"?"DivineCast":null;
+                string name=id=="step"?"Footstep":id=="hoof"?"HorseHoof":id=="arrow"?"BowRelease":id=="strike"||id=="impact"?"MetalImpact":id=="skill"?"DivineCast":id=="rally-charge"?"RallyCharge":id=="rally-release"?"RallyRelease":null;
                 var clip=name==null?null:Resources.Load<AudioClip>("Audio/"+name);clips.Add(id,clip!=null?clip:Make(id));
             }
         }
@@ -55,7 +55,7 @@ namespace ThronesOfMyth
             if (current == null || current.volume <= 0 || !current.clips.TryGetValue(id, out var clip) || Camera.main == null) return;
             var view = Camera.main.WorldToViewportPoint(point);
             if (view.z <= 0 || view.x < 0 || view.x > 1 || view.y < 0 || view.y > 1) return;
-            bool important=id=="skill"||id=="victory"||id=="retreat"||id=="reward";
+            bool important=id=="rally-charge"||id=="rally-release"||id=="skill"||id=="victory"||id=="retreat"||id=="reward";
             if(!important&&Time.unscaledTime<current.nextVoice)return;
             if (current.nextCue.TryGetValue(id, out float next) && Time.unscaledTime < next) return;
             current.nextVoice=Time.unscaledTime+.045f;
