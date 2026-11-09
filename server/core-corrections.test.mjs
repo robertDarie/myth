@@ -119,5 +119,5 @@ test('schema thirteen JSON migration archives the untouched original before savi
 test('Windows package includes the entire server import graph and matches protocol sixteen',async()=>{
  const {readFileSync}=await import('node:fs');const builder=readFileSync(new URL('../client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs',import.meta.url),'utf8');const launcher=readFileSync(new URL('../packaging/windows/Launcher.ps1',import.meta.url),'utf8');const visited=new Set();
  function visit(file){if(visited.has(file))return;visited.add(file);assert.ok(builder.includes('"'+file+'"'),'Windows builder must bundle '+file);const source=readFileSync(new URL(file,import.meta.url),'utf8');for(const match of source.matchAll(/(?:from\s*|import\s*)['"]\.\/([^'"]+\.mjs)['"]/g))visit(match[1]);}
- visit('index.mjs');assert.ok(visited.has('field-logistics.mjs')&&visited.has('discovery.mjs'));assert.ok(launcher.includes('$health.version -eq 16'));assert.ok(builder.includes('bundleVersion = "0.32.0"'));
+ visit('index.mjs');assert.ok(visited.has('field-logistics.mjs')&&visited.has('discovery.mjs'));assert.ok(launcher.includes('$health.version -eq 16'));assert.ok(builder.includes('bundleVersion = "0.33.0"'));
 });

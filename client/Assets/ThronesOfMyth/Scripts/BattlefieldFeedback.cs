@@ -8,6 +8,7 @@ namespace ThronesOfMyth
         private static BattlefieldFeedback current;
         private readonly Spark[] pool = new Spark[48];
         private Material material;
+        private Mesh fragment;
         private MaterialPropertyBlock tintBlock;
         private int cursor;
         private float nextAmbient;
@@ -15,9 +16,10 @@ namespace ThronesOfMyth
         private void Awake()
         {
             current=this;tintBlock=new MaterialPropertyBlock(); material=new Material(Shader.Find("Standard")){color=new Color(1,0.77f,0.35f),enableInstancing=true};material.SetFloat("_Glossiness",0);
+            fragment=new Mesh{name="Original impact fleck"};fragment.vertices=new[]{Vector3.up,Vector3.down,Vector3.left*.5f,Vector3.right*.5f,Vector3.forward*.25f,Vector3.back*.25f};fragment.triangles=new[]{0,4,3,0,2,4,0,5,2,0,3,5,1,3,4,1,4,2,1,2,5,1,5,3};fragment.RecalculateNormals();fragment.RecalculateBounds();
             for(int i=0;i<pool.Length;i++)
             {
-                var obj=GameObject.CreatePrimitive(PrimitiveType.Cube);obj.name="Pooled battlefield feedback";obj.transform.SetParent(transform,false);Destroy(obj.GetComponent<Collider>());
+                var obj=new GameObject();obj.AddComponent<MeshFilter>().sharedMesh=fragment;obj.AddComponent<MeshRenderer>();obj.name="Pooled battlefield feedback";obj.transform.SetParent(transform,false);
                 var renderer=obj.GetComponent<Renderer>();renderer.sharedMaterial=material;renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;renderer.receiveShadows=false;
                 pool[i]=new Spark{root=obj.transform,renderer=renderer};obj.SetActive(false);
             }
@@ -51,6 +53,6 @@ namespace ThronesOfMyth
                 spark.velocity+=Vector3.down*Time.deltaTime*1.5f;spark.root.position+=spark.velocity*Time.deltaTime;spark.root.localScale=Vector3.one*spark.size*Mathf.Clamp01(spark.life/spark.duration);
             }
         }
-        private void OnDestroy(){if(current==this)current=null;if(material!=null)Destroy(material);}
+        private void OnDestroy(){if(current==this)current=null;if(material!=null)Destroy(material);if(fragment!=null)Destroy(fragment);}
     }
 }

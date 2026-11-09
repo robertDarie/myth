@@ -227,6 +227,12 @@ namespace ThronesOfMyth
             float inset = rect.height < 6 ? 0 : 1;
             Fill(new Rect(rect.x + inset, rect.y + inset, Mathf.Max(0, rect.width - inset * 2) * Mathf.Clamp01(value), Mathf.Max(1, rect.height - inset * 2)), color);
         }
+        public void HealthBar(Rect rect,float current,float trace,Color color)
+        {
+            Fill(rect,new Color(.02f,.04f,.05f,.95f));float width=Mathf.Max(0,rect.width-2);
+            Fill(new Rect(rect.x+1,rect.y+1,width*Mathf.Clamp01(trace),Mathf.Max(1,rect.height-2)),new Color(.85f,.71f,.49f,.85f));
+            Fill(new Rect(rect.x+1,rect.y+1,width*Mathf.Clamp01(current),Mathf.Max(1,rect.height-2)),color);
+        }
         public void Icon(Rect r, string id, Color color)
         {
             var c = r.center; float u = r.width / 24;

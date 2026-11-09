@@ -23,7 +23,7 @@ namespace ThronesOfMyth.Editor
             {var texture=Resources.Load<Texture2D>("Art/"+name);if(texture==null||texture.width!=256||texture.height!=256||texture.mipmapCount<2)throw new InvalidOperationException("Showcase texture import/mipmaps: "+name);}
             var gold=Resources.Load<Shader>("Art/RallyGold");if(gold==null||ShaderUtil.ShaderHasError(gold))throw new InvalidOperationException("RallyGold shader import/compilation failed.");
             var veil=Resources.Load<Shader>("Art/FogVeil");if(veil==null||ShaderUtil.ShaderHasError(veil))throw new InvalidOperationException("Kingdom veil shader import/compilation failed.");
-            foreach(string name in new[]{"RallyCharge","RallyRelease"})
+            foreach(string name in new[]{"RallyCharge","RallyRelease","RenewalChime","HuntressFlight","CrescentImpact"})
             {var clip=Resources.Load<AudioClip>("Audio/"+name);if(clip==null||clip.channels!=1||clip.length<=0||clip.length>1)throw new InvalidOperationException("Showcase audio import: "+name);}
             var pages=new HashSet<InterfacePage>();foreach(var entry in GameNavigation.Entries)if(!pages.Add(entry.Page))throw new InvalidOperationException("Duplicate navigation destination: "+entry.Page);
             foreach(InterfacePage page in Enum.GetValues(typeof(InterfacePage)))if(page!=InterfacePage.World&&page!=InterfacePage.Menu&&!pages.Contains(page))throw new InvalidOperationException("Unreachable screen: "+page);

@@ -31,7 +31,7 @@ namespace ThronesOfMyth
         private Color captionColor;
         public bool reducedMotion, allowAudio;
         private bool mountedArmy, arrowReleasePending,combat,mythicAttack;
-        private bool woundedReturning,captainCry;
+        private bool woundedReturning,usesSkillPool,confirmedShield;
         private bool recovering, campDead, impactSoundPending, wasFlashing;
         private string previewPose;
         private float previewPoseUntil, dustAt;
@@ -72,14 +72,15 @@ namespace ThronesOfMyth
         }
         public void Observe(ArmyData army,ArmyObservation observation)
         {
-            captainCry=army.commanderId=="captain";
+            confirmedShield=army.shield>0;
             mountedArmy=army.units!=null&&army.units.Cavalry>0;
             woundedReturning=army.state=="Returning"&&army.health<army.maxHealth*.5f;
             gathering=ArmyPresentationState.IsGathering(army);hasTarget=army.hasOrder;
             targetPosition=new Vector3(army.targetX,0,army.targetZ);skillKind=army.skillKind;
             rangedAttack=army.units!=null&&army.units.Archers>0||authored.Exists(u=>u.commander&&u.ranged);
             mythicAttack=army.mythic>0;combat=ArmyPresentationState.IsEngaged(army)||observation.Has(ArmyCue.Attack);if(combat)attackTarget=new Vector3(army.attackX,0,army.attackZ);
-            bool cry=army.commanderId=="captain"&&RallyingCryVfx.Present(transform,army.shield>0,observation.Has(ArmyCue.Skill),reducedMotion,allowAudio,authored);
+            bool cry=CommanderSkillVfx.Present(transform,army,observation.Has(ArmyCue.Skill),reducedMotion,allowAudio,authored);
+            usesSkillPool=cry;
             if(shield!=null)shield.SetActive(army.shield>0&&!cry);
             if(observation.Has(ArmyCue.Attack))
             {
@@ -95,8 +96,8 @@ namespace ThronesOfMyth
             {
                 castUntil=Time.unscaledTime+.9f;foreach(var unit in authored)if(unit.commander)unit.Restart("Skill");
                 var color=skillKind=="heal"?new Color(.4f,.9f,.6f):skillKind=="shield"?new Color(.4f,.7f,1):new Color(1,.7f,.25f);
-                if(!captainCry)BattlefieldFeedback.Emit("skill",transform.parent.position,color,reducedMotion);caption=army.lastSkill+(observation.Has(ArmyCue.Health)?" · "+(observation.HealthDelta>0?"+":"")+observation.HealthDelta+" HP":"");captionColor=color;captionUntil=Time.unscaledTime+1.4f;
-                if(allowAudio&&army.commanderId!="captain")BattlefieldAudio.Cue("skill",transform.parent.position);
+                if(!usesSkillPool)BattlefieldFeedback.Emit("skill",transform.parent.position,color,reducedMotion);caption=army.lastSkill+(observation.Has(ArmyCue.Health)?" · "+(observation.HealthDelta>0?"+":"")+observation.HealthDelta+" HP":"");captionColor=color;captionUntil=Time.unscaledTime+1.4f;
+                if(allowAudio&&!usesSkillPool)BattlefieldAudio.Cue("skill",transform.parent.position);
             }
             if(observation.Has(ArmyCue.Retreat)){attackUntil=castUntil=impactUntil=0;arrowReleasePending=impactSoundPending=false;SetCaption("RETREAT · RECOVERING",new Color(1,.65f,.4f),1.6f);if(allowAudio)BattlefieldAudio.UiCue("retreat");}
             else if(observation.Has(ArmyCue.Victory))ObserveVictory();
@@ -117,7 +118,7 @@ namespace ThronesOfMyth
         public void ObserveVictory()
         {
             victoryUntil=Time.unscaledTime+1.4f;caption="VICTORY";captionColor=new Color(1,.82f,.40f);captionUntil=Time.unscaledTime+1.3f;
-            foreach(var unit in authored)unit.Restart("Victory");if(allowAudio)BattlefieldAudio.UiCue("victory");
+            foreach(var unit in authored)unit.Restart("Victory");BattlefieldFeedback.Emit("victory",transform.position,new Color(1,.82f,.4f),reducedMotion);if(allowAudio)BattlefieldAudio.UiCue("victory");
         }
         public void RebaseMotion() { lastPosition = transform.parent.position; }
         public void PreviewSkill(string kind)
@@ -190,15 +191,15 @@ namespace ThronesOfMyth
             // A defeat return is a server teleport, never a sprint across the map.
             bool walking = previewWalking || (movement.sqrMagnitude > 0.000003f && movement.sqrMagnitude < 9);
             Vector3 facing = walking ? movement : combat ? targetPosition-position : hasTarget ? targetPosition-position : Vector3.zero; facing.y = 0;
-            string pose=Time.unscaledTime<castUntil?"Skill":Time.unscaledTime<attackUntil?"Attack":Time.unscaledTime<recoilUntil?"Hit":Time.unscaledTime<victoryUntil?"Victory":walking&&!recovering?(woundedReturning?"Retreat":"March"):gathering?"Gather":"Idle";
+            string pose=Time.unscaledTime<castUntil?"Skill":Time.unscaledTime<recoilUntil?"Hit":Time.unscaledTime<attackUntil?"Attack":Time.unscaledTime<victoryUntil?"Victory":walking&&!recovering?(woundedReturning?"Retreat":"March"):gathering?"Gather":"Idle";
             if(Time.unscaledTime<previewPoseUntil&&!string.IsNullOrEmpty(previewPose))pose=previewPose;
             foreach(var unit in authored)if(unit.gameObject.activeInHierarchy)
             {
                 string unitPose=pose=="Skill"&&!unit.commander?(Time.unscaledTime<attackUntil?"Attack":"Idle"):pose;
                 unit.Pose(unitPose,reducedMotion);
                 unit.FormationMotion(turnLean,walkBlend,reducedMotion);
-                float strike=Time.unscaledTime<attackUntil?Mathf.Sin(Mathf.Clamp01(1-(attackUntil-Time.unscaledTime)/.65f)*Mathf.PI*2):0;
-                unit.CombatMotion(strike,unit.commander&&Time.unscaledTime<castUntil?Mathf.Sin(Mathf.Clamp01(1-(castUntil-Time.unscaledTime)/.9f)*Mathf.PI):0,Mathf.Clamp01((recoilUntil-Time.unscaledTime)/.2f),combat,reducedMotion);
+                float strike=SkillPresentation.AttackLean(.65f-(attackUntil-Time.unscaledTime));
+                unit.CombatMotion(strike,unit.commander&&Time.unscaledTime<castUntil?Mathf.Sin(Mathf.Clamp01(1-(castUntil-Time.unscaledTime)/.9f)*Mathf.PI):0,Mathf.Clamp01((recoilUntil-Time.unscaledTime)/.2f),combat,reducedMotion,confirmedShield);
             }
             float previousYaw = transform.localEulerAngles.y;
             if (facing.sqrMagnitude > 0.001f) transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.LookRotation(facing), 210 * Time.deltaTime);
@@ -243,7 +244,7 @@ namespace ThronesOfMyth
             if (fire != null) fire.localScale = new Vector3(0.4f, reducedMotion ? 0.6f : 0.6f + Mathf.Sin(Time.unscaledTime * 6) * 0.08f, 0.4f);
             if (skill != null)
             {
-                bool active = Time.unscaledTime < castUntil&&!captainCry; skill.SetActive(active);
+                bool active = Time.unscaledTime < castUntil&&!usesSkillPool&&BattlefieldFeedback.Enabled; skill.SetActive(active);
                 skill.transform.localScale = Vector3.one * (reducedMotion ? 1 : 1 + Mathf.Clamp01(1 - (castUntil - Time.unscaledTime) / 0.9f) * 0.6f);
             }
             if (campDead) transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(0, 0, 22), reducedMotion ? 1 : 1 - Mathf.Exp(-5 * Time.deltaTime));

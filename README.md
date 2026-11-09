@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.32
+## Playable slice 0.33
 
+- Combat spectacle: shared bounded commander effect styles, coordinated attack
+  envelopes, shield/readable loss traces and original skill audio.
+  [Implementation and verification](docs/combat-release-0.33.md).
 - World/city craft pass: culture-shaped tiled roofs, bent grass, pottery, gatehouses,
   worksite details, ambient activity and opaque cloud fog.
   [Implementation and verification](docs/art-release-0.32.md).

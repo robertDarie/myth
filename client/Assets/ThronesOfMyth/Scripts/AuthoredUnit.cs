@@ -46,13 +46,13 @@ namespace ThronesOfMyth
             transform.localPosition=reducedMotion?rest:Vector3.SmoothDamp(transform.localPosition,target,ref formationVelocity,.16f);
             formationRotation=reducedMotion?Quaternion.identity:Quaternion.Slerp(formationRotation,Quaternion.Euler(0,-turn*9,0),1-Mathf.Exp(-9*Time.deltaTime));transform.localRotation=formationRotation;
         }
-        public void CombatMotion(float attack,float casting,float hit,bool engaged,bool reduced)
+        public void CombatMotion(float attack,float casting,float hit,bool engaged,bool reduced,bool shielded=false)
         {
             if(reduced)return;
             // Additive, root-local anticipation/lunge; never moves the authoritative army.
             float lunge=ranged?-.04f*attack:.14f*attack;
             combatOffset=new Vector3(0,commander?casting*.035f:0,lunge-hit*.08f);transform.localPosition+=combatOffset;
-            transform.localRotation*=Quaternion.Euler(-attack*(ranged?3:6)+hit*5,0,commander?-casting*5:engaged?-2:0);
+            transform.localRotation*=Quaternion.Euler(-attack*(ranged?3:6)+hit*5,0,commander?-casting*5:shielded?-5:engaged?-2:0);
         }
         public void Restart(string state)
         {
