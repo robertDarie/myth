@@ -12,6 +12,7 @@ namespace ThronesOfMyth
         private readonly AudioSource ambient;
         private readonly WorldArtFactory art=new WorldArtFactory();
         private readonly Dictionary<string,Transform> districts=new Dictionary<string,Transform>(),cranes=new Dictionary<string,Transform>();
+        private readonly Dictionary<string,Transform> hoistLoads=new Dictionary<string,Transform>();
         private Transform[] guards;
         private readonly Dictionary<string,GameObject> plotSeals=new Dictionary<string,GameObject>();
         private readonly Dictionary<string,LineRenderer> districtRings=new Dictionary<string,LineRenderer>();
@@ -87,13 +88,14 @@ namespace ThronesOfMyth
         {
             if(ReferenceEquals(appearanceObserved,city))return;appearanceObserved=city;
             string key=city.civilization;foreach(var b in city.cityBuildings)key+="|"+b.id+":"+b.level;
-            if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();plotSeals.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
+            if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();hoistLoads.Clear();plotSeals.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
             // Designed city hinterland fills the viewport at every supported aspect.
             art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.5f,0),new Vector3(128,.2f,128),new Color(.27f,.36f,.26f));
             for(int i=0;i<24;i++){float angle=i*Mathf.PI*2/24;var at=new Vector3(Mathf.Sin(angle)*11,0,Mathf.Cos(angle)*11);art.EnvironmentModel(content,city.civilization=="norse"?"PineTree":"OakTree",at,.65f,new Color(.28f,.43f,.24f),i*37);}
             art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.35f,-12),new Vector3(1.2f,.12f,12),new Color(.60f,.54f,.40f));
             art.CityTerrace(content,new Vector3(0,-.45f,0),new Vector3(7.8f,.28f,7.8f),new Color(.36f,.42f,.29f));
             art.CityTerrace(content,new Vector3(0,-.17f,0),new Vector3(7.5f,.17f,7.5f),new Color(.43f,.51f,.32f));
+            art.CivicDressing(content,city.civilization);
             foreach (var building in city.cityBuildings) Boulevard(DistrictPosition(building.id));
             // Repeated pavers and roadside gardens establish human scale without labels.
             for(int side=-1;side<=1;side+=2)for(int i=-6;i<=6;i++)
@@ -139,10 +141,11 @@ namespace ThronesOfMyth
                 var ring=art.Ring(district,(b.id=="citadel"?1.8f:1.02f)/district.localScale.x,MythInterfaceTheme.Gold,.04f);districtRings[b.id]=ring;
                 var crane=new GameObject("Active construction scaffold").transform;crane.SetParent(district,false);art.Shape(crane,PrimitiveType.Cube,new Vector3(-.7f,.8f,.3f),new Vector3(.07f,1.6f,.07f),new Color(.49f,.34f,.18f));art.Shape(crane,PrimitiveType.Cube,new Vector3(-.20f,1.55f,.3f),new Vector3(1.1f,.06f,.06f),new Color(.49f,.34f,.18f));cranes[b.id]=crane;
                 for(int stack=0;stack<3;stack++)art.Shape(crane,PrimitiveType.Cube,new Vector3(.65f,.08f+stack*.10f,.42f),new Vector3(.5f,.08f,.24f),new Color(.62f,.54f,.39f));
+                hoistLoads[b.id]=art.Shape(crane,PrimitiveType.Cube,new Vector3(.25f,.65f,.3f),new Vector3(.26f,.18f,.24f),new Color(.60f,.53f,.40f));
                 art.Shape(crane,PrimitiveType.Cube,new Vector3(.25f,1.15f,.3f),new Vector3(.018f,.7f,.018f),new Color(.27f,.22f,.15f));
             }
             for(int edge=0;edge<32;edge++){float angle=edge*Mathf.PI*2/32;framingPoints.Add(new Vector3(Mathf.Sin(angle)*8,-.45f,Mathf.Cos(angle)*8));}
-            guards=new[]{art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization)};guardActors=new[]{guards[0].GetComponent<WorldActorAnimation>(),guards[1].GetComponent<WorldActorAnimation>()};Layer(content);renderedAt=-1;
+            guards=new[]{art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization),art.CityGuard(content,city.civilization)};guardActors=new WorldActorAnimation[guards.Length];for(int i=0;i<guards.Length;i++)guardActors[i]=guards[i].GetComponent<WorldActorAnimation>();Layer(content);renderedAt=-1;
         }
         private void FitCity(float aspect)
         {
@@ -182,8 +185,15 @@ namespace ThronesOfMyth
                 ring.sharedMaterial=art.MaterialFor(status);ring.widthMultiplier=completed ? (reducedMotion?.12f:.12f+Mathf.Sin(Time.unscaledTime*6)*.025f):chosen ? .10f:b.id==hoveredDistrict ? .075f:.035f;
                 // Construction stays readable with motion disabled; only the crane's idle sway stops.
                 cranes[b.id].localRotation=Quaternion.Euler(0,reducedMotion?0:Mathf.Sin(Time.unscaledTime*.8f)*5,0);
+                if(construction)hoistLoads[b.id].localPosition=new Vector3(.25f,reducedMotion?.65f:.5f+Mathf.PingPong(Time.unscaledTime*.28f,1)*.7f,.3f);
             }
-            for(int i=0;i<guards.Length;i++){float t=reducedMotion?i*Mathf.PI:Time.unscaledTime*.16f+i*Mathf.PI;guards[i].localPosition=new Vector3(Mathf.Cos(t)*6.5f,0,Mathf.Sin(t)*6.5f);guards[i].localRotation=Quaternion.Euler(0,-t*Mathf.Rad2Deg,0);guardActors[i].reducedMotion=reducedMotion;}
+            for(int i=0;i<guards.Length;i++)
+            {
+                float t=reducedMotion?i*Mathf.PI:Time.unscaledTime*.16f+i*Mathf.PI;
+                if(i<2){guards[i].localPosition=new Vector3(Mathf.Cos(t)*6.5f,0,Mathf.Sin(t)*6.5f);guards[i].localRotation=Quaternion.Euler(0,-t*Mathf.Rad2Deg,0);}
+                else{float phase=reducedMotion?.25f:Mathf.PingPong(Time.unscaledTime*.10f+(i-2),1);guards[i].localPosition=new Vector3((i==2?-1:1)*.25f,0,Mathf.Lerp(-6.2f,-3.5f,phase));bool outward=Mathf.Repeat(Time.unscaledTime*.10f+(i-2),2)>1;guards[i].localRotation=Quaternion.Euler(0,outward?180:0,0);}
+                guardActors[i].reducedMotion=reducedMotion;
+            }
             var image=immersive?rect:new Rect(rect.x+5,rect.y+5,rect.width-10,rect.height-45);
             // Match render density to UI scale, capped to keep this inset inexpensive.
             CityViewportPolicy.RenderSize(image.width*Mathf.Abs(GUI.matrix.m00),image.height*Mathf.Abs(GUI.matrix.m11),immersive,out int width,out int height);

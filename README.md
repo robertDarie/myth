@@ -4,8 +4,11 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.31
+## Playable slice 0.32
 
+- World/city craft pass: culture-shaped tiled roofs, bent grass, pottery, gatehouses,
+  worksite details, ambient activity and opaque cloud fog.
+  [Implementation and verification](docs/art-release-0.32.md).
 - Starting-region / Captain showcase: original sculpted vegetation and architecture,
   painted surfaces, bounded Rallying Cry VFX/audio, mixed patrol preset, real
   remembered-camp attacks, opening guidance and shared UI readability fixes.

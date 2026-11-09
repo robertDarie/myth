@@ -31,10 +31,11 @@ namespace ThronesOfMyth
                 }
                 fogMesh.vertices = vertices; fogMesh.triangles = triangles; fogMesh.RecalculateBounds();
                 fogObject.AddComponent<MeshFilter>().sharedMesh = fogMesh;
-                fogMaterial = new Material(Shader.Find("Sprites/Default")) { name = "Veil transparency", renderQueue = 3001 };
+                fogMaterial = new Material(Shader.Find("ThronesOfMyth/KingdomVeil")) { name = "Veil transparency", renderQueue = 3001 };
                 var renderer = fogObject.AddComponent<MeshRenderer>(); renderer.sharedMaterial = fogMaterial;
                 renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
             }
+            fogMaterial.SetFloat("_Drift",reducedMotion?0:1);
             if(!fogGrid.Update(data))return;
             for (int z = 0; z <= FogSteps; z++) for (int x = 0; x <= FogSteps; x++)
             {

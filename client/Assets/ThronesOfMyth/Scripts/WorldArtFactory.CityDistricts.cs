@@ -78,18 +78,10 @@ namespace ThronesOfMyth
         }
         private void DistrictRoof(Transform parent,string culture,Vector3 position,float width,float depth,Color color)
         {
-            var roof=new GameObject("Culture roof · "+culture).transform;roof.SetParent(parent,false);roof.localPosition=position;
-            if(culture=="egyptian")
-            {Box(roof,0,0,0,width,.18f,depth,stone);Box(roof,0,.13f,0,width*.84f,.10f,depth*.84f,bronze);}
-            else
-            {
-                Roof(roof,0,width,depth,color);
-                if(culture=="norse"){roof.localScale=new Vector3(1,1.65f,1);Box(roof,0,.18f,0,.08f,.12f,depth*1.12f,timber);}
-                if(culture=="chinese"||culture=="japanese")for(int side=-1;side<=1;side+=2)
-                {var eave=Box(roof,side*width*.43f,-.08f,0,width*.27f,.10f,depth*1.1f,color);eave.localRotation=Quaternion.Euler(0,0,side*16);}
-                if(culture=="greek")Box(roof,0,.20f,0,.09f,.10f,depth,bronze);
-            }
+            CraftedRoof(parent,culture,position,width,depth,color);
+            if(culture=="egyptian")for(int side=-1;side<=1;side+=2)Box(parent,side*width*.44f,position.y+.18f,position.z,.10f,.25f,depth,bronze);
         }
+
         public Transform CityGuard(Transform parent,string culture)
         {
             var root=new GameObject("Ambient city guard").transform;root.SetParent(parent,false);root.localScale=Vector3.one*.28f;

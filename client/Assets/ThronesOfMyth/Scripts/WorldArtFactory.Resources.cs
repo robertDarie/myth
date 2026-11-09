@@ -7,7 +7,8 @@ namespace ThronesOfMyth
         {
             // Earth beds and work equipment distinguish sites from decorative scenery.
             var earth=new Color(.39f,.34f,.23f);
-            Shape(root,PrimitiveType.Cylinder,new Vector3(0,-.035f,0),new Vector3(2.9f,.07f,2.65f),earth);
+            CityTerrace(root,new Vector3(0,-.035f,0),new Vector3(1.45f,.035f,1.32f),earth);
+            WorksiteDressing(root,resource);
             var visual=root.gameObject.AddComponent<ResourceSiteVisual>();visual.stock=new Transform[4];
             for(int section=0;section<4;section++)
             {

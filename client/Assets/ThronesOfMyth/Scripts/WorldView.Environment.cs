@@ -33,7 +33,9 @@ namespace ThronesOfMyth
                 var p = new Vector2(x / 511f * 80, y / 511f * 80); float patch = Mathf.PerlinNoise(p.x * 0.12f + 43, p.y * 0.12f + 17), grain = Mathf.PerlinNoise(p.x * 2.1f, p.y * 2.1f);
                 var south = Color.Lerp(new Color(.35f,.48f,.26f),new Color(.69f,.57f,.32f), Mathf.SmoothStep(0,1,(p.x-34)/30));
                 var north = Color.Lerp(new Color(.25f,.39f,.35f),new Color(.47f,.55f,.37f), p.x/80);
-                var meadow = Color.Lerp(south, north, Mathf.SmoothStep(0,1,(p.y-34)/22)); meadow *= 0.86f + patch * 0.24f + grain * 0.055f;
+                var meadow = Color.Lerp(south, north, Mathf.SmoothStep(0,1,(p.y-34)/22)); float brush=Mathf.PerlinNoise(p.x*.57f+patch*3,p.y*.63f)*.07f;
+                meadow *= 0.84f + patch * 0.26f + grain * 0.055f+brush;
+                meadow=Color.Lerp(meadow,new Color(.53f,.55f,.31f),Mathf.Clamp01((patch-.62f)*2)*.22f);
                 float vein=Mathf.Abs(Mathf.PerlinNoise(p.x*.05f+12,p.y*.08f+21)-.5f);
                 meadow=Color.Lerp(meadow,new Color(.34f,.37f,.27f),Mathf.Clamp01((.07f-vein)*5)*.30f);
                 float roadDistance=RoadDistance(p);float road = 1 - Mathf.SmoothStep(0.65f, 1.9f, roadDistance); var earth = Color.Lerp(new Color(0.65f,0.56f,0.36f), new Color(0.81f,0.72f,0.49f), patch);
@@ -65,12 +67,11 @@ namespace ThronesOfMyth
                 art.EnvironmentModel(scenery,"BorderRock",new Vector3(i,0,40),1.4f,new Color(0.48f,0.51f,0.43f),i*23);
             }
             // Low vegetation punctuates meadows, without filling paths or site clearings.
-            for(int i=0;i<160;i++)
+            for(int i=0;i<480;i++)
             {
                 var p=new Vector2(2+(float)random.NextDouble()*76,2+(float)random.NextDouble()*76);
                 if(SceneryClearing(p)||p.x>44&&p.y<40)continue;
-                for(int blade=0;blade<3;blade++)
-                {var tuft=art.Shape(scenery,PrimitiveType.Cube,new Vector3(p.x+blade*.08f,TerrainHeight(p)+.09f,p.y),new Vector3(.035f,.18f,.06f),new Color(.39f,.48f,.28f));tuft.localRotation=Quaternion.Euler(0,i*31,(blade-1)*18);}
+                art.Meadow(scenery,new Vector3(p.x,TerrainHeight(p),p.y),i,.75f+(i%3)*.15f,Color.Lerp(new Color(.33f,.45f,.23f),new Color(.58f,.57f,.30f),(i%4)/4f));
             }
             BuildRealmDressing();
             art.BatchEnvironment(scenery);

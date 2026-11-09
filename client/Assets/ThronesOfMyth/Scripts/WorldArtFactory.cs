@@ -39,11 +39,7 @@ namespace ThronesOfMyth
         }
         private void Roof(Transform p, float y, float width, float depth, Color c)
         {
-            for (int side = -1; side <= 1; side += 2)
-            {
-                var roof = Box(p, side * width * 0.23f, y, 0, width * 0.56f, 0.18f, depth, c);
-                roof.localRotation = Quaternion.Euler(0, 0, -side * 26);
-            }
+            CraftedRoof(p,"greek",new Vector3(0,y,0),width,depth,c);
         }
         private void Temple(Transform p, Color team, bool grand)
         {
@@ -279,6 +275,6 @@ namespace ThronesOfMyth
             if (culture == "greek") MinotaurKit(bodyRoot, rig);
             if (culture == "egyptian") Box(bodyRoot, 0, 1.95f, 0.65f, 0.85f, 0.25f, 0.65f, bronze);
         }
-        public void Dispose() { foreach (var mesh in authoredMeshes) Object.Destroy(mesh); authoredMeshes.Clear(); equipmentMeshes.Clear();showcaseMeshes.Clear(); foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
+        public void Dispose() { foreach (var mesh in authoredMeshes) Object.Destroy(mesh); authoredMeshes.Clear(); equipmentMeshes.Clear();showcaseMeshes.Clear();DisposeCraft(); foreach (var material in materials.Values) Object.Destroy(material); materials.Clear(); }
     }
 }
