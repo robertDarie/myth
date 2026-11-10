@@ -32,7 +32,7 @@ namespace ThronesOfMyth
             if(effect==null&&Camera.main!=null){var viewport=Camera.main.WorldToViewportPoint(army.position);if(viewport.z<=0||viewport.x<-.05f||viewport.x>1.05f||viewport.y<-.05f||viewport.y>1.05f)return false;}
             if(effect==null){effect=free;if(effect==null&&pool.Count<8){effect=new GameObject("Commander skill · pooled original effect").AddComponent<CommanderSkillVfx>();effect.Build();pool.Add(effect);}if(effect==null)return false;effect.owner=army;effect.commander=state.commanderId;effect.castAt=-100;effect.gameObject.SetActive(true);}
             effect.profile=style;effect.block.SetColor("_Tint",new Color(style.R,style.G,style.B,.6f));effect.sparkRenderer.SetPropertyBlock(effect.block);if(cast)effect.target=new Vector3(state.attackX,.4f,state.attackZ);effect.shielded=shield;if(reducedMotion&&!effect.reduced)effect.sparks.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);effect.reduced=reducedMotion;effect.audio=sound;
-            int represented=0;foreach(var unit in units){if(unit.commander||!unit.gameObject.activeInHierarchy||represented>=4)continue;effect.wards[represented].transform.localPosition=army.InverseTransformPoint(unit.transform.position)+Vector3.up*.16f;represented++;}for(int i=0;i<4;i++)effect.wards[i].gameObject.SetActive(i<represented);
+            int represented=0;foreach(var unit in units){if(unit.commander||!unit.gameObject.activeInHierarchy||represented>=4)continue;effect.wards[represented].transform.localPosition=army.InverseTransformPoint(unit.transform.position)+Vector3.up*.95f;represented++;}for(int i=0;i<4;i++)effect.wards[i].gameObject.SetActive(i<represented);
             if(cast){effect.castAt=Time.unscaledTime;effect.releaseAt=effect.castAt+RallyingCryTimeline.Release;effect.releasePending=!reducedMotion;if(!reducedMotion){if(sound&&style.Shape==SkillShape.Shield)BattlefieldAudio.Cue("rally-charge",army.position);}else if(sound)BattlefieldAudio.Cue(style.Sound,army.position);}
             return true;
         }
@@ -46,7 +46,9 @@ namespace ThronesOfMyth
             wave=Ring("Golden shockwave",64,.11f);charge=Ring("Energy gathering",40,.06f);aura=Ring("Confirmed protection",48,.035f);
             trail=Ring("Confirmed skill trajectory",16,.09f);trail.loop=false;trail.useWorldSpace=true;
             sigil=Ring("Commander rune",20,.055f);
-            for(int i=0;i<4;i++){var rune=Ring("Soldier ward",6,.035f);rune.transform.localPosition=new Vector3((i%2==0?-1:1)*.72f,.18f,-(i/2)*1.0f);wards.Add(rune);}
+            for(int i=0;i<4;i++){var rune=Ring("Soldier ward",6,.035f);rune.transform.localPosition=new Vector3((i%2==0?-1:1)*.72f,.18f,-(i/2)*1.0f);// Upright shield silhouette, rather than another ground circle.
+                var outline=new[]{new Vector3(-.45f,.35f,0),new Vector3(0,.55f,0),new Vector3(.45f,.35f,0),new Vector3(.38f,-.25f,0),new Vector3(0,-.60f,0),new Vector3(-.38f,-.25f,0)};
+                rune.SetPositions(outline);wards.Add(rune);}
             var dome=GameObject.CreatePrimitive(PrimitiveType.Sphere);dome.name="Magical protection shell";dome.transform.SetParent(transform,false);dome.transform.localPosition=new Vector3(0,.45f,0);dome.transform.localScale=new Vector3(4.8f,3.6f,4.8f);Destroy(dome.GetComponent<Collider>());shell=dome.GetComponent<Renderer>();shell.sharedMaterial=glow;shell.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;shell.receiveShadows=false;block=new MaterialPropertyBlock();
             var emitter=new GameObject("Gold embers");emitter.transform.SetParent(transform,false);emitter.transform.localPosition=new Vector3(0,.3f,1.2f);sparks=emitter.AddComponent<ParticleSystem>();sparks.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);var main=sparks.main;main.playOnAwake=false;main.loop=false;main.maxParticles=32;main.startLifetime=.65f;main.startSize=.07f;main.startSpeed=1.2f;main.startColor=Color.white;main.simulationSpace=ParticleSystemSimulationSpace.Local;var emission=sparks.emission;emission.enabled=false;var shape=sparks.shape;shape.shapeType=ParticleSystemShapeType.Circle;shape.radius=1.6f;var velocity=sparks.velocityOverLifetime;velocity.enabled=true;velocity.y=1.4f;sparkRenderer=sparks.GetComponent<ParticleSystemRenderer>();sparkRenderer.sharedMaterial=glow;
         }
@@ -68,8 +70,8 @@ namespace ThronesOfMyth
             Tint(wave,!reduced&&age>=RallyingCryTimeline.Release&&age<.94f&&(defensive||profile.Shape==SkillShape.Healing)?(1-shock)*.8f:0);
             charge.transform.localPosition=new Vector3(0,.3f+gather*.8f,1.2f);charge.transform.localScale=Vector3.one*(2.1f-gather*1.4f);Tint(charge,reduced?0:gather*.7f);
             charge.transform.localRotation=Quaternion.Euler(65,0,0);
-            float strength=defensive?RallyingCryTimeline.Shell(age,shielded,reduced):0;Tint(shell,wide?strength*.55f:strength);aura.transform.localScale=Vector3.one*2.35f;Tint(aura,shielded?.4f:!reduced&&(profile.Shape==SkillShape.Buff||profile.Shape==SkillShape.Debuff)?envelope*.25f:0);
-            foreach(var ward in wards){ward.transform.localScale=Vector3.one*(.32f+(!reduced?.04f*Mathf.Sin(Time.unscaledTime*2):0));Tint(ward,shielded&&!wide?strength:0);}
+            float strength=defensive?RallyingCryTimeline.Shell(age,shielded,reduced):0;Tint(shell,strength*.30f);aura.transform.localScale=Vector3.one*2.35f;Tint(aura,shielded?.4f:!reduced&&(profile.Shape==SkillShape.Buff||profile.Shape==SkillShape.Debuff)?envelope*.25f:0);
+            for(int i=0;i<wards.Count;i++){var ward=wards[i];ward.transform.localScale=Vector3.one*(wide?.85f:.70f);Tint(ward,RallyingCryTimeline.Ward(age,i,shielded,reduced));}
             float flight=SkillPresentation.Flight(age);
             bool projectile=profile.Shape==SkillShape.Projectile||profile.Shape==SkillShape.Charge;
             bool striking=profile.Shape==SkillShape.Physical||profile.Shape==SkillShape.Area;

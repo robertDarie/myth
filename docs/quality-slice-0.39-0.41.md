@@ -33,3 +33,20 @@ rendering, picking and performance are pending. No Unity Editor is installed her
 Remaining art work: surrounding housing, gates, vegetation and regional landmarks
 still use the earlier assets. This civic slice does not complete all requested
 commercial-art acceptance criteria. Dedicated art/animation review remains needed.
+
+## v0.40 — Formation readability and protective choreography
+
+Authored soldiers and commanders are larger, with wider front/rear ranks to retain
+separation. Infantry lunges and archers' backward preparation are more pronounced.
+Rallying Cry projects upright shield outlines onto represented soldiers in a short
+release sequence; the translucent enclosing shell is softer, keeping bodies visible.
+Shield outlines remain readable at distant zoom; particles retain the previous
+close-zoom gate, eight leases and 32-particle caps. Actual shield state is required;
+reduced motion shows static wards and no extra shield or damage is invented.
+Existing projectile/audio timing and commander palettes are reused.
+
+Validation: 275 server tests, 16,585 portable assertions (four new ward authority/
+sequence/reduced-motion checks), source checks zero issues. Native silhouettes,
+formation overlap, animation/audio sync and FPS remain unverified. This improves
+the existing showcase; it is not a claim of premium animation quality, and new
+bespoke commander clips/recorded audio have not been authored in this release.

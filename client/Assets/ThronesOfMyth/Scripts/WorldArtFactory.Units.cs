@@ -22,7 +22,7 @@ namespace ThronesOfMyth
                 var direction = pivot.InverseTransformDirection(node.position - instance.transform.position); direction.y = 0;
                 if (direction.sqrMagnitude > 0.01f) orientation.localRotation = Quaternion.FromToRotation(direction, Vector3.forward) * orientation.localRotation;
             }
-            float scale = role == "Mythic" ? culture == "norse" ? 1.35f : culture == "greek" ? 1.15f : 1 : role == "Commander" ? 0.88f : role == "Cavalry" ? 0.72f : 0.80f;
+            float scale = role == "Mythic" ? culture == "norse" ? 1.35f : culture == "greek" ? 1.15f : 1 : role == "Commander" ? 1.08f : role == "Cavalry" ? 0.82f : 0.95f;
             orientation.localScale = Vector3.one * scale;
             string paletteCulture=string.IsNullOrEmpty(heroId)?culture:heroId=="rune-seer"||heroId=="sigurd"?"norse":heroId=="mulan"||heroId=="wukong"?"chinese":heroId=="tomoe"?"japanese":heroId=="horus-champion"?"egyptian":"greek";
             foreach (var renderer in instance.GetComponentsInChildren<SkinnedMeshRenderer>())
@@ -55,7 +55,7 @@ namespace ThronesOfMyth
                 for (int i = 0; i < proxies && assigned < 6; i++, assigned++)
                 {
                     float side = i % 2 == 0 ? -1 : 1;
-                    var position = role == "Archer" ? new Vector3((i-0.5f)*0.85f,0,-1.35f) : role == "Cavalry" ? new Vector3(side*(1.65f+i/2*0.8f),0,-0.2f) : new Vector3((i-0.5f)*0.85f,0,0.05f);
+                    var position = role == "Archer" ? new Vector3((i-0.5f)*1.05f,0,-1.65f) : role == "Cavalry" ? new Vector3(side*(1.65f+i/2*0.8f),0,-0.2f) : new Vector3((i-0.5f)*1.05f,0,0.05f);
                     if (!SkinnedUnit(root,culture,role,"",position,team,actor)) Soldier(root,position,team,culture,actor,role == "Archer" ? "archers" : role.ToLowerInvariant());
                     int veterans=role=="Infantry"?units.veteranInfantry:role=="Archer"?units.veteranArchers:units.veteranCavalry;
                     if(i<veterans&&actor.soldiers.Count>0)
@@ -65,7 +65,7 @@ namespace ThronesOfMyth
                     }
                 }
             }
-            var leader = new Vector3(0,0,1.2f);
+            var leader = new Vector3(0,0,1.45f);
             if (!SkinnedUnit(root,culture,"Commander",commanderId,leader,team,actor)) Commander(root,commanderId,team,actor);
             for (int i=0;i<Mathf.Min(2,mythic);i++) { var at=new Vector3(2.5f+i*1.8f,0,-1.5f); if(!SkinnedUnit(root,culture,"Mythic","",at,team,actor)) Beast(root,at,culture,team,actor); }
         }

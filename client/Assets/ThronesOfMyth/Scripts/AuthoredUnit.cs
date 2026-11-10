@@ -50,7 +50,7 @@ namespace ThronesOfMyth
         {
             if(reduced)return;
             // Additive, root-local anticipation/lunge; never moves the authoritative army.
-            float lunge=ranged?-.04f*attack:.14f*attack;
+            float lunge=ranged?-.065f*attack:.22f*attack;
             combatOffset=new Vector3(0,commander?casting*.035f:0,lunge-hit*.08f);transform.localPosition+=combatOffset;
             transform.localRotation*=Quaternion.Euler(-attack*(ranged?3:6)+hit*5,0,commander?-casting*5:shielded?-5:engaged?-2:0);
         }

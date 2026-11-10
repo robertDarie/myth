@@ -11,6 +11,10 @@ static class CombatSpectacleContracts
   Check(SkillPresentation.ArrowSlope(0)>0&&SkillPresentation.ArrowSlope(.5f)==0&&SkillPresentation.ArrowSlope(1)<0,"Arrow nose follows rising and falling trajectory");
   Check(SkillPresentation.CastPose(0)==0&&SkillPresentation.CastPose(RallyingCryTimeline.Release)==1,"Commander pose peaks with release audio and wave");
   Check(SkillPresentation.CastPose(-1)==0&&SkillPresentation.CastPose(.9f)==0,"No lingering cast pose outside confirmed presentation");
+  Check(RallyingCryTimeline.Ward(.2f,0,true,false)==0,"Ward waits for release");
+  Check(RallyingCryTimeline.Ward(.34f,0,true,false)>0&&RallyingCryTimeline.Ward(.34f,3,true,false)==0,"Ward wave reaches represented soldiers in sequence");
+  Check(RallyingCryTimeline.Ward(.5f,0,false,false)==0,"No invented shield");
+  Check(RallyingCryTimeline.Ward(0,0,true,true)==RallyingCryTimeline.Ward(2,3,true,true),"Reduced motion uses static confirmed wards");
   foreach(string hero in new[]{"captain","warden","mulan"})Check(SkillPresentation.Profile(hero,"shield").Shape==SkillShape.Shield,"Shield authority");
   foreach(string hero in new[]{"rune-seer","horus-champion"})Check(SkillPresentation.Profile(hero,"heal").Shape==SkillShape.Healing,"Healing authority");
   foreach(string hero in new[]{"scout","atalanta","tomoe","heracles","sigurd","wukong"})
