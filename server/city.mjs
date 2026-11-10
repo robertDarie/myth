@@ -1,6 +1,7 @@
 import { trainingOptions } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
+import { scoutCampCard } from './scout-camp.mjs';
 import { armyList, age, crews, constructionJobs, totalTroops, totalMythic, skillInfo } from './progression.mjs';
 import { COMMANDERS } from './content.mjs';
 
@@ -42,7 +43,9 @@ export function buildingCard(p, b) {
   if (!lockedReason && !affordable(p, nextCost)) lockedReason = 'Not enough resources.';
   const dependencies=[...(b.id==='citadel'?CITADEL_REQUIREMENTS[next]??[]:b.requirements??[])];
   if(b.id!=='citadel')dependencies.unshift({id:'citadel',level:Math.max(b.unlock,next)});
-  return { ...b, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason };
+  const card = { ...b, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason };
+  if (b.id === 'scoutcamp') card.scoutCamp = scoutCampCard(level);
+  return card;
 }
 export function technologyCard(p, t) {
   const level = p.technologies[t.id], next = level + 1, cost = scaled(t.base, next * next);

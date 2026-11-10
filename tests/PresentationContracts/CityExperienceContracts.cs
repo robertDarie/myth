@@ -31,12 +31,12 @@ static class CityExperienceContracts
             check(Math.Abs((float)w/h-(float)size.Item1/size.Item2)<.06f,"Render density must not distort city composition significantly");
         }
         CityViewportPolicy.RenderSize(float.NaN,0,true,out int zeroW,out int zeroH);check(zeroW==16&&zeroH==16,"Transient invalid display size must remain safe");
-        string[] ids={"citadel","oracle","academy","barracks","menagerie","farm","lumber","quarry","mint","well","infirmary","vault","market","oathhall","forge","builders"};
+        string[] ids={"citadel","oracle","academy","barracks","menagerie","farm","lumber","quarry","mint","well","infirmary","vault","market","oathhall","forge","builders","scoutcamp"};
         var buildings=Array.ConvertAll(ids,id=>new BuildingCard{id=id,level=1,maxLevel=5});
         for(int i=0;i<ids.Length;i++)check(CitySelection.Find(buildings,ids[i])==i,"Every institution must map from a picked marker ID");
-        check(CitySelection.Find(buildings,"missing",4)==4&&CitySelection.Find(buildings,"missing",500)==15&&CitySelection.Find(null,"citadel")==-1,"Stale picks must preserve a valid selection");
-        check(CitySelection.Step(15,1,16)==0&&CitySelection.Step(0,-1,16)==15&&CitySelection.Step(0,1,0)==-1,"Keyboard selection must wrap safely");
-        check(CitySelection.Institution("oracle")==InterfacePage.Temple&&CitySelection.Institution("academy")==InterfacePage.Research&&CitySelection.Institution("menagerie")==InterfacePage.Training&&CitySelection.Institution("infirmary")==InterfacePage.Hospital&&CitySelection.Institution("market")==InterfacePage.Market,"Institution actions must route to existing systems");
+        check(CitySelection.Find(buildings,"missing",4)==4&&CitySelection.Find(buildings,"missing",500)==16&&CitySelection.Find(null,"citadel")==-1,"Stale picks must preserve a valid selection");
+        check(CitySelection.Step(16,1,17)==0&&CitySelection.Step(0,-1,17)==16&&CitySelection.Step(0,1,0)==-1,"Keyboard selection must wrap safely");
+        check(CitySelection.Institution("oracle")==InterfacePage.Temple&&CitySelection.Institution("academy")==InterfacePage.Research&&CitySelection.Institution("menagerie")==InterfacePage.Training&&CitySelection.Institution("infirmary")==InterfacePage.Hospital&&CitySelection.Institution("market")==InterfacePage.Market&&CitySelection.Institution("scoutcamp")==InterfacePage.Exploration,"Institution actions must route to existing systems");
         var data=new ArmyData{civilization="norse",mana=137,aether=5,cityBuildings=buildings,construction=new QueueJob{id="a",type="building",targetId="academy",remaining=8,duration=12},secondConstruction=new QueueJob{id="b",type="upgrade",remaining=10,duration=20},research=new QueueJob{id="r",type="research",targetId="logistics",remaining=4,duration=12},trainingQueue=new[]{new QueueJob{id="t",type="train",remaining=5,duration=8}},economy=new EconomyData{ap=95},homeFormations=new[]{new ArmyData{id="home",commanderId="captain",health=90}}};
         string original=JsonSerializer.Serialize(data,new JsonSerializerOptions{IncludeFields=true});
         for(int i=0;i<100;i++){city.SetCity(true);city.Advance(1,true);CitySelection.Find(data.cityBuildings,"academy");city.SetCity(false);city.Advance(1,true);}

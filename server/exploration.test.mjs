@@ -40,11 +40,11 @@ test('all four corridors support movement in both directions including fractiona
 test('scout missions reveal land, record arrival-time intelligence once, return and preserve army slots and troops',()=>{
  const {w,players:[p,,enemy]}=setup();enemy.x=30;enemy.z=25;const count=p.troops,marches=w.armies().length;
  const initial=w.snapshot(p.id);assert.equal(initial.armies.some(a=>a.id===enemy.id),false);
- cmd(w,p,'scout-send',{x:30,z:25});const id=p.scout.id;
+ cmd(w,p,'scout-send',{x:30,z:25});const id=p.scouts[0].id;
  assert.throws(()=>cmd(w,p,'scout-send',{x:20,z:20}),/already/);
- advance(w,5);assert.equal(p.scoutReports.length,1);assert.equal(p.scoutReports[0].armies[0].id,enemy.id);assert.equal(p.scout.phase,'Returning');
+ advance(w,6);assert.equal(p.scoutReports.length,1);assert.equal(p.scoutReports[0].armies[0].id,enemy.id);assert.equal(p.scouts[0].phase,'Returning');
  const report=structuredClone(p.scoutReports[0]),explored=p.explored.length;enemy.x=35;advance(w,8);
- assert.equal(p.scout,null);assert.deepEqual(p.scoutReports[0],report);assert.equal(p.troops,count);assert.equal(w.armies().length,marches);assert.ok(p.explored.length>=explored&&explored>initial.exploration.explored.length);
+ assert.equal(p.scouts.length,0);assert.deepEqual(p.scoutReports[0],report);assert.equal(p.troops,count);assert.equal(w.armies().length,marches);assert.ok(p.explored.length>=explored&&explored>initial.exploration.explored.length);
  assert.throws(()=>cmd(w,p,'scout-recall',{targetId:id}),/no longer/);
  const snapshot=w.snapshot(p.id);assert.equal(snapshot.armies.some(a=>a.id===enemy.id),false);assert.equal(snapshot.exploration.reports.length,1);
 });
@@ -66,11 +66,11 @@ test('fog excludes hidden armies, camp state, enemy orders, garrisons and global
 
 test('recall, gate loss and restart retain scouts safely without replaying rewards or completed reports',()=>{
  const {w,sessions,players:[p]}=setup();gates(w,p);cmd(w,p,'scout-send',{x:65,z:65});advance(w,1);
- let restored=World.fromSave(w.toSave()),q=restored.authenticate(sessions[0].token);assert.ok(q.scout);assert.deepEqual(q.explored,p.explored);
- for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scout.phase,'Returning');advance(restored,10);assert.equal(q.scout,null);assert.equal(q.scoutReports.length,0);
- cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scout.id});advance(restored,0.1);assert.equal(q.scout,null);
- for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scout={id:'bad'},p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
- const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scoutReports;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,15);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);
+ let restored=World.fromSave(w.toSave()),q=restored.authenticate(sessions[0].token);assert.equal(q.scouts.length,1);assert.deepEqual(q.explored,p.explored);
+ for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scouts[0].phase,'Returning');advance(restored,10);assert.equal(q.scouts.length,0);assert.equal(q.scoutReports.length,0);
+ cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scouts[0].id});advance(restored,0.1);assert.equal(q.scouts.length,0);
+ for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scouts=[{id:'bad'}],p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
+ const old=w.toSave();old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scouts;delete p.scoutReports;delete p.autoExplore;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,16);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);assert.equal(restored.authenticate(sessions[0].token).buildings.scoutcamp,1);
 });
 
 test('garrisons and rally centers obey the same gate corridors as ordinary marches',()=>{
@@ -97,7 +97,7 @@ test('authenticated HTTP does not expose hidden troops or another city scouting 
  const get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();
  assert.equal((await get(0)).armies.some(a=>a.id===enemy.id),false);
  assert.equal((await post(0,{type:'attack-player',targetId:enemy.id})).status,400);
- assert.equal((await post(0,{type:'scout-send',x:30,z:25})).status,200);advance(w,5);
+ assert.equal((await post(0,{type:'scout-send',x:30,z:25})).status,200);advance(w,6);
  let snap=await get(0);assert.equal(snap.exploration.reports.length,1);assert.ok(snap.armies.some(a=>a.id===enemy.id));
  snap=await get(1);assert.equal(snap.exploration.reports.length,0);const foreign=snap.players.find(a=>a.id===p.id);assert.equal(foreign.scoutReports,undefined);assert.equal(foreign.scout,undefined);assert.equal(foreign.explored,undefined);
  advance(w,8);assert.equal((await get(0)).armies.some(a=>a.id===enemy.id),false);

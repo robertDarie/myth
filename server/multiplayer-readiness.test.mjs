@@ -2,9 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {testWorld} from './testing/kingdom-fixture.mjs';
 import {visionContext,visible} from './exploration.mjs';
+import {scoutProfile} from './scout-camp.mjs';
 import {ServerTelemetry} from './telemetry.mjs';
 import {twoPlayerProof} from '../tools/two-player-proof.mjs';
-const legacySources=(w,p)=>[...w.players.values()].filter(q=>p.id===q.id||p.allianceId&&p.allianceId===q.allianceId).flatMap(q=>[{x:q.homeX,z:q.homeZ,radius:10},...w.armies().filter(a=>(a.deployed||a.target||Math.hypot(a.x-q.homeX,a.z-q.homeZ)>=2)&&w.owner(a).id===q.id).map(a=>({x:a.x,z:a.z,radius:8})),...(q.scout?[{...q.scout,radius:9}]:[])]);
+const legacySources=(w,p)=>[...w.players.values()].filter(q=>p.id===q.id||p.allianceId&&p.allianceId===q.allianceId).flatMap(q=>[{x:q.homeX,z:q.homeZ,radius:10},...w.armies().filter(a=>(a.deployed||a.target||Math.hypot(a.x-q.homeX,a.z-q.homeZ)>=2)&&w.owner(a).id===q.id).map(a=>({x:a.x,z:a.z,radius:8})),...(q.scouts??[]).map(s=>({...s,radius:scoutProfile(q.buildings.scoutcamp).radius}))]);
 test('vision reuse matches original geometry and never survives alliance membership or movement changes',()=>{
  const w=testWorld(),p=w.authenticate(w.join('A').token),q=w.authenticate(w.join('B').token);w.command(p,{type:'alliance-create',name:'Vision'});w.command(q,{type:'alliance-join',targetId:p.allianceId});w.command(q,{type:'move',x:25,z:25});for(let i=0;i<50;i++)w.tick(.1);
  for(const viewer of [p,q]){const eyes=legacySources(w,viewer),context=visionContext(w,viewer);for(let z=0;z<=80;z+=2)for(let x=0;x<=80;x+=2)assert.equal(context.seen({x,z}),eyes.some(s=>Math.hypot(x-s.x,z-s.z)<=s.radius));}

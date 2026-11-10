@@ -8,7 +8,7 @@ import { activityClock, initializeActivity, ensureActivity, recordActivity, acti
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
 import { route, travel } from './navigation.mjs';
-import { initializeExploration, explorationTick, explorationCommand, filterFog, visible, visionContext, validateExploration } from './exploration.mjs';
+import { initializeExploration, migrateScouting, explorationTick, explorationCommand, filterFog, visible, visionContext, validateExploration } from './exploration.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
@@ -295,14 +295,14 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
-    return { schema: 15, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 16, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -315,7 +315,8 @@ export class World {
       if (!Number.isInteger(p.slot) || p.slot < 0 || p.slot >= 32 || !Number.isInteger(p.level) || p.level < 1 || !Number.isInteger(p.kills) || p.kills < 0 || !Array.isArray(p.ownedCommanders) || !p.ownedCommanders.includes(p.commanderId) || p.ownedCommanders.some(id => !COMMANDERS.some(c => c.id === id)) || !Array.isArray(p.trainingQueue) || p.trainingQueue.length > 3) throw new Error('Invalid saved roster or queue.');
       if (data.schema < 4) migrateUnits(p);
       if (data.schema < 5) { initializeWar(p); initializeSocial(p); }
-      if (data.schema < 7) initializeExploration(p); else validateExploration(p);
+      if (data.schema < 16) { p.buildings ??= {}; if (!Number.isInteger(p.buildings.scoutcamp)) p.buildings.scoutcamp = 1; }
+      if (data.schema < 7) initializeExploration(p); else { if (data.schema < 16) migrateScouting(p); validateExploration(p); }
       if (data.schema < 8) initializeJourney(p, true); else validateJourney(p);
       if (data.schema < 9) p.strongholdVictories = 0;
       if (!Number.isSafeInteger(p.strongholdVictories) || p.strongholdVictories < 0) throw new Error('Invalid saved stronghold victories.');

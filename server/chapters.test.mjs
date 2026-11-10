@@ -36,7 +36,7 @@ test('early achievements persist across chapter locks and loss of the measured s
 });
 
 test('surveys count at arrival and garrisons count only after their own march reaches an allied structure',()=>{
- const {w,p}=setup();cmd(w,p,'scout-send',{x:30,z:30});advance(w,1);assert.equal(p.journey.metrics.surveys,0);cmd(w,p,'scout-recall',{targetId:p.scout.id});advance(w,5);assert.equal(p.journey.metrics.surveys,0);
+ const {w,p}=setup();cmd(w,p,'scout-send',{x:30,z:30});advance(w,1);assert.equal(p.journey.metrics.surveys,0);cmd(w,p,'scout-recall',{targetId:p.scouts[0].id});advance(w,5);assert.equal(p.journey.metrics.surveys,0);
  cmd(w,p,'scout-send',{x:20,z:20});advance(w,4);assert.equal(p.journey.metrics.surveys,1);advance(w,10);assert.equal(p.journey.metrics.surveys,1);
  p.cityLevel=2;cmd(w,p,'alliance-create',{name:'Guardians'});const s=w.sites.find(s=>s.id==='shrine-dawn');s.allianceId=p.allianceId;
  cmd(w,p,'garrison-join',{targetId:s.id});assert.equal(p.journey.progress['first-garrison'],0);advance(w,0.1);assert.equal(p.journey.progress['first-garrison'],0);advance(w,10);assert.equal(p.journey.progress['first-garrison'],1);

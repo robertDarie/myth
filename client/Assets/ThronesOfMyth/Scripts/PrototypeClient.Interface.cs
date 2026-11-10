@@ -46,7 +46,7 @@ namespace ThronesOfMyth
         }
         private void OpenInterface(InterfacePage page)
         {
-            hoveredTooltip="";tooltips.Reset();placeBeacon = false; chooseScoutDestination = false;
+            hoveredTooltip="";tooltips.Reset();placeBeacon = false; CancelScoutAim();
             if(page==InterfacePage.City){if(interfacePage==InterfacePage.City&&cityExperience.TargetCity)ExitCity();else BeginCity();}
             else if(page==InterfacePage.World){if(cityExperience.BlocksWorld)ExitCity();else interfacePage=InterfacePage.World;}
             else interfacePage=interfacePage==page?(cityExperience.TargetCity?InterfacePage.City:InterfacePage.World):page;
@@ -57,7 +57,7 @@ namespace ThronesOfMyth
         }
         private void CloseInterface()
         {
-            hoveredTooltip="";tooltips.Reset();GUIUtility.keyboardControl = 0; chooseScoutDestination = false;
+            hoveredTooltip="";tooltips.Reset();GUIUtility.keyboardControl = 0; CancelScoutAim();
             if(cityExperience.BlocksWorld){if(cityExperience.CloseDestination(interfacePage,!cityModelView)==InterfacePage.City){interfacePage=InterfacePage.City;cityModelView=true;}else ExitCity();return;}
             if (interfacePage != InterfacePage.World) { interfacePage = InterfacePage.World; PlayerPrefs.Save(); }
             else if (placeBeacon) placeBeacon = false;
@@ -96,8 +96,10 @@ namespace ThronesOfMyth
         {
             switch (command.type)
             {
-                case "scout-send": return "Your scout is surveying the route. A report will arrive when it reaches the destination.";
+                case "scout-send": return "A scout is traveling. Explored land stays clear after the survey.";
+                case "scout-redirect": return "Scout redirected. It does not need to return home first.";
                 case "scout-recall": return "Scout recalled. It will return through the gate corridors.";
+                case "scout-auto": return "Auto explore updated. Spare scouts survey nearby fog.";
                 case "move": return "Your march is on its way.";
                 case "rally-create": return "Rally assembly has begun. Allies can contribute a prepared march.";
                 case "rally-join": return "Your march is moving to the rally assembly point.";
@@ -327,15 +329,15 @@ namespace ThronesOfMyth
             if (theme.Button(new Rect(r.x + 10, r.y + 5, r.width - 20, 25), "Chronicle")) GuidePage(InterfacePage.Kingdom);
             float mapSize=Mathf.Min(r.width-24,r.height-40);var mapArea=new Rect(r.center.x-mapSize*.5f,r.y+33,mapSize,mapSize);
             MythInterfaceTheme.Fill(mapArea,new Color(.07f,.12f,.17f));if(map.MinimapTerrain!=null)GUI.DrawTexture(mapArea,map.MinimapTerrain);
-            theme.Hint(mapArea,"Kingdom overview · dark: unknown · gray: remembered · green: current vision. Click to focus.");
+            theme.Hint(mapArea,"Kingdom overview · dark: unexplored · green: permanently explored. Click to focus.");
             MythInterfaceTheme.Line(new Vector2(mapArea.center.x, mapArea.y), new Vector2(mapArea.center.x, mapArea.yMax), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
             MythInterfaceTheme.Line(new Vector2(mapArea.x, mapArea.center.y), new Vector2(mapArea.xMax, mapArea.center.y), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
             if (world.exploration != null)
             {
-                var known = new HashSet<int>(world.exploration.explored); var sight = new HashSet<int>(world.exploration.visible);
+                var known = new HashSet<int>(world.exploration.explored);
                 for (int z = 0; z < 20; z++) for (int x = 0; x < 20; x++)
-                { int cell = z * 20 + x; if (!sight.Contains(cell)) MythInterfaceTheme.Fill(new Rect(mapArea.x + x * mapArea.width / 20, mapArea.y + (19 - z) * mapArea.height / 20, mapArea.width / 20 + 1, mapArea.height / 20 + 1), known.Contains(cell) ? new Color(0.08f, 0.12f, 0.14f, 0.6f) : new Color(0.03f, 0.05f, 0.08f)); }
-                foreach (var scout in world.exploration.scouts) Dot(mapArea, scout.x, scout.z, Color.cyan, 4);
+                { int cell = z * 20 + x; if (!known.Contains(cell)) MythInterfaceTheme.Fill(new Rect(mapArea.x + x * mapArea.width / 20, mapArea.y + (19 - z) * mapArea.height / 20, mapArea.width / 20 + 1, mapArea.height / 20 + 1), new Color(0.03f, 0.05f, 0.08f)); }
+                foreach (var scout in world.exploration.scouts) if (scout.phase != "Idle") { Dot(mapArea, scout.x, scout.z, Color.cyan, 4); Dot(mapArea, scout.targetX, scout.targetZ, MythInterfaceTheme.Gold, 3); }
             }
             foreach (var boss in world.strongholds) Dot(mapArea, boss.x, boss.z, MythInterfaceTheme.Red, 6);
             foreach (var site in world.sites) Dot(mapArea, site.x, site.z, new Color(0.85f, 0.72f, 0.95f), 5);

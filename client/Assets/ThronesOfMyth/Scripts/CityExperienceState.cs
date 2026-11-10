@@ -54,7 +54,7 @@ namespace ThronesOfMyth
     {
         public static InterfacePage Institution(string id)
         {
-            switch(id){case "oracle":return InterfacePage.Temple;case "academy":return InterfacePage.Research;case "barracks":case "menagerie":return InterfacePage.Training;case "infirmary":return InterfacePage.Hospital;case "forge":return InterfacePage.Forge;case "market":return InterfacePage.Market;case "vault":return InterfacePage.Inventory;case "oathhall":return InterfacePage.Alliance;default:return InterfacePage.City;}
+            switch(id){case "oracle":return InterfacePage.Temple;case "academy":return InterfacePage.Research;case "barracks":case "menagerie":return InterfacePage.Training;case "infirmary":return InterfacePage.Hospital;case "forge":return InterfacePage.Forge;case "market":return InterfacePage.Market;case "vault":return InterfacePage.Inventory;case "oathhall":return InterfacePage.Alliance;case "scoutcamp":return InterfacePage.Exploration;default:return InterfacePage.City;}
         }
         public static int Find(BuildingCard[] buildings,string id,int fallback=0)
         {if(buildings==null||buildings.Length==0)return -1;for(int i=0;i<buildings.Length;i++)if(buildings[i].id==id)return i;return Math.Max(0,Math.Min(buildings.Length-1,fallback));}

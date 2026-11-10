@@ -4,12 +4,16 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.42
+## Playable slice 0.43
+
+- Permanent two-state map exploration, an upgradeable Scout Camp, multiple scouts,
+  redirect, recall and nearby auto-explore. Military sight stays separate from
+  explored terrain. [Values, migration and RoK difference](docs/scouting-0.43.md).
+  **Native visual acceptance remains pending.**
 
 - Original Greek homes, gatehouse and market stall; branching woodland variants,
   a distinctive Forsaken Scouts shelter, shared woodland palettes and an opt-in
   shadow diagnostic. [Scope, provenance and native checklist](docs/living-world-0.42.md).
-  **v0.43/v0.44 are not implemented; native visual acceptance remains pending.**
 
 - Greek civic kit, corrected grass normals, clearer troop/ward silhouettes,
   owned inventory and durable PvE outcome details.

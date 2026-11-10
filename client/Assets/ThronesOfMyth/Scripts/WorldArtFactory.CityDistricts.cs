@@ -39,6 +39,15 @@ namespace ThronesOfMyth
             else if(id=="quarry") { for(int i=0;i<4;i++)Ball(root,(i%2-.5f)*.6f,.35f+i*.03f,(i/2-.5f)*.5f,.6f,.5f,.5f,stone); }
             else if(id=="lumber") { for(int i=0;i<4;i++){var log=Pillar(root,(i%2-.5f)*.35f,.30f+i/2*.25f,0,.25f,1.0f,timber);log.localRotation=Quaternion.Euler(90,0,0);}Roof(root,1.1f,1.4f,1.2f,timber); }
             else if(id=="oracle") { var temple=new GameObject("Temple pavilion").transform;temple.SetParent(root,false);temple.localScale=Vector3.one*.38f;Temple(temple,team,false); }
+            else if(id=="scoutcamp")
+            {
+                Box(root,0,.28f,0,1.15f,.4f,.9f,stone);
+                Pillar(root,0,.95f,0,.16f,1.15f,timber);
+                Box(root,0,1.55f,0,.72f,.1f,.72f,timber);
+                Pillar(root,0,1.85f,0,.035f,.5f,bronze);
+                Box(root,.2f,2.02f,0,.32f,.16f,.04f,team);
+                Box(root,-.28f,.42f,-.2f,.18f,.55f,.18f,darkStone);
+            }
             else
             {
                 Color roof=id=="infirmary"?new Color(.25f,.52f,.43f):culture=="japanese"?new Color(.23f,.31f,.47f):culture=="chinese"?new Color(.22f,.46f,.35f):culture=="norse"?new Color(.24f,.31f,.29f):new Color(.62f,.28f,.18f);

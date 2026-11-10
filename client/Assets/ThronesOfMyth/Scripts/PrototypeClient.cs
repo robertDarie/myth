@@ -70,7 +70,7 @@ namespace ThronesOfMyth
             if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1)) return;
             GUIUtility.keyboardControl = 0;
             if (chooseScoutDestination && Input.GetMouseButtonDown(0))
-            { ScoutAt(hit.point.x, hit.point.z); chooseScoutDestination = false; return; }
+            { ScoutAt(hit.point.x, hit.point.z); return; }
             if (placeBeacon && Input.GetMouseButtonDown(0))
             {
                 Send(new GameCommand { type = "flag", x = hit.point.x, z = hit.point.z }); placeBeacon = false; return;
@@ -431,7 +431,7 @@ namespace ThronesOfMyth
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
                         if (next.version != 16) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         lastSnapshotAt = Time.unscaledTime;
-                        world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId);
+                        world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId); NoteScoutReports();
                         if (me != null)
                         {
                             cityProgress.Observe(serverUrl.TrimEnd('/')+"/"+playerId,me,Time.unscaledTime);

@@ -110,7 +110,7 @@ test('JSON schema-12 migration archives the untouched source and preserves reser
  const {w,p,s}=fixture();command(w,p,'inventory-supplies');command(w,p,'train',{targetId:'archers'});
  const old=structuredClone(w.toSave());old.schema=12;delete old.world.players[0].technologies.veterans;const bytes=JSON.stringify(old);writeFileSync(path,bytes);
  const store=new WorldStore(path),loaded=store.load(),q=loaded.authenticate(s.token);assert.equal(q.technologies.veterans,0);assert.deepEqual(q.units,p.units);assert.deepEqual(q.inventory,p.inventory);assert.equal(q.trainingQueue[0].id,p.trainingQueue[0].id);
- assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,15);assert.equal(q.gold,p.gold);
+ assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,16);assert.equal(q.gold,p.gold);
 });
 
 test('splitting a class between tiers cannot evade severe wounds through rounding',()=>{

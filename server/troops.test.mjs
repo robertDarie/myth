@@ -86,7 +86,7 @@ test('current schema preserves typed formations and pending orders, while schema
   const migrated = World.fromSave(old), m = migrated.authenticate(session.token);
   assert.deepEqual(m.units, { infantry: 20, archers: 0, cavalry: 0 }); assert.equal(m.reserveUnits.infantry, 7);
   assert.equal(m.marches[0].units.infantry, 5); assert.equal(m.trainingQueue[0].targetId, 'infantry');
-  assert.equal(migrated.toSave().schema,15); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
+  assert.equal(migrated.toSave().schema,16); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
 });
 
 test('current schema rejects forged or mismatched composition data instead of silently repairing it', () => {

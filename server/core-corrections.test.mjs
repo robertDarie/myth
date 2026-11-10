@@ -72,7 +72,7 @@ test('combat defeat destroys carried resources with an attributed loss report an
 test('schema thirteen migration preserves paid progress and balances without inventing cargo or historical observations',()=>{
  const {w,p,session}=setup();p.gold=777;p.ownedRelics.push('aegis');command(w,p,'train');at(p,{x:30,z:30});const save=structuredClone(w.toSave());save.schema=13;
  for(const a of save.world.players){delete a.cargo;delete a.cargoTripId;delete a.cargoSources;delete a.cargoStarted;delete a.deployed;delete a.discovery;delete a.coreReports;}
- const next=World.fromSave(save),q=next.authenticate(session.token);assert.equal(next.toSave().schema,15);assert.equal(q.gold,p.gold);assert.equal(q.trainingQueue.length,1);assert.equal(cargoTotal(q),0);assert.ok(q.ownedRelics.includes('aegis'));assert.ok(q.discovery.every(r=>r.observedAt===next.time));
+ const next=World.fromSave(save),q=next.authenticate(session.token);assert.equal(next.toSave().schema,16);assert.equal(q.gold,p.gold);assert.equal(q.trainingQueue.length,1);assert.equal(cargoTotal(q),0);assert.ok(q.ownedRelics.includes('aegis'));assert.ok(q.discovery.every(r=>r.observedAt===next.time));
 });
 test('damaged cargo, discovery, settled trip replay and malformed report saves are rejected',()=>{
  const {w,p}=setup();const node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);
@@ -114,10 +114,10 @@ test('a failed simulation delivery commit rolls back and pauses, then recovery d
 });
 test('schema thirteen JSON migration archives the untouched original before saving current cargo format',async t=>{
  const {mkdtempSync,readFileSync,writeFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {WorldStore}=await import('./storage.mjs');
- const directory=mkdtempSync(join(tmpdir(),'tom-028-'));t.after(()=>rmSync(directory,{recursive:true,force:true}));const path=join(directory,'world.json'),{w}=setup(),old=structuredClone(w.toSave());old.schema=13;const original=JSON.stringify(old);writeFileSync(path,original);const store=new WorldStore(path),migrated=store.load();store.save(migrated);assert.equal(readFileSync(path+'.schema13.bak','utf8'),original);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,15);
+ const directory=mkdtempSync(join(tmpdir(),'tom-028-'));t.after(()=>rmSync(directory,{recursive:true,force:true}));const path=join(directory,'world.json'),{w}=setup(),old=structuredClone(w.toSave());old.schema=13;const original=JSON.stringify(old);writeFileSync(path,original);const store=new WorldStore(path),migrated=store.load();store.save(migrated);assert.equal(readFileSync(path+'.schema13.bak','utf8'),original);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,16);
 });
 test('Windows package includes the entire server import graph and matches protocol sixteen',async()=>{
  const {readFileSync}=await import('node:fs');const builder=readFileSync(new URL('../client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs',import.meta.url),'utf8');const launcher=readFileSync(new URL('../packaging/windows/Launcher.ps1',import.meta.url),'utf8');const visited=new Set();
  function visit(file){if(visited.has(file))return;visited.add(file);assert.ok(builder.includes('"'+file+'"'),'Windows builder must bundle '+file);const source=readFileSync(new URL(file,import.meta.url),'utf8');for(const match of source.matchAll(/(?:from\s*|import\s*)['"]\.\/([^'"]+\.mjs)['"]/g))visit(match[1]);}
- visit('index.mjs');assert.ok(visited.has('field-logistics.mjs')&&visited.has('discovery.mjs'));assert.ok(launcher.includes('$health.version -eq 16'));assert.ok(builder.includes('bundleVersion = ReleaseVersion.Current'));assert.ok(readFileSync(new URL('../client/Assets/ThronesOfMyth/Scripts/ReleaseVersion.cs',import.meta.url),'utf8').includes('Current="0.42.0"'));
+ visit('index.mjs');assert.ok(visited.has('field-logistics.mjs')&&visited.has('discovery.mjs'));assert.ok(launcher.includes('$health.version -eq 16'));assert.ok(builder.includes('bundleVersion = ReleaseVersion.Current'));assert.ok(readFileSync(new URL('../client/Assets/ThronesOfMyth/Scripts/ReleaseVersion.cs',import.meta.url),'utf8').includes('Current="0.43.0"'));
 });

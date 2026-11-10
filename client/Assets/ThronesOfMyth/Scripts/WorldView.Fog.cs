@@ -40,7 +40,7 @@ namespace ThronesOfMyth
             fogMaterial.SetFloat("_Drift",reducedMotion?0:1);
             if(!fogGrid.Update(data))return;
             if(MinimapTerrain==null)MinimapTerrain=new Texture2D(20,20,TextureFormat.RGB24,false){name="Surveyed kingdom minimap",filterMode=FilterMode.Point};
-            for(int i=0;i<400;i++){float opacity=FogOpacity(i%20,i/20);minimapColors[i]=opacity<.25f?new Color(.29f,.43f,.31f):opacity<.75f?new Color(.24f,.29f,.29f):new Color(.07f,.12f,.17f);}
+            for(int i=0;i<400;i++){float opacity=FogOpacity(i%20,i/20);minimapColors[i]=opacity<.5f?new Color(.29f,.43f,.31f):new Color(.07f,.12f,.17f);}
             MinimapTerrain.SetPixels(minimapColors);MinimapTerrain.Apply(false,false);
             for (int z = 0; z <= FogSteps; z++) for (int x = 0; x <= FogSteps; x++)
             {
@@ -51,8 +51,8 @@ namespace ThronesOfMyth
                 float tx = Mathf.SmoothStep(0, 1, sx - ix), tz = Mathf.SmoothStep(0, 1, sz - iz);
                 float alpha = Mathf.Lerp(Mathf.Lerp(FogOpacity(ix, iz), FogOpacity(ix + 1, iz), tx), Mathf.Lerp(FogOpacity(ix, iz + 1), FogOpacity(ix + 1, iz + 1), tx), tz);
                 float cloud=fogCloud[z*(FogSteps+1)+x];
-                // Remembered land is a lighter, desaturated veil; unknown land is opaque slate.
-                var tint=Color.Lerp(new Color(.30f,.35f,.34f),new Color(.12f,.20f,.25f),Mathf.Clamp01((alpha-.50f)*2));
+                // Unexplored land is opaque. Explored land has no grey remembered veil.
+                var tint=new Color(.12f,.20f,.25f);
                 fogColors[z*(FogSteps+1)+x]=new Color(tint.r+cloud,tint.g+cloud,tint.b+cloud,alpha);
             }
             fogMesh.colors = fogColors;

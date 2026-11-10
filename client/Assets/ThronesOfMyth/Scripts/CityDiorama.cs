@@ -55,6 +55,7 @@ namespace ThronesOfMyth
                 case "oathhall": return new Vector3(2.8f,0,5.5f);
                 case "forge": return new Vector3(5.5f,0,3.8f);
                 case "builders": return new Vector3(-5.5f,0,3.8f);
+                case "scoutcamp": return new Vector3(0,0,-5.5f);
                 default: return Vector3.zero;
             }
         }

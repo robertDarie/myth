@@ -49,7 +49,12 @@ namespace ThronesOfMyth
         {
             var seen = new HashSet<string>();
             UpdateFog(world.exploration);
-            if (world.exploration != null) foreach (var scout in world.exploration.scouts) Put(seen, scout.id, "scout", scout.x, scout.z, Color.cyan, "Scout · " + scout.phase);
+            if (world.exploration != null) foreach (var scout in world.exploration.scouts)
+            {
+                if (scout.phase == "Idle") continue;
+                string eta = scout.eta > 0.05f ? " · " + Mathf.CeilToInt(scout.eta) + "s" : "";
+                Put(seen, scout.id, "scout", scout.x, scout.z, scout.phase == "Exploring" ? gold : Color.cyan, "Scout · " + (scout.phase == "Outbound" ? "Traveling" : scout.phase) + eta);
+            }
             foreach (var p in world.armies)
             {
                 var color = p.ownerId == ownId ? blue : !string.IsNullOrEmpty(allianceId) && p.allianceId == allianceId ? new Color(0.4f, 0.85f, 0.6f) : red;

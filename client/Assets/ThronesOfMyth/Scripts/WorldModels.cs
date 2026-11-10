@@ -5,7 +5,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; public string joinCode; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex; public UnitCounts units; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex; public bool enabled; public UnitCounts units; }
     [Serializable] public sealed class InventoryItem { public string id,name,kind,resource,scope,description,category; public int amount,seconds,count; }
     [Serializable] public sealed class InventoryJob { public string id,lane,type,targetId; public float remaining; }
     [Serializable] public sealed class InventoryData { public bool suppliesAvailable; public InventoryItem[] items; public InventoryJob[] jobs; }
@@ -64,7 +64,8 @@ namespace ThronesOfMyth
     [Serializable] public sealed class RequirementCard {public string kind,id,name;public int level,current;public bool met;}
     [Serializable] public sealed class ComparisonStats {public float maxHealth,damage,speed,gather,heal,mitigation,level;}
     [Serializable] public sealed class CommanderComparison {public string marchId,candidateId,currentId;public bool available;public ComparisonStats current,candidate;}
-    [Serializable] public sealed class BuildingCard { public RequirementCard[] prerequisites;public string id, name, category, description, lockedReason; public int level, maxLevel; public bool canUpgrade; public ResourceAmounts nextCost; public float nextDuration; }
+    [Serializable] public sealed class ScoutCampCard { public int scouts, nextScouts, autoSectors, nextAutoSectors; public float speed, nextSpeed, radius, nextRadius, surveySeconds, nextSurveySeconds; public bool hasNext; }
+    [Serializable] public sealed class BuildingCard { public RequirementCard[] prerequisites;public ScoutCampCard scoutCamp; public string id, name, category, description, lockedReason; public int level, maxLevel; public bool canUpgrade; public ResourceAmounts nextCost; public float nextDuration; }
     [Serializable] public sealed class ResearchCard { public RequirementCard[] prerequisites; public string id, name, branch, description, lockedReason, prerequisite; public int level, maxLevel; public bool canResearch; public ResourceAmounts cost; public float duration; }
     [Serializable] public sealed class HeroProgress { public string id, expertiseDescription; public int rank, shards, nextShards, nextGold, heroLevel, stars; public float xp; public bool expertise; public HeroSkill[] skills; }
     [Serializable] public sealed class HeroSkill { public int index, level, unlockStar; public string name, kind, description; }
@@ -94,11 +95,11 @@ namespace ThronesOfMyth
     [Serializable] public sealed class CampaignLimits { public int rallyMarches, rallyLoad, garrisonMarches, garrisonLoad, reportEntries; }
     [Serializable] public sealed class GroupBattleReport { public string kind; public int tier, targetCycle; public bool settled; public float guardHealthBefore, guardHealthAfter, wallHealthBefore, wallHealthAfter, npcDamageDealt, npcDamageTaken; public StrongholdReward[] rewards; public string id, targetId, targetName, attackingAllianceId, defendingAllianceId, outcome; public float started, ended, structureDamage; public int rounds; public BattleSide[] participants; }
     [Serializable] public sealed class RoutePoint { public float x, z; }
-    [Serializable] public sealed class ScoutData { public string id, ownerId, phase; public float x, z, targetX, targetZ; }
+    [Serializable] public sealed class ScoutData { public string id, ownerId, phase; public float x, z, targetX, targetZ, eta, progress; public bool auto; }
     [Serializable] public sealed class ScoutEnemy { public string id, ownerId, name, commanderId; public int troops, mythic, health; public float x, z; }
     [Serializable] public sealed class ScoutGarrison { public string targetId; public int marches, troops, mythic; }
     [Serializable] public sealed class ScoutReport { public StrongholdData[] strongholds; public string id; public float x, z, time; public ScoutEnemy[] armies; public CampData[] camps; public SiteData[] sites; public FlagData[] flags; public ScoutGarrison[] garrisons; }
-    [Serializable] public sealed class ExplorationData { public int cellSize, width; public int[] explored, visible; public ScoutData[] scouts; public ScoutReport[] reports; }
+    [Serializable] public sealed class ExplorationData { public int cellSize, width; public float exploredPercent; public bool autoExplore; public ScoutCampCard scoutCamp; public int[] explored, visible; public ScoutData[] scouts; public ScoutReport[] reports; }
     [Serializable] public sealed class JourneyRewards { public int wood, food, gold, stone, mana, aether, sigils; public RewardGrant[] itemRewards; }
     [Serializable] public sealed class JourneyTask { public string id, title, description, guide, targetId; public int goal, progress; public bool claimed, canClaim; public JourneyRewards reward; }
     [Serializable] public sealed class JourneyChapter { public string id, title, story, commanderReward; public bool claimed, locked, canClaim; public JourneyTask[] tasks; public JourneyRewards reward; }

@@ -18,7 +18,7 @@ namespace ThronesOfMyth
             if(me==null||LoadingActive)return;
             if(!cityExperience.BlocksWorld&&cameraControl!=null&&kingdomView!=null){kingdomReturnFocus=cameraControl.FocusPoint;kingdomReturnZoom=kingdomView.orthographicSize;kingdomViewSaved=true;}
             cityExperience.SetCity(true);cityExperience.Advance(0,reducedMotion);
-            placeBeacon=false;chooseScoutDestination=false;selectedId="";if(map!=null)map.selectedId="";
+            placeBeacon=false;CancelScoutAim();selectedId="";if(map!=null)map.selectedId="";
             interfacePage=InterfacePage.City;opening.CityViewed=true;
             cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),cameraControl.MinimumZoom,reducedMotion);
         }
@@ -30,7 +30,7 @@ namespace ThronesOfMyth
         }
         private void ShowKingdomForTarget()
         {
-            placeBeacon=false;chooseScoutDestination=false;
+            placeBeacon=false;CancelScoutAim();
             if(cityExperience.BlocksWorld)ExitCity(false);else interfacePage=InterfacePage.World;
         }
         private void ResetCityExperience()
@@ -84,6 +84,7 @@ namespace ThronesOfMyth
             selectedBuilding=Mathf.Clamp(selectedBuilding,0,me.cityBuildings.Length-1);var selected=me.cityBuildings[selectedBuilding];
             GUILayout.Label(selected.category.ToUpperInvariant(),theme.Eyebrow);GUILayout.Label(selected.name,theme.Heading);GUILayout.Label("Level "+selected.level+" / "+selected.maxLevel,theme.Small);
             GUILayout.Label(selected.description,theme.Body);
+            if(selected.id=="scoutcamp")DrawScoutCampPanel(selected.scoutCamp);
             var job=CityPresentationData.Job(me,selected.id);
             if(job!=null&&!string.IsNullOrEmpty(job.id))DrawJob(job,JobName(job),false);
             if(selected.level<selected.maxLevel&&CityPresentationData.Construction(me,selected.id)==null)
