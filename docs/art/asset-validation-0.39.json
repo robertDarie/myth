@@ -1,0 +1,155 @@
+[
+  {
+    "asset": "BorderRock.fbx",
+    "vertices": 36,
+    "faces": 60,
+    "largest_dimension": 2.56,
+    "material_roles": [
+      "Rock"
+    ]
+  },
+  {
+    "asset": "CityChinese.fbx",
+    "vertices": 608,
+    "faces": 600,
+    "largest_dimension": 3.41,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Ground",
+      "Roof",
+      "Stone",
+      "Window",
+      "Wood"
+    ]
+  },
+  {
+    "asset": "CityEgyptian.fbx",
+    "vertices": 593,
+    "faces": 612,
+    "largest_dimension": 3.41,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Ground",
+      "Roof",
+      "Stone",
+      "Window"
+    ]
+  },
+  {
+    "asset": "CityGreek.fbx",
+    "vertices": 626,
+    "faces": 609,
+    "largest_dimension": 3.41,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Ground",
+      "Roof",
+      "Stone",
+      "Window"
+    ]
+  },
+  {
+    "asset": "CityJapanese.fbx",
+    "vertices": 760,
+    "faces": 740,
+    "largest_dimension": 3.41,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Ground",
+      "Roof",
+      "Stone",
+      "Window",
+      "Wood"
+    ]
+  },
+  {
+    "asset": "CityNorse.fbx",
+    "vertices": 506,
+    "faces": 503,
+    "largest_dimension": 3.41,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Ground",
+      "Roof",
+      "Stone",
+      "Window",
+      "Wood"
+    ]
+  },
+  {
+    "asset": "GreekBarracks.fbx",
+    "vertices": 624,
+    "faces": 676,
+    "largest_dimension": 2.3,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Recess",
+      "Roof",
+      "Stone",
+      "Wood"
+    ]
+  },
+  {
+    "asset": "GreekCitadel1.fbx",
+    "vertices": 1224,
+    "faces": 1254,
+    "largest_dimension": 2.3,
+    "material_roles": [
+      "Gold",
+      "Recess",
+      "Roof",
+      "Stone"
+    ]
+  },
+  {
+    "asset": "GreekCitadel2.fbx",
+    "vertices": 1272,
+    "faces": 1306,
+    "largest_dimension": 2.64,
+    "material_roles": [
+      "Banner",
+      "Gold",
+      "Recess",
+      "Roof",
+      "Stone"
+    ]
+  },
+  {
+    "asset": "GreekTemple.fbx",
+    "vertices": 912,
+    "faces": 772,
+    "largest_dimension": 2.3,
+    "material_roles": [
+      "Gold",
+      "Recess",
+      "Roof",
+      "Stone"
+    ]
+  },
+  {
+    "asset": "OakTree.fbx",
+    "vertices": 52,
+    "faces": 70,
+    "largest_dimension": 2.7,
+    "material_roles": [
+      "Bark",
+      "Green"
+    ]
+  },
+  {
+    "asset": "PineTree.fbx",
+    "vertices": 43,
+    "faces": 37,
+    "largest_dimension": 2.625,
+    "material_roles": [
+      "Bark",
+      "Green"
+    ]
+  }
+]

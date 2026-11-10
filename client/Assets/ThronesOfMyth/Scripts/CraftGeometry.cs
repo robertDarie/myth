@@ -40,7 +40,9 @@ namespace ThronesOfMyth
                 float dx=(float)Math.Cos(a)*.045f,dz=(float)Math.Sin(a)*.045f;int i=g.Vertices.Count;
                 g.Vertices.Add(new CraftVertex(x-dx,0,z-dz));g.Vertices.Add(new CraftVertex(x+dx,0,z+dz));g.Vertices.Add(new CraftVertex(x+dx*.3f+.07f,h*.6f,z+dz*.3f));g.Vertices.Add(new CraftVertex(x+.11f,h,z+.025f));g.Vertices.Add(new CraftVertex(x-dx*.3f+.07f,h*.6f,z-dz*.3f));
                 g.Triangle(i,i+1,i+2);g.Triangle(i,i+2,i+4);g.Triangle(i+4,i+2,i+3);
-                g.Triangle(i+2,i+1,i);g.Triangle(i+4,i+2,i);g.Triangle(i+3,i+2,i+4);
+                // Separate back-face vertices: shared reversed triangles cancel recalculated normals.
+                for(int back=0;back<5;back++)g.Vertices.Add(g.Vertices[i+back]);
+                int b=i+5;g.Triangle(b+2,b+1,b);g.Triangle(b+4,b+2,b);g.Triangle(b+3,b+2,b+4);
             }
             return g;
         }

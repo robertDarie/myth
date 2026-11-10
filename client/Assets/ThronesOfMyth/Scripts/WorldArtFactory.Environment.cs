@@ -17,7 +17,7 @@ namespace ThronesOfMyth
                 for (int i = 0; i < source.Length; i++)
                 {
                     string role = source[i] == null ? "Stone" : source[i].name;
-                    Color tint = role.Contains("Roof") ? roof : role.Contains("Banner") ? team : role.Contains("Gold") ? new Color(0.79f, 0.57f, 0.24f) : role.Contains("Window") ? new Color(0.98f, 0.75f, 0.31f) : role.Contains("Wood") || role.Contains("Bark") ? new Color(0.31f, 0.21f, 0.13f) : role.Contains("Green") ? team : role.Contains("Rock") ? new Color(0.48f, 0.51f, 0.43f) : role.Contains("Ground") ? new Color(0.51f, 0.57f, 0.35f) : new Color(0.83f, 0.77f, 0.61f);
+                    Color tint = role.Contains("Recess") ? new Color(.16f,.21f,.23f) : role.Contains("Roof") ? roof : role.Contains("Banner") ? team : role.Contains("Gold") ? new Color(0.79f, 0.57f, 0.24f) : role.Contains("Window") ? new Color(0.98f, 0.75f, 0.31f) : role.Contains("Wood") || role.Contains("Bark") ? new Color(0.31f, 0.21f, 0.13f) : role.Contains("Green") ? team : role.Contains("Rock") ? new Color(0.48f, 0.51f, 0.43f) : role.Contains("Ground") ? new Color(0.51f, 0.57f, 0.35f) : new Color(0.83f, 0.77f, 0.61f);
                     palette[i] = role.Contains("Roof")?RoofMaterial(tint):MaterialFor(tint);
                 }
                 renderer.sharedMaterials = palette;

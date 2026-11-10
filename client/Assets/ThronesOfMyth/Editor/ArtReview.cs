@@ -31,7 +31,7 @@ namespace ThronesOfMyth.Editor
             var paths=new List<string>();foreach(string culture in new[]{"Greek","Egyptian","Norse","Chinese","Japanese"})
             {paths.Add(Root+"Models/City"+culture+".fbx");foreach(string role in new[]{"Infantry","Archer","Cavalry","Commander","Mythic"})paths.Add(Root+"Units/"+culture+role+".fbx");}
             foreach(string hero in new[]{"captain","warden","scout","rune-seer","atalanta","mulan","tomoe","horus-champion","heracles","sigurd","wukong"})paths.Add(Root+"Units/Hero_"+hero+".fbx");
-            foreach(string environment in new[]{"OakTree","PineTree","BorderRock"})paths.Add(Root+"Models/"+environment+".fbx");
+            foreach(string environment in new[]{"OakTree","PineTree","BorderRock","GreekCitadel1","GreekCitadel2","GreekTemple","GreekBarracks"})paths.Add(Root+"Models/"+environment+".fbx");
             var results=new List<AssetResult>();var errors=new List<string>();
             foreach(string path in paths)
             {

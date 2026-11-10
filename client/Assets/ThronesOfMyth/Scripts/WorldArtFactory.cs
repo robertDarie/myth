@@ -139,7 +139,7 @@ namespace ThronesOfMyth
         private void City(Transform root, string culture, Color team)
         {
             string title = string.IsNullOrEmpty(culture) ? "Greek" : char.ToUpperInvariant(culture[0]) + culture.Substring(1);
-            if (Imported(root, "City" + title, team, culture)) {ShowcaseDistrict(root,"citadel",culture,1,team);return;}
+            if (Imported(root, culture=="greek"?"GreekCitadel1":"City" + title, team, culture)) {ShowcaseDistrict(root,"citadel",culture,1,team);return;}
             if (culture == "greek" || string.IsNullOrEmpty(culture)) { Temple(root, team, false); return; }
             Box(root, 0, 0.12f, 0, 4, 0.24f, 3.5f, darkStone);
             if (culture == "egyptian")

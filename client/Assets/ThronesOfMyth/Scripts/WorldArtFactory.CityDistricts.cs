@@ -12,6 +12,16 @@ namespace ThronesOfMyth
                 for(int side=-1;side<=1;side+=2)for(int end=-1;end<=1;end+=2)Pillar(root,side*.54f,.16f,end*.45f,.065f,.26f,timber);
                 return root;
             }
+            if(culture=="greek"&&(id=="citadel"||id=="oracle"||id=="barracks"))
+            {
+                string model=id=="citadel"?(level>=2?"GreekCitadel2":"GreekCitadel1"):id=="oracle"?"GreekTemple":"GreekBarracks";
+                if(Imported(root,model,team,culture))
+                {
+                    root.localScale=Vector3.one*(id=="citadel"?1.05f:.70f);
+                    if(level>=3)for(int side=-1;side<=1;side+=2){Pillar(root,side*.95f,.7f,.6f,.05f,1.4f,bronze);Box(root,side*.95f+.13f,1.15f,.6f,.24f,.36f,.04f,team);}
+                    return root;
+                }
+            }
             Box(root,0,.045f,0,1.5f,.09f,1.3f,stone);
             if(id=="citadel")
             {

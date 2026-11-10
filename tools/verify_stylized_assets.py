@@ -11,6 +11,6 @@ for name in sorted(os.listdir(folder)):
  size=max(max(o.dimensions) for o in objects);assert .5<size<5,(name,size)
  roles={m.name.split('.')[0] for o in objects for m in o.data.materials if m};assert roles,(name,'missing roles')
  results.append({'asset':name,'vertices':vertices,'faces':faces,'largest_dimension':round(size,3),'material_roles':sorted(roles)})
-assert len(results)==8
-with open(os.path.join(ROOT,'docs/art/asset-validation-0.16.json'),'w')as f:json.dump(results,f,indent=2)
-print('Verified 8 FBX round trips:',sum(r['vertices'] for r in results),'vertices')
+assert len(results)==12
+with open(os.path.join(ROOT,'docs/art/asset-validation-0.39.json'),'w')as f:json.dump(results,f,indent=2)
+print('Verified 12 FBX round trips:',sum(r['vertices'] for r in results),'vertices')
