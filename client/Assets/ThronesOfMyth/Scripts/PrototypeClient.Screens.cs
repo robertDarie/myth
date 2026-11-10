@@ -367,8 +367,8 @@ namespace ThronesOfMyth
             }
             else { selectedId = ""; return; }
             bool remembered=boss?.lastKnown==true||camp?.lastKnown==true||node?.lastKnown==true||site?.lastKnown==true||beacon?.lastKnown==true||city?.lastKnown==true;
-            bool readableCity = city != null && city.id != playerId && (string.IsNullOrEmpty(me.allianceId) || city.allianceId != me.allianceId) && city.cityLevel >= 2;
-            if(remembered && !readableCity){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
+            bool keepCityReading = city != null && city.id != playerId && (string.IsNullOrEmpty(me.allianceId) || city.allianceId != me.allianceId) && city.cityLevel >= 2;
+            if(remembered && !keepCityReading){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
             if(remembered&&camp!=null){action="March & attack";subtitle="LAST SEEN · Approach to verify; AP charged only on engagement";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
