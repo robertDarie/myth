@@ -4,7 +4,12 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.38
+## Playable slice 0.41
+
+- Greek civic kit, corrected grass normals, clearer troop/ward silhouettes,
+  owned inventory and durable PvE outcome details.
+  [v0.39–v0.41 scope, verification and Linux checklist](docs/quality-slice-0.39-0.41.md).
+  **Native acceptance and the broader art transformation remain incomplete.**
 
 - First impressions: composed woodland shading, hemispheric ambient lighting,
   city streets and stronger civic scale, arcing arrows and coordinated skill

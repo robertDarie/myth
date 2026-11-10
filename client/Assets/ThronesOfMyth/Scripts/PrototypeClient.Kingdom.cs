@@ -57,13 +57,7 @@ namespace ThronesOfMyth
         private void DrawBattleReports()
         {
             GUILayout.Label("WAR ARCHIVE",theme.Eyebrow);GUILayout.Label("Your battles",sectionStyle);
-            if(!string.IsNullOrEmpty(map.LatestEncounterTitle)){GUILayout.Label(map.LatestEncounterTitle,theme.Heading);GUILayout.Label(map.LatestEncounterDetail,theme.Body);}
-            GUILayout.Label("Camp victories: "+me.kills+" · Current treasury: "+me.gold+" gold / "+me.food+" food / "+me.stone+" stone / "+me.mana+" mana / "+me.sigils+" sigils",theme.Small);
-            GUILayout.Label("Camp rewards are credited directly. These are current totals, not an attributed reward breakdown. Field and alliance reports below contain their own confirmed outcomes.",theme.Small);
-
-            GUILayout.Space(14); GUILayout.Label("FIELD DUELS", theme.Eyebrow);
-            GUILayout.Label("Reports include live engagements and your latest 30 completed battles. Damage totals count actual health removed; shield absorption is separate. This field-war version has no permanent troop deaths or plunder rewards.", noteStyle);
-            if (me.battleReports.Length == 0) GUILayout.Label("No field duels yet. First-age cities and armies at their own city are protected.", noteStyle);
+            GUILayout.Label("Recorded health loss, healing and casualties for this encounter.",theme.Small);
             foreach (var report in me.battleReports)
             {
                 if(reportSelection!="battle:"+report.id)continue;

@@ -3,6 +3,8 @@ namespace ThronesOfMyth
 {
     public static class InterfaceLayout
     {
+        public static float Scale(float width,float height,float preference)=>Math.Min(Math.Min(width/(width<1280?1440f:1600f),height/900f)*preference,Math.Min(width/1280f,height/720f));
+        public static bool ShowItem(InventoryItem item,string category,bool catalogue)=>item!=null&&(catalogue||item.count>0)&&(string.IsNullOrEmpty(category)||item.category==category);
         public const float HudHeight=104,RailWidth=214,MarchTop=142,MarchStep=70;
         public static float MinimapHeight(float viewHeight)=>viewHeight<800?132:152;
         public static int TabColumns(float logicalWidth,int count)=>Math.Max(1,Math.Min(count,(int)(logicalWidth/150)));

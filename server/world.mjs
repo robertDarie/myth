@@ -12,7 +12,7 @@ import { initializeExploration, explorationTick, explorationCommand, filterFog, 
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, countOf, changeUnits, tierLock, promotionCost } from './troops.mjs';
+import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
@@ -238,8 +238,8 @@ export class World {
       for (const member of owners) {
         member.gold += Math.floor(50 * camp.level / owners.length); member.food += Math.floor(30 * camp.level / owners.length);
         member.stone += 20 * camp.level; member.mana += 5 * camp.level; member.sigils++; member.kills++; recordActivity(this,member,'camps',1);
-        coreReport(this,member,{id:randomUUID(),type:'pve',title:camp.name+' · Victory',outcome:'Victory',detail:'Level '+camp.level+' camp defeated',resources:{food:Math.floor(30*camp.level/owners.length),gold:Math.floor(50*camp.level/owners.length),stone:20*camp.level,mana:5*camp.level,wood:0}});
         const ownArmies = participants.filter(actor => this.owner(actor).id === member.id);
+        coreReport(this,member,{id:randomUUID(),type:'pve',title:camp.name+' · Victory',outcome:'Victory',detail:'Level '+camp.level+' camp defeated. Earned 1 Oracle Sigil and '+(25*camp.level)+' commander XP shared among participating marches.\n'+ownArmies.map(actor=>{const u=classCounts(actor.units);return actor.commanderId+' · '+u.infantry+' infantry / '+u.archers+' archers / '+u.cavalry+' cavalry / '+actor.mythic+' mythic at outcome · '+Math.ceil(actor.health)+' HP remaining · '+camp.contributors[actor.id]+' damage dealt';}).join('\n'),resources:{food:Math.floor(30*camp.level/owners.length),gold:Math.floor(50*camp.level/owners.length),stone:20*camp.level,mana:5*camp.level,wood:0}});
         for (const actor of ownArmies) {
           const record = ensureHero(member, actor.commanderId);
           record.xp += 25 * camp.level / ownArmies.length; actor.xp = record.xp; actor.level = heroLevel(record);

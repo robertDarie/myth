@@ -8,6 +8,7 @@ namespace ThronesOfMyth
         private string speedupJobId="";
         private Vector2 itemScroll,itemDetailScroll;
         private string selectedInventoryId="";
+        private bool inventoryCatalogue,shownCatalogue;
         private InventoryData shownBag;private int shownCategory=-1;private InventoryItem[] shownItems;
         private void RenderInventoryWindow(Rect r)
         {
@@ -19,9 +20,10 @@ namespace ThronesOfMyth
             GUILayout.BeginArea(new Rect(list.x+12,list.y+12,list.width-24,list.height-24));
             theme.Section("Stored supplies","Select a stack; items stay sealed until used.");
             if(bag.suppliesAvailable&&theme.Action("Collect founding supplies",!processing&&pendingOrder==null,"Confirm the pending order first."))Send("inventory-supplies");
+            inventoryCatalogue=GUILayout.Toggle(inventoryCatalogue,"Show unowned items");
             itemCategory=theme.Tabs(itemCategory,new[]{"All","Resources","Speedups","Summons","Energy","Combat buffs"},list.width-24);
             var categories=new[]{"","Resources","Speedups","Summons","Energy","Combat buffs"};
-            if(!ReferenceEquals(shownBag,bag)||shownCategory!=itemCategory){shownBag=bag;shownCategory=itemCategory;shownItems=Array.FindAll(bag.items??Array.Empty<InventoryItem>(),i=>itemCategory==0||i.category==categories[itemCategory]);}
+            if(!ReferenceEquals(shownBag,bag)||shownCategory!=itemCategory||shownCatalogue!=inventoryCatalogue){shownBag=bag;shownCategory=itemCategory;shownCatalogue=inventoryCatalogue;shownItems=Array.FindAll(bag.items??Array.Empty<InventoryItem>(),i=>InterfaceLayout.ShowItem(i,categories[itemCategory],inventoryCatalogue));}
             var filtered=shownItems;
             itemScroll=GUILayout.BeginScrollView(itemScroll);
             selectedItem=Array.FindIndex(filtered,i=>i.id==selectedInventoryId);if(selectedItem<0)selectedItem=0;
@@ -55,8 +57,8 @@ namespace ThronesOfMyth
             }
             else if(item.kind=="resource")GUILayout.Label("Adds "+item.amount*itemQuantity+" "+item.resource+" to your spendable stockpile.",theme.Heading);
 
-            if(me.economy!=null){var e=me.economy;GUILayout.Label("AP "+e.ap+" / "+e.apCap+(e.ap<e.apCap?" · Next point in "+e.nextAPSeconds+"s · Full in "+e.fullAPSeconds+"s":" · Full")+". Movement, PvP, gathering and scouting cost no AP.",noteStyle);foreach(var buff in e.buffs)if(buff.remaining>0)GUILayout.Label("Active "+buff.kind+" oath · "+buff.remaining+" seconds remaining",noteStyle);}
-            GUILayout.Label("Free premium Aether: 5 from each of Chapters I and III, and 2 / 3 from daily chests at 60 / 100 points. Claimed rewards never pay twice.",theme.Small);
+            if(me.economy!=null&&(item.kind=="energy"||item.kind=="buff")){var e=me.economy;GUILayout.Label("AP "+e.ap+" / "+e.apCap+(e.ap<e.apCap?" · Next point in "+e.nextAPSeconds+"s · Full in "+e.fullAPSeconds+"s":" · Full")+". Movement, PvP, gathering and scouting cost no AP.",noteStyle);foreach(var buff in e.buffs)if(buff.remaining>0)GUILayout.Label("Active "+buff.kind+" oath · "+buff.remaining+" seconds remaining",noteStyle);}
+
             bool valid=item.kind!="speedup"||job!=null&&(item.scope=="universal"||job.lane==item.scope)&&itemQuantity<=Mathf.CeilToInt(job.remaining/Mathf.Max(1,item.seconds));
             if(item.kind=="energy"&&me.economy!=null)valid &= me.economy.ap+item.amount*itemQuantity<=me.economy.apCap;
             if(item.kind=="buff"&&me.economy!=null)valid &= itemQuantity==1&&!Array.Exists(me.economy.buffs,b=>b.kind==item.scope&&b.remaining>0);

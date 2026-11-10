@@ -15,7 +15,7 @@ namespace ThronesOfMyth
         private int heroFilter;
         private bool onlyOwnedHeroes;
         private string heroSearch = "";
-        private float InterfaceScale => Mathf.Min(Mathf.Min(Screen.width / 1600f, Screen.height / 900f) * interfaceScalePreference, Mathf.Min(Screen.width / 1280f, Screen.height / 720f));
+        private float InterfaceScale => InterfaceLayout.Scale(Screen.width,Screen.height,interfaceScalePreference);
         private float ViewWidth => Screen.width / Mathf.Max(0.01f, InterfaceScale);
         private float ViewHeight => Screen.height / Mathf.Max(0.01f, InterfaceScale);
         private Rect WindowRect => new Rect((ViewWidth - Mathf.Min(1320, ViewWidth - 72)) / 2, 112, Mathf.Min(1320, ViewWidth - 72), ViewHeight - 204);

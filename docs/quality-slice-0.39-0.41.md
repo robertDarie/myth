@@ -50,3 +50,67 @@ sequence/reduced-motion checks), source checks zero issues. Native silhouettes,
 formation overlap, animation/audio sync and FPS remain unverified. This improves
 the existing showcase; it is not a claim of premium animation quality, and new
 bespoke commander clips/recorded audio have not been authored in this release.
+
+## v0.41 — Owned inventory, small-display readability and useful archives
+
+Inventory defaults to owned stacks; an explicit catalogue toggle retains access to
+unowned item descriptions. Contextual AP/buff instructions appear for those item
+kinds. Small desktop windows use a 1440-wide reference rather than 1600, retaining
+minimum logical bounds and the existing scale preference. Existing layout tests
+exercise 1024×768, 1080p, 1440p and ultrawide; actual fonts/clipping require Unity.
+
+New PvE victory reports persist actual owned participant composition **at outcome**,
+remaining HP and recorded camp contribution, plus the already-earned Sigil and
+shared XP. These are text in the existing private durable report, not a new reward
+or schema. Older reports remain valid; missing historical statistics are not
+backfilled. Detailed field-battle views no longer prepend unrelated live treasury
+and last-encounter data. PvP casualties/healing remain from their existing reports.
+
+Validation: 276 server tests; 16,588 portable assertions; source checks zero issues.
+New report test checks actual values, save round-trip and no reward on reading.
+Inventory filtering and small-display scale get three targeted checks. No economy,
+combat, save schema or protocol change. Native input/rendering/audio remain pending.
+
+## Build, record and evaluate
+
+Requires Unity 6000.3.0f1, Linux Build Support (Mono), editor license and Git;
+Linux host needs Node 24+. No Unity Editor is available in this cloud environment,
+so no native build, screenshot, animation timing, audio or GPU FPS result is claimed.
+
+```sh
+git switch main
+git pull --ff-only
+bash tools/build-linux-playtest.sh /path/to/6000.3.0f1/Editor/Unity
+```
+
+Extract `dist/Thrones-of-Myth-Linux-x86_64.zip` completely, then run
+`bash Start-Thrones-of-Myth.sh`. The real client/server and manifest use the source
+commit built. For capture use `node Launch.mjs --server-profile --thrones-profile`.
+F8 captures 600 frames; Unity prints the VisualReview output path. Logs and restart/
+two-client instructions remain in [the Linux guide](playtest-linux-0.37.md).
+
+1. Fresh Greek guest: capture world at default and near zoom, fog, forest, resource
+   grove and camp silhouettes. Check black marks on llvmpipe and hardware separately.
+2. Enter city; record all four new assets, district picking at rotated angles,
+   gates/roads, construction plots and exiting. Inspect other cultures for regressions.
+3. Open commander panel, train five archers, choose Scout patrol (Captain,
+   15 infantry / 5 archers, no mythics), confirm without ALL READY, deploy.
+4. Scout (20,20), attack discovered Forsaken Scouts. Record the full battle at
+   normal speed/default zoom and once close up: infantry, rear archers, projectile
+   release/impact and the actual Rallying Cry cast/wards. Stronger formations may
+   kill before casting. Do not force or fabricate an outcome for footage.
+5. Inspect the private battle report, recall, confirm home formation/slot release.
+   Upgrade Citadel to 2 and record the before/after silhouette at the same angle.
+6. Gather wood: show actual cargo, delivery and quest claim. Open inventory, verify
+   only owned stacks by default and opt-in catalogue; restart and resume the save.
+7. Repeat key interfaces at 1024×768, 1920×1080 and 2560×1440 with 85/100/115% scale,
+   keyboard shortcuts, sound off and reduced motion. Capture clipping/overlaps.
+8. Record renderer, GPU/driver, resolution, visible armies, settings, capture length
+   and frame times. Software llvmpipe measurements are not hardware GPU benchmarks.
+
+These releases deliver scoped improvements, not all of the requested transformation.
+Remaining acceptance work includes dedicated surrounding homes/gates/vegetation,
+stronger world landmarks, bespoke commander animation/audio, comprehensive native
+layout validation and artifact reproduction. Native visual acceptance is open for
+all three releases. The current art still uses stylized modular geometry; matching
+commercial reference-game production quality needs sustained artist-led iteration.
