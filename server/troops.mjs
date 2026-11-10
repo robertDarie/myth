@@ -24,6 +24,11 @@ export function tierLock(p,type) {
   return '';
 }
 export const promotionCost=type=>Object.fromEntries(Object.entries(type.cost).map(([id,value])=>[id,Math.max(0,value-(baseTypes.find(t=>t.id===type.baseId)?.cost[id]??0))]).filter(([,v])=>v>0));
+// Original curve. Hall levels 1–2 keep a batch of five so the first session stays readable.
+// Larger orders do not reduce the time or resources spent per soldier.
+export const TRAINING_BATCHES = { 1: 5, 2: 5, 3: 10, 4: 20, 5: 40 };
+export const trainingBatch = p => TRAINING_BATCHES[Math.max(1, Math.min(5, p.buildings?.barracks ?? 1))] ?? 5;
+export const batchCost = (cost, amount) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * amount / 5)]));
 export function trainingOptions(p) { return TROOP_TYPES.map(t=>({...t,lockedReason:tierLock(p,t),promotionCost:t.tier===2?promotionCost(t):{},sourceAvailable:countOf(p.reserveUnits,t.baseId)})); }
 export const unitPower=units=>TROOP_TYPES.reduce((sum,t)=>sum+countOf(units,t.id)*(t.tier===2?8:5),0);
 export const unitTotal = units => TROOP_TYPES.reduce((sum, type) => sum + countOf(units,type.id), 0);
@@ -43,7 +48,7 @@ export function validateUnits(p) {
   for(const type of TROOP_TYPES.filter(t=>t.tier===2))if((ledgers.some(units=>countOf(units,type.id)>0)||p.trainingQueue.some(job=>job.targetId===type.id))&&tierLock(p,type))throw new Error('Invalid saved veteran unlock.');
   if (!validUnits(p.reserveUnits) || unitTotal(p.reserveUnits) !== p.reserveTroops || !Number.isSafeInteger(p.reserveMythic) || p.reserveMythic < 0) throw new Error('Invalid saved troop reserves.');
   for (const army of [p, ...p.marches]) if (!validUnits(army.units) || unitTotal(army.units) !== army.troops || !Number.isSafeInteger(army.mythic) || army.mythic < 0 || army.troops + army.mythic < 1) throw new Error('Invalid saved march composition.');
-  if (p.trainingQueue.some(job => ['train','promote'].includes(job.type) && (!TROOP_TYPES.some(t => t.id === job.targetId)||(job.type==='promote'&&(!TROOP_TYPES.some(t=>t.id===job.targetId&&t.tier===2&&t.baseId===job.sourceId)||job.amount!==5))))) throw new Error('Invalid saved troop training order.');
+  if (p.trainingQueue.some(job => ['train','promote'].includes(job.type) && (!TROOP_TYPES.some(t => t.id === job.targetId)||(job.type==='train'&&!Object.values(TRAINING_BATCHES).includes(job.amount))||(job.type==='promote'&&(!TROOP_TYPES.some(t=>t.id===job.targetId&&t.tier===2&&t.baseId===job.sourceId)||job.amount!==5))))) throw new Error('Invalid saved troop training order.');
 }
 export function troopBase(a) {
   const units = a.units ?? legacyUnits(a.troops);

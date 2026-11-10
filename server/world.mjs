@@ -14,7 +14,7 @@ import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost } from './troops.mjs';
+import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, trainingBatch, batchCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
@@ -127,16 +127,18 @@ export class World {
       case 'promote': case 'train': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
         const queued = p.trainingQueue.filter(j => ['train','promote'].includes(j.type)).reduce((total, j) => total + j.amount, 0);
-        if (totalTroops(p) + p.reserveTroops + wardTroops(p) + queued + (c.type==='promote'?0:5) > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
+        const promoting=c.type==='promote';
+        const amount=promoting?5:trainingBatch(p);
+        if (totalTroops(p) + p.reserveTroops + wardTroops(p) + queued + (promoting?0:amount) > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
         const type = TROOP_TYPES.find(t => t.id === (c.targetId || 'infantry'));
         if (!type) throw new GameError('Choose a valid troop type.');
         const locked=tierLock(p,type);if(locked)throw new GameError(locked);
-        const promoting=c.type==='promote';
         if(promoting&&(type.tier!==2||countOf(p.reserveUnits,type.baseId)<5))throw new GameError('Promotion requires five ready Tier I reserves of this class.');
-        const cost=promoting?promotionCost(type):type.cost;
+        const cost=batchCost(promoting?promotionCost(type):type.cost, amount);
         this.spend(p,cost);
         if(promoting){changeUnits(p.reserveUnits,type.baseId,-5);p.reserveTroops-=5;}
-        const job = this.job(promoting?'promote':'train', (promoting?type.duration-TROOP_TYPES.find(t=>t.id===type.baseId).duration:type.duration) / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), { ...cost }, 5);
+        const baseDuration=promoting?type.duration-TROOP_TYPES.find(t=>t.id===type.baseId).duration:type.duration;
+        const job = this.job(promoting?'promote':'train', baseDuration * (promoting?1:amount/5) / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), { ...cost }, amount);
         job.targetId = type.id;if(promoting)job.sourceId=type.baseId; p.trainingQueue.push(job); return;
       }
       case 'recruit': {

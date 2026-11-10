@@ -1,4 +1,4 @@
-import { trainingOptions } from './troops.mjs';
+import { trainingOptions, trainingBatch } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { scoutCampCard } from './scout-camp.mjs';
@@ -19,7 +19,10 @@ export function initializeCity(p, migrated = false) {
   if (migrated && (p.mythic || p.reserveMythic || p.trainingQueue?.some(j => j.type === 'recruit'))) p.buildings.menagerie = Math.max(1, p.buildings.menagerie);
 }
 export const buildingLevel = (p, id) => id === 'citadel' ? p.cityLevel : p.buildings[id] ?? 0;
-export const capacity = p => p.cityLevel * 20 + 20 + Math.max(0, p.buildings.barracks - 1) * 5;
+// Citadel 1 stays 40. Later citadels grow faster than the old +20 per level.
+// Hall of Spears still adds 5 per level beyond the first. This is original tuning, not a RoK table.
+export const CITADEL_TROOP_CAPACITY = [0, 40, 80, 140, 220, 340];
+export const capacity = p => (CITADEL_TROOP_CAPACITY[p.cityLevel] ?? 40) + Math.max(0, (p.buildings.barracks ?? 1) - 1) * 5;
 export const mythicCapacity = p => p.cityLevel + Math.max(0, p.buildings.menagerie - 1);
 export const passiveCap = p => 500 + p.buildings.vault * 250 + p.cityLevel * 50;
 const scaled = (cost, factor) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * factor)]));
@@ -62,7 +65,7 @@ export function technologyCard(p, t) {
 }
 export function citySnapshot(world, p) {
   return { trainingOptions: trainingOptions(p), ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), assignedTroops:totalTroops(p),assignedMythic:totalMythic(p),deployedTroops:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.troops,0),deployedMythic:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.mythic,0), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
-    trainingDuration: 8 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
+    trainingBatch: trainingBatch(p), trainingDuration: 8 * trainingBatch(p) / 5 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
     troopCapacity: capacity(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
     offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),

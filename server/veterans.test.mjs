@@ -90,10 +90,10 @@ test('HTTP promotion retries are once-only, use the owning city and preserve a f
  assert.equal(p.trainingQueue.filter(j=>j.type==='promote').length,1);assert.equal(census(p),before);
 });
 test('a promotion at full troop capacity reserves its place and cannot open free training space',()=>{
- const {w,p}=fixture();unlock(w,p);p.reserveUnits.infantry=45;p.reserveTroops=45;assert.equal(census(p),65);
- command(w,p,'promote',{targetId:'veteranInfantry'});assert.equal(census(p),65);
+ const {w,p}=fixture();unlock(w,p);p.reserveUnits.infantry=65;p.reserveTroops=65;assert.equal(census(p),85);
+ command(w,p,'promote',{targetId:'veteranInfantry'});assert.equal(census(p),85);
  assert.throws(()=>command(w,p,'train'),/capacity/);assert.equal(p.trainingQueue.length,1);
- command(w,p,'cancel-job',{targetId:p.trainingQueue[0].id});assert.equal(p.reserveTroops,45);
+ command(w,p,'cancel-job',{targetId:p.trainingQueue[0].id});assert.equal(p.reserveTroops,65);
 });
 test('veteran rally contributors retain their tier in group reports, rewards and restored saves',()=>{
  const {w,p}=fixture();unlock(w,p);const other=w.authenticate(w.join('Veteran Ally').token);other.gold=other.wood=other.food=other.stone=other.mana=10000;unlock(w,other);

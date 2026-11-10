@@ -21,9 +21,35 @@ const PROFILES = {
   wukong: ['Heavenward Staff', 'damage', 'offense'],
 };
 export const activeKind = id => PROFILES[id][1];
+export const TALENT_TREES = [
+  { id: 'warhost', name: 'Warhost', nodes: [
+    { id: 'line-oath', name: 'Oath of the Line', max: 3, requires: '', effect: '+2% damage per rank' },
+    { id: 'forsaken-bane', name: 'Bane of the Forsaken', max: 3, requires: 'line-oath', effect: '+2% damage against camps and strongholds per rank' },
+    { id: 'iron-lung', name: 'Iron Lung', max: 3, requires: 'line-oath', effect: '+2% maximum health per rank' },
+  ] },
+  { id: 'provision', name: 'Provision', nodes: [
+    { id: 'pilgrim', name: 'Pilgrim\'s Measure', max: 3, requires: '', effect: '+3% gathering per rank' },
+    { id: 'trail', name: 'Open Trail', max: 3, requires: 'pilgrim', effect: '+2% march speed per rank' },
+    { id: 'satchel', name: 'Full Satchel', max: 3, requires: 'pilgrim', effect: '+2% maximum health per rank' },
+  ] },
+  { id: 'sanctuary', name: 'Sanctuary', nodes: [
+    { id: 'hearth', name: 'Hearth Rite', max: 3, requires: '', effect: '+3% recovery per rank' },
+    { id: 'bulwark', name: 'Bulwark', max: 3, requires: 'hearth', effect: '+1% damage reduction per rank' },
+    { id: 'warden-eye', name: 'Warden\'s Eye', max: 3, requires: 'hearth', effect: '+2% damage per rank' },
+  ] },
+];
+const TALENT_NODES = TALENT_TREES.flatMap(tree => tree.nodes.map(node => ({ ...node, tree: tree.id })));
+export const talentNode = id => TALENT_NODES.find(node => node.id === id);
 export function ensureHero(p, id) {
-  p.heroRecords[id] ??= { xp: 0, stars: 1, skills: [1, 0, 0, 0] };
+  p.heroRecords[id] ??= { xp: 0, stars: 1, skills: [1, 0, 0, 0], talents: {} };
+  if (!p.heroRecords[id].talents || typeof p.heroRecords[id].talents !== 'object' || Array.isArray(p.heroRecords[id].talents)) p.heroRecords[id].talents = {};
   return p.heroRecords[id];
+}
+export const talentPoints = record => Math.floor(heroLevel(record) / 5);
+export const spentTalents = record => Object.values(record.talents ?? {}).reduce((sum, rank) => sum + rank, 0);
+export function talentMods(record) {
+  const rank = id => record.talents?.[id] ?? 0;
+  return { damage: 1 + 0.02 * (rank('line-oath') + rank('warden-eye')), pve: 1 + 0.02 * rank('forsaken-bane'), health: 1 + 0.02 * (rank('iron-lung') + rank('satchel')), gather: 1 + 0.03 * rank('pilgrim'), speed: 1 + 0.02 * rank('trail'), heal: 1 + 0.03 * rank('hearth'), mitigation: 0.01 * rank('bulwark') };
 }
 export function heroLevel(record) { return Math.min(record.stars * 10, 1 + Math.floor(record.xp / 100)); }
 export function initializeProgression(p) {
@@ -50,7 +76,8 @@ export function skillInfo(p, id) {
   const names = role === 'offense' ? ['Battle Discipline', 'Slayer of the Forsaken', 'Unbroken Resolve']
     : role === 'gather' ? ['Forager\'s Wisdom', 'Trailcraft', 'Hardy Travelers']
     : role === 'defense' ? ['Guardian\'s Oath', 'Provisioning', 'Hold the Line'] : ['Shared Resolve', 'Restorative Arts', 'Protect the Fallen'];
-  return { id, heroLevel: heroLevel(r), xp: r.xp, stars: r.stars, expertise,
+  const talents = TALENT_TREES.map(tree => ({ id: tree.id, name: tree.name, nodes: tree.nodes.map(node => ({ ...node, rank: r.talents?.[node.id] ?? 0, available: talentPoints(r) - spentTalents(r) > 0 && (r.talents?.[node.id] ?? 0) < node.max && (!node.requires || (r.talents?.[node.requires] ?? 0) > 0) })) }));
+  return { id, heroLevel: heroLevel(r), xp: r.xp, stars: r.stars, talentPoints: talentPoints(r), talentPointsSpent: spentTalents(r), talents, expertise,
     expertiseDescription: ['Epic', 'Legendary'].includes(hero.rarity) ? 'All four normal skills at level 5: +20% active-skill effect.' : 'No expertise in this prototype rarity.',
     skills: [
       { index: 0, name: active, kind: 'Active', level: r.skills[0], unlockStar: 1, description: kind === 'damage' ? 'Automatically spends 1,000 rage for extra damage (1.2 + 0.2 × skill level) times normal attack damage.' : kind === 'shield' ? 'At 1,000 rage, shields for (8% + 2% × skill level) of maximum health for four seconds.' : 'At 1,000 rage, heals (8% + 2% × skill level) of maximum health.' },
@@ -58,15 +85,15 @@ export function skillInfo(p, id) {
     ] };
 }
 export function skillModifiers(p, a) {
-  const r = ensureHero(p, a.commanderId), role = PROFILES[a.commanderId][2];
+  const r = ensureHero(p, a.commanderId), role = PROFILES[a.commanderId][2], talents = talentMods(r);
   const [, s2, s3, s4] = r.skills;
-  return { damage: role === 'offense' ? 1 + 0.04 * s2 : 1,
-    pve: role === 'offense' ? 1 + 0.03 * s3 : 1,
-    health: role === 'offense' || role === 'gather' ? 1 + 0.02 * s4 : 1 + (role === 'defense' ? 0.04 : 0.03) * s2,
-    speed: role === 'gather' ? 1 + 0.02 * s3 : 1,
-    gather: role === 'gather' ? 1 + 0.05 * s2 : role === 'defense' ? 1 + 0.02 * s3 : 1,
-    heal: role === 'support' ? 1 + 0.04 * s3 : 1,
-    mitigation: ['defense', 'support'].includes(role) ? 0.02 * s4 : 0 };
+  return { damage: (role === 'offense' ? 1 + 0.04 * s2 : 1) * talents.damage,
+    pve: (role === 'offense' ? 1 + 0.03 * s3 : 1) * talents.pve,
+    health: (role === 'offense' || role === 'gather' ? 1 + 0.02 * s4 : 1 + (role === 'defense' ? 0.04 : 0.03) * s2) * talents.health,
+    speed: (role === 'gather' ? 1 + 0.02 * s3 : 1) * talents.speed,
+    gather: (role === 'gather' ? 1 + 0.05 * s2 : role === 'defense' ? 1 + 0.02 * s3 : 1) * talents.gather,
+    heal: (role === 'support' ? 1 + 0.04 * s3 : 1) * talents.heal,
+    mitigation: (['defense', 'support'].includes(role) ? 0.02 * s4 : 0) + talents.mitigation };
 }
 export function activeSkill(p, a, stats) {
   const r = ensureHero(p, a.commanderId), [name, kind] = PROFILES[a.commanderId];
@@ -79,7 +106,7 @@ export function activeSkill(p, a, stats) {
   return 0;
 }
 export function progressionCommand(world, p, c, fail) {
-  if (!['mentor-commander', 'promote-commander', 'upgrade-skill'].includes(c.type)) return false;
+  if (!['mentor-commander', 'promote-commander', 'upgrade-skill', 'talent-raise', 'talent-respec'].includes(c.type)) return false;
   if (!p.ownedCommanders.includes(c.targetId)) fail('Recruit that commander first.');
   const r = ensureHero(p, c.targetId);
   if (c.type === 'mentor-commander') {
@@ -90,6 +117,20 @@ export function progressionCommand(world, p, c, fail) {
   if (c.type === 'promote-commander') {
     if (r.stars >= 6 || heroLevel(r) < r.stars * 10) fail('Reach the current star level cap before promotion (maximum six stars).');
     world.spend(p, { gold: 100 * r.stars, mana: 10 * r.stars }); r.stars++; if (r.stars <= 4) r.skills[r.stars - 1] = 1;
+  }
+  if (c.type === 'talent-raise') {
+    const node = talentNode(c.name);
+    if (!node) fail('Unknown talent.');
+    const rank = r.talents[node.id] ?? 0;
+    if (spentTalents(r) >= talentPoints(r)) fail('No talent points remain. Raise this commander\'s level or respec.');
+    if (rank >= node.max) fail('That talent is at its highest rank.');
+    if (node.requires && !(r.talents[node.requires] > 0)) fail('Learn the preceding talent first.');
+    r.talents[node.id] = rank + 1;
+  }
+  if (c.type === 'talent-respec') {
+    const spent = spentTalents(r);
+    if (spent < 1) fail('This commander has no talents to respec.');
+    world.spend(p, { mana: 15 * spent }); r.talents = {};
   }
   if (c.type === 'upgrade-skill') {
     const slot = c.skillIndex;
@@ -105,6 +146,10 @@ export function validateProgression(p) {
   if (!Number.isInteger(p.nextMarchNumber) || p.nextMarchNumber < 2) throw new Error('Invalid saved march numbering.');
   for (const a of armyList(p)) if (['rage', 'shield', 'shieldTime', 'skillCasts'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.rage > 1000 || typeof a.lastSkill !== 'string') throw new Error('Invalid saved army skill state.');
   for (const [id, hero] of Object.entries(p.heroRecords)) {
+    if (!hero.talents || typeof hero.talents !== 'object' || Array.isArray(hero.talents)) hero.talents = {};
     if (!COMMANDERS.some(c => c.id === id) || !Number.isFinite(hero.xp) || hero.xp < 0 || !Number.isInteger(hero.stars) || hero.stars < 1 || hero.stars > 6 || !Array.isArray(hero.skills) || hero.skills.length !== 4 || hero.skills.some((value, i) => !Number.isInteger(value) || value < (i < hero.stars ? 1 : 0) || value > (i < hero.stars ? 5 : 0))) throw new Error('Invalid saved commander skills.');
+    const ranks = Object.entries(hero.talents);
+    if (ranks.some(([nodeId, rank]) => !talentNode(nodeId) || !Number.isInteger(rank) || rank < 1 || rank > talentNode(nodeId).max) || ranks.reduce((sum, [, rank]) => sum + rank, 0) > talentPoints(hero)) throw new Error('Invalid saved commander talents.');
+    if (ranks.some(([nodeId]) => { const node = talentNode(nodeId); return node.requires && !(hero.talents[node.requires] > 0); })) throw new Error('Invalid saved commander talents.');
   }
 }
