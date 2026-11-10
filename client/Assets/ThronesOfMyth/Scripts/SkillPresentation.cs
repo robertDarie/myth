@@ -27,6 +27,13 @@ namespace ThronesOfMyth
                 default:return new SkillPalette(SkillShape.Physical,1,.70f,.30f,"cleave-cast",6);
             }
         }
+        public const float ArrowRelease=.20f, ArrowImpact=.48f;
+        public static float ArrowProgress(float elapsed)=>Math.Max(0,Math.Min(1,(elapsed-ArrowRelease)/(ArrowImpact-ArrowRelease)));
+        public static float ArrowHeight(float progress)=>4*progress*(1-progress)*.75f;
+        public static float ArrowSlope(float progress)=>3*(1-2*progress);
+        // Commander reaches the release pose exactly with the shared sound/shockwave cue.
+        public static float CastPose(float age)
+        {if(age<0||age>=.9f)return 0;return age<RallyingCryTimeline.Release?age/RallyingCryTimeline.Release:1-(age-RallyingCryTimeline.Release)/(.9f-RallyingCryTimeline.Release);}
         public static float AttackLean(float elapsed)
         {
             if(elapsed<0||elapsed>=.65f)return 0;

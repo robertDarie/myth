@@ -1,4 +1,4 @@
-THRONES OF MYTH — LINUX x86_64 PLAYTEST 0.37.0
+THRONES OF MYTH — LINUX x86_64 PLAYTEST 0.38.0
 
 Requires a desktop Linux x86_64 system, a compatible graphics driver and host
 Node.js 24 LTS or later. Node is NOT bundled in this package. Use the official

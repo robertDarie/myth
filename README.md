@@ -4,7 +4,12 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.37
+## Playable slice 0.38
+
+- First impressions: composed woodland shading, hemispheric ambient lighting,
+  city streets and stronger civic scale, arcing arrows and coordinated skill
+  release. [v0.38 changes, limits and Linux checklist](docs/visual-release-0.38.md).
+  **Unity compilation/rendering/audio/FPS remain unverified.**
 
 - Multiplayer reliability: live alliance membership/help independent of remembered
   map intelligence, matching-build client-only Linux join, bounded opt-in server

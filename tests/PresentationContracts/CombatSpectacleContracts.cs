@@ -5,6 +5,12 @@ static class CombatSpectacleContracts
  public static int Run()
  {
   int n=0;void Check(bool v,string why){n++;if(!v)throw new Exception(why);}
+  Check(SkillPresentation.ArrowProgress(0)==0&&SkillPresentation.ArrowProgress(1)==1,"Arrow flight clamps to observed attack window");
+  Check(SkillPresentation.ArrowProgress(SkillPresentation.ArrowRelease)==0&&SkillPresentation.ArrowProgress(SkillPresentation.ArrowImpact)==1,"Release and impact align with flight endpoints");
+  Check(SkillPresentation.ArrowHeight(0)==0&&SkillPresentation.ArrowHeight(1)==0&&SkillPresentation.ArrowHeight(.5f)>.7f,"Arrows rise and land at endpoints");
+  Check(SkillPresentation.ArrowSlope(0)>0&&SkillPresentation.ArrowSlope(.5f)==0&&SkillPresentation.ArrowSlope(1)<0,"Arrow nose follows rising and falling trajectory");
+  Check(SkillPresentation.CastPose(0)==0&&SkillPresentation.CastPose(RallyingCryTimeline.Release)==1,"Commander pose peaks with release audio and wave");
+  Check(SkillPresentation.CastPose(-1)==0&&SkillPresentation.CastPose(.9f)==0,"No lingering cast pose outside confirmed presentation");
   foreach(string hero in new[]{"captain","warden","mulan"})Check(SkillPresentation.Profile(hero,"shield").Shape==SkillShape.Shield,"Shield authority");
   foreach(string hero in new[]{"rune-seer","horus-champion"})Check(SkillPresentation.Profile(hero,"heal").Shape==SkillShape.Healing,"Healing authority");
   foreach(string hero in new[]{"scout","atalanta","tomoe","heracles","sigurd","wukong"})

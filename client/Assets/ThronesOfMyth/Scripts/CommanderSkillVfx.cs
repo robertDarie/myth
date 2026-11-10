@@ -33,7 +33,7 @@ namespace ThronesOfMyth
             if(effect==null){effect=free;if(effect==null&&pool.Count<8){effect=new GameObject("Commander skill · pooled original effect").AddComponent<CommanderSkillVfx>();effect.Build();pool.Add(effect);}if(effect==null)return false;effect.owner=army;effect.commander=state.commanderId;effect.castAt=-100;effect.gameObject.SetActive(true);}
             effect.profile=style;effect.block.SetColor("_Tint",new Color(style.R,style.G,style.B,.6f));effect.sparkRenderer.SetPropertyBlock(effect.block);if(cast)effect.target=new Vector3(state.attackX,.4f,state.attackZ);effect.shielded=shield;if(reducedMotion&&!effect.reduced)effect.sparks.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);effect.reduced=reducedMotion;effect.audio=sound;
             int represented=0;foreach(var unit in units){if(unit.commander||!unit.gameObject.activeInHierarchy||represented>=4)continue;effect.wards[represented].transform.localPosition=army.InverseTransformPoint(unit.transform.position)+Vector3.up*.16f;represented++;}for(int i=0;i<4;i++)effect.wards[i].gameObject.SetActive(i<represented);
-            if(cast){effect.castAt=Time.unscaledTime;effect.releaseAt=effect.castAt+RallyingCryTimeline.Release;effect.releasePending=!reducedMotion;if(!reducedMotion){effect.sparks.Emit(22);if(sound&&style.Shape==SkillShape.Shield)BattlefieldAudio.Cue("rally-charge",army.position);}else if(sound)BattlefieldAudio.Cue(style.Sound,army.position);}
+            if(cast){effect.castAt=Time.unscaledTime;effect.releaseAt=effect.castAt+RallyingCryTimeline.Release;effect.releasePending=!reducedMotion;if(!reducedMotion){if(sound&&style.Shape==SkillShape.Shield)BattlefieldAudio.Cue("rally-charge",army.position);}else if(sound)BattlefieldAudio.Cue(style.Sound,army.position);}
             return true;
         }
         private LineRenderer Ring(string name,int points,float width)
@@ -58,14 +58,16 @@ namespace ThronesOfMyth
             float age=castAt<0?-1:Time.unscaledTime-castAt;
             if(!RallyingCryTimeline.Live(age,shielded)){Release();return;}
             if(reduced)releasePending=false;
-            if(releasePending&&Time.unscaledTime>=releaseAt){releasePending=false;if(audio)BattlefieldAudio.Cue(profile.Sound,transform.position);}
+            if(releasePending&&Time.unscaledTime>=releaseAt){releasePending=false;if(audio)BattlefieldAudio.Cue(profile.Sound,transform.position);
+                if(!reduced&&Camera.main!=null&&Camera.main.orthographicSize<=18)sparks.Emit(12);}
             bool wide=Camera.main!=null&&Camera.main.orthographicSize>18;sparkRenderer.enabled=!wide&&!reduced;
             bool defensive=profile.Shape==SkillShape.Shield;
             float envelope=SkillPresentation.Envelope(age,profile.Shape),shock=RallyingCryTimeline.Shock(age),gather=RallyingCryTimeline.Gather(age);
             wave.transform.localPosition=profile.Shape==SkillShape.Healing?Vector3.up*(.1f+shock*1.5f):Vector3.zero;
-            wave.transform.localScale=Vector3.one*Mathf.Lerp(.8f,defensive?4.6f:1.8f,shock);
+            wave.transform.localScale=Vector3.one*Mathf.Lerp(.8f,defensive?3.2f:1.8f,1-(1-shock)*(1-shock));
             Tint(wave,!reduced&&age>=RallyingCryTimeline.Release&&age<.94f&&(defensive||profile.Shape==SkillShape.Healing)?(1-shock)*.8f:0);
             charge.transform.localPosition=new Vector3(0,.3f+gather*.8f,1.2f);charge.transform.localScale=Vector3.one*(2.1f-gather*1.4f);Tint(charge,reduced?0:gather*.7f);
+            charge.transform.localRotation=Quaternion.Euler(65,0,0);
             float strength=defensive?RallyingCryTimeline.Shell(age,shielded,reduced):0;Tint(shell,wide?strength*.55f:strength);aura.transform.localScale=Vector3.one*2.35f;Tint(aura,shielded?.4f:!reduced&&(profile.Shape==SkillShape.Buff||profile.Shape==SkillShape.Debuff)?envelope*.25f:0);
             foreach(var ward in wards){ward.transform.localScale=Vector3.one*(.32f+(!reduced?.04f*Mathf.Sin(Time.unscaledTime*2):0));Tint(ward,shielded&&!wide?strength:0);}
             float flight=SkillPresentation.Flight(age);

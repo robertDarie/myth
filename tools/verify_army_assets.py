@@ -1,5 +1,5 @@
 """Independent FBX import, skin/bone/clip checks and original model review renders."""
-import bpy,os,json,math
+import bpy,os,json,math,sys
 from mathutils import Vector
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)));folder=os.path.join(ROOT,'client/Assets/ThronesOfMyth/Resources/Art/Units');states=['Idle','March','Attack','Skill','Retreat','Victory','Gather','Hit'];rows=[]
 def clear():
@@ -27,6 +27,7 @@ for file in sorted(os.listdir(folder)):
 assert len(rows)==36
 with open(os.path.join(ROOT,'docs/art/army-validation-0.17.json'),'w')as f:json.dump(rows,f,indent=2)
 print('Verified',len(rows),'weighted FBX models,',len(rows)*8,'takes and moving march poses')
+if "--checks-only" in sys.argv: sys.exit(0)
 # Render actual imported assets, not a Unity screenshot.
 clear();scene=bpy.context.scene
 for i,role in enumerate(['Infantry','Archer','Cavalry','Commander','Mythic']):

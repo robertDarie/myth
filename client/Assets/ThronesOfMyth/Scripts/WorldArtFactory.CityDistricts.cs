@@ -19,7 +19,7 @@ namespace ThronesOfMyth
                 if(level>=2)for(int side=-1;side<=1;side+=2)
                 {Box(root,side*1.9f,1.5f,.6f,.65f,2.8f,.75f,stone);DistrictRoof(root,culture,new Vector3(side*1.9f,3.05f,.6f),1.0f,1.0f,bronze);Pillar(root,side*1.9f,3.6f,.6f,.06f,1.0f,bronze);Box(root,side*1.9f+.17f,3.85f,.6f,.34f,.32f,.04f,team);}
                 if(level>=3)Sculpt(root,"arch",new Vector3(0,3.1f,-.2f),new Vector3(.8f,.75f,1.5f),stone);
-                root.localScale=Vector3.one*.55f;return root;
+                root.localScale=Vector3.one*.62f;return root;
             }
             if(id=="farm")
             {
@@ -28,7 +28,7 @@ namespace ThronesOfMyth
             else if(id=="well") { Pillar(root,0,.35f,0,.85f,.50f,stone);Ball(root,0,.65f,0,.45f,.15f,.45f,new Color(.30f,.69f,.78f)); }
             else if(id=="quarry") { for(int i=0;i<4;i++)Ball(root,(i%2-.5f)*.6f,.35f+i*.03f,(i/2-.5f)*.5f,.6f,.5f,.5f,stone); }
             else if(id=="lumber") { for(int i=0;i<4;i++){var log=Pillar(root,(i%2-.5f)*.35f,.30f+i/2*.25f,0,.25f,1.0f,timber);log.localRotation=Quaternion.Euler(90,0,0);}Roof(root,1.1f,1.4f,1.2f,timber); }
-            else if(id=="oracle") { var temple=new GameObject("Temple pavilion").transform;temple.SetParent(root,false);temple.localScale=Vector3.one*.34f;Temple(temple,team,false); }
+            else if(id=="oracle") { var temple=new GameObject("Temple pavilion").transform;temple.SetParent(root,false);temple.localScale=Vector3.one*.38f;Temple(temple,team,false); }
             else
             {
                 Color roof=id=="infirmary"?new Color(.25f,.52f,.43f):culture=="japanese"?new Color(.23f,.31f,.47f):culture=="chinese"?new Color(.22f,.46f,.35f):culture=="norse"?new Color(.24f,.31f,.29f):new Color(.62f,.28f,.18f);

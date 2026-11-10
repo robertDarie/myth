@@ -85,7 +85,7 @@ namespace ThronesOfMyth
             if(observation.Has(ArmyCue.Attack))
             {
                 foreach(var unit in authored)unit.Restart("Attack");attackUntil=Time.unscaledTime+.65f;
-                attackTarget=new Vector3(army.attackX,0,army.attackZ);impactAt=Time.unscaledTime+.35f;impactUntil=impactAt+.22f;impactSoundPending=true;arrowReleasePending=rangedAttack;
+                attackTarget=new Vector3(army.attackX,0,army.attackZ);impactAt=Time.unscaledTime+(rangedAttack?SkillPresentation.ArrowImpact:.35f);impactUntil=impactAt+.22f;impactSoundPending=true;arrowReleasePending=rangedAttack;
             }
             if(observation.Has(ArmyCue.Health))
             {
@@ -199,7 +199,7 @@ namespace ThronesOfMyth
                 unit.Pose(unitPose,reducedMotion);
                 unit.FormationMotion(turnLean,walkBlend,reducedMotion);
                 float strike=SkillPresentation.AttackLean(.65f-(attackUntil-Time.unscaledTime));
-                unit.CombatMotion(strike,unit.commander&&Time.unscaledTime<castUntil?Mathf.Sin(Mathf.Clamp01(1-(castUntil-Time.unscaledTime)/.9f)*Mathf.PI):0,Mathf.Clamp01((recoilUntil-Time.unscaledTime)/.2f),combat,reducedMotion,confirmedShield);
+                unit.CombatMotion(strike,unit.commander&&Time.unscaledTime<castUntil?SkillPresentation.CastPose(.9f-(castUntil-Time.unscaledTime)):0,Mathf.Clamp01((recoilUntil-Time.unscaledTime)/.2f),combat,reducedMotion,confirmedShield);
             }
             float previousYaw = transform.localEulerAngles.y;
             if (facing.sqrMagnitude > 0.001f) transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.LookRotation(facing), 210 * Time.deltaTime);
@@ -268,18 +268,18 @@ namespace ThronesOfMyth
             if(walking&&Time.unscaledTime>dustAt&&!previewWalking){dustAt=Time.unscaledTime+.28f;BattlefieldFeedback.Emit("dust",position,new Color(.70f,.63f,.43f),reducedMotion);}
             if (allowAudio && walkBlend > 0.6f && Time.unscaledTime > footstepAt)
             { footstepAt = Time.unscaledTime + 0.4f; BattlefieldAudio.Cue(mountedArmy?"hoof":"step", position); }
-            if(arrowReleasePending&&Time.unscaledTime>=attackUntil-.5f){arrowReleasePending=false;if(allowAudio)BattlefieldAudio.Cue("arrow",position);}
+            if(arrowReleasePending&&Time.unscaledTime>=attackUntil-.65f+SkillPresentation.ArrowRelease){arrowReleasePending=false;if(allowAudio)BattlefieldAudio.Cue("arrow",position);}
             if (projectile != null)
             {
                 float flightElapsed = 0.65f - (attackUntil - Time.unscaledTime);
-                bool firing = !reducedMotion && rangedAttack && flightElapsed >= 0.15f && flightElapsed <= 0.35f;
+                bool firing = !reducedMotion && rangedAttack && flightElapsed >= SkillPresentation.ArrowRelease && flightElapsed <= SkillPresentation.ArrowImpact;
                 projectile.gameObject.SetActive(firing);
                 if (firing)
                 {
-                    float t = Mathf.Clamp01((flightElapsed - 0.15f) / 0.2f);
+                    float t = SkillPresentation.ArrowProgress(flightElapsed);
                     Vector3 start = position + Vector3.up * 1.5f, end = attackTarget + Vector3.up;
-                    projectile.position = Vector3.Lerp(start, end, t) + Vector3.up * Mathf.Sin(t * Mathf.PI) * 0.5f;
-                    if ((end - start).sqrMagnitude > 0.01f) projectile.rotation = Quaternion.LookRotation(end - start);
+                    projectile.position = Vector3.Lerp(start, end, t) + Vector3.up * SkillPresentation.ArrowHeight(t);
+                    if ((end - start).sqrMagnitude > 0.01f) projectile.rotation = Quaternion.LookRotation(end - start + Vector3.up * SkillPresentation.ArrowSlope(t));
                 }
             }
         }

@@ -21,6 +21,8 @@ namespace ThronesOfMyth
             for (int i = 0; i < 12; i++) if (Vector2.Distance(p, new Vector2(8 + i % 4 * 8, 18 + i / 4 * 8)) < 2.7f) return true;
             return false;
         }
+        // One deterministic woodland field drives both canopy placement and soil color.
+        private float Woodland(Vector2 p) => Mathf.SmoothStep(.36f,.72f,Mathf.PerlinNoise(p.x*.16f+8,p.y*.16f+31));
         private void BuildKingdomEnvironment()
         {
             scenery = new GameObject("Painted realm scenery").transform;
@@ -38,6 +40,8 @@ namespace ThronesOfMyth
                 meadow=Color.Lerp(meadow,new Color(.53f,.55f,.31f),Mathf.Clamp01((patch-.62f)*2)*.22f);
                 float vein=Mathf.Abs(Mathf.PerlinNoise(p.x*.05f+12,p.y*.08f+21)-.5f);
                 meadow=Color.Lerp(meadow,new Color(.34f,.37f,.27f),Mathf.Clamp01((.07f-vein)*5)*.30f);
+                float woods=SceneryClearing(p)?0:Woodland(p);
+                meadow=Color.Lerp(meadow,new Color(.22f,.32f,.21f),woods*.48f);
                 float roadDistance=RoadDistance(p);float road = 1 - Mathf.SmoothStep(0.65f, 1.9f, roadDistance); var earth = Color.Lerp(new Color(0.65f,0.56f,0.36f), new Color(0.81f,0.72f,0.49f), patch);
                 float shoulder=Mathf.Clamp01(1-Mathf.Abs(roadDistance-1.45f)*2)*.22f;
                 meadow=Color.Lerp(meadow,new Color(.36f,.37f,.25f),shoulder);
@@ -45,18 +49,22 @@ namespace ThronesOfMyth
                 pixels[y * 512 + x] = Color.Lerp(meadow, earth, road * 0.86f);
             }
             groundTexture.SetPixels(pixels); groundTexture.Apply(true, true); material.mainTexture = groundTexture; material.SetTexture("_DetailAlbedoMap",Resources.Load<Texture2D>("Art/MeadowDetail"));material.SetTextureScale("_DetailAlbedoMap",new Vector2(34,34));material.EnableKeyword("_DETAIL_MULX2"); ground.GetComponent<Renderer>().enabled=false;BuildRelief(material);
-            RenderSettings.ambientLight = new Color(.48f,.55f,.59f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(.32f,.43f,.44f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
+            RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor=new Color(.51f,.60f,.66f);
+            RenderSettings.ambientEquatorColor=new Color(.37f,.43f,.38f);
+            RenderSettings.ambientGroundColor=new Color(.22f,.23f,.17f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(.32f,.43f,.44f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
             var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.cullingMask &= ~((1 << 30) | (1 << 31)); light.color = new Color(1,0.94f,0.79f); light.intensity = 1.12f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.58f; } }
             QualitySettings.shadowDistance = 110;
             var random = new System.Random(431);
             for (int cluster = 0; cluster < 125; cluster++)
             {
                 var center = new Vector2(3 + (float)random.NextDouble()*74, 3 + (float)random.NextDouble()*74);
-                int density=center.y>44?6:center.x>42?2:4;
+                int density=Mathf.RoundToInt(Mathf.Lerp(1,center.y>44?7:center.x>42?3:6,Woodland(center)));
                 for (int tree = 0; tree < density; tree++)
                 {
-                    var p = center + new Vector2((float)random.NextDouble()*5-2.5f,(float)random.NextDouble()*5-2.5f); if (SceneryClearing(p)) continue;
+                    var p = center + new Vector2((float)random.NextDouble()*5-2.5f,(float)random.NextDouble()*5-2.5f); if (SceneryClearing(p)||Woodland(p)<.26f) continue;
                     bool pine = p.y > 40; var tint = pine ? new Color(0.24f,0.41f,0.34f) : p.x > 40 ? new Color(0.46f,0.52f,0.28f) : new Color(0.28f,0.48f,0.24f);
+                    tint=Color.Lerp(tint,new Color(.56f,.59f,.30f),(float)random.NextDouble()*.25f);
                     art.EnvironmentModel(scenery, pine ? "PineTree" : "OakTree", new Vector3(p.x,TerrainHeight(p),p.y), 0.75f + (float)random.NextDouble()*0.40f, tint, (float)random.NextDouble()*360);
                 }
             }

@@ -50,7 +50,7 @@ namespace ThronesOfMyth
                     CampData camp = null; float distance = float.MaxValue;
                     foreach (var c in world.camps) if (c.health > 0 && c.x <= 40 && c.z <= 40 && (task.targetId!="opening-level-one"||c.level==1))
                     { float d = c.level * 100 + Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(c.x, c.z)); if (d < distance) { distance = d; camp = c; } }
-                    if (camp != null) { interfacePage = InterfacePage.World; Select(camp.id, "camp"); FocusGameplay(camp.x,camp.z); }
+                    if (camp != null) { interfacePage = InterfacePage.World; Select(camp.id, "camp"); FocusGameplay(camp.x,camp.z); status = "Camp selected · choose March & attack. Recall after battle to recover and free the march slot."; }
                     else { GuidePage(InterfacePage.Exploration); status = "Send a scout toward the frontier to reveal a Forsaken camp."; }
                     break;
             }

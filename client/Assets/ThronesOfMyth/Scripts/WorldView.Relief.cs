@@ -9,7 +9,9 @@ namespace ThronesOfMyth
             float edge=Mathf.Min(p.x,p.y,80-p.x,80-p.y);
             if(edge<1.5f||SceneryClearing(p))return 0;
             // Restrained cosmetic relief; authoritative movement/picking stays y=0.
-            return -.18f*Mathf.SmoothStep(0,1,(edge-1.5f)/2)*Mathf.PerlinNoise(p.x*.21f+19,p.y*.21f+7);
+            // Broad shallow basins catch light; keep the highest surface at logical y=0.
+            float broad=Mathf.PerlinNoise(p.x*.085f+19,p.y*.085f+7);
+            return -(.10f+.38f*broad)*Mathf.SmoothStep(0,1,(edge-1.5f)/2);
         }
         private void BuildRelief(Material material)
         {

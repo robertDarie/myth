@@ -58,12 +58,19 @@ namespace ThronesOfMyth
                 default: return Vector3.zero;
             }
         }
+        private void Street(Vector3 from,Vector3 to,float width=.72f)
+        {
+            var direction=to-from;if(direction.sqrMagnitude<.01f)return;
+            var road=art.Shape(content,PrimitiveType.Cube,(from+to)*.5f+Vector3.up*.018f,new Vector3(width,.04f,direction.magnitude),new Color(.65f,.59f,.46f));
+            road.localRotation=Quaternion.LookRotation(direction);
+            // A few long edging strips, rather than hundreds of individual paving stones.
+            foreach(int side in new[]{-1,1})art.Shape(road,PrimitiveType.Cube,new Vector3(side*.53f,.65f,0),new Vector3(.06f,.45f,1),new Color(.77f,.72f,.59f));
+        }
         private void Boulevard(Vector3 destination)
         {
-            Vector3 direction = destination; float length = direction.magnitude;
-            if (length < .1f) return;
-            var road = art.Shape(content,PrimitiveType.Cube,direction*.5f+Vector3.up*.012f,new Vector3(.65f,.035f,length),new Color(.67f,.60f,.46f));
-            road.localRotation=Quaternion.LookRotation(direction);
+            if(destination.sqrMagnitude<.01f)return;
+            float lane=destination.z>1?destination.z<4?1.4f:4.2f:destination.z< -4?-4.2f:-1.4f;
+            Street(new Vector3(destination.x,0,lane),destination,.48f);
         }
         public CityDiorama()
         {
@@ -91,18 +98,22 @@ namespace ThronesOfMyth
             if(signature==key)return;signature=key;foreach(Transform child in content){child.gameObject.SetActive(false);UnityEngine.Object.Destroy(child.gameObject);}districts.Clear();cranes.Clear();hoistLoads.Clear();plotSeals.Clear();districtRings.Clear();framingPoints.Clear();fittedAspect=-1;
             // Designed city hinterland fills the viewport at every supported aspect.
             art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.5f,0),new Vector3(128,.2f,128),new Color(.27f,.36f,.26f));
-            for(int i=0;i<24;i++){float angle=i*Mathf.PI*2/24;var at=new Vector3(Mathf.Sin(angle)*11,0,Mathf.Cos(angle)*11);art.EnvironmentModel(content,city.civilization=="norse"?"PineTree":"OakTree",at,.65f,new Color(.28f,.43f,.24f),i*37);}
+            for(int i=0;i<24;i++){float angle=i*Mathf.PI*2/24;float radius=10.8f+Mathf.Sin(i*2.3f)*1.4f;var at=new Vector3(Mathf.Sin(angle)*radius,0,Mathf.Cos(angle)*radius);art.EnvironmentModel(content,city.civilization=="norse"?"PineTree":"OakTree",at,.65f,new Color(.28f,.43f,.24f),i*37);}
             art.Shape(content,PrimitiveType.Cube,new Vector3(0,-.35f,-12),new Vector3(1.2f,.12f,12),new Color(.60f,.54f,.40f));
             art.CityTerrace(content,new Vector3(0,-.45f,0),new Vector3(7.8f,.28f,7.8f),new Color(.36f,.42f,.29f));
             art.CityTerrace(content,new Vector3(0,-.17f,0),new Vector3(7.5f,.17f,7.5f),new Color(.43f,.51f,.32f));
             art.CivicDressing(content,city.civilization);
+            // Cross streets occupy the gaps between institutions, preserving each district.
+            foreach(float z in new[]{-4.2f,-1.4f,1.4f,4.2f})Street(new Vector3(-6.2f,0,z),new Vector3(6.2f,0,z));
+            foreach(float x in new[]{-4.2f,4.2f})Street(new Vector3(x,0,-6.2f),new Vector3(x,0,6.2f));
+            Street(new Vector3(0,0,-7.6f),new Vector3(0,0,-1.4f),.95f);
+            Street(new Vector3(0,0,1.4f),new Vector3(0,0,5.5f),.95f);
             foreach (var building in city.cityBuildings) Boulevard(DistrictPosition(building.id));
             // Repeated pavers and roadside gardens establish human scale without labels.
             for(int side=-1;side<=1;side+=2)for(int i=-6;i<=6;i++)
             {art.Shape(content,PrimitiveType.Cube,new Vector3(side*.46f,.045f,i),new Vector3(.12f,.07f,.84f),new Color(.73f,.68f,.53f));}
             for(int side=-1;side<=1;side+=2)for(int row=0;row<3;row++)
             {var at=new Vector3(side*6.4f,0,-4+row*2.2f);art.EnvironmentModel(content,"OakTree",at,.26f,new Color(.40f,.52f,.28f),row*57);art.Shape(content,PrimitiveType.Cube,at+new Vector3(0,.03f,0),new Vector3(.8f,.1f,.8f),new Color(.61f,.59f,.45f));}
-            Boulevard(new Vector3(0,0,-7.6f));
             art.CityTerrace(content,new Vector3(0,.005f,0),new Vector3(2.2f,.05f,2.2f),new Color(.75f,.69f,.55f));
             // Civic edge and open southern gate are presentation, not city defenses.
             for(int side=0;side<4;side++)for(int segment=-3;segment<=3;segment++)
