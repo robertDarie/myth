@@ -33,7 +33,7 @@ namespace ThronesOfMyth
             if (camp == null) return;
             GUILayout.Label("CURRENT SCOUTS", theme.Eyebrow);
             GUILayout.Label(ScoutInterfaceCopy.Line(camp.scouts, camp.speed, camp.radius, camp.surveySeconds, camp.autoSectors), theme.Body);
-            if (!camp.hasNext) { GUILayout.Label("Maximum Scout Camp level.", theme.Small); return; }
+            if (!camp.hasNext) { GUILayout.Label("The Outlook of the Horizon is fully raised.", theme.Small); return; }
             GUILayout.Space(8);
             GUILayout.Label("NEXT UPGRADE", theme.Eyebrow);
             GUILayout.Label(ScoutInterfaceCopy.Line(camp.nextScouts, camp.nextSpeed, camp.nextRadius, camp.nextSurveySeconds, camp.nextAutoSectors), theme.Body);
@@ -54,7 +54,7 @@ namespace ThronesOfMyth
             {
                 GUILayout.Space(8);
                 DrawScoutCampPanel(fog.scoutCamp);
-                if (theme.Action("Open Scout Camp", !processing, "Sending your order…")) { selectedBuilding = CitySelection.Find(me.cityBuildings, "scoutcamp", selectedBuilding); OpenInterface(InterfacePage.City); }
+                if (theme.Action("Open the Outlook", !processing, "Sending your order…")) { selectedBuilding = CitySelection.Find(me.cityBuildings, "scoutcamp", selectedBuilding); OpenInterface(InterfacePage.City); }
             }
             GUILayout.Space(8);
             bool auto = fog.autoExplore;
@@ -69,7 +69,7 @@ namespace ThronesOfMyth
             {
                 shown++;
                 GUILayout.BeginVertical(GUI.skin.box);
-                string where = scout.phase == "Idle" ? "At the Scout Camp" : ScoutInterfaceCopy.Phase(scout.phase) + " · " + scout.x.ToString("0") + ", " + scout.z.ToString("0");
+                string where = scout.phase == "Idle" ? "At the Outlook" : ScoutInterfaceCopy.Phase(scout.phase) + " · " + scout.x.ToString("0") + ", " + scout.z.ToString("0");
                 string eta = scout.phase != "Idle" && scout.eta > 0.05f ? " · ETA " + Mathf.CeilToInt(scout.eta) + "s" : "";
                 GUILayout.Label("Scout " + shown + " · " + where + eta, sectionStyle);
                 if (scout.phase != "Idle") GUILayout.Label("Destination " + scout.targetX.ToString("0") + ", " + scout.targetZ.ToString("0"), noteStyle);
@@ -91,7 +91,7 @@ namespace ThronesOfMyth
                 }
                 GUILayout.EndVertical();
             }
-            if (shown == 0) GUILayout.Label("Build the Scout Camp to train a scout.", noteStyle);
+            if (shown == 0) GUILayout.Label("Raise the Outlook of the Horizon to train a scout.", noteStyle);
             GUILayout.Space(8);
             if (Opening?.Guide == "combat" && !Array.Exists(world.camps, c => c.level == 1 && c.health > 0) && theme.Action("Survey the nearby frontier", !processing && pendingOrder == null, "Confirm your pending order first.")) ScoutAt(20, 20);
             GUILayout.Label("Scouts use no army slot and no troops. Gate corridors are still required.", noteStyle);

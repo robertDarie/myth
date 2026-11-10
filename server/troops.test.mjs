@@ -4,6 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { emptyUnits, unitTotal } from './troops.mjs';
+import { closeHttpServer } from './testing/cleanup.mjs';
 const setup = () => {
   const w = testWorld({ now: () => Date.UTC(2026, 10, 2, 12) }), session = w.join('Formation'), p = w.authenticate(session.token);
   p.cityLevel = 3; for (const key of ['food','gold','wood','stone','mana']) p[key] = 10000;
@@ -100,7 +101,7 @@ test('HTTP accepts the Unity-style exact-count payload and exposes typed reserve
   const { createGameServer } = await import('./http.mjs');
   const { server, world } = createGameServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  t.after(() => new Promise(resolve => { server.close(resolve); server.closeIdleConnections(); }));
+  t.after(() => closeHttpServer(server));
   const base = 'http://127.0.0.1:' + server.address().port;
   const session = await (await fetch(base + '/join', { method: 'POST', body: JSON.stringify({ name: 'HTTP Legion', civilization: 'greek' }) })).json();
   const p = world.authenticate(session.token); p.cityLevel = 2; p.gold = p.food = 1000;

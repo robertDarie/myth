@@ -13,7 +13,7 @@ namespace ThronesOfMyth
         }
         public static string Delta(ScoutCampCard camp)
         {
-            if (camp == null || !camp.hasNext) return "Scout Camp is at its maximum level.";
+            if (camp == null || !camp.hasNext) return "The Outlook of the Horizon is fully raised.";
             var parts = new List<string>();
             if (camp.nextScouts > camp.scouts) parts.Add("+" + (camp.nextScouts - camp.scouts) + " scout slot");
             if (camp.nextSpeed > camp.speed) parts.Add("faster travel");

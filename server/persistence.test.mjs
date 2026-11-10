@@ -9,11 +9,14 @@ import { advanceDowntime, OFFLINE_PRODUCTION_CAP } from './downtime.mjs';
 import { World } from './world.mjs';
 import { createGameServer } from './http.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
-const directory = t => { const path = mkdtempSync(join(tmpdir(), 'tom-db-')); t.after(() => rmSync(path, { recursive: true, force: true })); return path; };
+import { closeHttpServer, tempDirectory } from './testing/cleanup.mjs';
+const bins = new WeakMap();
+const directory = t => { const bin = tempDirectory(t, 'tom-db-'); bins.set(t, bin); return bin.dir; };
+const track = (t, fn) => bins.get(t).close(fn);
 async function listen(t, options) {
   const app = createGameServer(options);
   await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
-  t.after(() => new Promise(resolve => { app.server.close(resolve); app.server.closeAllConnections(); }));
+  const bin = bins.get(t); if (bin) bin.server(app.server); else t.after(() => closeHttpServer(app.server));
   const base = `http://127.0.0.1:${app.server.address().port}`;
   const post = (path, body, token = '', key = '') => fetch(base + path, { method: 'POST', headers: { Authorization: 'Bearer ' + token, ...(key ? { 'Idempotency-Key': key } : {}) }, body: JSON.stringify(body) });
   return { ...app, base, post };
@@ -51,13 +54,13 @@ test('failed joins cannot hand out an unpersisted session', async t => {
 });
 test('concurrent writers are rejected and an expired former owner is fenced', t => {
   const path = join(directory(t), 'world.sqlite'); let now = 100000;
-  const first = new KingdomDatabase(path, { now: () => now }); t.after(() => first.close()); const w = first.load();
+  const first = new KingdomDatabase(path, { now: () => now }); track(t, () => first.close()); const w = first.load();
   assert.throws(() => new KingdomDatabase(path, { now: () => now }), /active writer/); now += 31000;
-  const second = new KingdomDatabase(path, { now: () => now }); t.after(() => second.close()); second.load();
+  const second = new KingdomDatabase(path, { now: () => now }); track(t, () => second.close()); second.load();
   assert.throws(() => first.save(w), /lease lost/); first.close(); assert.doesNotThrow(() => second.save(w));
 });
 test('a SQL write failure cannot commit a receipt without its world', t => {
-  const store = new KingdomDatabase(join(directory(t), 'world.sqlite')); t.after(() => store.close());
+  const store = new KingdomDatabase(join(directory(t), 'world.sqlite')); track(t, () => store.close());
   const w = store.load(), s = w.join('Atomic'); store.save(w);
   store.db.exec("CREATE TRIGGER deny_world BEFORE INSERT ON kingdom BEGIN SELECT RAISE(ABORT, 'disk failure'); END;");
   w.authenticate(s.token).gold = 999;
@@ -74,7 +77,7 @@ test('downtime completes paid jobs and healing, and restarting twice never pays 
   const next = new KingdomDatabase(path, { now: () => now }), q = next.load().authenticate(s.token);
   assert.equal(q.cityLevel, 2); assert.equal(q.trainingQueue.length, 0); assert.equal(q.healing, null);
   assert.equal(q.reserveUnits.infantry, 7); assert.equal(q.reserveUnits.archers, 5); const food = q.food; next.close();
-  const third = new KingdomDatabase(path, { now: () => now }); t.after(() => third.close()); const r = third.load().authenticate(s.token);
+  const third = new KingdomDatabase(path, { now: () => now }); track(t, () => third.close()); const r = third.load().authenticate(s.token);
   assert.equal(r.food, food); assert.equal(r.reserveUnits.infantry, 7); assert.equal(third.recovery.elapsedSeconds, 0);
 });
 test('passive catch-up caps at eight hours, respects ceilings and never pays for a backward clock', () => {
@@ -92,9 +95,9 @@ test('jobs credit their completion day, not login day, and downtime invents no f
 });
 test('a live online backup restores state and command receipts', async t => {
   const dir = directory(t), path = join(dir, 'world.sqlite'), destination = join(dir, 'backup.sqlite'); let now = Date.now();
-  const store = new KingdomDatabase(path, { now: () => now }); t.after(() => store.close()); const w = store.load(), s = w.join('Backed Up');
+  const store = new KingdomDatabase(path, { now: () => now }); track(t, () => store.close()); const w = store.load(), s = w.join('Backed Up');
   store.save(w, { receipt: { id: 'receipt', digest: 'digest', response: { accepted: true } } }); await backupKingdom(path, destination); now += 31000;
-  const recovered = new KingdomDatabase(destination, { now: () => now }); t.after(() => recovered.close());
+  const recovered = new KingdomDatabase(destination, { now: () => now }); track(t, () => recovered.close());
   assert.equal(recovered.load().authenticate(s.token).name, 'Backed Up'); assert.equal(recovered.receipt('receipt').digest, 'digest');
   await assert.rejects(backupKingdom(path, destination), /new backup/);
 });
@@ -121,7 +124,7 @@ test('a backward host clock cannot move the committed downtime watermark backwar
   const path = join(directory(t), 'clock.sqlite'); let now = 100000;
   const first = new KingdomDatabase(path, { now: () => now }); const w = first.load(), s = w.join('Clock Safe'); first.save(w); first.close();
   now = 50000; const second = new KingdomDatabase(path, { now: () => now }); const q = second.load().authenticate(s.token); const food = q.food; second.close();
-  now = 100000; const third = new KingdomDatabase(path, { now: () => now }); t.after(() => third.close());
+  now = 100000; const third = new KingdomDatabase(path, { now: () => now }); track(t, () => third.close());
   assert.equal(third.load().authenticate(s.token).food, food); assert.equal(third.recovery.elapsedSeconds, 0);
 });
 test('a hard-killed process retains the committed WAL state and receipt', async t => {
@@ -129,10 +132,10 @@ test('a hard-killed process retains the committed WAL state and receipt', async 
   const path = join(directory(t), 'crash.sqlite'), moduleUrl = new URL('./database.mjs', import.meta.url).href;
   const source = `import {KingdomDatabase} from ${JSON.stringify(moduleUrl)}; const db=new KingdomDatabase(process.env.TEST_DB_PATH); const w=db.load(),s=w.join('Crash Survivor'); w.command(w.authenticate(s.token),{type:'train'}); db.save(w,{receipt:{id:'crash-key',digest:'train',response:{accepted:true}}}); process.send(s); setInterval(()=>{},1000);`;
   const child = spawn(process.execPath, ['--input-type=module', '-e', source], { env: { ...process.env, TEST_DB_PATH: path }, stdio: ['ignore', 'ignore', 'pipe', 'ipc'] });
-  t.after(() => child.kill('SIGKILL')); child.stderr.resume();
+  track(t, () => child.kill('SIGKILL')); child.stderr.resume();
   const [session] = await once(child, 'message', { signal: AbortSignal.timeout(5000) });
   const exited = once(child, 'exit'); child.kill('SIGKILL'); await exited;
-  const recovered = new KingdomDatabase(path, { now: () => Date.now() + 31000 }); t.after(() => recovered.close());
+  const recovered = new KingdomDatabase(path, { now: () => Date.now() + 31000 }); track(t, () => recovered.close());
   const committed = JSON.parse(recovered.db.prepare('SELECT payload FROM kingdom').get().payload);
   assert.equal(committed.world.players[0].food, 150);
   const p = recovered.load().authenticate(session.token);

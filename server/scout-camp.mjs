@@ -1,5 +1,4 @@
-// Original v0.43 Scout Camp tuning. These numbers are not a verified Rise of Kingdoms table.
-// RoK's camp adds scout marches, speed and exploration range; the levels below are this prototype's values.
+// Original v0.43 tuning for the Outlook of the Horizon. Player-facing name lives in city content.
 export const SCOUT_CAMP_LEVELS = [
   { scouts: 0, speed: 0, radius: 0, surveySeconds: 0, autoSectors: 0 },
   { scouts: 1, speed: 7, radius: 9, surveySeconds: 0.8, autoSectors: 2 },

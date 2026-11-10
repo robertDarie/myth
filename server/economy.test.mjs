@@ -10,6 +10,7 @@ import {RESOURCES} from './city-content.mjs';
 import {activitySnapshot,recordActivity} from './activity.mjs';
 import {advanceDowntime} from './downtime.mjs';
 import {KingdomDatabase} from './database.mjs';
+import {closeHttpServer,tempDirectory} from './testing/cleanup.mjs';
 const date=Date.UTC(2026,10,8,12);
 const setup=()=>{let now=date;const w=new World({now:()=>now}),session=w.join('Economy');return {w,p:w.authenticate(session.token),session,setNow:n=>now=n};};
 const command=(w,p,type,extra={})=>w.command(p,{type,...extra});
@@ -110,13 +111,13 @@ test('PvP is AP-free and combat oaths alter actual server combat damage and rece
  for(const e of[control,buffed]){const camp=e.w.camps[0];e.p.x=camp.x;e.p.z=camp.z;command(e.w,e.p,'attack',{targetId:camp.id});e.w.tick(.1);}
  assert.ok(buffed.w.camps[0].health<control.w.camps[0].health);assert.ok(buffed.p.health>control.p.health);
 });
-async function http(t,options={}){
- const {createGameServer}=await import('./http.mjs');const app=createGameServer(options);await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));t.after(()=>new Promise(resolve=>{app.server.close(resolve);app.server.closeAllConnections();}));
+async function http(t,options={},bin=null){
+ const {createGameServer}=await import('./http.mjs');const app=createGameServer(options);await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));if(bin)bin.server(app.server);else t.after(()=>closeHttpServer(app.server));
  const base='http://127.0.0.1:'+app.server.address().port;return {...app,post:(path,body,token='',key='')=>fetch(base+path,{method:'POST',headers:{Authorization:'Bearer '+token,...(key?{'Idempotency-Key':key}:{})},body:JSON.stringify(body)})};
 }
 test('concurrent HTTP transfers serialize, failed saves roll back both balances/reports and SQLite retries survive reconnect',async t=>{
- const dir=mkdtempSync(join(tmpdir(),'tom-economy-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const db=new KingdomDatabase(join(dir,'world.sqlite'));let fail=false;
- const app=await http(t,{store:{load:()=>db.load(),save:(...args)=>{if(fail)throw new Error('Disk full');db.save(...args);},receipt:(...args)=>db.receipt(...args),close:()=>db.close()}});
+ const bin=tempDirectory(t,'tom-economy-');const db=new KingdomDatabase(bin.path('world.sqlite'));let fail=false;
+ const app=await http(t,{store:{load:()=>db.load(),save:(...args)=>{if(fail)throw new Error('Disk full');db.save(...args);},receipt:(...args)=>db.receipt(...args),close:()=>db.close()}},bin);
  const s=await(await app.post('/join',{name:'Trade sender'})).json(),other=await(await app.post('/join',{name:'Trade recipient'})).json();let p=app.world.authenticate(s.token),q=app.world.authenticate(other.token);p.gold=1000;p.wood=10000;p.cityLevel=2;p.buildings.market=1;command(app.world,p,'alliance-create',{name:'HTTP guild'});command(app.world,q,'alliance-join',{targetId:p.allianceId});app.saveNow();
  const body={type:'resource-transfer',targetId:q.id,name:'wood',count:100,jobId:'1-http-transfer-unique'},before=p.wood,received=q.wood;
  const responses=await Promise.all([app.post('/command',body,s.token,'transfer-once-1'),app.post('/command',body,s.token,'transfer-once-1')]);assert.deepEqual(responses.map(r=>r.status),[200,200]);assert.equal(p.wood,before-110);assert.equal(q.wood,received+100);
@@ -157,7 +158,7 @@ test('JSON migration archives the untouched schema fourteen fixture before writi
  const {writeFileSync}=await import('node:fs');const {WorldStore}=await import('./storage.mjs');const dir=mkdtempSync(join(tmpdir(),'tom-currency-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const path=join(dir,'world.json'),original=JSON.stringify(oldSave());writeFileSync(path,original);const store=new WorldStore(path),w=store.load();store.save(w);assert.equal(readFileSync(path+'.schema14.bak','utf8'),original);const current=JSON.parse(readFileSync(path,'utf8'));assert.equal(current.schema,16);assert.equal(current.world.players[0].aether,0);assert.equal(current.world.players[0].mana,oldSave().world.players[0].aether);
 });
 test('SQLite migrates schema fourteen atomically and a second load does not mint premium, items or AP',t=>{
- const dir=mkdtempSync(join(tmpdir(),'tom-sql-economy-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const db=new KingdomDatabase(join(dir,'world.sqlite'),{now:()=>date});t.after(()=>db.close());const old=oldSave();db.db.prepare('INSERT INTO kingdom VALUES(1,?,?)').run(JSON.stringify(old),date);const w=db.load(),p=[...w.players.values()][0];assert.equal(p.aether,0);assert.equal(p.mana,old.world.players[0].aether);p.ap=17;db.save(w);const next=db.load(),q=[...next.players.values()][0];assert.equal(q.ap,17);assert.equal(q.aether,0);assert.equal(q.inventory['mana-pack-10'],1);assert.equal(JSON.parse(db.db.prepare('SELECT payload FROM kingdom').get().payload).schema,16);
+ const bin=tempDirectory(t,'tom-sql-economy-');const db=new KingdomDatabase(bin.path('world.sqlite'),{now:()=>date});bin.close(()=>db.close());const old=oldSave();db.db.prepare('INSERT INTO kingdom VALUES(1,?,?)').run(JSON.stringify(old),date);const w=db.load(),p=[...w.players.values()][0];assert.equal(p.aether,0);assert.equal(p.mana,old.world.players[0].aether);p.ap=17;db.save(w);const next=db.load(),q=[...next.players.values()][0];assert.equal(q.ap,17);assert.equal(q.aether,0);assert.equal(q.inventory['mana-pack-10'],1);assert.equal(JSON.parse(db.db.prepare('SELECT payload FROM kingdom').get().payload).schema,16);
 });
 test('migration grandfathers already engaged legacy camp contributors without retroactive AP charges',()=>{
  const old=oldSave(),id=old.world.players[0].id;old.world.camps[0].health=90;old.world.camps[0].contributors={[id]:10};const w=World.fromSave(old,{now:()=>date}),p=[...w.players.values()][0];assert.equal(p.campPasses[w.camps[0].id],1);p.x=w.camps[0].x;p.z=w.camps[0].z;command(w,p,'attack',{targetId:w.camps[0].id});w.tick(.1);assert.equal(p.ap,100);

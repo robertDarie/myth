@@ -78,7 +78,7 @@ class Program
         Check(fog.Update(new ExplorationData{explored=new[]{0,1,2},visible=new int[0]}),"Lost sight must update fog");
         Check(fog.Opacity(1,0)==0,"Lost military sight must not restore fog");
         var camp=new ScoutCampCard{scouts=1,speed=7,radius=9,surveySeconds=.8f,autoSectors=2,hasNext=true,nextScouts=1,nextSpeed=8.5f,nextRadius=10,nextSurveySeconds=.7f,nextAutoSectors=3};
-        Check(ScoutInterfaceCopy.Line(1,7,9,.8f,2).Contains("1 scout")&&ScoutInterfaceCopy.Delta(camp).Contains("faster travel"),"Scout Camp copy must describe current and next benefits");
+        Check(ScoutInterfaceCopy.Line(1,7,9,.8f,2).Contains("1 scout")&&ScoutInterfaceCopy.Delta(camp).Contains("faster travel"),"Outlook copy must describe current and next scout benefits");
         Check(ScoutInterfaceCopy.Phase("Outbound")=="Traveling"&&ScoutInterfaceCopy.Phase("Exploring")=="Exploring","Scout status names stay readable");
         fog.Reset();Check(fog.Opacity(1,0)==1,"Reset must not leak the prior profile's fog");
         string longText=new string('x',180);var baseline=Measure(()=>LegacyFit(longText,22,width));var optimized=Measure(()=>TextElision.Fit(longText,22,width));

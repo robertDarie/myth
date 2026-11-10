@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { World } from './world.mjs';
 import { KingdomDatabase } from './database.mjs';
 import { createGameServer } from './http.mjs';
+import { tempDirectory } from './testing/cleanup.mjs';
 import { TROOP_TYPES,unitTotal,countOf,legacyUnits,changeUnits,troopBase,tierLock } from './troops.mjs';
 import { counterMultiplier,retreat } from './war.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
@@ -74,16 +75,16 @@ test('schema 12 preserves old troop counts and pending training; invalid tier da
  const bad=structuredClone(w.toSave());bad.world.players[0].technologies.veterans=0;assert.throws(()=>World.fromSave(bad),/unlock/);
 });
 test('promotions survive SQLite downtime and an hourglass completes only the chosen active batch',t=>{
- const dir=mkdtempSync(join(tmpdir(),'tom-veterans-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));let now=Date.now();const path=join(dir,'world.sqlite');
+ const bin=tempDirectory(t,'tom-veterans-');let now=Date.now();const path=bin.path('world.sqlite');
  const {w,p,s}=fixture();unlock(w,p);reserves(w,p);command(w,p,'promote',{targetId:'veteranInfantry'});command(w,p,'train',{targetId:'archers'});
  command(w,p,'inventory-supplies');command(w,p,'inventory-use',{targetId:'universal-minute',count:1,jobId:p.trainingQueue[0].id});const second=p.trainingQueue[1],remaining=second.remaining;w.tick(.1);assert.equal(p.reserveUnits.veteranInfantry,5);assert.ok(second.remaining>=remaining-.1001);
  const store=new KingdomDatabase(path,{now:()=>now});store.save(w);store.close();now+=20000;
- const next=new KingdomDatabase(path,{now:()=>now});t.after(()=>next.close());const q=next.load().authenticate(s.token);assert.equal(q.reserveUnits.veteranInfantry,5);assert.equal(q.reserveUnits.archers,5);
+ const next=new KingdomDatabase(path,{now:()=>now});bin.close(()=>next.close());const q=next.load().authenticate(s.token);assert.equal(q.reserveUnits.veteranInfantry,5);assert.equal(q.reserveUnits.archers,5);
 });
 test('HTTP promotion retries are once-only, use the owning city and preserve a fixed soldier count',async t=>{
- const dir=mkdtempSync(join(tmpdir(),'tom-veteran-http-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const app=createGameServer({databasePath:join(dir,'world.sqlite')});
+ const bin=tempDirectory(t,'tom-veteran-http-');const app=createGameServer({databasePath:bin.path('world.sqlite')});
  const session=app.world.join('HTTP Veterans'),p=app.world.authenticate(session.token);p.gold=p.food=p.wood=p.stone=p.mana=10000;unlock(app.world,p);reserves(app.world,p);app.saveNow();
- await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));t.after(()=>new Promise(resolve=>{app.server.close(resolve);app.server.closeAllConnections();}));
+ await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));bin.server(app.server);
  const url=`http://127.0.0.1:${app.server.address().port}/command`,body=JSON.stringify({type:'promote',targetId:'veteranInfantry'}),headers={Authorization:'Bearer '+session.token,'Idempotency-Key':'promote-once-001'};
  const before=census(p);for(let i=0;i<2;i++)assert.equal((await fetch(url,{method:'POST',headers,body})).status,200);
  assert.equal(p.trainingQueue.filter(j=>j.type==='promote').length,1);assert.equal(census(p),before);

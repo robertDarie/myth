@@ -1,15 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync,rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { createGameServer } from './http.mjs';
 import { KingdomDatabase } from './database.mjs';
+import { closeHttpServer, tempDirectory } from './testing/cleanup.mjs';
 const PASSWORD='long original password 123';
 const nextPassword='a different long password 456';
-function fixture(t){const dir=mkdtempSync(join(tmpdir(),'tom-identity-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));return join(dir,'kingdom.sqlite');}
-async function start(t,options){const app=createGameServer(options);await new Promise((resolve,reject)=>{app.server.once('error',reject);app.server.listen(0,'127.0.0.1',resolve);});t.after(()=>new Promise(resolve=>{app.server.close(resolve);app.server.closeAllConnections();}));
+const fixtures=new WeakMap();
+function fixture(t){const bin=tempDirectory(t,'tom-identity-');fixtures.set(t,bin);return bin.path('kingdom.sqlite');}
+async function start(t,options){const app=createGameServer(options);await new Promise((resolve,reject)=>{app.server.once('error',reject);app.server.listen(0,'127.0.0.1',resolve);});const bin=fixtures.get(t);if(bin)bin.server(app.server);else t.after(()=>closeHttpServer(app.server));
  const base=`http://127.0.0.1:${app.server.address().port}`;
  const call=async(path,body,token='',key='')=>{const r=await fetch(base+path,{method:body===null?'GET':'POST',headers:{Authorization:'Bearer '+token,...(key?{'Idempotency-Key':key}:{})},...(body===null?{}:{body:JSON.stringify(body)})});return {status:r.status,body:await r.json()};};return {...app,call};}
 async function protect(app,name='protected_user'){

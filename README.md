@@ -6,7 +6,7 @@ See [the game concept](docs/game-design.md).
 
 ## Playable slice 0.43
 
-- Permanent two-state map exploration, an upgradeable Scout Camp, multiple scouts,
+- Permanent two-state map exploration, an upgradeable Outlook of the Horizon, multiple scouts,
   redirect, recall and nearby auto-explore. Military sight stays separate from
   explored terrain. [Values, migration and RoK difference](docs/scouting-0.43.md).
   **Native visual acceptance remains pending.**

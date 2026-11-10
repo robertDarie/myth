@@ -41,12 +41,14 @@ namespace ThronesOfMyth
             else if(id=="oracle") { var temple=new GameObject("Temple pavilion").transform;temple.SetParent(root,false);temple.localScale=Vector3.one*.38f;Temple(temple,team,false); }
             else if(id=="scoutcamp")
             {
-                Box(root,0,.28f,0,1.15f,.4f,.9f,stone);
-                Pillar(root,0,.95f,0,.16f,1.15f,timber);
-                Box(root,0,1.55f,0,.72f,.1f,.72f,timber);
-                Pillar(root,0,1.85f,0,.035f,.5f,bronze);
-                Box(root,.2f,2.02f,0,.32f,.16f,.04f,team);
-                Box(root,-.28f,.42f,-.2f,.18f,.55f,.18f,darkStone);
+                Color roof=culture=="japanese"?new Color(.23f,.31f,.47f):culture=="chinese"?new Color(.22f,.46f,.35f):culture=="norse"?new Color(.24f,.31f,.29f):culture=="egyptian"?new Color(.72f,.58f,.28f):new Color(.62f,.28f,.18f);
+                Box(root,0,.42f,.16f,1.28f,.62f,.82f,stone);
+                DistrictRoof(root,culture,new Vector3(0,.86f,.16f),1.58f,1.05f,roof);
+                Box(root,0,.28f,-.32f,.28f,.40f,.08f,timber);
+                Pillar(root,.58f,1.22f,-.08f,.045f,1.7f,bronze);
+                Ball(root,.58f,2.12f,-.08f,.18f,.18f,.18f,bronze);
+                Box(root,.76f,1.72f,-.08f,.30f,.18f,.04f,team);
+                for(int i=-1;i<=1;i++)Ball(root,i*.26f,.14f,-.68f,.11f,.16f,.11f,darkStone);
             }
             else
             {

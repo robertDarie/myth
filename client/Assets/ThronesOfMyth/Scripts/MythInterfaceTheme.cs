@@ -285,9 +285,10 @@ namespace ThronesOfMyth
                 case "alliance": case "oathhall":
                     Line(new Vector2(r.x + 4 * u, r.yMax), new Vector2(r.x + 4 * u, r.y), 2 * u, color); Fill(new Rect(r.x + 6 * u, r.y + u, 16 * u, 11 * u), color); break;
                 case "scoutcamp":
-                    Fill(new Rect(c.x - u, r.y + 6 * u, 2 * u, 16 * u), color);
-                    Fill(new Rect(c.x - u, r.y + 4 * u, 12 * u, 8 * u), color);
-                    Fill(new Rect(r.x + 3 * u, r.y + 16 * u, 18 * u, 6 * u), color); break;
+                    Line(new Vector2(r.x + 2 * u, r.y + 14 * u), new Vector2(c.x, r.y + 8 * u), 2 * u, color);
+                    Line(new Vector2(c.x, r.y + 8 * u), new Vector2(r.xMax - 2 * u, r.y + 14 * u), 2 * u, color);
+                    Fill(new Rect(c.x - u, r.y + 10 * u, 2 * u, 12 * u), color);
+                    Diamond(new Rect(c.x - 4 * u, r.y + u, 8 * u, 8 * u), color); break;
                 case "forge": case "builders":
                     Line(new Vector2(r.x + 5 * u, r.yMax - u), new Vector2(r.x + 18 * u, r.y + 4 * u), 4 * u, color); Fill(new Rect(r.x + 9 * u, r.y + u, 14 * u, 7 * u), color); break;
                 case "research": case "chronicle":

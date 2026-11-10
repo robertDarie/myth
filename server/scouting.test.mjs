@@ -69,7 +69,7 @@ test('schema 15 scouts and missing camps migrate without erasing exploration', (
   assert.equal(q.autoExplore, false);
 });
 
-test('Scout Camp levels change capacity, speed and reveal using the documented table', () => {
+test('Outlook of the Horizon levels change capacity, speed and reveal using the documented table', () => {
   assert.deepEqual(SCOUT_CAMP_LEVELS.map(row => row.scouts), [0, 1, 1, 2, 2, 3]);
   assert.equal(scoutProfile(1).speed, 7);
   assert.equal(scoutProfile(1).radius, 9);
@@ -78,6 +78,7 @@ test('Scout Camp levels change capacity, speed and reveal using the documented t
   const { w, players: [p] } = setup(['Builder']);
   p.cityLevel = 2; p.wood = p.food = p.gold = 10000;
   const card = w.snapshot(p.id).players.find(a => a.id === p.id).cityBuildings.find(b => b.id === 'scoutcamp');
+  assert.equal(card.name, 'Outlook of the Horizon');
   assert.equal(card.level, 1);
   assert.equal(card.scoutCamp.scouts, 1);
   assert.equal(card.scoutCamp.hasNext, true);
@@ -155,4 +156,34 @@ test('players cannot read or command another city scout, and explored land does 
   assert.equal(hidden.players.find(a => a.id === p.id).scouts, undefined);
   assert.equal(own.players.find(a => a.id === p.id).explored, undefined);
   assert.ok(p.explored.some(cell => !hidden.exploration.explored.includes(cell)));
+});
+
+test('two cities auto-explore, redirect and recall without mixing orders or private reports', () => {
+  const { w, players: [a, b] } = setup(['Alpha', 'Beta']);
+  a.buildings.scoutcamp = 5; b.buildings.scoutcamp = 5;
+  const aLand = a.explored.length, bLand = b.explored.length;
+  w.command(a, { type: 'scout-auto', enabled: true });
+  w.command(b, { type: 'scout-auto', enabled: true });
+  assert.ok(a.scouts.length > 0 && b.scouts.length > 0);
+  assert.ok(a.scouts.every(s => s.ownerId === a.id) && b.scouts.every(s => s.ownerId === b.id));
+  assert.equal(new Set([...a.scouts, ...b.scouts].map(s => s.id)).size, a.scouts.length + b.scouts.length);
+  const redirected = a.scouts[0].id;
+  w.command(a, { type: 'scout-redirect', targetId: redirected, x: 36, z: 16 });
+  assert.equal(a.scouts[0].targetX, 36); assert.equal(a.scouts[0].targetZ, 16); assert.equal(a.scouts[0].phase, 'Outbound');
+  assert.throws(() => w.command(b, { type: 'scout-redirect', targetId: a.scouts[0].id, x: 28, z: 16 }), /no longer/);
+  assert.throws(() => w.command(a, { type: 'scout-recall', targetId: b.scouts[0].id }), /no longer/);
+  advance(w, 1);
+  const recalled = b.scouts[0];
+  const away = Math.hypot(recalled.x - b.homeX, recalled.z - b.homeZ);
+  w.command(b, { type: 'scout-recall', targetId: recalled.id });
+  const returning = b.scouts.find(s => s.id === recalled.id);
+  if (away > 0.2) { assert.ok(returning); assert.equal(returning.phase, 'Returning'); assert.equal(returning.rewardPending, false); }
+  else assert.equal(returning, undefined);
+  assert.equal(a.scouts.find(s => s.id === redirected).targetX, 36);
+  assert.equal(a.autoExplore, true); assert.equal(b.autoExplore, true);
+  advance(w, 2);
+  assert.ok(a.explored.length >= aLand && b.explored.length >= bLand);
+  const own = w.snapshot(a.id), other = w.snapshot(b.id);
+  assert.ok((own.exploration.reports ?? []).every(r => !(other.exploration.reports ?? []).some(x => x.id === r.id)));
+  assert.equal(own.players.find(p => p.id === b.id).scouts, undefined);
 });

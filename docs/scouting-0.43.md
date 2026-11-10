@@ -1,6 +1,6 @@
 # Scouting and permanent exploration · 0.43
 
-Protocol stays **16**. World saves move to **schema 16**. Schema 15 and older still load. A missing Scout Camp becomes level 1, and a single `scout` mission becomes the `scouts` array. Explored sector lists are kept. Schema 15 files are archived beside the save as `.schema15.bak` on the next successful load.
+Protocol stays **16**. World saves move to **schema 16**. Schema 15 and older still load. A missing Outlook becomes level 1, and a single `scout` mission becomes the `scouts` array. Explored sector lists are kept. Schema 15 files are archived beside the save as `.schema15.bak` on the next successful load.
 
 ## Terrain fog
 
@@ -25,9 +25,9 @@ In RoK, explored land keeps showing the map, and other players’ marches are br
 - Camps, resources and cities already follow the existing last-known landmark memory. Live amounts and troop counts still require current sight or a new survey.
 - One discovery reward is granted per newly assigned unexplored destination. Surveying that sector again records a report and does not repeat the journey or activity credit.
 
-## Scout Camp
+## Outlook of the Horizon
 
-The Scout Camp is a city building, separate from military marches. New cities and migrated saves start at level 1, which preserves today’s one-scout capability. These values are original v0.43 tuning. They are not a verified copy of Rise of Kingdoms.
+The player-facing building is the Outlook of the Horizon. Its save id remains `scoutcamp`. It trains scouts and stays separate from military marches. New cities and migrated saves start at level 1, which preserves the existing one-scout capability. The levels below are original v0.43 tuning.
 
 | Level | Scouts | Speed | Reveal radius | Survey | Auto range |
 | --- | ---: | ---: | ---: | ---: | ---: |

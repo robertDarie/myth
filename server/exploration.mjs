@@ -168,8 +168,8 @@ export function explorationCommand(w, p, c, fail) {
   const profile = scoutProfile(p.buildings?.scoutcamp ?? 0);
   if (c.type === 'scout-send') {
     if (!point(c)) fail('Choose a scouting destination inside the map (1–79).');
-    if (profile.scouts <= 0) fail('Build a Scout Camp before sending scouts.');
-    if (p.scouts.length >= profile.scouts) fail(profile.scouts === 1 ? 'Your scout is already deployed. Recall it or wait for its return.' : 'All scouts are already deployed. Recall one or upgrade the Scout Camp.');
+    if (profile.scouts <= 0) fail('Raise the Outlook of the Horizon before sending scouts.');
+    if (p.scouts.length >= profile.scouts) fail(profile.scouts === 1 ? 'Your scout is already deployed. Recall it or wait for its return.' : 'All scouts are already deployed. Recall one or raise the Outlook of the Horizon.');
     if (!w.canEnter(p, c)) fail('Scouts need alliance access through the corresponding Divine Gate.');
     if (regionBusy(p, c.x, c.z)) fail('A scout is already working on that region.');
     p.scouts.push(createScout(p, c.x, c.z)); return true;
@@ -190,7 +190,7 @@ export function explorationCommand(w, p, c, fail) {
   }
   if (c.type === 'scout-auto') {
     if (typeof c.enabled !== 'boolean') fail('Choose whether auto explore is on or off.');
-    if (c.enabled && profile.scouts <= 0) fail('Build a Scout Camp before using auto explore.');
+    if (c.enabled && profile.scouts <= 0) fail('Raise the Outlook of the Horizon before using auto explore.');
     p.autoExplore = c.enabled; return true;
   }
   if (c.type === 'attack-player') {

@@ -1,0 +1,21 @@
+---
+description: Keep Thrones of Myth original while matching reference-game depth
+alwaysApply: true
+---
+
+# Original mythic identity
+
+Rise of Kingdoms and Call of Dragons are references for functionality, progression, balance and quality. They are not sources for names, art, UI layouts, dialogue or characters.
+
+- Keep the five civilizations distinct. New buildings, units, discoveries, commanders and skills use existing Thrones of Myth lore.
+- Match established naming: Citadel of Mortals, Hall of Spears, Temple of Echoes, Outlook of the Horizon. The internal id can stay plain (`scoutcamp`); the player-facing name cannot be a generic competitor label.
+- Use original models, icons and effects that follow the current stone, timber, bronze and culture-roof architecture.
+- Use the same words in the Unity UI, server errors, tutorials and reports. Scouts, surveys, reveal and auto-explore stay the scouting terms.
+- Mana is an ordinary resource. Aether is premium. Do not merge or rename them.
+- Check `server/city-content.mjs` and existing UI copy before adding a name or mechanic.
+- Seek functional parity. Do not copy a competitor's proprietary assets or screen layout.
+
+```text
+Bad:  name: "Scout Camp", description mentions a competitor, generic flag tower.
+Good: name: "Outlook of the Horizon", description states the scout function, culture roof and bronze sighting post.
+```
