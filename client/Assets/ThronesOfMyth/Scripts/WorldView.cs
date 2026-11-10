@@ -105,6 +105,13 @@ namespace ThronesOfMyth
                 Put(seen, f.id, "flag", f.x, f.z, f.connected ? (f.allianceId == allianceId ? blue : red) : Color.gray, name + state, f.health / Mathf.Max(1, f.maxHealth), variant);
             }
             foreach (var pin in world.markers) Put(seen, pin.id, "marker", pin.x, pin.z, new Color(0.85f, 0.45f, 0.8f), pin.name);
+            if (world.exploration?.findings != null) foreach (var place in world.exploration.findings)
+            {
+                Color mark = place.category == "cavern" ? new Color(.25f, .55f, .62f) : place.category == "ruin" ? new Color(.72f, .58f, .28f) : MythInterfaceTheme.Gold;
+                Put(seen, place.id, "finding", place.x, place.z, mark, place.name + " · " + place.state, -1, place.category + "-" + place.culture);
+                pieces[place.id].compactLabel = place.category == "settlement" ? "Hearth" : place.category == "cavern" ? "Cavern" : "Ruin";
+                pieces[place.id].icon = "city";
+            }
             foreach(var n in world.nodes)if(n.lastKnown)Remembered(n.id);
             foreach(var c in world.camps)if(c.lastKnown)Remembered(c.id);
             foreach(var s in world.sites)if(s.lastKnown)Remembered(s.id);

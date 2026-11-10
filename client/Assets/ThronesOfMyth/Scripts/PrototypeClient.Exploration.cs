@@ -8,6 +8,7 @@ namespace ThronesOfMyth
         private string redirectScoutId = "";
         private string scoutX = "20", scoutZ = "20";
         private string lastScoutReportId;
+        private int seenFindingClaims = -1;
         private void CancelScoutAim() { chooseScoutDestination = false; redirectScoutId = ""; }
         private void ScoutAt(float x, float z)
         {
@@ -27,6 +28,21 @@ namespace ThronesOfMyth
                 toastUntil = Time.unscaledTime + 6f;
             }
             lastScoutReportId = id;
+            var journal = world?.exploration?.journal;
+            if (journal == null) return;
+            if (seenFindingClaims < 0) { seenFindingClaims = journal.claimed; return; }
+            if (journal.claimed > seenFindingClaims)
+            {
+                status = "Ancient gift claimed.";
+                toastUntil = Time.unscaledTime + 6f;
+            }
+            seenFindingClaims = journal.claimed;
+        }
+        private void FocusFinding(FindingData place)
+        {
+            if (place == null) return;
+            selectedId = place.id; if (map != null) map.selectedId = place.id;
+            cameraControl?.Focus(place.x, place.z); ShowKingdomForTarget();
         }
         private void DrawScoutCampPanel(ScoutCampCard camp)
         {
@@ -119,6 +135,49 @@ namespace ThronesOfMyth
                 if (report.sites != null) foreach (var site in report.sites) GUILayout.Label(site.name + " · " + AllianceName(site.allianceId) + " · " + Mathf.CeilToInt(site.health) + " structure HP", theme.Small);
                 if (report.garrisons != null) foreach (var g in report.garrisons) GUILayout.Label(WarTargetName(g.targetId) + " garrison · " + g.marches + " marches / " + g.troops + " mortals / " + g.mythic + " mythic", theme.Small);
                 if (theme.Action("Focus surveyed area", true, "")) { cameraControl?.SetView(new Vector3(report.x, 0, report.z), 10); ShowKingdomForTarget(); }
+                GUILayout.EndVertical();
+            }
+            DrawDiscoveryJournal(fog);
+        }
+        private void DrawDiscoveryJournal(ExplorationData fog)
+        {
+            var journal = fog.journal;
+            if (journal == null) return;
+            GUILayout.Space(18);
+            GUILayout.Label("DISCOVERY JOURNAL", theme.Eyebrow);
+            GUILayout.Label("Ancient places", theme.Heading);
+            var counts = journal.byType;
+            GUILayout.Label(journal.discovered + " discovered · " + journal.investigated + " investigated · " + journal.claimed + " claimed · " + journal.unclaimed + " ready to claim", sectionStyle);
+            GUILayout.Label((counts == null ? 0 : counts.settlement) + " settlements · " + (counts == null ? 0 : counts.cavern) + " caverns · " + (counts == null ? 0 : counts.ruin) + " ruins · " + journal.remaining + " still beyond the fog", noteStyle);
+            if (journal.milestones != null) foreach (var mark in journal.milestones) GUILayout.Label((mark.reached ? "Reached · " : "Ahead · ") + mark.name, theme.Small);
+            bool ready = !string.IsNullOrEmpty(journal.nextUnclaimedId);
+            if (theme.Action("Next unclaimed discovery", ready && !processing, ready ? "Sending your order…" : "Every revealed gift is already claimed."))
+            {
+                var next = Array.Find(fog.findings ?? Array.Empty<FindingData>(), place => place.id == journal.nextUnclaimedId);
+                if (next != null) FocusFinding(next);
+            }
+            foreach (var place in fog.findings ?? Array.Empty<FindingData>())
+            {
+                if (place == null || !place.known) continue;
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label(place.name + " · " + place.category + " · " + place.state, sectionStyle);
+                GUILayout.Label(place.description, noteStyle);
+                GUILayout.Label(place.preview, theme.Small);
+                if (place.state == "investigating")
+                {
+                    GUILayout.Label("Investigation " + Mathf.RoundToInt(Mathf.Clamp01(place.progress) * 100f) + "%" + (place.eta > 0.05f ? " · ETA " + Mathf.CeilToInt(place.eta) + "s" : ""), theme.Small);
+                    theme.Bar(GUILayoutUtility.GetRect(80, 12, GUILayout.ExpandWidth(true)), Mathf.Clamp01(place.progress), MythInterfaceTheme.Gold);
+                }
+                string reward = DiscoveryJournal.RewardLine(place.reward);
+                if (reward.Length > 0) GUILayout.Label(place.claimed ? "Claimed · " + reward : "Ready · " + reward, theme.Small);
+                GUILayout.BeginHorizontal();
+                if (theme.Action("Show on map", !processing, "")) FocusFinding(place);
+                bool claim = place.state == "known" && !place.requiresInvestigation || place.state == "completed";
+                if (claim && theme.Action("Claim gift", !processing && pendingOrder == null, pendingOrder != null ? "Confirm your previous order first." : "Sending your order…"))
+                    Send(new GameCommand { type = "finding-claim", targetId = place.id });
+                if (place.requiresInvestigation && place.state == "known" && theme.Action("Investigate", !processing && pendingOrder == null, pendingOrder != null ? "Confirm your previous order first." : "Sending your order…"))
+                    Send(new GameCommand { type = "finding-investigate", targetId = place.id });
+                GUILayout.EndHorizontal();
                 GUILayout.EndVertical();
             }
         }

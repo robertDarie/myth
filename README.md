@@ -4,7 +4,10 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.43
+## Playable slice 0.44
+
+- Ancient settlements, forgotten caverns and ancient ruins. Fog reveals them, scouts investigate caverns and ruins, and each city claims its own gift once. [Places, rewards and migration](docs/discoveries-0.44.md).
+  **Native visual acceptance remains pending.**
 
 - Permanent two-state map exploration, an upgradeable Outlook of the Horizon, multiple scouts,
   redirect, recall and nearby auto-explore. Military sight stays separate from

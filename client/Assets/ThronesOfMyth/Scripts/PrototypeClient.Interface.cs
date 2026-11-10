@@ -338,6 +338,7 @@ namespace ThronesOfMyth
                 for (int z = 0; z < 20; z++) for (int x = 0; x < 20; x++)
                 { int cell = z * 20 + x; if (!known.Contains(cell)) MythInterfaceTheme.Fill(new Rect(mapArea.x + x * mapArea.width / 20, mapArea.y + (19 - z) * mapArea.height / 20, mapArea.width / 20 + 1, mapArea.height / 20 + 1), new Color(0.03f, 0.05f, 0.08f)); }
                 foreach (var scout in world.exploration.scouts) if (scout.phase != "Idle") { Dot(mapArea, scout.x, scout.z, Color.cyan, 4); Dot(mapArea, scout.targetX, scout.targetZ, MythInterfaceTheme.Gold, 3); }
+                if (world.exploration.findings != null) foreach (var place in world.exploration.findings) Dot(mapArea, place.x, place.z, place.category == "cavern" ? new Color(.25f, .55f, .62f) : place.category == "ruin" ? new Color(.72f, .58f, .28f) : MythInterfaceTheme.Gold, 4);
             }
             foreach (var boss in world.strongholds) Dot(mapArea, boss.x, boss.z, MythInterfaceTheme.Red, 6);
             foreach (var site in world.sites) Dot(mapArea, site.x, site.z, new Color(0.85f, 0.72f, 0.95f), 5);

@@ -350,6 +350,18 @@ namespace ThronesOfMyth
                 action = city.id == playerId ? "Enter city" : "Focus city"; perform = () => { if (city.id == playerId) OpenInterface(InterfacePage.City); else cameraControl?.Focus(city.homeX, city.homeZ); };
             }
             else if (pin != null) { title = pin.name; subtitle = "ALLIANCE MARKER · " + Mathf.CeilToInt(pin.expires - world.time) + "s"; action = "Focus marker"; perform = () => cameraControl?.Focus(pin.x, pin.z); }
+            else if (world.exploration?.findings != null && Array.Find(world.exploration.findings, place => place.id == selectedId) is FindingData finding)
+            {
+                title = finding.name; emblem = "city";
+                subtitle = finding.category.ToUpperInvariant() + " · " + finding.state.ToUpperInvariant();
+                if (finding.state == "investigating") subtitle += " · " + Mathf.RoundToInt(Mathf.Clamp01(finding.progress) * 100f) + "%";
+                string reward = DiscoveryJournal.RewardLine(finding.reward);
+                if (reward.Length > 0) subtitle += " · " + reward;
+                bool claim = finding.state == "known" && !finding.requiresInvestigation || finding.state == "completed";
+                if (claim) { action = "Claim gift"; perform = () => Send(new GameCommand { type = "finding-claim", targetId = finding.id }); }
+                else if (finding.requiresInvestigation && finding.state == "known") { action = "Investigate"; perform = () => Send(new GameCommand { type = "finding-investigate", targetId = finding.id }); }
+                else { action = "Open the journal"; perform = () => OpenInterface(InterfacePage.Exploration); }
+            }
             else { selectedId = ""; return; }
             bool remembered=boss?.lastKnown==true||camp?.lastKnown==true||node?.lastKnown==true||site?.lastKnown==true||beacon?.lastKnown==true||city?.lastKnown==true;
             if(remembered){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}

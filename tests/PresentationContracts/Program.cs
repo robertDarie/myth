@@ -80,6 +80,9 @@ class Program
         var camp=new ScoutCampCard{scouts=1,speed=7,radius=9,surveySeconds=.8f,autoSectors=2,hasNext=true,nextScouts=1,nextSpeed=8.5f,nextRadius=10,nextSurveySeconds=.7f,nextAutoSectors=3};
         Check(ScoutInterfaceCopy.Line(1,7,9,.8f,2).Contains("1 scout")&&ScoutInterfaceCopy.Delta(camp).Contains("faster travel"),"Outlook copy must describe current and next scout benefits");
         Check(ScoutInterfaceCopy.Phase("Outbound")=="Traveling"&&ScoutInterfaceCopy.Phase("Exploring")=="Exploring","Scout status names stay readable");
+        var journalRows=new[]{new FindingData{id="hidden",known=false,state="known"},new FindingData{id="cave",known=true,requiresInvestigation=true,state="known"},new FindingData{id="hearth",known=true,state="known",reward=new FindingReward{food=80,wood=60,gold=25,xp=40}}};
+        Check(DiscoveryJournal.Hidden(journalRows)==1&&DiscoveryJournal.NextUnclaimed(journalRows)=="hearth","Journal skips hidden places and uninvestigated caves");
+        Check(DiscoveryJournal.RewardLine(journalRows[2].reward).Contains("80 food")&&DiscoveryJournal.RewardLine(journalRows[2].reward).Contains("commander experience"),"Claimed discovery copy names the granted gift");
         fog.Reset();Check(fog.Opacity(1,0)==1,"Reset must not leak the prior profile's fog");
         string longText=new string('x',180);var baseline=Measure(()=>LegacyFit(longText,22,width));var optimized=Measure(()=>TextElision.Fit(longText,22,width));
         var baselineJobs=Measure(()=>LegacyJob(jobs,"barracks"));var optimizedJobs=Measure(()=>CityPresentationData.Job(jobs,"barracks"));

@@ -99,7 +99,13 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ScoutEnemy { public string id, ownerId, name, commanderId; public int troops, mythic, health; public float x, z; }
     [Serializable] public sealed class ScoutGarrison { public string targetId; public int marches, troops, mythic; }
     [Serializable] public sealed class ScoutReport { public StrongholdData[] strongholds; public string id; public float x, z, time; public ScoutEnemy[] armies; public CampData[] camps; public SiteData[] sites; public FlagData[] flags; public ScoutGarrison[] garrisons; }
-    [Serializable] public sealed class ExplorationData { public int cellSize, width; public float exploredPercent; public bool autoExplore; public ScoutCampCard scoutCamp; public int[] explored, visible; public ScoutData[] scouts; public ScoutReport[] reports; }
+    [Serializable] public sealed class FindingItem { public string id, name; public int count; }
+    [Serializable] public sealed class FindingReward { public int food, wood, stone, gold, mana, xp; public FindingItem[] items; }
+    [Serializable] public sealed class FindingData { public string id, name, category, culture, description, preview, state; public float x, z, seconds, progress, eta; public bool known, requiresInvestigation, claimed; public FindingReward reward; }
+    [Serializable] public sealed class FindingCounts { public int settlement, cavern, ruin; }
+    [Serializable] public sealed class FindingMilestone { public string id, name; public bool reached; }
+    [Serializable] public sealed class DiscoveryJournalData { public int discovered, investigated, claimed, unclaimed, remaining; public FindingCounts byType; public FindingMilestone[] milestones; public string nextUnclaimedId; }
+    [Serializable] public sealed class ExplorationData { public int cellSize, width; public float exploredPercent; public bool autoExplore; public ScoutCampCard scoutCamp; public int[] explored, visible; public ScoutData[] scouts; public ScoutReport[] reports; public FindingData[] findings; public DiscoveryJournalData journal; }
     [Serializable] public sealed class JourneyRewards { public int wood, food, gold, stone, mana, aether, sigils; public RewardGrant[] itemRewards; }
     [Serializable] public sealed class JourneyTask { public string id, title, description, guide, targetId; public int goal, progress; public bool claimed, canClaim; public JourneyRewards reward; }
     [Serializable] public sealed class JourneyChapter { public string id, title, story, commanderReward; public bool claimed, locked, canClaim; public JourneyTask[] tasks; public JourneyRewards reward; }

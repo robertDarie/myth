@@ -75,6 +75,7 @@ namespace ThronesOfMyth
             else if (kind == "city") City(root, variant, team);
             else if (kind == "node") Resource(root, variant, team);
             else if (kind == "marker") { Pillar(root, 0, 1, 0, 0.1f, 2, bronze); Ball(root, 0, 2.1f, 0, 0.5f, 0.5f, 0.5f, team); Ring(root, 0.6f, team); }
+            else if (kind == "finding") Finding(root, variant, team);
             else if (kind == "flag")
             {
                 Pillar(root, 0, 1.75f, 0, 0.13f, 3.5f, bronze);
@@ -135,6 +136,37 @@ namespace ThronesOfMyth
                 actor.selection.SetActive(false);
             }
             actor.ConfigureFootprint();return actor;
+        }
+        private static Color CultureRoof(string culture) => culture == "japanese" ? new Color(.23f, .31f, .47f) : culture == "chinese" ? new Color(.22f, .46f, .35f) : culture == "norse" ? new Color(.24f, .31f, .29f) : culture == "egyptian" ? new Color(.72f, .58f, .28f) : new Color(.62f, .28f, .18f);
+        private void Finding(Transform root, string variant, Color team)
+        {
+            string[] parts = (variant ?? "settlement-greek").Split('-');
+            string category = parts[0], culture = parts.Length > 1 ? parts[1] : "greek";
+            Color roof = CultureRoof(culture);
+            if (category == "cavern")
+            {
+                Box(root, 0, 0.7f, 0, 2.4f, 1.4f, 1.6f, darkStone);
+                Box(root, 0, 0.55f, 0.35f, 0.9f, 0.8f, 0.4f, new Color(.05f, .06f, .08f));
+                Pillar(root, -0.7f, 0.8f, 0.7f, 0.18f, 1.6f, stone);
+                Pillar(root, 0.7f, 0.8f, 0.7f, 0.18f, 1.6f, stone);
+                Ball(root, 0.9f, 1.3f, 0.8f, 0.16f, 0.16f, 0.16f, bronze);
+            }
+            else if (category == "ruin")
+            {
+                Box(root, 0, 0.12f, 0, 2.8f, 0.24f, 2.2f, stone);
+                Pillar(root, -0.8f, 0.9f, 0.4f, 0.28f, 1.5f, stone);
+                Pillar(root, 0.7f, 0.55f, -0.3f, 0.24f, 0.8f, darkStone);
+                Box(root, 0.2f, 0.2f, 0.8f, 1.4f, 0.18f, 0.4f, roof);
+                Ball(root, -0.8f, 1.75f, 0.4f, 0.18f, 0.12f, 0.18f, bronze);
+            }
+            else
+            {
+                Box(root, 0, 0.45f, 0, 1.8f, 0.9f, 1.4f, new Color(.45f, .32f, .18f));
+                Box(root, 0, 1.05f, 0, 2.2f, 0.28f, 1.7f, roof);
+                Box(root, 0, 0.4f, 0.72f, 0.35f, 0.55f, 0.08f, darkStone);
+                Pillar(root, 0.7f, 1.15f, 0, 0.06f, 0.7f, bronze);
+                Ball(root, 0.7f, 1.55f, 0, 0.12f, 0.12f, 0.12f, team);
+            }
         }
         private void City(Transform root, string culture, Color team)
         {

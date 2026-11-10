@@ -91,7 +91,7 @@ namespace ThronesOfMyth.Editor
             File.Copy(node, Path.Combine(runtime, "node.exe"), true);
             File.Copy(license, Path.Combine(runtime, "LICENSE"), true);
             string server = Path.Combine(package, "Server"); Directory.CreateDirectory(server);
-            foreach (string file in new[] { "index.mjs", "backup.mjs", "migrate.mjs", "http.mjs", "telemetry.mjs", "world.mjs", "inventory.mjs", "power.mjs", "content.mjs", "storage.mjs", "database.mjs", "identity.mjs", "downtime.mjs", "city.mjs", "city-content.mjs", "progression.mjs", "marches.mjs", "troops.mjs", "war.mjs", "social.mjs", "campaign.mjs", "navigation.mjs", "exploration.mjs", "scout-camp.mjs", "chapters.mjs", "strongholds.mjs", "activity.mjs", "kingdom.mjs", "field-logistics.mjs", "economy.mjs", "discovery.mjs" })
+            foreach (string file in new[] { "index.mjs", "backup.mjs", "migrate.mjs", "http.mjs", "telemetry.mjs", "world.mjs", "inventory.mjs", "power.mjs", "content.mjs", "storage.mjs", "database.mjs", "identity.mjs", "downtime.mjs", "city.mjs", "city-content.mjs", "progression.mjs", "marches.mjs", "troops.mjs", "war.mjs", "social.mjs", "campaign.mjs", "navigation.mjs", "exploration.mjs", "scout-camp.mjs", "findings.mjs", "chapters.mjs", "strongholds.mjs", "activity.mjs", "kingdom.mjs", "field-logistics.mjs", "economy.mjs", "discovery.mjs" })
                 File.Copy(Path.Combine(repository, "server", file), Path.Combine(server, file), true);
             foreach (string file in new[] { "Launcher.ps1", "Start Thrones of Myth.cmd", "README.txt" })
                 File.Copy(Path.Combine(packaging, file), Path.Combine(package, file), true);

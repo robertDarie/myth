@@ -30,6 +30,7 @@
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/CityPresentationData.cs" Link="CityPresentationData.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/FogVisibilityGrid.cs" Link="FogVisibilityGrid.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ScoutInterfaceCopy.cs" Link="ScoutInterfaceCopy.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/DiscoveryJournal.cs" Link="DiscoveryJournal.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/GameNavigation.cs" Link="GameNavigation.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/InterfaceReadability.cs" Link="InterfaceReadability.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/WorldModels.cs" Link="WorldModels.cs" />
