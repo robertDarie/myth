@@ -124,7 +124,7 @@ namespace ThronesOfMyth
                 if (variant == "forsaken-4" || variant == "forsaken-6") Beast(root, Vector3.zero, variant == "forsaken-6" ? "norse" : "greek", team);
                 else
                 {
-                    ShowcaseCamp(root, team);
+                    if(variant!="forsaken-1"||!Imported(root,"ForsakenShelter",team))ShowcaseCamp(root, team);
                 }
                 Pillar(root, 0, 0.15f, -1.3f, 0.9f, 0.3f, darkStone);
                 actor.fire = Ball(root, 0, 0.48f, -1.3f, 0.4f, 0.6f, 0.4f, new Color(1, 0.54f, 0.16f));

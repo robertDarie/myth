@@ -61,5 +61,6 @@ def build(name,kind,level=1):
  bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.mesh.normals_make_consistent(inside=False);bpy.ops.object.mode_set(mode='OBJECT')
  bpy.ops.export_scene.fbx(filepath=os.path.join(OUT,name+'.fbx'),use_selection=True,object_types={'MESH'},axis_forward='-Z',axis_up='Y',add_leaf_bones=False,bake_anim=False)
  return {'asset':name,'vertices':len(o.data.vertices),'polygons':len(o.data.polygons),'materials':len(o.data.materials)}
-report=[build('GreekCitadel1','citadel'),build('GreekCitadel2','citadel',2),build('GreekTemple','temple'),build('GreekBarracks','barracks')]
-print(json.dumps(report))
+if __name__=='__main__':
+ report=[build('GreekCitadel1','citadel'),build('GreekCitadel2','citadel',2),build('GreekTemple','temple'),build('GreekBarracks','barracks')]
+ print(json.dumps(report))

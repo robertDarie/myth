@@ -55,6 +55,10 @@ namespace ThronesOfMyth
             RenderSettings.ambientGroundColor=new Color(.22f,.23f,.17f); RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear; RenderSettings.fogColor = new Color(.32f,.43f,.44f); RenderSettings.fogStartDistance = 105; RenderSettings.fogEndDistance = 185;
             var sun = GameObject.Find("Sun"); if (sun != null) { var light = sun.GetComponent<Light>(); if (light != null) { light.cullingMask &= ~((1 << 30) | (1 << 31)); light.color = new Color(1,0.94f,0.79f); light.intensity = 1.12f; light.shadows = LightShadows.Soft; light.shadowStrength = 0.58f; } }
             QualitySettings.shadowDistance = 110;
+            // Opt-in diagnostic only: compare the same view with shadows disabled.
+            if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"--thrones-no-shadows")>=0)
+            {QualitySettings.shadows=ShadowQuality.Disable;Debug.Log("Shadow diagnostic active · "+SystemInfo.graphicsDeviceName+" · "+SystemInfo.graphicsDeviceVersion);}
+
             var random = new System.Random(431);
             for (int cluster = 0; cluster < 125; cluster++)
             {
@@ -64,7 +68,7 @@ namespace ThronesOfMyth
                 {
                     var p = center + new Vector2((float)random.NextDouble()*5-2.5f,(float)random.NextDouble()*5-2.5f); if (SceneryClearing(p)||Woodland(p)<.26f) continue;
                     bool pine = p.y > 40; var tint = pine ? new Color(0.24f,0.41f,0.34f) : p.x > 40 ? new Color(0.46f,0.52f,0.28f) : new Color(0.28f,0.48f,0.24f);
-                    tint=Color.Lerp(tint,new Color(.56f,.59f,.30f),(float)random.NextDouble()*.25f);
+                    tint=Color.Lerp(tint,new Color(.56f,.59f,.30f),(cluster%4)/12f);
                     art.EnvironmentModel(scenery, pine ? "PineTree" : "OakTree", new Vector3(p.x,TerrainHeight(p),p.y), 0.75f + (float)random.NextDouble()*0.40f, tint, (float)random.NextDouble()*360);
                 }
             }

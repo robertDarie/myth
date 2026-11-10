@@ -9,8 +9,10 @@ for name in sorted(os.listdir(folder)):
  objects=[o for o in bpy.context.scene.objects if o.type=='MESH'];assert objects,name
  vertices=sum(len(o.data.vertices) for o in objects);faces=sum(len(o.data.polygons) for o in objects);assert vertices>=20 and faces>=20,(name,vertices,faces)
  size=max(max(o.dimensions) for o in objects);assert .5<size<5,(name,size)
+ assert all(v.normal.length>.9 for o in objects for v in o.data.vertices),(name,'invalid lighting normal')
+ if name.startswith(('RealmOak','GreekHome','GreekMarket','GreekGate','ForsakenShelter')):assert vertices<2000,(name,'asset vertex budget')
  roles={m.name.split('.')[0] for o in objects for m in o.data.materials if m};assert roles,(name,'missing roles')
  results.append({'asset':name,'vertices':vertices,'faces':faces,'largest_dimension':round(size,3),'material_roles':sorted(roles)})
-assert len(results)==12
-with open(os.path.join(ROOT,'docs/art/asset-validation-0.39.json'),'w')as f:json.dump(results,f,indent=2)
-print('Verified 12 FBX round trips:',sum(r['vertices'] for r in results),'vertices')
+assert len(results)==18
+with open(os.path.join(ROOT,'docs/art/asset-validation-0.42.json'),'w')as f:json.dump(results,f,indent=2)
+print('Verified 18 FBX round trips:',sum(r['vertices'] for r in results),'vertices')

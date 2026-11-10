@@ -12,9 +12,9 @@ namespace ThronesOfMyth
                 for(int side=-1;side<=1;side+=2)for(int end=-1;end<=1;end+=2)Pillar(root,side*.54f,.16f,end*.45f,.065f,.26f,timber);
                 return root;
             }
-            if(culture=="greek"&&(id=="citadel"||id=="oracle"||id=="barracks"))
+            if(culture=="greek"&&(id=="citadel"||id=="oracle"||id=="barracks"||id=="market"))
             {
-                string model=id=="citadel"?(level>=2?"GreekCitadel2":"GreekCitadel1"):id=="oracle"?"GreekTemple":"GreekBarracks";
+                string model=id=="citadel"?(level>=2?"GreekCitadel2":"GreekCitadel1"):id=="oracle"?"GreekTemple":id=="market"?"GreekMarketStall":"GreekBarracks";
                 if(Imported(root,model,team,culture))
                 {
                     root.localScale=Vector3.one*(id=="citadel"?1.05f:.70f);

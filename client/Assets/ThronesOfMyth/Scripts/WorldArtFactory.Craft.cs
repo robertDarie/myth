@@ -32,10 +32,17 @@ namespace ThronesOfMyth
         {return Craft(parent,"vessel",craftMeshes.ContainsKey("vessel")?null:CraftGeometry.Vessel(),at,Vector3.one*scale,MaterialFor(tint));}
         public void CivicDressing(Transform parent,string culture)
         {
+            if(culture=="greek")
+            {
+                var gateRoot=new GameObject("Greek civic gate").transform;gateRoot.SetParent(parent,false);gateRoot.localPosition=new Vector3(0,0,-7);Imported(gateRoot,"GreekGatehouse",MythInterfaceTheme.Teal);
+                foreach(var at in new[]{new Vector3(-5.5f,0,-5.6f),new Vector3(5.5f,0,-5.6f),new Vector3(-5.5f,0,5.6f),new Vector3(5.5f,0,5.6f)})
+                {var home=new GameObject("Residential courtyard · scenery").transform;home.SetParent(parent,false);home.localPosition=at;home.localScale=Vector3.one*.68f;Imported(home,"GreekHome",MythInterfaceTheme.Teal);}
+            }
             for(int side=-1;side<=1;side+=2)
             {
-                var gate=new GameObject("Culture gatehouse").transform;gate.SetParent(parent,false);gate.localPosition=new Vector3(side*1.0f,0,-7.0f);
-                Box(gate,0,.65f,0,.65f,1.3f,.65f,stone);CraftedRoof(gate,culture,new Vector3(0,1.35f,0),1.0f,.95f,bronze);
+                if(culture!="greek")
+                {var gate=new GameObject("Culture gatehouse").transform;gate.SetParent(parent,false);gate.localPosition=new Vector3(side*1.0f,0,-7.0f);
+                Box(gate,0,.65f,0,.65f,1.3f,.65f,stone);CraftedRoof(gate,culture,new Vector3(0,1.35f,0),1.0f,.95f,bronze);}
                 Vessel(parent,new Vector3(side*1.7f,.05f,-5.5f),.45f,new Color(.58f,.30f,.18f));
                 for(int i=0;i<5;i++)Meadow(parent,new Vector3(side*5.8f,.03f,-4.8f+i*1.8f),i,.8f,new Color(.38f,.47f,.25f));
             }
