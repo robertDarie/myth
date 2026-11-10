@@ -347,7 +347,10 @@ namespace ThronesOfMyth
             else if (city != null)
             {
                 title = city.name + "'s city"; subtitle = city.ageName + " · CITADEL " + city.cityLevel; emblem = "city";
-                action = city.id == playerId ? "Enter city" : "Focus city"; perform = () => { if (city.id == playerId) OpenInterface(InterfacePage.City); else cameraControl?.Focus(city.homeX, city.homeZ); };
+                bool alliedCity = !string.IsNullOrEmpty(me.allianceId) && city.allianceId == me.allianceId;
+                bool readableCity = city.id != playerId && !alliedCity && city.cityLevel >= 2;
+                action = city.id == playerId ? "Enter city" : readableCity ? "Read this city" : "Focus city";
+                perform = () => { if (city.id == playerId) OpenInterface(InterfacePage.City); else if (readableCity) Send(new GameCommand { type = "recon-city", targetId = city.id }); else cameraControl?.Focus(city.homeX, city.homeZ); };
             }
             else if (pin != null) { title = pin.name; subtitle = "ALLIANCE MARKER · " + Mathf.CeilToInt(pin.expires - world.time) + "s"; action = "Focus marker"; perform = () => cameraControl?.Focus(pin.x, pin.z); }
             else if (world.exploration?.findings != null && Array.Find(world.exploration.findings, place => place.id == selectedId) is FindingData finding)
@@ -364,18 +367,23 @@ namespace ThronesOfMyth
             }
             else { selectedId = ""; return; }
             bool remembered=boss?.lastKnown==true||camp?.lastKnown==true||node?.lastKnown==true||site?.lastKnown==true||beacon?.lastKnown==true||city?.lastKnown==true;
-            if(remembered){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
+            bool readableCity = city != null && city.id != playerId && (string.IsNullOrEmpty(me.allianceId) || city.allianceId != me.allianceId) && city.cityLevel >= 2;
+            if(remembered && !readableCity){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
             if(remembered&&camp!=null){action="March & attack";subtitle="LAST SEEN · Approach to verify; AP charged only on engagement";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
             theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);
             if (health >= 0) theme.Bar(new Rect(r.x + 68, r.y + 78, 220, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
-            if (city == null || city.id != playerId) theme.OneLine(new Rect(r.x + 18, r.y + 100, 370, 24), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
+            bool readMarch = army != null && army.ownerId != playerId && (string.IsNullOrEmpty(me.allianceId) || army.allianceId != me.allianceId) && army.deployed && !army.protectedField;
+            bool readGarrison = (site != null || beacon != null) && (string.IsNullOrEmpty(me.allianceId) || (site != null ? site.allianceId : beacon.allianceId) != me.allianceId) && (site == null || !site.unknown && !site.locked);
+            if ((city == null || city.id != playerId) && !readMarch && !readGarrison) theme.OneLine(new Rect(r.x + 18, r.y + 100, 370, 24), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
             if (theme.Button(new Rect(r.xMax - 38, r.y + 7, 28, 27), "×")) { selectedId = ""; map.selectedId = ""; }
             if (city != null && city.id == playerId)
             {
                 if (theme.Button(new Rect(r.x + 18, r.y + 94, 140, 32), "Prepare march")) PrepareCityMarch();
             }
+            if (readMarch && theme.Button(new Rect(r.x + 18, r.y + 94, 150, 32), "Read this march")) Send(new GameCommand { type = "recon-march", targetId = army.id });
+            if (readGarrison && theme.Button(new Rect(r.x + 18, r.y + 94, 160, 32), "Read the garrison")) Send(new GameCommand { type = "recon-garrison", targetId = site != null ? site.id : beacon.id });
             if (theme.Button(new Rect(r.xMax - 208, r.y + 91, 190, 35), action, true, enabled)) perform?.Invoke();
         }
     }

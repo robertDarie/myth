@@ -1,0 +1,175 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { testWorld } from './testing/kingdom-fixture.mjs';
+import { World } from './world.mjs';
+const setup = (names = ['Reader', 'Defender', 'Stranger']) => {
+  const w = testWorld(), sessions = names.map(name => w.join(name));
+  return { w, sessions, players: sessions.map(s => w.authenticate(s.token)) };
+};
+const advance = (w, seconds) => { for (let i = 0; i < seconds * 10; i++) w.tick(0.1); };
+const host = p => { p.cityLevel = 2; p.units.infantry = 80; p.troops = 80; p.mythic = 0; p.food = 1234; p.aether = 77; };
+const reading = p => p.reconReports[0];
+
+test('a city reading is private, timed, and limited to the real depth', () => {
+  const { w, sessions, players: [a, b, c] } = setup();
+  assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /first oath/);
+  host(b);
+  assert.throws(() => w.command(a, { type: 'recon-city', targetId: a.id }), /cannot be read/);
+  w.command(a, { type: 'alliance-create', name: 'Watchers' });
+  w.command(b, { type: 'alliance-join', targetId: a.allianceId });
+  assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /cannot be read/);
+  w.command(b, { type: 'alliance-leave' });
+  b.homeX = 55; b.homeZ = 20;
+  assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /Divine Gate/);
+  b.homeX = 8.5; b.homeZ = 5;
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /already deployed/);
+  assert.equal(a.reconReports.length, 0);
+  advance(w, 14);
+  const report = reading(a);
+  assert.equal(report.outcome, 'read');
+  assert.equal(report.depth, 1);
+  assert.equal(report.cityLevel, 2);
+  assert.equal(report.civilization, b.civilization);
+  assert.equal(report.strength, 'a company');
+  assert.equal(report.forces, undefined);
+  assert.equal(report.resources, undefined);
+  assert.equal(JSON.stringify(report).includes('aether'), false);
+  assert.equal(report.food, undefined);
+  assert.equal(b.reconNotices.length, 1);
+  assert.equal(b.reconNotices[0].scoutName, a.name);
+  assert.equal(b.reconNotices[0].id, report.scoutId);
+  advance(w, 20);
+  assert.equal(b.reconNotices.length, 1);
+  const own = w.snapshot(a.id), defender = w.snapshot(b.id), stranger = w.snapshot(c.id);
+  assert.equal(own.exploration.reconReports.length, 1);
+  assert.ok(own.players.find(p => p.id === a.id).reports.some(r => r.type === 'reconnaissance' && r.sourceId === report.id));
+  assert.ok(defender.players.find(p => p.id === b.id).reports.some(r => r.type === 'recon-notice'));
+  assert.equal(stranger.exploration.reconReports.length, 0);
+  assert.equal(stranger.exploration.reconNotices.length, 0);
+  assert.equal(stranger.players.find(p => p.id === a.id).reconReports, undefined);
+  assert.equal(stranger.players.find(p => p.id === b.id).reconNotices, undefined);
+  assert.equal(stranger.players.find(p => p.id === a.id).reports, undefined);
+  assert.equal(stranger.players.find(p => p.id === b.id).food, undefined);
+  assert.equal(own.players.find(p => p.id === b.id).food, undefined);
+  assert.equal(sessions.length, 3);
+});
+
+test('recall and redirect cancel an unfinished reading', () => {
+  const { w, players: [a, b] } = setup(['Reader', 'Defender']);
+  host(b);
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  w.command(a, { type: 'scout-recall', targetId: a.scouts[0].id });
+  advance(w, 16);
+  assert.equal(a.reconReports.length, 0);
+  assert.equal(b.reconNotices.length, 0);
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  w.command(a, { type: 'scout-redirect', targetId: a.scouts[0].id, x: 24, z: 24 });
+  advance(w, 16);
+  assert.equal(a.reconReports.length, 0);
+  assert.equal(b.reconNotices.length, 0);
+  assert.equal(a.scouts.every(s => !s.recon), true);
+});
+
+test('two scouts can read one city, and a reload finishes the watch once', () => {
+  const { w, sessions, players: [a, b] } = setup(['Reader', 'Defender']);
+  host(b);
+  a.buildings.scoutcamp = 3;
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  assert.equal(a.scouts.length, 2);
+  assert.equal(new Set(a.scouts.map(s => s.recon.targetId)).size, 1);
+  advance(w, 2);
+  const loaded = World.fromSave(w.toSave());
+  const reader = loaded.authenticate(sessions[0].token), defender = loaded.authenticate(sessions[1].token);
+  assert.equal(reader.scouts.length, 2);
+  assert.ok(reader.scouts.every(s => s.recon && s.recon.kind === 'city'));
+  advance(loaded, 16);
+  assert.equal(reader.reconReports.length, 2);
+  assert.equal(reader.reconReports.every(r => r.depth === 2 && r.forces[0].types.some(t => t.id === 'infantry' && t.count === 80)), true);
+  assert.equal(defender.reconNotices.length, 2);
+  assert.equal(new Set(defender.reconNotices.map(n => n.id)).size, 2);
+});
+
+test('advanced readings include the commander and ordinary stores, never Aether', () => {
+  const { w, players: [a, b] } = setup(['Reader', 'Defender']);
+  host(b);
+  b.technologies.drill = 1;
+  a.buildings.scoutcamp = 5;
+  a.technologies.veilreading = 2;
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  const watch = a.scouts[0];
+  advance(w, 1);
+  assert.equal(watch.phase, 'Exploring');
+  assert.equal(watch.watchSeconds, 4);
+  advance(w, 8);
+  const report = reading(a);
+  assert.equal(report.depth, 3);
+  assert.equal(report.commanderId, b.commanderId);
+  assert.ok(report.commanderName.length > 0);
+  assert.match(report.bonuses, /Heroic Formations rank 1/);
+  assert.equal(report.resources.food, 1234);
+  assert.equal(report.resources.mana, b.mana);
+  assert.equal(Object.hasOwn(report.resources, 'aether'), false);
+  assert.equal(a.scoutReports.length, 0);
+});
+
+test('march and garrison readings follow live state and reject hidden or empty targets', () => {
+  const { w, players: [a, b] } = setup(['Reader', 'Defender']);
+  host(b);
+  b.x = 40; b.z = 40; b.deployed = true;
+  assert.throws(() => w.command(a, { type: 'recon-march', targetId: b.id }), /outside current allied vision/);
+  b.x = 12; b.z = 8;
+  w.command(a, { type: 'recon-march', targetId: b.id });
+  b.x = b.homeX; b.z = b.homeZ; b.deployed = false; b.target = null;
+  advance(w, 12);
+  assert.equal(a.reconReports.length, 0);
+  assert.equal(b.reconNotices.length, 0);
+  b.x = 12; b.z = 8; b.deployed = true;
+  w.command(a, { type: 'recon-march', targetId: b.id });
+  advance(w, 14);
+  assert.equal(reading(a).kind, 'march');
+  assert.equal(reading(a).forces, undefined);
+  assert.equal(b.reconNotices.length, 0);
+  assert.throws(() => w.command(a, { type: 'recon-garrison', targetId: 'shrine-dawn' }), /No enemy garrison/);
+  a.buildings.scoutcamp = 3;
+  const shrine = w.sites.find(s => s.id === 'shrine-dawn');
+  b.allianceId = 'foreign'; shrine.allianceId = 'foreign'; b.x = shrine.x; b.z = shrine.z; b.deployed = true;
+  w.garrisons.push({ targetId: shrine.id, allianceId: 'foreign', armyIds: [b.id] });
+  w.command(a, { type: 'recon-garrison', targetId: 'shrine-dawn' });
+  advance(w, 14);
+  const garrison = a.reconReports.find(r => r.kind === 'garrison');
+  assert.equal(garrison.depth, 2);
+  assert.equal(garrison.forces[0].types.find(t => t.id === 'infantry').count, 80);
+  assert.equal(b.reconNotices.length, 0);
+});
+
+test('a withdrawn host during the watch records no numbers and no notice', () => {
+  const { w, players: [a, b] } = setup(['Reader', 'Defender']);
+  host(b);
+  b.x = 12; b.z = 8; b.deployed = true;
+  w.command(a, { type: 'recon-march', targetId: b.id });
+  advance(w, 3);
+  assert.equal(a.scouts[0].phase, 'Exploring');
+  b.x = b.homeX; b.z = b.homeZ; b.deployed = false; b.target = null;
+  advance(w, 10);
+  assert.equal(reading(a).outcome, 'missed');
+  assert.equal(reading(a).forces, undefined);
+  assert.equal(reading(a).strength, '');
+  assert.equal(b.reconNotices.length, 0);
+});
+
+test('schema 17 gains empty readings and rank-zero veil research without erasing exploration', () => {
+  const { w, sessions, players: [a] } = setup(['Keeper']);
+  const explored = [...a.explored];
+  const old = w.toSave();
+  old.schema = 17;
+  for (const p of old.world.players) { delete p.reconReports; delete p.reconNotices; delete p.technologies.veilreading; for (const s of p.scouts ?? []) { delete s.recon; delete s.watchSeconds; } }
+  const loaded = World.fromSave(old);
+  const keeper = loaded.authenticate(sessions[0].token);
+  assert.equal(loaded.toSave().schema, 18);
+  assert.deepEqual(keeper.explored, explored);
+  assert.deepEqual(keeper.reconReports, []);
+  assert.deepEqual(keeper.reconNotices, []);
+  assert.equal(keeper.technologies.veilreading, 0);
+});

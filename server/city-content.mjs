@@ -36,6 +36,7 @@ export const TECHNOLOGIES = [
   { id: 'vitality', name: 'Oaths of Endurance', branch: 'Military', description: '+5% army maximum health per rank; new capacity heals at home.', academy: 1, prerequisite: 'drill', base: { food: 50, gold: 40, mana: 5 } },
   { id: 'march', name: 'Paths of Hermes', branch: 'Military', description: '+4% march speed per rank.', academy: 2, prerequisite: 'logistics', base: { food: 40, gold: 50 } },
   { id: 'beastlore', name: 'Pacts of the First Beasts', branch: 'Divine', description: '+10% mythic damage contribution per rank.', academy: 2, prerequisite: 'vitality', building: 'menagerie', base: { food: 50, gold: 50, mana: 15 } },
+  { id: 'veilreading', name: 'Reading of the Veil', branch: 'Military', description: 'The Outlook reads troop types at rank 1. Rank 2, with a fully raised Outlook, reads commanders, defenses and ordinary stores. Original v0.45 tuning.', academy: 1, prerequisite: 'drill', maxLevel: 2, base: { food: 40, gold: 50, wood: 30 } },
 ];
 export const RELICS = [
   { id: 'aegis', name: 'Bronze Aegis', description: '+10% army maximum health.', cost: { stone: 80, gold: 60, mana: 10 }, duration: 15, damage: 1, health: 1.1 },

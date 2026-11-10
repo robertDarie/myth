@@ -64,7 +64,8 @@ namespace ThronesOfMyth
             int found = fog.explored.Length;
             GUILayout.Label("Explored land stays clear. " + found + " / 400 sectors · " + (found / 4f).ToString("0.0") + "%", sectionStyle);
             theme.Bar(GUILayoutUtility.GetRect(80, 14, GUILayout.ExpandWidth(true)), found / 400f, MythInterfaceTheme.Teal);
-            GUILayout.Label("Military sight is separate. Enemy troop counts, cargo and defenses stay hidden unless a scout or allied army can currently see them. A private survey is a snapshot, not live tracking.", noteStyle);
+            GUILayout.Label("Explored land stays clear. A veil reading is a private historical report. Enemy stores, home hosts and garrison details are not published on the ordinary map.", noteStyle);
+            if (fog.recon != null) GUILayout.Label(ReconCopy.Depth(fog.recon.depth) + " Watch " + fog.recon.seconds + "s once the scout arrives. " + ReconCopy.Stale, noteStyle);
             GUILayout.Label((fog.visible == null ? 0 : fog.visible.Length) + " sectors are in current allied sight.", theme.Small);
             if (fog.scoutCamp != null)
             {
@@ -85,13 +86,13 @@ namespace ThronesOfMyth
             {
                 shown++;
                 GUILayout.BeginVertical(GUI.skin.box);
-                string where = scout.phase == "Idle" ? "At the Outlook" : ScoutInterfaceCopy.Phase(scout.phase) + " · " + scout.x.ToString("0") + ", " + scout.z.ToString("0");
+                string where = scout.phase == "Idle" ? "At the Outlook" : (string.IsNullOrEmpty(scout.reconKind) ? ScoutInterfaceCopy.Phase(scout.phase) : ReconCopy.Kind(scout.reconKind)) + " · " + scout.x.ToString("0") + ", " + scout.z.ToString("0");
                 string eta = scout.phase != "Idle" && scout.eta > 0.05f ? " · ETA " + Mathf.CeilToInt(scout.eta) + "s" : "";
                 GUILayout.Label("Scout " + shown + " · " + where + eta, sectionStyle);
                 if (scout.phase != "Idle") GUILayout.Label("Destination " + scout.targetX.ToString("0") + ", " + scout.targetZ.ToString("0"), noteStyle);
                 if (scout.phase == "Exploring")
                 {
-                    GUILayout.Label("Survey " + Mathf.RoundToInt(Mathf.Clamp01(scout.progress) * 100f) + "%", theme.Small);
+                    GUILayout.Label((string.IsNullOrEmpty(scout.reconKind) ? "Survey " : "Reading ") + Mathf.RoundToInt(Mathf.Clamp01(scout.progress) * 100f) + "%", theme.Small);
                     theme.Bar(GUILayoutUtility.GetRect(80, 12, GUILayout.ExpandWidth(true)), Mathf.Clamp01(scout.progress), MythInterfaceTheme.Gold);
                 }
                 if (scout.phase != "Idle" && !scout.id.StartsWith("idle:", StringComparison.Ordinal))

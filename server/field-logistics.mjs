@@ -80,5 +80,7 @@ export function unifiedReports(w,p,battles=p.battleReports,groups=p.groupReports
  for(const r of battles)rows.push({id:'battle:'+r.id,type:'battle',time:r.ended||r.started,title:r.outcome,detail:r.sides.map(s=>s.playerName).join(' vs '),sourceId:r.id,currencyNote:r.currencyNote});
  for(const r of groups)rows.push({id:'rally:'+r.id,type:'rally',time:r.ended||r.started,title:r.outcome,detail:r.targetName,sourceId:r.id,currencyNote:r.currencyNote});
  for(const r of p.scoutReports)rows.push({id:'scout:'+r.id,type:'scouting',time:r.time,title:'Scouting survey',detail:`${r.x.toFixed(1)}, ${r.z.toFixed(1)}`,sourceId:r.id,currencyNote:r.currencyNote});
+ for(const r of p.reconReports??[])rows.push({id:'reading:'+r.id,type:'reconnaissance',time:r.time,title:r.outcome==='read'?'Veil reading · '+r.subjectName:'Veil reading missed',detail:r.staleNote,sourceId:r.id});
+ for(const n of p.reconNotices??[])rows.push({id:'notice:'+n.id,type:'recon-notice',time:n.time,title:n.scoutName+' read your city',detail:'Observed '+n.targetName+' . This notice is private.',sourceId:n.id});
  return rows.sort((a,b)=>b.time-a.time||a.id.localeCompare(b.id)).slice(0,170);
 }

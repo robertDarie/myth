@@ -4,7 +4,10 @@ A shared-world mythology strategy prototype: found a city, lead mortal and
 mythic armies, form an alliance, and reclaim the fallen gods' sanctuary.
 See [the game concept](docs/game-design.md).
 
-## Playable slice 0.44
+## Playable slice 0.45
+
+- Private veil readings of enemy cities, marches and garrisons. The Outlook of the Horizon and Reading of the Veil set the depth. Reports are historical and stay with the reader. [Depths, timing and visibility](docs/reconnaissance-0.45.md).
+  **Native visual acceptance remains pending.**
 
 - Ancient settlements, forgotten caverns and ancient ruins. Fog reveals them, scouts investigate caverns and ruins, and each city claims its own gift once. [Places, rewards and migration](docs/discoveries-0.44.md).
   **Native visual acceptance remains pending.**

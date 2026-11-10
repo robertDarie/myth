@@ -53,7 +53,7 @@ namespace ThronesOfMyth
             {
                 if (scout.phase == "Idle") continue;
                 string eta = scout.eta > 0.05f ? " · " + Mathf.CeilToInt(scout.eta) + "s" : "";
-                Put(seen, scout.id, "scout", scout.x, scout.z, scout.phase == "Exploring" ? gold : Color.cyan, "Scout · " + (scout.phase == "Outbound" ? "Traveling" : scout.phase) + eta);
+                Put(seen, scout.id, "scout", scout.x, scout.z, scout.phase == "Exploring" ? gold : Color.cyan, "Scout · " + (string.IsNullOrEmpty(scout.reconKind) ? "" : "Reading · ") + (scout.phase == "Outbound" ? "Traveling" : scout.phase) + eta);
             }
             foreach (var p in world.armies)
             {

@@ -13,6 +13,8 @@ The map has two exploration states:
 
 There is no grey or half-fogged “remembered” terrain. Current allied sight does not paint a third map state. Exploration is stored per city, so joining or leaving an alliance cannot erase it. Alliance vision can still add sectors while members can see them.
 
+v0.45 adds a private veil reading for enemy cities, marches and garrisons. Explored terrain stays clear, and the rule against last-seen march ghosts still holds. See [reconnaissance](reconnaissance-0.45.md).
+
 ## Military reconnaissance
 
 This is intentionally narrower than Rise of Kingdoms.

@@ -10,12 +10,13 @@ import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journ
 import { route, travel } from './navigation.mjs';
 import { initializeExploration, migrateScouting, explorationTick, explorationCommand, filterFog, visible, visionContext, validateExploration } from './exploration.mjs';
 import { initializeFindings, validateFindings, findingCommand } from './findings.mjs';
+import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
 import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
-import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES } from './city-content.mjs';
+import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
 import { AGES, age, crews, armyList, constructionJobs, totalTroops, totalMythic, ensureHero, heroLevel, activeKind, initializeProgression, skillModifiers, activeSkill, progressionCommand, validateProgression } from './progression.mjs';
 import { initializeCity, capacity, mythicCapacity, cityCommand, citySnapshot, tickCity, validateCity } from './city.mjs';
@@ -58,7 +59,7 @@ export class World {
       health: 0, gold: 150, wood: 150, food: 200, troops: 20, mythic: 0, cityLevel: 1,
       commanderId: 'captain', ownedCommanders: ['captain'], xp: 0, level: 1, kills: 0, questClaimed: false,
       allianceId: '', target: null, cooldown: 0, gatherClock: 0, lastSeen: 0, state: 'Idle', recovery: 0, reserveTroops: 0, reserveMythic: 0, construction: null, trainingQueue: [], offline: false };
-    initializeCity(player); initializeInventory(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeFindings(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player); player.kingdomClaims = [];
+    initializeCity(player); initializeInventory(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeFindings(player); initializeRecon(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player); player.kingdomClaims = [];
     initializeEconomy(this,player);initializeLogistics(player);player.health = this.stats(player).maxHealth;
     this.players.set(id, player); this.sessions.set(token, id); refreshJourney(this, player);explorationTick(this,0);
     this.event(`${player.name} founded a ${civilization} city.`);
@@ -296,14 +297,14 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
-    return { schema: 17, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 18, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -317,8 +318,10 @@ export class World {
       if (data.schema < 4) migrateUnits(p);
       if (data.schema < 5) { initializeWar(p); initializeSocial(p); }
       if (data.schema < 16) { p.buildings ??= {}; if (!Number.isInteger(p.buildings.scoutcamp)) p.buildings.scoutcamp = 1; }
-      if (data.schema < 7) initializeExploration(p); else { if (data.schema < 16) migrateScouting(p); for (const s of p.scouts ?? []) if (typeof s.investigationId !== 'string') s.investigationId = ''; validateExploration(p); }
+      if (data.schema < 7) initializeExploration(p); else { if (data.schema < 16) migrateScouting(p); for (const s of p.scouts ?? []) { if (typeof s.investigationId !== 'string') s.investigationId = ''; if (s.recon === undefined) s.recon = null; if (!Number.isFinite(s.watchSeconds)) s.watchSeconds = 0; } validateExploration(p); }
       if (data.schema < 17) initializeFindings(p); else validateFindings(p);
+      if (data.schema < 18) initializeRecon(p); else validateRecon(p);
+      p.technologies ??= {}; for (const tech of TECHNOLOGIES) if (!Number.isInteger(p.technologies[tech.id])) p.technologies[tech.id] = 0;
       if (data.schema < 8) initializeJourney(p, true); else validateJourney(p);
       if (data.schema < 9) p.strongholdVictories = 0;
       if (!Number.isSafeInteger(p.strongholdVictories) || p.strongholdVictories < 0) throw new Error('Invalid saved stronghold victories.');

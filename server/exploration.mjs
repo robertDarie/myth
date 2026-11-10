@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { route, travel } from './navigation.mjs';
 import { scoutCampCard, scoutProfile } from './scout-camp.mjs';
 import { revealFindings, completeInvestigation, journalFor, prepareInvestigation, findingById } from './findings.mjs';
+import { beginRecon, trackRecon, finishRecon, reconDepth, reconSeconds, initializeRecon, validateRecon, visibleMarch } from './recon.mjs';
 
 // Terrain discovery is permanent. Military reconnaissance is separate and current-vision only.
 // Explored land does not publish enemy troop counts, cargo, orders, live garrison totals or live resource amounts.
@@ -57,9 +58,11 @@ function assignTarget(p, s, x, z) {
   s.targetX = x; s.targetZ = z; s.phase = 'Outbound'; s.surveyRemaining = 0; s.reportedThisLeg = false;
   s.rewardPending = !p.explored.includes(cellIndex({ x, z }));
   s.investigationId = '';
+  s.recon = null;
+  s.watchSeconds = 0;
 }
 function createScout(p, x, z) {
-  const s = { id: randomUUID(), ownerId: p.id, x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ, targetX: x, targetZ: z, phase: 'Outbound', surveyRemaining: 0, rewardPending: !p.explored.includes(cellIndex({ x, z })), reportedThisLeg: false, investigationId: '' };
+  const s = { id: randomUUID(), ownerId: p.id, x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ, targetX: x, targetZ: z, phase: 'Outbound', surveyRemaining: 0, rewardPending: !p.explored.includes(cellIndex({ x, z })), reportedThisLeg: false, investigationId: '', recon: null, watchSeconds: 0 };
   return s;
 }
 function visibleCells(w, p) {
@@ -127,9 +130,10 @@ function scoutEta(w, p, s, profile) {
   return Number.isFinite(length) ? length / profile.speed : 0;
 }
 function presentScout(w, owner, s, profile, includeAuto) {
-  const progress = s.phase === 'Exploring' && profile.surveySeconds > 0 ? Math.max(0, Math.min(1, 1 - s.surveyRemaining / profile.surveySeconds)) : 0;
+  const watch = s.watchSeconds > 0 ? s.watchSeconds : profile.surveySeconds;
+  const progress = s.phase === 'Exploring' && watch > 0 ? Math.max(0, Math.min(1, 1 - s.surveyRemaining / watch)) : 0;
   const body = { id: s.id, ownerId: s.ownerId, phase: s.phase, x: s.x, z: s.z, targetX: s.targetX, targetZ: s.targetZ, eta: scoutEta(w, owner, s, profile), progress };
-  if (includeAuto) { body.auto = !!owner.autoExplore; if (s.investigationId) body.investigationId = s.investigationId; }
+  if (includeAuto) { body.auto = !!owner.autoExplore; if (s.investigationId) body.investigationId = s.investigationId; if (s.recon) body.reconKind = s.recon.kind; }
   return body;
 }
 export function explorationTick(w, dt) {
@@ -139,12 +143,16 @@ export function explorationTick(w, dt) {
     dispatchAuto(w, p, profile);
     const keep = [];
     for (const s of p.scouts) {
-      if (s.phase === 'Outbound' && !w.canEnter(p, { x: s.targetX, z: s.targetZ })) { s.phase = 'Returning'; s.rewardPending = false; }
+      trackRecon(w, p, s);
+      if (s.phase === 'Outbound' && !w.canEnter(p, { x: s.targetX, z: s.targetZ })) { s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; s.recon = null; }
       if (s.phase === 'Exploring') {
         s.surveyRemaining = Math.max(0, s.surveyRemaining - dt);
         if (s.surveyRemaining > 0.00001) { keep.push(s); continue; }
-        completeSurvey(w, p, s, profile);
-        if (s.investigationId) { completeInvestigation(p, s.investigationId); s.investigationId = ''; }
+        if (s.recon) finishRecon(w, p, s);
+        else {
+          completeSurvey(w, p, s, profile);
+          if (s.investigationId) { completeInvestigation(p, s.investigationId); s.investigationId = ''; }
+        }
         if (p.autoExplore) {
           const next = nextAutoTarget(w, p, s, profile);
           if (next) { assignTarget(p, s, next.x, next.z); keep.push(s); continue; }
@@ -157,7 +165,8 @@ export function explorationTick(w, dt) {
       if (arrived && returning) continue;
       if (arrived && s.phase === 'Outbound') {
         const place = findingById(s.investigationId);
-        s.phase = 'Exploring'; s.surveyRemaining = place && place.seconds > 0 ? place.seconds : profile.surveySeconds; s.reportedThisLeg = false;
+        const seconds = s.recon ? reconSeconds(reconDepth(p)) : place && place.seconds > 0 ? place.seconds : profile.surveySeconds;
+        s.phase = 'Exploring'; s.watchSeconds = seconds; s.surveyRemaining = seconds; s.reportedThisLeg = false;
       }
       keep.push(s);
     }
@@ -173,6 +182,15 @@ export function explorationTick(w, dt) {
 }
 export function explorationCommand(w, p, c, fail) {
   const profile = scoutProfile(p.buildings?.scoutcamp ?? 0);
+  if (c.type === 'recon-city' || c.type === 'recon-march' || c.type === 'recon-garrison') {
+    const started = beginRecon(w, p, c, fail);
+    if (c.type === 'recon-march' && !visibleMarch(w, p, c.targetId, target => visible(w, p, target))) fail('That march is outside current allied vision. Scout the area first.');
+    if (profile.scouts <= 0) fail('Raise the Outlook of the Horizon before sending scouts.');
+    if (p.scouts.length >= profile.scouts) fail('All scouts are already deployed. Recall one or raise the Outlook of the Horizon.');
+    const s = createScout(p, started.x, started.z);
+    s.recon = started.recon; s.rewardPending = false; s.investigationId = '';
+    p.scouts.push(s); return true;
+  }
   if (c.type === 'finding-investigate') {
     const place = prepareInvestigation(p, c.targetId, fail);
     if (profile.scouts <= 0) fail('Raise the Outlook of the Horizon before sending scouts.');
@@ -203,7 +221,7 @@ export function explorationCommand(w, p, c, fail) {
   if (c.type === 'scout-recall') {
     const s = p.scouts.find(s => s.id === c.targetId);
     if (!s) fail('That scout mission is no longer active.');
-    s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; return true;
+    s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; s.recon = null; return true;
   }
   if (c.type === 'scout-auto') {
     if (typeof c.enabled !== 'boolean') fail('Choose whether auto explore is on or off.');
@@ -223,14 +241,15 @@ export function fogSnapshot(w, p, context = visionContext(w, p)) {
   for (let i = own.length; i < profile.scouts; i++) own.push({ id: 'idle:' + p.id + ':' + i, ownerId: p.id, phase: 'Idle', x: p.homeX, z: p.homeZ, targetX: p.homeX, targetZ: p.homeZ, eta: 0, progress: 0, auto: !!p.autoExplore });
   const alliedScouts = [...w.players.values()].filter(q => q.id !== p.id && allied(p, q)).flatMap(q => q.scouts.map(s => presentScout(w, q, s, scoutProfile(q.buildings?.scoutcamp ?? 0), false)));
   const journal = journalFor(p, p.scouts.map(s => ({ ...s, eta: scoutEta(w, p, s, profile) })));
-  return { cellSize: 4, width: 20, explored, visible: cells, exploredPercent: Math.round(explored.length * 2.5) / 10, autoExplore: !!p.autoExplore, scoutCamp: scoutCampCard(p.buildings?.scoutcamp ?? 0), scouts: [...own, ...alliedScouts], reports: p.scoutReports, findings: journal.places, journal: { discovered: journal.discovered, investigated: journal.investigated, claimed: journal.claimed, unclaimed: journal.unclaimed, byType: journal.byType, remaining: journal.remaining, milestones: journal.milestones, nextUnclaimedId: journal.nextUnclaimedId } };
+  const depth = reconDepth(p);
+  return { cellSize: 4, width: 20, explored, visible: cells, exploredPercent: Math.round(explored.length * 2.5) / 10, autoExplore: !!p.autoExplore, scoutCamp: scoutCampCard(p.buildings?.scoutcamp ?? 0), scouts: [...own, ...alliedScouts], reports: p.scoutReports, findings: journal.places, journal: { discovered: journal.discovered, investigated: journal.investigated, claimed: journal.claimed, unclaimed: journal.unclaimed, byType: journal.byType, remaining: journal.remaining, milestones: journal.milestones, nextUnclaimedId: journal.nextUnclaimedId }, recon: { depth, seconds: reconSeconds(depth), research: p.technologies?.veilreading ?? 0 }, reconReports: p.reconReports ?? [], reconNotices: p.reconNotices ?? [] };
 }
 export function filterFog(w, snapshot, p, context = visionContext(w, p)) {
   const seen = context.seen, friendly = a => a.ownerId === p.id || !!p.allianceId && a.allianceId === p.allianceId;
   snapshot.exploration = fogSnapshot(w, p, context); rememberStatics(w, p, seen);
   snapshot.armies = snapshot.armies.filter(a => friendly(a) || seen(a)).map(a => a.ownerId === p.id ? a : { ...a, cargo: undefined, cargoSources: undefined, carryCapacity: undefined, homeX: undefined, homeZ: undefined, hasOrder: false, targetId: '', targetX: a.x, targetZ: a.z, route: [] });
   for (const q of snapshot.players) {
-    delete q.explored; delete q.scout; delete q.scouts; delete q.scoutReports; delete q.autoExplore; delete q.findings;
+    delete q.explored; delete q.scout; delete q.scouts; delete q.scoutReports; delete q.autoExplore; delete q.findings; delete q.reconReports; delete q.reconNotices;
     if (q.id !== p.id) { q.x = q.homeX; q.z = q.homeZ; }
   }
   for (const kind of ['strongholds', 'camps', 'nodes', 'flags', 'sites']) {
@@ -254,7 +273,9 @@ export function validateExploration(p) {
   if (p.scouts.length > Math.max(profile.scouts, 3) || p.scouts.length > 3 || new Set(p.scouts.map(s => s?.id)).size !== p.scouts.length) throw new Error('Invalid saved scout.');
   if (p.buildings && Number.isInteger(p.buildings.scoutcamp) && p.scouts.length > profile.scouts) throw new Error('Invalid saved scout.');
   for (const s of p.scouts) {
-    if (!s || !point(s) || !point({ x: s.targetX, z: s.targetZ }) || typeof s.id !== 'string' || s.ownerId !== p.id || !PHASES.includes(s.phase) || !Number.isFinite(s.surveyRemaining) || s.surveyRemaining < 0 || s.surveyRemaining > 30 || typeof s.rewardPending !== 'boolean' || typeof s.reportedThisLeg !== 'boolean' || typeof s.investigationId !== 'string') throw new Error('Invalid saved scout.');
+    if (!s || !point(s) || !point({ x: s.targetX, z: s.targetZ }) || typeof s.id !== 'string' || s.ownerId !== p.id || !PHASES.includes(s.phase) || !Number.isFinite(s.surveyRemaining) || s.surveyRemaining < 0 || s.surveyRemaining > 30 || typeof s.rewardPending !== 'boolean' || typeof s.reportedThisLeg !== 'boolean' || typeof s.investigationId !== 'string' || !Number.isFinite(s.watchSeconds) || s.watchSeconds < 0 || s.watchSeconds > 30) throw new Error('Invalid saved scout.');
+    if (s.recon && (!['city', 'march', 'garrison'].includes(s.recon.kind) || typeof s.recon.targetId !== 'string')) throw new Error('Invalid saved scout.');
+    if (s.recon && s.investigationId) throw new Error('Invalid saved scout.');
     if (s.investigationId && !findingById(s.investigationId)) throw new Error('Invalid saved scout.');
   }
   for (const r of p.scoutReports) {

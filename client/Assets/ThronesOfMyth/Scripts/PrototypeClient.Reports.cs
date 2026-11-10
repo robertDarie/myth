@@ -18,7 +18,7 @@ namespace ThronesOfMyth
             foreach(var report in me.reports??Array.Empty<CoreReport>())
             {
                 string category=reportCategory==1?"battle":reportCategory==2?"gathering":reportCategory==3?"scouting":reportCategory==4?"alliance":reportCategory==6?"trade":"system";
-                if(reportCategory>0&&report.type!=category&&!(category=="battle"&&(report.type=="pve"||report.type=="rally"))&&!(category=="alliance"&&report.type=="rally"))continue;
+                if(reportCategory>0&&report.type!=category&&!(category=="battle"&&(report.type=="pve"||report.type=="rally"))&&!(category=="alliance"&&report.type=="rally")&&!(category=="scouting"&&(report.type=="reconnaissance"||report.type=="recon-notice")))continue;
                 if(!string.IsNullOrWhiteSpace(reportSearch)&&((report.title??"")+" "+report.detail+" "+report.outcome+" "+report.reason).IndexOf(reportSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
                 found=true;
                 if(GUILayout.Button(report.title+"\n"+report.type.ToUpperInvariant()+" · "+report.outcome+" · "+InterfaceLayout.Duration(Mathf.Max(0,world.time-report.time))+" ago",reportSelection==report.id?theme.Primary:theme.Skin.button,GUILayout.MinHeight(54)))reportSelection=reportSelection==report.id?"":report.id;
@@ -35,6 +35,8 @@ namespace ThronesOfMyth
                 }
                 else if(report.type=="battle")DrawBattleReports();
                 else if(report.type=="rally")DrawGroupReports();
+                else if(report.type=="reconnaissance")DrawReading(report);
+                else if(report.type=="recon-notice")GUILayout.Label(report.detail??"",noteStyle);
                 else if(report.type=="scouting")
                 {
                     var survey=Array.Find(world.exploration.reports,r=>r.id==report.sourceId);
@@ -45,6 +47,21 @@ namespace ThronesOfMyth
                 GUILayout.EndVertical();
             }
             if(!found)GUILayout.Label("No matching reports. Gather and deliver resources, scout, or engage a camp to record your first outcome.",noteStyle);
+        }
+        private void DrawReading(CoreReport report)
+        {
+            var reading=Array.Find(world.exploration?.reconReports??Array.Empty<ReconReport>(),item=>item.id==report.sourceId);
+            if(reading==null){GUILayout.Label(report.detail??"",noteStyle);return;}
+            GUILayout.Label(reading.subjectName+" · "+reading.civilization+" · Citadel "+reading.cityLevel+(string.IsNullOrEmpty(reading.strength)?"":" · "+reading.strength),sectionStyle);
+            GUILayout.Label("Observed "+InterfaceLayout.Duration(Mathf.Max(0,world.time-reading.time))+" ago · depth "+reading.depth+" · "+reading.staleNote,noteStyle);
+            if(reading.showsCommand)GUILayout.Label("Commander "+reading.commanderName+" · "+(reading.bonuses??""),noteStyle);
+            if(reading.showsForces)foreach(var force in reading.forces??Array.Empty<ReconForce>())
+            {
+                GUILayout.Label(force.role+" · "+force.commanderName+" · "+force.troops+" troops",noteStyle);
+                foreach(var type in force.types??Array.Empty<ReconTypeLine>())GUILayout.Label(type.name+" · tier "+type.tier+" · "+type.count,noteStyle);
+            }
+            if(reading.showsResources&&reading.resources!=null)GUILayout.Label("Stores · food "+reading.resources.food+" · wood "+reading.resources.wood+" · stone "+reading.resources.stone+" · gold "+reading.resources.gold+" · Mana "+reading.resources.mana,noteStyle);
+            if(GUILayout.Button("Go to the target"))FocusGameplay(reading.x,reading.z);
         }
     }
 }
