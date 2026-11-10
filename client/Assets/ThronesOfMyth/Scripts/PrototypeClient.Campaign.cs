@@ -58,14 +58,16 @@ namespace ThronesOfMyth
         private void DrawCampaign()
         {
             var campaign = me.journeyCampaign;
-            if (campaign == null) return;
+            if (campaign == null || campaign.chapters == null || campaign.chapters.Length == 0) return;
             if (lastActiveChapter != campaign.activeId) { selectedChapterId = campaign.activeId; lastActiveChapter = campaign.activeId; }
             GUILayout.Label("CHRONICLES OF THE FALLEN GODS", theme.Eyebrow);
             GUILayout.Label(campaign.complete ? "Opening campaign complete" : "Your path through the fallen world", theme.Heading);
             GUILayout.Label("Tasks track your actions even before their chapter unlocks. Claim each objective, then its chapter reward. City work continues while armies and scouts are away.", noteStyle);
             var chapterTitles=new string[campaign.chapters.Length];int selectedIndex=0;
             for(int i=0;i<chapterTitles.Length;i++){var c=campaign.chapters[i];chapterTitles[i]=c.title+(c.claimed?" · Complete":c.locked?" · Locked":"");if(c.id==selectedChapterId)selectedIndex=i;}
-            selectedIndex=theme.Tabs(selectedIndex,chapterTitles,WindowRect.width-280);selectedChapterId=campaign.chapters[selectedIndex].id;
+            selectedIndex=Mathf.Clamp(theme.Tabs(selectedIndex,chapterTitles,WindowRect.width-280),0,campaign.chapters.Length-1);
+            var chapter=campaign.chapters[selectedIndex];
+            selectedChapterId=chapter.id;
             GUILayout.Space(12); GUILayout.Label(chapter.title, sectionStyle); GUILayout.Label(chapter.story, noteStyle);
             if (chapter.locked) GUILayout.Label("Finish and claim earlier chapters to unlock these rewards. Progress made early is remembered.", theme.Small);
             foreach (var task in chapter.tasks)
