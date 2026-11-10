@@ -37,16 +37,16 @@ namespace ThronesOfMyth
         {
             theme.Panel(row, false, true);
             theme.Icon(new Rect(row.x + 13, row.y + 13, 30, 30), icon.StartsWith("veteran")?icon.Substring(7).ToLowerInvariant():icon, count > 0 ? MythInterfaceTheme.Gold : MythInterfaceTheme.Muted);
-            theme.Text(new Rect(row.x + 57, row.y + 8, row.width - 210, 27), title, theme.Heading);
-            theme.Text(new Rect(row.x + 57, row.y + 37, row.width - 74, 23), description + " · Ready " + available, theme.Small);
+            theme.OneLine(new Rect(row.x + 57, row.y + 8, InterfaceLayout.TroopTitleWidth(row.width), 27), title, theme.Heading);theme.Hint(new Rect(row.x+57,row.y+8,row.width-74,27),title);
+            theme.OneLine(new Rect(row.x + 57, row.y + 37, row.width - 210, 23), description + " · Ready " + available, theme.Small);
             if (!formationEntries.TryGetValue(icon, out var entry)) entry = count.ToString();
             GUI.SetNextControlName("formation-" + icon);
-            entry = GUI.TextField(new Rect(row.xMax - 136, row.y + 10, 76, 33), entry, 6);
+            entry = GUI.TextField(new Rect(row.xMax - 136, row.y + 37, 76, 33), entry, 6);
             if (string.IsNullOrEmpty(entry)) count = 0;
             else if (int.TryParse(entry, out var parsed)) { count = Mathf.Clamp(parsed, 0, available); if (count != parsed) entry = count.ToString(); }
             else entry = count.ToString();
-            if (theme.Button(new Rect(row.xMax - 53, row.y + 10, 43, 33), "MAX")) { count = available; entry = count.ToString(); GUIUtility.keyboardControl = 0; }
-            int slider = Mathf.Clamp(Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(row.x + 17, row.y + 68, row.width - 34, 16), count, 0, Mathf.Max(1, available))), 0, available);
+            if (theme.Button(new Rect(row.xMax - 53, row.y + 37, 43, 33), "MAX")) { count = available; entry = count.ToString(); GUIUtility.keyboardControl = 0; }
+            int slider = Mathf.Clamp(Mathf.RoundToInt(GUI.HorizontalSlider(new Rect(row.x + 17, row.y + 83, row.width - 34, 16), count, 0, Mathf.Max(1, available))), 0, available);
             if (slider != count) { count = slider; entry = count.ToString(); }
             formationEntries[icon] = entry;
             return count;
@@ -57,9 +57,10 @@ namespace ThronesOfMyth
             var ready = me.reserveUnits.Copy();
             if (current != null) foreach(var type in world.troopTypes) ready.Set(type.id,ready.Get(type.id)+current.units.Get(type.id));
             int readyMythic = me.reserveMythic + (current?.mythic ?? 0);
-            var left = new Rect(r.x, r.y, 286, r.height); var right = new Rect(r.x + 302, r.y, r.width - 302, r.height);
+            float rosterWidth=InterfaceLayout.FormationRosterWidth(r.width);
+            var left = new Rect(r.x, r.y, rosterWidth, r.height); var right = new Rect(r.x + rosterWidth+16, r.y, r.width - rosterWidth-16, r.height);
             theme.Panel(left, false, true); theme.Panel(right, false, true);
-            theme.Text(new Rect(left.x + 18, left.y + 12, left.width - 36, 25), "CHOOSE YOUR COMMANDER", theme.Eyebrow);
+            theme.OneLine(new Rect(left.x + 18, left.y + 12, left.width - 36, 25), "COMMANDER", theme.Eyebrow);
             foreach (var id in me.ownedCommanders)
                 if (string.IsNullOrEmpty(formationHeroId) && !OwnMarches().Exists(a => a.id != formationMarchId && a.commanderId == id)) formationHeroId = id;
             var hero = Array.Find(world.commanders, h => h.id == formationHeroId);
@@ -67,7 +68,7 @@ namespace ThronesOfMyth
             if (hero != null)
             {
                 theme.PortraitCard(new Rect(left.center.x - portraitHeight * 0.375f, left.y + 49, portraitHeight * 0.75f, portraitHeight), hero.id, RarityColor(hero.color));
-                theme.Text(new Rect(left.x + 10, left.y + portraitHeight + 58, left.width - 20, 30), hero.name, theme.Center);
+                theme.OneLine(new Rect(left.x + 10, left.y + portraitHeight + 58, left.width - 20, 30), hero.name, theme.Center);
             }
             var roster = new Rect(left.x + 10, left.y + portraitHeight + 98, left.width - 20, left.height - portraitHeight - 108);
             formationHeroScroll = GUI.BeginScrollView(roster, formationHeroScroll, new Rect(0, 0, roster.width - 16, me.ownedCommanders.Length * 60));
@@ -77,8 +78,8 @@ namespace ThronesOfMyth
                 bool assigned = OwnMarches().Exists(a => a.id != formationMarchId && a.commanderId == id);
                 var cell = new Rect(2, i * 60, roster.width - 20, 54); theme.Panel(cell, id == formationHeroId);
                 theme.Portrait(new Rect(8, cell.y + 8, 38, 38), id, RarityColor(definition.color));
-                theme.Text(new Rect(56, cell.y + 5, cell.width - 65, 26), definition.name, theme.Body);
-                theme.Text(new Rect(56, cell.y + 29, cell.width - 65, 20), assigned ? "LEADING ANOTHER MARCH" : definition.rarity.ToUpperInvariant(), theme.Small);
+                theme.OneLine(new Rect(56, cell.y + 5, cell.width - 65, 26), definition.name, theme.Body);
+                theme.OneLine(new Rect(56, cell.y + 29, cell.width - 65, 20), assigned ? "Assigned to a march" : definition.rarity.ToUpperInvariant(), theme.Small);
                 if (!assigned && GUI.Button(cell, GUIContent.none, GUIStyle.none)) formationHeroId = id;
             }
             GUI.EndScrollView();
@@ -89,17 +90,17 @@ namespace ThronesOfMyth
             if(theme.Button(new Rect(right.x+18,right.y+80,right.width-36,34),"Scout patrol · Captain · 15 infantry + 5 archers",false,patrolReady,"Needs the Captain, 15 ready infantry and 5 archers. Train archers in your city."))
             {formationHeroId="captain";formationUnits=new UnitCounts();formationUnits.Set("infantry",15);formationUnits.Set("archers",5);formationMythic=0;formationEntries.Clear();GUIUtility.keyboardControl=0;}
             var viewport = new Rect(right.x + 10, right.y + 121, right.width - 20, right.height - 223);
-            formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, (world.troopTypes.Length+1) * 98));
+            formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, (world.troopTypes.Length+1) * InterfaceLayout.TroopRowStep));
             for (int i = 0; i < world.troopTypes.Length; i++)
             {
                 var type = world.troopTypes[i]; int available = UnitsOf(ready, type.id);
-                SetUnits(formationUnits, type.id, QuantityRow(new Rect(2, i * 98, viewport.width - 22, 92), type.name+" · T"+type.tier, type.role, type.id, Mathf.Min(UnitsOf(formationUnits, type.id), available), available));
+                SetUnits(formationUnits, type.id, QuantityRow(new Rect(2, i * InterfaceLayout.TroopRowStep, viewport.width - 22, InterfaceLayout.TroopRowHeight), type.name+" · T"+type.tier, type.role, type.id, Mathf.Min(UnitsOf(formationUnits, type.id), available), available));
             }
             string mythicName = Array.Find(world.civilizations, c => c.id == me.civilization)?.mythic ?? "Mythic guardian";
-            formationMythic = QuantityRow(new Rect(2, world.troopTypes.Length*98, viewport.width - 22, 92), mythicName, "Mythic escort", "mana", Mathf.Min(formationMythic, readyMythic), readyMythic);
+            formationMythic = QuantityRow(new Rect(2, world.troopTypes.Length*InterfaceLayout.TroopRowStep, viewport.width - 22, InterfaceLayout.TroopRowHeight), mythicName, "Mythic escort", "mana", Mathf.Min(formationMythic, readyMythic), readyMythic);
             GUI.EndScrollView();
             var footer = new Rect(right.x + 18, right.yMax - 96, right.width - 36, 84);
-            theme.Text(new Rect(footer.x, footer.y, footer.width - 200, 25), formationUnits.Total + " mortal · " + formationMythic + " mythic selected", theme.Heading);
+            theme.OneLine(new Rect(footer.x, footer.y, footer.width - 200, 25), formationUnits.Total + " mortal · " + formationMythic + " mythic", theme.Body);
             if (theme.Button(new Rect(footer.xMax - 190, footer.y, 90, 27), "CLEAR")) { formationUnits = new UnitCounts(); formationMythic = 0; formationEntries.Clear(); GUIUtility.keyboardControl = 0; }
             if (theme.Button(new Rect(footer.xMax - 92, footer.y, 92, 27), "ALL READY")) { formationUnits = ready.Copy(); formationMythic = readyMythic; formationEntries.Clear(); GUIUtility.keyboardControl = 0; }
             bool home = current != null && Vector2.Distance(new Vector2(current.x, current.z), new Vector2(me.homeX, me.homeZ)) < 2 && !current.hasOrder && current.recovery <= 0 && current.health >= current.maxHealth;

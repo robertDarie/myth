@@ -433,7 +433,9 @@ namespace ThronesOfMyth
             if(theme.NavigationButton(new Rect(0,row*42,navigation.width-16,36),"All activities","",false,"Open the kingdom menu"))OpenInterface(InterfacePage.Menu);
             GUI.EndScrollView();
             theme.Panel(main, false, true);
-            GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12, main.width - 40, main.height - 24));
+            float fixedHeader=interfacePage==InterfacePage.Exploration?36*Mathf.CeilToInt(explorationTabs.Length/(float)InterfaceLayout.TabColumns(main.width-40,explorationTabs.Length))+8:0;
+            if(fixedHeader>0){GUILayout.BeginArea(new Rect(main.x+20,main.y+12,main.width-40,fixedHeader));DrawExplorationTabs(main.width-40);GUILayout.EndArea();}
+            GUILayout.BeginArea(new Rect(main.x + 20, main.y + 12+fixedHeader, main.width - 40, main.height - 24-fixedHeader));
             contentScroll = GUILayout.BeginScrollView(contentScroll);
             if (interfacePage == InterfacePage.Marches) DrawArmy();
             if (interfacePage == InterfacePage.Training) DrawTraining();

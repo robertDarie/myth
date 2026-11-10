@@ -4,6 +4,7 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
+        private int explorationTab;
         private bool chooseScoutDestination;
         private string redirectScoutId = "";
         private string scoutX = "20", scoutZ = "20";
@@ -29,7 +30,7 @@ namespace ThronesOfMyth
             }
             lastScoutReportId = id;
             var journal = world?.exploration?.journal;
-            if (journal == null) return;
+            if (journal == null) {GUILayout.Label("Waiting for your discovery journal.",noteStyle);return;}
             if (seenFindingClaims < 0) { seenFindingClaims = journal.claimed; return; }
             if (journal.claimed > seenFindingClaims)
             {
@@ -55,12 +56,20 @@ namespace ThronesOfMyth
             GUILayout.Label(ScoutInterfaceCopy.Line(camp.nextScouts, camp.nextSpeed, camp.nextRadius, camp.nextSurveySeconds, camp.nextAutoSectors), theme.Body);
             GUILayout.Label(ScoutInterfaceCopy.Delta(camp), theme.Small);
         }
+        private void DrawExplorationTabs(float width)
+        {
+            int nextTab=theme.Tabs(explorationTab,explorationTabs,width);
+            if(nextTab!=explorationTab){explorationTab=nextTab;contentScroll=Vector2.zero;}
+        }
+        private static readonly string[] explorationTabs={"Scouts","Discovery journal","Survey reports"};
         private void DrawExploration()
         {
             var fog = world.exploration;
             GUILayout.Label("THE VEIL OF THE GODS", theme.Eyebrow);
             GUILayout.Label("Scouts & exploration", theme.Heading);
             if (fog == null || fog.explored == null) { GUILayout.Label("Waiting for the kingdom map.", noteStyle); return; }
+            if(explorationTab==1){DrawDiscoveryJournal(fog);return;}
+            if(explorationTab==2){DrawSurveyArchive(fog);return;}
             int found = fog.explored.Length;
             GUILayout.Label("Explored land stays clear. " + found + " / 400 sectors · " + (found / 4f).ToString("0.0") + "%", sectionStyle);
             theme.Bar(GUILayoutUtility.GetRect(80, 14, GUILayout.ExpandWidth(true)), found / 400f, MythInterfaceTheme.Teal);
@@ -124,6 +133,9 @@ namespace ThronesOfMyth
             }
             bool validX = float.TryParse(scoutX, out float x); bool validZ = float.TryParse(scoutZ, out float z);
             if (theme.Action(string.IsNullOrEmpty(redirectScoutId) ? "Send scout to coordinates" : "Redirect scout to coordinates", validX && validZ && !processing && pendingOrder == null, !validX || !validZ ? "Enter a map coordinate from 1 to 79." : pendingOrder != null ? "Confirm your previous order first." : "")) ScoutAt(x, z);
+        }
+        private void DrawSurveyArchive(ExplorationData fog)
+        {
             GUILayout.Space(18); GUILayout.Label("Scouting reports", sectionStyle);
             GUILayout.Label("Arrival-time observations, saved privately. Alliance members share current sight, not this history.", noteStyle);
             foreach (var report in fog.reports ?? Array.Empty<ScoutReport>())
@@ -138,12 +150,11 @@ namespace ThronesOfMyth
                 if (theme.Action("Focus surveyed area", true, "")) { cameraControl?.SetView(new Vector3(report.x, 0, report.z), 10); ShowKingdomForTarget(); }
                 GUILayout.EndVertical();
             }
-            DrawDiscoveryJournal(fog);
         }
         private void DrawDiscoveryJournal(ExplorationData fog)
         {
             var journal = fog.journal;
-            if (journal == null) return;
+            if (journal == null) {GUILayout.Label("Waiting for your discovery journal.",noteStyle);return;}
             GUILayout.Space(18);
             GUILayout.Label("DISCOVERY JOURNAL", theme.Eyebrow);
             GUILayout.Label("Ancient places", theme.Heading);

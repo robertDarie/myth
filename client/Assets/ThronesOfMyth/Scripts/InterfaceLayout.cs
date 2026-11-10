@@ -3,6 +3,20 @@ namespace ThronesOfMyth
 {
     public static class InterfaceLayout
     {
+        public static float FormationRosterWidth(float available)=>Math.Min(286,Math.Max(220,available*.27f));
+        public static float TroopTitleWidth(float rowWidth)=>Math.Max(1,rowWidth-74);
+        public const float TroopRowHeight=104,TroopRowStep=110;
+        // Stable tree cells. Newly introduced technologies must not overlap an authored cell.
+        public static int ResearchSlot(string id,int fallbackIndex)
+        {
+            switch(id)
+            {
+                case "harvest":return 0;case "masonry":return 1;case "writing":return 4;
+                case "logistics":return 6;case "march":return 7;case "drill":return 9;
+                case "vitality":return 10;case "beastlore":return 11;case "veterans":return 12;
+                case "veilreading":return 13;default:return 15+Math.Max(0,fallbackIndex);
+            }
+        }
         public static float Scale(float width,float height,float preference)=>Math.Min(Math.Min(width/(width<1280?1440f:1600f),height/900f)*preference,Math.Min(width/1280f,height/720f));
         public static bool ShowItem(InventoryItem item,string category,bool catalogue)=>item!=null&&(catalogue||item.count>0)&&(string.IsNullOrEmpty(category)||item.category==category);
         public const float HudHeight=104,RailWidth=214,MarchTop=142,MarchStep=70;

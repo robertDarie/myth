@@ -211,10 +211,16 @@ namespace ThronesOfMyth
             var diagram = new Rect(r.x, r.y, r.width - 370, r.height); var detail = new Rect(r.xMax - 350, r.y, 350, r.height);
             theme.Panel(diagram, false, true); theme.Panel(detail, false, true);
             theme.Text(new Rect(diagram.x + 20, diagram.y + 12, diagram.width - 40, 26), "ATHENAEUM OF AGES", theme.Eyebrow);
-            var positions = new Dictionary<string, Vector2Int> { { "harvest", new Vector2Int(0, 0) }, { "masonry", new Vector2Int(1, 0) }, { "writing", new Vector2Int(1, 1) }, { "logistics", new Vector2Int(0, 2) }, { "march", new Vector2Int(1, 2) }, { "drill", new Vector2Int(0, 3) }, { "vitality", new Vector2Int(1, 3) }, { "beastlore", new Vector2Int(2, 3) }, { "veterans",new Vector2Int(0,4) } };
+            if(me.researchOptions==null||me.researchOptions.Length==0){theme.Text(new Rect(diagram.x+20,diagram.y+50,diagram.width-40,60),"Waiting for available research.",theme.Body);return;}
+            var positions = new Dictionary<string, Vector2Int>();int rows=0,additional=0;
+            foreach(var technology in me.researchOptions)
+            {
+                int slot=InterfaceLayout.ResearchSlot(technology.id,additional);if(slot>=15)additional++;
+                positions[technology.id]=new Vector2Int(slot%3,slot/3);rows=Mathf.Max(rows,slot/3+1);
+            }
             float step = (diagram.width - 34) / 3, cardWidth = step - 18;
             var viewport = new Rect(diagram.x + 12, diagram.y + 48, diagram.width - 24, diagram.height - 60);
-            rosterScroll = GUI.BeginScrollView(viewport, rosterScroll, new Rect(0, 0, diagram.width - 42, 610));
+            rosterScroll = GUI.BeginScrollView(viewport, rosterScroll, new Rect(0, 0, diagram.width - 42, rows*120+10));
             foreach (var technology in me.researchOptions)
             {
                 if (string.IsNullOrEmpty(technology.prerequisite) || !positions.ContainsKey(technology.prerequisite) || !positions.ContainsKey(technology.id)) continue;
@@ -223,10 +229,10 @@ namespace ThronesOfMyth
             }
             for (int i = 0; i < me.researchOptions.Length; i++)
             {
-                var technology = me.researchOptions[i]; var position = positions.ContainsKey(technology.id) ? positions[technology.id] : new Vector2Int(i % 3, i / 3);
+                var technology = me.researchOptions[i]; var position = positions[technology.id];
                 var cell = new Rect(position.x * step + 2, position.y * 120 + 3, cardWidth, 104);
                 theme.Panel(cell, i == inspectedTechnology);
-                theme.Text(new Rect(cell.x + 10, cell.y + 7, cell.width - 20, 20), technology.branch.ToUpperInvariant(), theme.Eyebrow);
+                theme.OneLine(new Rect(cell.x + 10, cell.y + 7, cell.width - 20, 20), technology.branch.ToUpperInvariant(), theme.Eyebrow);
                 theme.Text(new Rect(cell.x + 10, cell.y + 30, cell.width - 20, 43), technology.name, theme.Body);
                 theme.Text(new Rect(cell.x + 10, cell.y + 77, cell.width - 20, 20), technology.level + " / " + technology.maxLevel + (technology.canResearch ? " · READY" : ""), theme.Small);
                 if (GUI.Button(cell, GUIContent.none, GUIStyle.none)) { inspectedTechnology = i; contentScroll = Vector2.zero; }
