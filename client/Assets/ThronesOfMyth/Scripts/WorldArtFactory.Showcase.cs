@@ -31,7 +31,7 @@ namespace ThronesOfMyth
                 if(arch){int count=vertices.Count;for(int i=0;i<count;i++){var v=vertices[i];v.z=.32f;vertices.Add(v);uv.Add(uv[i]);}int countT=triangles.Count;for(int i=0;i<countT;i+=3)triangles.AddRange(new[]{triangles[i]+count,triangles[i+2]+count,triangles[i+1]+count});for(int i=0;i<sides;i++){int a=i,b=i+1;triangles.AddRange(new[]{a,b,a+count,b,b+count,a+count});a=i+sides+1;b=a+1;triangles.AddRange(new[]{a,a+count,b,b,a+count,b+count});}}
                 mesh=new Mesh{name="Original sculpt · "+key};mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();showcaseMeshes[key]=mesh;authoredMeshes.Add(mesh);
             }
-            var obj=new GameObject("Sculpted "+key);obj.transform.SetParent(parent,false);obj.transform.localPosition=at;obj.transform.localScale=scale;obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=MaterialFor(color);return obj.transform;
+            var obj=new GameObject("Sculpted "+key);obj.transform.SetParent(parent,false);obj.transform.localPosition=at;obj.transform.localScale=scale;obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=key.StartsWith("crown")||key.StartsWith("pine")?FoliageMaterial(color):MaterialFor(color);return obj.transform;
         }
         public Transform CityTerrace(Transform parent,Vector3 at,Vector3 scale,Color color)
         {

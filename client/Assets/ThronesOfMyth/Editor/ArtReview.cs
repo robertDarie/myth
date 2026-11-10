@@ -28,6 +28,8 @@ namespace ThronesOfMyth.Editor
         public static void ValidateAssets(bool reimport)
         {
             if(EditorApplication.isPlaying)throw new InvalidOperationException("Stop Play mode before validating imported assets.");
+            foreach(string name in new[]{"ThronesOfMyth/Vegetation","ThronesOfMyth/KingdomVeil"})
+            {var shader=Shader.Find(name);if(shader==null||ShaderUtil.ShaderHasError(shader))throw new InvalidOperationException("Missing or failing presentation shader: "+name);}
             var paths=new List<string>();foreach(string culture in new[]{"Greek","Egyptian","Norse","Chinese","Japanese"})
             {paths.Add(Root+"Models/City"+culture+".fbx");foreach(string role in new[]{"Infantry","Archer","Cavalry","Commander","Mythic"})paths.Add(Root+"Units/"+culture+role+".fbx");}
             foreach(string hero in new[]{"captain","warden","scout","rune-seer","atalanta","mulan","tomoe","horus-champion","heracles","sigurd","wukong"})paths.Add(Root+"Units/Hero_"+hero+".fbx");

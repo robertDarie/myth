@@ -54,6 +54,6 @@ namespace ThronesOfMyth
             if(resource=="wood"){CraftedRoof(root,"norse",new Vector3(.75f,1.1f,.85f),1.0f,.95f,timber);for(int side=-1;side<=1;side+=2)Pillar(root,.75f+side*.35f,.55f,.85f,.08f,1.1f,timber);}
             if(resource=="stone"||resource=="gold"||resource=="mana")Sculpt(root,"arch",new Vector3(0,.4f,-1.04f),new Vector3(.50f,.62f,.7f),stone);
         }
-        private void DisposeCraft(){foreach(var m in roofMaterials.Values)Object.Destroy(m);roofMaterials.Clear();craftMeshes.Clear();}
+        private void DisposeCraft(){foreach(var m in foliageMaterials.Values)Object.Destroy(m);foliageMaterials.Clear();foreach(var m in roofMaterials.Values)Object.Destroy(m);roofMaterials.Clear();craftMeshes.Clear();}
     }
 }
