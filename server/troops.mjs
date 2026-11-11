@@ -29,7 +29,18 @@ export const promotionCost=type=>Object.fromEntries(Object.entries(type.cost).ma
 export const TRAINING_BATCHES = { 1: 5, 2: 5, 3: 10, 4: 20, 5: 40 };
 export const trainingBatch = p => TRAINING_BATCHES[Math.max(1, Math.min(5, p.buildings?.barracks ?? 1))] ?? 5;
 export const batchCost = (cost, amount) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * amount / 5)]));
-export function trainingOptions(p) { return TROOP_TYPES.map(t=>({...t,lockedReason:tierLock(p,t),promotionCost:t.tier===2?promotionCost(t):{},sourceAvailable:countOf(p.reserveUnits,t.baseId)})); }
+const hallSpeed = p => 1 + 0.1 * Math.max(0, (p.buildings?.barracks ?? 1) - 1);
+export function trainingOptions(p) {
+  const amount = trainingBatch(p), speed = hallSpeed(p);
+  return TROOP_TYPES.map(t => {
+    const quote = { orderAmount: amount, orderSeconds: t.duration * (amount / 5) / speed, orderCost: batchCost(t.cost, amount) };
+    if (t.tier === 2) {
+      const base = TROOP_TYPES.find(b => b.id === t.baseId);
+      quote.promotionSeconds = (t.duration - base.duration) / speed;
+    }
+    return { ...t, ...quote, lockedReason: tierLock(p, t), promotionCost: t.tier === 2 ? promotionCost(t) : {}, sourceAvailable: countOf(p.reserveUnits, t.baseId) };
+  });
+}
 export const unitPower=units=>TROOP_TYPES.reduce((sum,t)=>sum+countOf(units,t.id)*(t.tier===2?8:5),0);
 export const unitTotal = units => TROOP_TYPES.reduce((sum, type) => sum + countOf(units,type.id), 0);
 export const legacyUnits = count => ({ ...emptyUnits(), infantry: count });

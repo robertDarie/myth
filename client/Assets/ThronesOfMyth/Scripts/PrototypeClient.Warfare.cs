@@ -79,16 +79,16 @@ namespace ThronesOfMyth
             var boss = KnownStronghold(warfareTargetId);
             if (boss != null)
             {
-                if(boss.lastKnown)GUILayout.Label("LAST OBSERVED · Scout again for current guards and availability.",noteStyle);
+                if(boss.lastKnown)GUILayout.Label(LandmarkCopy.Inspection(boss.terrainExplored),noteStyle);
                 GUILayout.Label("GODBREAKER STRONGHOLD · TIER " + boss.tier, theme.Eyebrow);
-                GUILayout.Label(Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth) + " defender HP · " + Mathf.CeilToInt(boss.health) + "/" + Mathf.CeilToInt(boss.maxHealth) + " wall HP", noteStyle);
+                if(!boss.lastKnown)GUILayout.Label(Mathf.CeilToInt(boss.guardHealth) + "/" + Mathf.CeilToInt(boss.maxGuardHealth) + " defender HP · " + Mathf.CeilToInt(boss.health) + "/" + Mathf.CeilToInt(boss.maxHealth) + " wall HP", noteStyle);
                 if(!boss.lastKnown)GUILayout.Label("Defenders · " + UnitSummary(boss.units) + " · Base retaliation " + boss.guardDamage.ToString("F0"), theme.Small);
                 GUILayout.Label("At least " + world.strongholdRules.minMarches + " assembled marches. Defeat the guards, then the walls. " + world.strongholdRules.roundLimit + " combat-round limit; no beacon supply required.", noteStyle);
                 if(!boss.lastKnown)GUILayout.Label("TOTAL SHARED REWARD POOL · " + JourneyRewardText(boss.reward) + " · " + boss.xp + " commander XP", theme.Small);
                 GUILayout.Label((me.economy?.rules.strongholdAP??10)+" AP per participating city on actual siege entry, not during assembly. AP can be spent elsewhere before arrival.",noteStyle);
                 GUILayout.Label("The pool is divided by actual guard/wall damage, aggregated per city. Additional marches do not multiply rewards. Survivors return home automatically.", theme.Small);
             }
-            foreach (var fallen in world.strongholds) if (fallen.respawn > 0) GUILayout.Label(fallen.name + (fallen.lastKnown?" · Last observed reforming; scout to refresh":" · Reforms in " + Mathf.CeilToInt(fallen.respawn) + "s"), theme.Small);
+            foreach (var fallen in world.strongholds) if (fallen.respawn > 0) GUILayout.Label(fallen.name + (fallen.lastKnown?" · "+LandmarkCopy.Inspection(fallen.terrainExplored):" · Reforms in " + Mathf.CeilToInt(fallen.respawn) + "s"), theme.Small);
             rallyAssemblyIndex = GUILayout.Toolbar(rallyAssemblyIndex, new[] { "10s assembly", "30s assembly", "60s assembly" });
             GUILayout.Label("Up to " + world.campaignLimits.rallyMarches + " marches / " + world.campaignLimits.rallyLoad + " load. A mortal uses one load; a mythic uses five. Contributions must reach the leader's city before assembly ends.", theme.Small);
             bool createReady = (WarOfficer || boss != null) && BuildingLevel("oathhall") > 0 && ContributionReady && CanEditArmy && warfareTargetId != null;

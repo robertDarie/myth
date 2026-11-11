@@ -26,6 +26,9 @@ static class InterfacePolishContracts
   Check(InterfaceLayout.Countdown(2,4)==0&&InterfaceLayout.Countdown(10,100)==7,"Countdown must not extrapolate beyond short snapshot window");
   Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==16,"Release identity advances without a protocol change");
   Check(ReconCopy.Depth(1).Contains("approximate strength")&&ReconCopy.Depth(2).Contains("quantities")&&ReconCopy.Depth(3).Contains("ordinary stores")&&ReconCopy.Stale.Contains("may have changed"),"Veil reading copy states depth and staleness");
+  Check(LandmarkCopy.ShowRemembered(true)&&!LandmarkCopy.ShowRemembered(false),"Unexplored remembered markers stay concealed");
+  Check(!LandmarkCopy.MapLabel(true,"Stone Cutting").Contains("Last seen")&&LandmarkCopy.MapLabel(true,"Stone Cutting").Contains("Recorded landmark"),"Explored landmarks keep their name without a last-seen label");
+  Check(LandmarkCopy.Inspection(true).Contains("not a live count")&&LandmarkCopy.Inspection(false).Contains("Concealed"),"Historical counts are not presented as current");
   Check(OutcomeSummary.Credited(new ResourceAmounts{gold=50,food=30,mana=5})=="Credited · 50 gold · 30 food · 5 Mana","Reward presentation must use exact report values");
   Check(!OutcomeSummary.Credited(new ResourceAmounts()).Contains("Credited")&&!OutcomeSummary.Credited(null).Contains("Credited"),"No fabricated reward for missing or empty report");
   Console.WriteLine("UI layout/identity contracts: "+n+" passed; font rendering pending.");return n;

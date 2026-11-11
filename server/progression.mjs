@@ -76,8 +76,14 @@ export function skillInfo(p, id) {
   const names = role === 'offense' ? ['Battle Discipline', 'Slayer of the Forsaken', 'Unbroken Resolve']
     : role === 'gather' ? ['Forager\'s Wisdom', 'Trailcraft', 'Hardy Travelers']
     : role === 'defense' ? ['Guardian\'s Oath', 'Provisioning', 'Hold the Line'] : ['Shared Resolve', 'Restorative Arts', 'Protect the Fallen'];
-  const talents = TALENT_TREES.map(tree => ({ id: tree.id, name: tree.name, nodes: tree.nodes.map(node => ({ ...node, rank: r.talents?.[node.id] ?? 0, available: talentPoints(r) - spentTalents(r) > 0 && (r.talents?.[node.id] ?? 0) < node.max && (!node.requires || (r.talents?.[node.requires] ?? 0) > 0) })) }));
-  return { id, heroLevel: heroLevel(r), xp: r.xp, stars: r.stars, talentPoints: talentPoints(r), talentPointsSpent: spentTalents(r), talents, expertise,
+  const openTalents = talentPoints(r) - spentTalents(r);
+  const talents = TALENT_TREES.map(tree => ({ id: tree.id, name: tree.name, nodes: tree.nodes.map(node => {
+    const rank = r.talents?.[node.id] ?? 0;
+    const lockedReason = rank >= node.max ? 'That talent is at its highest rank.' : node.requires && !(r.talents?.[node.requires] > 0) ? 'Learn the preceding talent first.' : openTalents <= 0 ? 'No talent points remain. Raise this commander\'s level or respec.' : '';
+    return { ...node, rank, available: lockedReason === '', lockedReason };
+  }) }));
+  const spent = spentTalents(r);
+  return { id, heroLevel: heroLevel(r), xp: r.xp, stars: r.stars, talentPoints: talentPoints(r), talentPointsSpent: spent, respecMana: 15 * spent, respecLockedReason: spent < 1 ? 'This commander has no talents to respec.' : '', talents, expertise,
     expertiseDescription: ['Epic', 'Legendary'].includes(hero.rarity) ? 'All four normal skills at level 5: +20% active-skill effect.' : 'No expertise in this prototype rarity.',
     skills: [
       { index: 0, name: active, kind: 'Active', level: r.skills[0], unlockStar: 1, description: kind === 'damage' ? 'Automatically spends 1,000 rage for extra damage (1.2 + 0.2 × skill level) times normal attack damage.' : kind === 'shield' ? 'At 1,000 rage, shields for (8% + 2% × skill level) of maximum health for four seconds.' : 'At 1,000 rage, heals (8% + 2% × skill level) of maximum health.' },

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { World } from './world.mjs';
 import { capacity, CITADEL_TROOP_CAPACITY } from './city.mjs';
-import { trainingBatch, batchCost } from './troops.mjs';
+import { trainingBatch, batchCost, trainingOptions } from './troops.mjs';
+import { skillInfo } from './progression.mjs';
 import { cellIndex } from './exploration.mjs';
 const setup = () => { const w = testWorld(), s = w.join('Warden'); return { w, p: w.authenticate(s.token), s }; };
 
@@ -15,6 +16,32 @@ test('citadel troop capacity grows after the first city while the first hall sti
   p.cityLevel = 5; p.buildings.barracks = 5;
   assert.equal(capacity(p), 340 + 20);
   assert.equal(trainingBatch(p), 40);
+});
+
+test('training quotes come from the hall and match the order the server will run', () => {
+  const { p } = setup();
+  const early = trainingOptions(p).find(t => t.id === 'infantry');
+  assert.equal(early.orderAmount, 5);
+  assert.equal(early.orderCost.food, 50);
+  assert.equal(early.orderSeconds, 8);
+  p.buildings.barracks = 5;
+  const late = trainingOptions(p).find(t => t.id === 'archers');
+  assert.equal(late.orderAmount, 40);
+  assert.equal(late.orderCost.food, Math.ceil(55 * 40 / 5));
+  assert.ok(Math.abs(late.orderSeconds - 10 * 8 / 1.4) < 0.001);
+  const veteran = trainingOptions(p).find(t => t.id === 'veteranInfantry');
+  assert.equal(veteran.orderAmount, 40);
+  assert.ok(veteran.promotionSeconds > 0 && veteran.promotionSeconds < veteran.orderSeconds);
+});
+
+test('a new commander reports locked talents and a zero Mana respec until a point is spent', () => {
+  const { p } = setup();
+  const info = skillInfo(p, 'captain');
+  assert.equal(info.talents.length, 3);
+  assert.equal(info.respecMana, 0);
+  assert.match(info.respecLockedReason, /no talents/);
+  assert.match(info.talents[0].nodes[0].lockedReason, /No talent points/);
+  assert.equal(info.talents[0].nodes[1].available, false);
 });
 
 test('a larger training order spends the same resources and time per soldier', () => {

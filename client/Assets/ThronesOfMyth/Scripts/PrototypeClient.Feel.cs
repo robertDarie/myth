@@ -52,7 +52,7 @@ namespace ThronesOfMyth
             if(command.type=="configure-march"||command.type=="deploy-march")opening.ArmyPrepared=true;
             switch(command.type)
             {
-                case "building-upgrade":case "upgrade":case "train":case "promote":case "research":case "configure-march":case "deploy-march":case "upgrade-skill":case "promote-commander":case "upgrade-commander":BattlefieldAudio.UiCue("confirm");break;
+                case "building-upgrade":case "upgrade":case "train":case "promote":case "research":case "configure-march":case "deploy-march":case "upgrade-skill":case "promote-commander":case "upgrade-commander":case "talent-raise":case "talent-respec":BattlefieldAudio.UiCue("confirm");break;
             }
         }
     }

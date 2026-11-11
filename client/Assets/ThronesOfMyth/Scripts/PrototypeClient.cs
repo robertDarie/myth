@@ -135,7 +135,7 @@ namespace ThronesOfMyth
             foreach (var job in me.trainingQueue)
                 if (job.type == "train"||job.type=="promote") queuedTroops += job.amount; else queuedMythic += job.amount;
             int cap = me.troopCapacity;
-            GUILayout.Label($"City {me.cityLevel}/5 · Troops {me.assignedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops}/{cap} including reserves and queues", noteStyle);
+            GUILayout.Label($"Citadel {me.cityLevel}/5 · Hall order {Mathf.Max(0, me.trainingBatch)} · Troops {me.assignedTroops + me.reserveTroops + me.hospitalTroops + queuedTroops}/{cap} including reserves, wounded and queued orders", noteStyle);
             DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
             GUILayout.Label("Infantry counters cavalry · Cavalry counters archers · Archers counter infantry. Tiers keep these roles.",noteStyle);
@@ -152,17 +152,16 @@ namespace ThronesOfMyth
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(troop.name + " · " + troop.role + " · T" + troop.tier, sectionStyle);
                 GUILayout.Label(troop.description + "  Base health " + troop.health + " · Damage " + troop.damage.ToString("F2") + " per troop", noteStyle);
-                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.assignedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+5>cap?"Increase troop capacity or finish current training.":!Afford(troop.cost)?"More resources required: "+Cost(troop.cost):"";
-                float duration=me.trainingDuration*troop.duration/8;
-                if(theme.Action("Train 5 · "+Mathf.CeilToInt(duration)+"s · "+Cost(troop.cost),string.IsNullOrEmpty(reason),reason))Send("train",troop.id);
+                int batch=troop.orderAmount;
+                string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":batch<=0?"The server has not quoted this order.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.assignedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+batch>cap?"Increase troop capacity or finish current training.":!Afford(troop.orderCost)?"More resources required: "+Cost(troop.orderCost):"";
+                if(theme.Action("Train "+batch+" · "+Mathf.CeilToInt(troop.orderSeconds)+"s · "+Cost(troop.orderCost),string.IsNullOrEmpty(reason),reason))Send("train",troop.id);
                 if(troop.tier==2)
                 {
                     var source=Array.Find(world.troopTypes,t=>t.id==troop.baseId);
                     GUILayout.Label("Per unit: health "+source.health+" → "+troop.health+" · damage "+source.damage.ToString("F2")+" → "+troop.damage.ToString("F2"),noteStyle);
-                    GUILayout.Label("Ready Tier I reserves: "+troop.sourceAvailable+" · promotion preserves soldier count",noteStyle);
+                    GUILayout.Label("Ready Tier I reserves: "+troop.sourceAvailable+" · promotion keeps the same five soldiers",noteStyle);
                     string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<5?"Needs five ready Tier I reserves.":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
-                    float sourceDuration=source.duration;
-                    if(theme.Action("Promote 5 · "+Mathf.CeilToInt(me.trainingDuration*(troop.duration-sourceDuration)/8)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
+                    if(theme.Action("Promote 5 · "+Mathf.CeilToInt(troop.promotionSeconds)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
                 }
                 GUILayout.EndVertical();
             }
@@ -330,9 +329,47 @@ namespace ThronesOfMyth
         {
             if (GUILayout.Button("Assemble a new march", theme.Primary, GUILayout.Height(44))) BeginFormation(false);
         }
+        private void DrawTalents(CommanderData hero, HeroProgress progress)
+        {
+            int open = progress.talentPoints - progress.talentPointsSpent;
+            GUILayout.Label("Talent points " + Mathf.Max(0, open) + " open · " + progress.talentPointsSpent + " spent · level " + progress.heroLevel, sectionStyle);
+            GUILayout.Label("Warhost, Provision and Sanctuary are learned from the server. A point opens every five levels.", noteStyle);
+            if (progress.talents == null || progress.talents.Length == 0) { GUILayout.Label("This commander has no talent tree in the current reading.", noteStyle); return; }
+            foreach (var tree in progress.talents)
+            {
+                GUILayout.Space(8); GUILayout.Label(tree.name.ToUpperInvariant(), theme.Eyebrow);
+                if (tree.nodes == null) continue;
+                foreach (var node in tree.nodes)
+                {
+                    GUILayout.BeginVertical(GUI.skin.box);
+                    GUILayout.Label(node.name + " · rank " + node.rank + " / " + node.max, sectionStyle);
+                    GUILayout.Label(node.effect, noteStyle);
+                    if (!string.IsNullOrEmpty(node.requires)) GUILayout.Label("Requires the preceding oath in this tree.", noteStyle);
+                    string reason = processing ? "Sending your order…" : pendingOrder != null ? "Confirm your previous order first." : node.lockedReason;
+                    if (theme.Action("Learn " + node.name, node.available && string.IsNullOrEmpty(reason), string.IsNullOrEmpty(reason) ? "" : reason, false))
+                        Send(new GameCommand { type = "talent-raise", targetId = hero.id, name = node.id });
+                    GUILayout.EndVertical();
+                }
+            }
+            GUILayout.Space(10);
+            bool confirming = talentConfirmId == hero.id;
+            if (!confirming)
+            {
+                string reason = !string.IsNullOrEmpty(progress.respecLockedReason) ? progress.respecLockedReason : me.mana < progress.respecMana ? "More Mana required: " + progress.respecMana : processing ? "Sending your order…" : pendingOrder != null ? "Confirm your previous order first." : "";
+                if (theme.Action("Respec · " + progress.respecMana + " Mana", string.IsNullOrEmpty(reason), reason, false)) talentConfirmId = hero.id;
+            }
+            else
+            {
+                GUILayout.Label("Clear every talent on " + hero.name + " for " + progress.respecMana + " Mana. The points return. The Mana does not.", noteStyle);
+                string reason = me.mana < progress.respecMana ? "More Mana required: " + progress.respecMana : processing ? "Sending your order…" : pendingOrder != null ? "Confirm your previous order first." : "";
+                if (theme.Action("Confirm respec", string.IsNullOrEmpty(reason), reason)) { talentConfirmId = null; Send(new GameCommand { type = "talent-respec", targetId = hero.id }); }
+                if (GUILayout.Button("Keep talents")) talentConfirmId = null;
+            }
+        }
         private void DrawHeroSkills(CommanderData hero, HeroProgress progress)
         {
-            if(heroDetailTab==1)
+            if(heroDetailTab==1){DrawTalents(hero,progress);return;}
+            if(heroDetailTab==2)
             {
             GUILayout.Label($"Level {progress.heroLevel}/{progress.stars * 10} · {progress.stars} stars · XP {progress.xp:F0}", sectionStyle);
             var experience = GUILayoutUtility.GetRect(80, 9, GUILayout.ExpandWidth(true));

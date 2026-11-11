@@ -7,6 +7,7 @@ namespace ThronesOfMyth
     public sealed partial class PrototypeClient
     {
         private int inspectedTechnology,heroDetailTab;
+        private string talentConfirmId;
         private CityDiorama cityDiorama;
         private readonly CityProgressFeedback cityProgress=new CityProgressFeedback();
         private bool cityModelView = true;
@@ -131,9 +132,9 @@ namespace ThronesOfMyth
             {
                 if(Opening?.Guide=="training"&&theme.Action("Next · Train five archers",!processing,"Wait for your order.")){trainingTier=0;GuidePage(InterfacePage.Training);}
                 DrawCommanderComparison(selected,recruited);
-                heroDetailTab=theme.Tabs(heroDetailTab,new[]{"Skills","Development"},detail.width-48);
+                heroDetailTab=theme.Tabs(heroDetailTab,new[]{"Skills","Talents","Development"},detail.width-48);
                 DrawHeroSkills(selected, progress);
-                if(heroDetailTab==1){GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
+                if(heroDetailTab==2){GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
                 GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.", theme.Small);
                 string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";
                 if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);}
@@ -373,9 +374,11 @@ namespace ThronesOfMyth
             }
             else { selectedId = ""; return; }
             bool remembered=boss?.lastKnown==true||camp?.lastKnown==true||node?.lastKnown==true||site?.lastKnown==true||beacon?.lastKnown==true||city?.lastKnown==true;
+            bool terrainExplored=boss?.terrainExplored==true||camp?.terrainExplored==true||node?.terrainExplored==true||site?.terrainExplored==true||beacon?.terrainExplored==true||city?.terrainExplored==true;
             bool keepCityReading = city != null && city.id != playerId && (string.IsNullOrEmpty(me.allianceId) || city.allianceId != me.allianceId) && city.cityLevel >= 2;
-            if(remembered && !keepCityReading){subtitle="LAST OBSERVED · Information may have changed";action="Scout to refresh";health=-1;enabled=!processing;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;perform=()=>ScoutAt(sx,sz);}
-            if(remembered&&camp!=null){action="March & attack";subtitle="LAST SEEN · Approach to verify; AP charged only on engagement";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}
+            if(remembered){subtitle=LandmarkCopy.Inspection(terrainExplored);health=-1;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;
+                if(!keepCityReading){action="Scout to refresh";enabled=!processing;perform=()=>ScoutAt(sx,sz);}
+                if(camp!=null){action="March & attack";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
             theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);

@@ -32,6 +32,7 @@
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ScoutInterfaceCopy.cs" Link="ScoutInterfaceCopy.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/DiscoveryJournal.cs" Link="DiscoveryJournal.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ReconCopy.cs" Link="ReconCopy.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/LandmarkCopy.cs" Link="LandmarkCopy.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/GameNavigation.cs" Link="GameNavigation.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/InterfaceReadability.cs" Link="InterfaceReadability.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/WorldModels.cs" Link="WorldModels.cs" />

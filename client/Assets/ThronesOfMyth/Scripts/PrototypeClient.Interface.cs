@@ -133,6 +133,8 @@ namespace ThronesOfMyth
                 case "mentor-commander": return "Your commander has gained experience.";
                 case "promote-commander": return "Your commander has earned a new star.";
                 case "upgrade-skill": return "Your commander's skill has grown stronger.";
+                case "talent-raise": return "The talent has been learned.";
+                case "talent-respec": return "Talents cleared. Mana was spent and the points returned.";
                 case "upgrade-commander": return "Your commander has ascended.";
                 case "kingdom-claim": return "Kingdom milestone reward claimed.";
                 case "daily-claim": return "Daily task reward claimed. Your activity points have increased.";
