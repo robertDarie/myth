@@ -7,7 +7,7 @@ This derivative: 23,926 vertices, 48,000 triangles, the same UV map, a 22-bone g
 Equipment, added from the same inbox on 2026-11-11:
 Suncrest Aegis, archive Meshy_AI_Suncrest_Aegis_20261111_texture_fbx.zip. Source 481,367 vertices, 962,878 triangles. Presentation mesh 5,928 vertices, 12,000 triangles, same UV map, parented to LeftLowerArm. Packed map SuncrestAegis_MetallicSmoothness.png.
 Sunforged Spear, archive Meshy_AI_Sunforged_Spear_20261111_texture_fbx.zip. Source 31,414 vertices, 62,828 triangles. Presentation mesh 4,000 vertices, 8,000 triangles, same UV map, parented to SpearGrip. Packed map SunforgedSpear_MetallicSmoothness.png.
-Equipped presentation total: 68,000 triangles. The source zips and the unreduced FBX files stay in work/asset-inbox/solar-centurion/ and are not part of this commit.
+Equipped presentation total: 68,000 triangles. The right-hand fingertips were closed onto the shaft in the bind pose, and the four clips were rebuilt around that grip. The source zips and the unreduced FBX files stay in work/asset-inbox/solar-centurion/ and are not part of this commit.
 Metallic and roughness were packed into FrontierCaptain_MetallicSmoothness.png (metallic in RGB, smoothness in alpha) for Unity's built-in Standard shader.
 
 Meshy's terms, last updated 2026-09-19, license free-plan output as CC BY 4.0 and state that Meshy retains ownership of free-plan output. Paid plans transfer ownership when the inputs belonged to the user. The plan used for this generation is not recorded in the archive. Until that plan is confirmed, credit the figure as "Model created with Meshy – CC BY 4.0 License" and do not treat the raw source as cleared for redistribution.

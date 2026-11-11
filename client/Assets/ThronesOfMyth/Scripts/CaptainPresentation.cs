@@ -52,10 +52,10 @@ namespace ThronesOfMyth
             camera.enabled = false;
             camera.cullingMask = 1 << Layer;
             camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.045f, 0.07f, 0.11f, 1f);
-            camera.fieldOfView = 27f;
-            camera.transform.localPosition = new Vector3(0f, 1.15f, 5.15f);
-            camera.transform.LookAt(stage.transform.position + new Vector3(0f, 1.05f, 0f));
+            camera.backgroundColor = new Color(0.56f, 0.67f, 0.78f, 1f);
+            camera.fieldOfView = 30f;
+            camera.transform.localPosition = new Vector3(0f, 1.22f, 4.55f);
+            camera.transform.LookAt(stage.transform.position + new Vector3(0f, 1.02f, 0f));
             camera.nearClipPlane = 0.05f;
             camera.farClipPlane = 20f;
             camera.allowHDR = false;
@@ -65,33 +65,10 @@ namespace ThronesOfMyth
             var main = Camera.main;
             if (main != null) main.cullingMask &= ~(1 << Layer);
 
-            AddLight("Key", new Color(1f, 0.86f, 0.68f), 1.55f, new Vector3(32f, -42f, 0f), true);
-            AddLight("Fill", new Color(0.55f, 0.68f, 0.86f), 0.32f, new Vector3(8f, 128f, 0f), false);
-            AddLight("Rim", new Color(1f, 0.72f, 0.38f), 1.05f, new Vector3(16f, 164f, 0f), false);
-            var plinth = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            plinth.name = "Frontier Captain plinth";
-            plinth.transform.SetParent(stage.transform, false);
-            plinth.transform.localPosition = new Vector3(0f, -0.08f, 0f);
-            plinth.transform.localScale = new Vector3(1.55f, 0.08f, 1.55f);
-            plinth.layer = Layer;
-            var stone = new Material(Shader.Find("Standard"));
-            stone.color = new Color(0.42f, 0.38f, 0.32f);
-            stone.SetFloat("_Glossiness", 0.18f);
-            stone.SetFloat("_Metallic", 0.04f);
-            plinth.GetComponent<MeshRenderer>().sharedMaterial = stone;
-            UnityEngine.Object.Destroy(plinth.GetComponent<Collider>());
-            var ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            ring.name = "Frontier Captain bronze ring";
-            ring.transform.SetParent(stage.transform, false);
-            ring.transform.localPosition = new Vector3(0f, 0.012f, 0f);
-            ring.transform.localScale = new Vector3(1.15f, 0.012f, 1.15f);
-            ring.layer = Layer;
-            var bronze = new Material(Shader.Find("Standard"));
-            bronze.color = new Color(0.62f, 0.42f, 0.16f);
-            bronze.SetFloat("_Glossiness", 0.55f);
-            bronze.SetFloat("_Metallic", 0.72f);
-            ring.GetComponent<MeshRenderer>().sharedMaterial = bronze;
-            UnityEngine.Object.Destroy(ring.GetComponent<Collider>());
+            AddLight("Key", new Color(1f, 0.84f, 0.64f), 1.35f, new Vector3(38f, -28f, 0f), true);
+            AddLight("Fill", new Color(0.55f, 0.66f, 0.82f), 0.42f, new Vector3(12f, 150f, 0f), false);
+            AddLight("Rim", new Color(0.95f, 0.7f, 0.4f), 0.7f, new Vector3(8f, 168f, 0f), false);
+            BuildCourt();
         }
 
         public void LockReview(float yawDegrees, string clip, float normalizedTime)
@@ -106,8 +83,8 @@ namespace ThronesOfMyth
         {
             float shownYaw = reviewLock ? reviewYaw : yaw;
             figure.localRotation = Quaternion.Euler(0f, shownYaw, 0f);
-            camera.transform.localPosition = new Vector3(0f, 1.16f, 5.2f);
-            camera.transform.LookAt(stage.transform.position + new Vector3(0f, 1.08f, 0f));
+            camera.transform.localPosition = new Vector3(0f, 1.22f, 4.55f);
+            camera.transform.LookAt(stage.transform.position + new Vector3(0f, 1.02f, 0f));
             if (animator != null)
             {
                 if (reviewLock)
@@ -151,6 +128,65 @@ namespace ThronesOfMyth
             UnityEngine.Object.Destroy(stage);
         }
 
+        private void BuildCourt()
+        {
+            var marble = Stone(new Color(0.78f, 0.74f, 0.66f), 0.22f, 0.02f);
+            var step = Stone(new Color(0.62f, 0.58f, 0.5f), 0.16f, 0.03f);
+            var bronze = Stone(new Color(0.62f, 0.44f, 0.18f), 0.48f, 0.62f);
+            Disc("Court", new Vector3(0f, -0.04f, 0.2f), 4.2f, 0.04f, marble);
+            Disc("Pedestal", new Vector3(0f, 0.02f, 0f), 1.15f, 0.06f, marble);
+            Disc("Bronze ring", new Vector3(0f, 0.09f, 0f), 0.92f, 0.012f, bronze);
+            for (int side = -1; side <= 1; side += 2)
+            {
+                Column(side * 1.55f, -1.15f, marble, bronze);
+                Column(side * 1.15f, -2.35f, step, bronze);
+            }
+            var lintel = Block("Lintel", new Vector3(0f, 3.15f, -1.15f), new Vector3(3.5f, 0.22f, 0.42f), marble);
+            lintel.transform.localRotation = Quaternion.identity;
+            Block("Rear step", new Vector3(0f, 0.08f, -2.2f), new Vector3(3.4f, 0.16f, 1.1f), step);
+        }
+
+        private void Column(float x, float z, Material shaft, Material capital)
+        {
+            Block("Column", new Vector3(x, 1.55f, z), new Vector3(0.28f, 3.1f, 0.28f), shaft);
+            Block("Capital", new Vector3(x, 3.05f, z), new Vector3(0.46f, 0.16f, 0.46f), capital);
+            Block("Base", new Vector3(x, 0.12f, z), new Vector3(0.4f, 0.12f, 0.4f), capital);
+        }
+
+        private void Disc(string name, Vector3 position, float diameter, float height, Material material)
+        {
+            var disc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            disc.name = name;
+            disc.transform.SetParent(stage.transform, false);
+            disc.transform.localPosition = position;
+            disc.transform.localScale = new Vector3(diameter, height, diameter);
+            disc.layer = Layer;
+            disc.GetComponent<MeshRenderer>().sharedMaterial = material;
+            UnityEngine.Object.Destroy(disc.GetComponent<Collider>());
+        }
+
+        private GameObject Block(string name, Vector3 position, Vector3 scale, Material material)
+        {
+            var block = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            block.name = name;
+            block.transform.SetParent(stage.transform, false);
+            block.transform.localPosition = position;
+            block.transform.localScale = scale;
+            block.layer = Layer;
+            block.GetComponent<MeshRenderer>().sharedMaterial = material;
+            UnityEngine.Object.Destroy(block.GetComponent<Collider>());
+            return block;
+        }
+
+        private static Material Stone(Color color, float gloss, float metal)
+        {
+            var material = new Material(Shader.Find("Standard"));
+            material.color = color;
+            material.SetFloat("_Glossiness", gloss);
+            material.SetFloat("_Metallic", metal);
+            return material;
+        }
+
         private void AddLight(string name, Color color, float intensity, Vector3 euler, bool shadows)
         {
             var lightObject = new GameObject(name);
@@ -190,9 +226,9 @@ namespace ThronesOfMyth
 
         private static void Dress(Transform root)
         {
-            var body = Gear("FrontierCaptain", 1f);
-            var shield = Gear("SuncrestAegis", 1f);
-            var spear = Gear("SunforgedSpear", 1f);
+            var body = Gear("FrontierCaptain", 0.42f);
+            var shield = Gear("SuncrestAegis", 0.92f);
+            var spear = Gear("SunforgedSpear", 0.72f);
             foreach (var renderer in root.GetComponentsInChildren<Renderer>())
             {
                 string name = renderer.gameObject.name;

@@ -21,7 +21,7 @@ namespace ThronesOfMyth
         private string reviewDirectory;
         private int reviewStep,reviewResizeMisses;
         private string reviewHoldLabel;
-        private float reviewAt;
+        private float reviewAt,reviewFrameCost;
         private GUIStyle hallInset;
         private int civilization, selectedBuilding;
         private string activeMarchId, inspectedHeroId = "captain";
@@ -373,16 +373,39 @@ namespace ThronesOfMyth
             var shots = new (int w, int h, int tab, string label, float yaw, string clip, float time)[] {
                 (1024, 768, 0, "skills", 0f, "Idle", 0.5f), (1280, 800, 0, "skills", 0f, "Idle", 0.5f), (1920, 1080, 0, "skills", 0f, "Idle", 0.5f),
                 (1280, 800, 1, "talents", 0f, "Idle", 0.5f), (1280, 800, 2, "development", 0f, "Idle", 0.5f),
-                (1024, 768, 0, "front", 0f, "Idle", 0.5f), (1024, 768, 0, "side", 90f, "Idle", 0.5f), (1024, 768, 0, "back", 180f, "Idle", 0.5f), (1024, 768, 0, "attack", 18f, "Attack", 0.32f), (1024, 768, 0, "victory", -12f, "Victory", 0.6f),
-                (1280, 800, 0, "front", 0f, "Idle", 0.5f), (1280, 800, 0, "side", 90f, "Idle", 0.5f), (1280, 800, 0, "back", 180f, "Idle", 0.5f), (1280, 800, 0, "idle", 0f, "Idle", 0.12f), (1280, 800, 0, "attack", 18f, "Attack", 0.32f), (1280, 800, 0, "victory", -12f, "Victory", 0.6f),
-                (1920, 1080, 0, "front", 0f, "Idle", 0.5f), (1920, 1080, 0, "side", 90f, "Idle", 0.5f), (1920, 1080, 0, "back", 180f, "Idle", 0.5f), (1920, 1080, 0, "attack", 18f, "Attack", 0.32f), (1920, 1080, 0, "victory", -12f, "Victory", 0.6f)
+                (1024, 768, 0, "front", 0f, "Idle", 0.5f), (1024, 768, 0, "side", 90f, "Idle", 0.5f), (1024, 768, 0, "back", 180f, "Idle", 0.5f), (1024, 768, 0, "attack", 18f, "Attack", 0.46f), (1024, 768, 0, "victory", -12f, "Victory", 0.4f),
+                (1280, 800, 0, "front", 0f, "Idle", 0.5f), (1280, 800, 0, "side", 90f, "Idle", 0.5f), (1280, 800, 0, "back", 180f, "Idle", 0.5f), (1280, 800, 0, "idle", 0f, "Idle", 0.12f), (1280, 800, 0, "ready", 24f, "Ready", 0.7f), (1280, 800, 0, "attack", 18f, "Attack", 0.46f), (1280, 800, 0, "victory", -12f, "Victory", 0.4f),
+                (1920, 1080, 0, "front", 0f, "Idle", 0.5f), (1920, 1080, 0, "side", 90f, "Idle", 0.5f), (1920, 1080, 0, "back", 180f, "Idle", 0.5f), (1920, 1080, 0, "attack", 18f, "Attack", 0.46f), (1920, 1080, 0, "victory", -12f, "Victory", 0.4f)
             };
             int index = reviewStep - 3;
+            string folder = string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory;
             if (index >= shots.Length)
             {
-                Directory.CreateDirectory(string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory);
-                File.WriteAllText(Path.Combine(string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory, "review-done.txt"), "done");
-                Application.Quit();
+                const int frames = 64;
+                int frame = index - shots.Length;
+                Directory.CreateDirectory(folder);
+                if (frame >= frames)
+                {
+                    float average = reviewFrameCost / Mathf.Max(1, frames);
+                    File.WriteAllText(Path.Combine(folder, "review-done.txt"), "frames " + frames + " average-ms " + (average * 1000f).ToString("0.0"));
+                    Application.Quit();
+                    return;
+                }
+                if ((Screen.width != 1280 || Screen.height != 800) && reviewResizeMisses < 6)
+                {
+                    Screen.SetResolution(1280, 800, FullScreenMode.Windowed);
+                    reviewResizeMisses++;
+                    reviewAt = Time.unscaledTime + 0.5f;
+                    return;
+                }
+                string[] cycle = { "Idle", "Ready", "Attack", "Victory" };
+                int part = frame / 16;
+                float normalized = (frame % 16) / 15f;
+                if (captainPresentation != null) captainPresentation.LockReview(frame * 5.5f, cycle[part], normalized);
+                reviewFrameCost += Time.unscaledDeltaTime;
+                reviewStep++;
+                reviewAt = Time.unscaledTime + 0.04f;
+                StartCoroutine(WriteReviewFrame(Path.Combine(folder, "motion-" + frame.ToString("00") + ".png")));
                 return;
             }
             var shot = shots[index];
@@ -417,7 +440,6 @@ namespace ThronesOfMyth
                 return;
             }
             reviewResizeMisses = 0;
-            string folder = string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory;
             Directory.CreateDirectory(folder);
             string path = Path.Combine(folder, "hall-" + shot.w + "x" + shot.h + "-" + shot.label + ".png");
             reviewStep++;
@@ -541,10 +563,12 @@ namespace ThronesOfMyth
             {
                 GUILayout.Space(10); GUILayout.BeginVertical(HallInset());
                 GUILayout.BeginHorizontal();
-                var emblem = GUILayoutUtility.GetRect(46, 46, GUILayout.Width(46), GUILayout.Height(46));
-                var color = skill.level == 0 ? MythInterfaceTheme.Muted : skill.kind == "Active" ? RarityColor(hero.color) : MythInterfaceTheme.Teal;
-                theme.Panel(emblem, skill.kind == "Active" && skill.level > 0);
-                theme.Icon(new Rect(emblem.x + 10, emblem.y + 10, 26, 26), skill.level == 0 ? "lock" : skill.kind == "Active" ? "mana" : "research", color);
+                var emblem = GUILayoutUtility.GetRect(52, 52, GUILayout.Width(52), GUILayout.Height(52));
+                var color = skill.level == 0 ? MythInterfaceTheme.Muted : skill.kind == "Active" ? RarityColor(hero.color) : MythInterfaceTheme.Gold;
+                theme.Circle(emblem, new Color(0.1f, 0.14f, 0.2f, 1f));
+                theme.Circle(new Rect(emblem.x + 4, emblem.y + 4, 44, 44), skill.level == 0 ? new Color(0.16f, 0.18f, 0.2f) : new Color(0.14f, 0.22f, 0.32f));
+                if (skill.level == 0) theme.Icon(new Rect(emblem.x + 12, emblem.y + 12, 28, 28), "lock", color);
+                else DrawSkillGlyph(new Rect(emblem.x + 8, emblem.y + 8, 36, 36), skill.index);
                 GUILayout.Space(10); GUILayout.BeginVertical();
                 GUILayout.Label(skill.kind.ToUpperInvariant() + (skill.level == 0 ? " · LOCKED" : " · LEVEL " + skill.level + " / 5"), theme.Eyebrow);
                 GUILayout.Label(skill.name, sectionStyle);

@@ -139,11 +139,14 @@ namespace ThronesOfMyth
         private void DrawHallStage(Rect stage,Rect figure)
         {
             var selected=Array.Find(world.commanders,hero=>hero.id==inspectedHeroId)??world.commanders[0];
-            theme.Backdrop(stage,0.72f);
-            MythInterfaceTheme.Fill(stage,new Color(0.05f,0.09f,0.16f,0.42f));
-            MythInterfaceTheme.Fill(new Rect(stage.x,stage.yMax-stage.height*0.22f,stage.width,stage.height*0.22f),new Color(0.18f,0.14f,0.08f,0.28f));
-            MythInterfaceTheme.Fill(new Rect(stage.x,stage.y,stage.width,2),HallBronze);
             bool livingCaptain=selected.id=="captain"&&!showCommanderModel&&!preferCaptainStudy&&CaptainPresentation.Available;
+            theme.Backdrop(stage,livingCaptain?0.15f:0.72f);
+            if(!livingCaptain)
+            {
+                MythInterfaceTheme.Fill(stage,new Color(0.05f,0.09f,0.16f,0.42f));
+                MythInterfaceTheme.Fill(new Rect(stage.x,stage.yMax-stage.height*0.22f,stage.width,stage.height*0.22f),new Color(0.18f,0.14f,0.08f,0.28f));
+            }
+            MythInterfaceTheme.Fill(new Rect(stage.x,stage.y,stage.width,2),HallBronze);
             if(showCommanderModel)
             {
                 if(commanderPreview==null)commanderPreview=new CommanderPreview();
@@ -227,11 +230,12 @@ namespace ThronesOfMyth
             float x=card.x+16,width=card.width-32,y=card.y+12;
             theme.Text(new Rect(x,y,width,18),selected.rarity.ToUpperInvariant()+" COMMANDER",theme.Eyebrow);
             theme.Text(new Rect(x,y+20,width,34),selected.name,theme.Title);
-            theme.Text(new Rect(x,y+56,width,42),selected.description,theme.Body);
+            MythInterfaceTheme.Fill(new Rect(x,y+54,72,2),MythInterfaceTheme.Gold);
+            theme.Text(new Rect(x,y+60,width,42),selected.description,theme.Body);
             theme.Hint(new Rect(x,y+56,width,42),selected.description);
             if(progress!=null)
             {
-                for(int i=0;i<6;i++)theme.Diamond(new Rect(x+i*22,y+102,16,16),i<progress.stars?MythInterfaceTheme.Gold:new Color(0.24f,0.28f,0.32f));
+                for(int i=0;i<6;i++)theme.Diamond(new Rect(x+i*24,y+106,18,18),i<progress.stars?MythInterfaceTheme.Gold:new Color(0.24f,0.28f,0.32f));
                 theme.OneLine(new Rect(x+140,y+100,width-140,20),recruited?"STARS "+progress.stars+" / 6":"Not recruited",theme.Eyebrow);
                 int cap=Math.Max(1,progress.stars*10);
                 bool capped=progress.heroLevel>=cap;
@@ -277,7 +281,12 @@ namespace ThronesOfMyth
                 var tabRow=GUILayoutUtility.GetRect(10,34,GUILayout.ExpandWidth(true));
                 string[] tabNames={"Skills","Talents","Development"};
                 float tabGap=6,tabWidth=(tabRow.width-tabGap*2)/3f;
-                for(int tab=0;tab<3;tab++)if(theme.Button(new Rect(tabRow.x+tab*(tabWidth+tabGap),tabRow.y,tabWidth,32),tabNames[tab],heroDetailTab==tab))heroDetailTab=tab;
+                for(int tab=0;tab<3;tab++)
+                {
+                    var tabRect=new Rect(tabRow.x+tab*(tabWidth+tabGap),tabRow.y,tabWidth,32);
+                    if(theme.Button(tabRect,tabNames[tab],heroDetailTab==tab))heroDetailTab=tab;
+                    if(heroDetailTab==tab)MythInterfaceTheme.Fill(new Rect(tabRect.x+8,tabRect.yMax-3,tabRect.width-16,2),MythInterfaceTheme.Gold);
+                }
                 heroBodyScroll=GUILayout.BeginScrollView(heroBodyScroll);
                 DrawHeroSkills(selected,progress);
                 if(heroDetailTab==2)
