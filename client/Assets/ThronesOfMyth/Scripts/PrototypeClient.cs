@@ -373,9 +373,9 @@ namespace ThronesOfMyth
             var shots = new (int w, int h, int tab, string label, float yaw, string clip, float time)[] {
                 (1024, 768, 0, "skills", 0f, "Idle", 0.5f), (1280, 800, 0, "skills", 0f, "Idle", 0.5f), (1920, 1080, 0, "skills", 0f, "Idle", 0.5f),
                 (1280, 800, 1, "talents", 0f, "Idle", 0.5f), (1280, 800, 2, "development", 0f, "Idle", 0.5f),
-                (1024, 768, 0, "front", 0f, "Idle", 0.5f), (1024, 768, 0, "side", 90f, "Idle", 0.5f), (1024, 768, 0, "back", 180f, "Idle", 0.5f), (1024, 768, 0, "attack", 18f, "Attack", 0.27f),
-                (1280, 800, 0, "front", 0f, "Idle", 0.5f), (1280, 800, 0, "side", 90f, "Idle", 0.5f), (1280, 800, 0, "back", 180f, "Idle", 0.5f), (1280, 800, 0, "idle", 0f, "Idle", 0.12f), (1280, 800, 0, "attack", 18f, "Attack", 0.27f),
-                (1920, 1080, 0, "front", 0f, "Idle", 0.5f), (1920, 1080, 0, "side", 90f, "Idle", 0.5f), (1920, 1080, 0, "back", 180f, "Idle", 0.5f), (1920, 1080, 0, "attack", 18f, "Attack", 0.27f)
+                (1024, 768, 0, "front", 0f, "Idle", 0.5f), (1024, 768, 0, "side", 90f, "Idle", 0.5f), (1024, 768, 0, "back", 180f, "Idle", 0.5f), (1024, 768, 0, "attack", 18f, "Attack", 0.32f), (1024, 768, 0, "victory", -12f, "Victory", 0.6f),
+                (1280, 800, 0, "front", 0f, "Idle", 0.5f), (1280, 800, 0, "side", 90f, "Idle", 0.5f), (1280, 800, 0, "back", 180f, "Idle", 0.5f), (1280, 800, 0, "idle", 0f, "Idle", 0.12f), (1280, 800, 0, "attack", 18f, "Attack", 0.32f), (1280, 800, 0, "victory", -12f, "Victory", 0.6f),
+                (1920, 1080, 0, "front", 0f, "Idle", 0.5f), (1920, 1080, 0, "side", 90f, "Idle", 0.5f), (1920, 1080, 0, "back", 180f, "Idle", 0.5f), (1920, 1080, 0, "attack", 18f, "Attack", 0.32f), (1920, 1080, 0, "victory", -12f, "Victory", 0.6f)
             };
             int index = reviewStep - 3;
             if (index >= shots.Length)
