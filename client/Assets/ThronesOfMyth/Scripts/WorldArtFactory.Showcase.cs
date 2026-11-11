@@ -58,6 +58,17 @@ namespace ThronesOfMyth
                 Sculpt(parent,(pine?"pine":"crown")+seed,at,scale,Color.Lerp(tint,new Color(.61f,.65f,.30f),i*.08f));
             }
         }
+        public void ProvinceRidge(Transform parent,Vector3 at,float yaw,int variant)
+        {
+            var root=new GameObject("Layered province escarpment").transform;root.SetParent(parent,false);root.localPosition=at;root.localRotation=Quaternion.Euler(0,yaw,0);
+            var pigment=variant>40?new Color(.42f,.48f,.45f):new Color(.57f,.51f,.38f);
+            for(int layer=0;layer<3;layer++)
+            {
+                float taper=1-layer*.20f;
+                var ledge=Sculpt(root,"rock"+(variant/4%3),new Vector3((layer%2-.5f)*.18f,layer*.48f,0),new Vector3(1.08f*taper,.65f,2.0f*taper),Color.Lerp(pigment,new Color(.70f,.67f,.51f),layer*.13f));
+                ledge.localRotation=Quaternion.Euler(0,(variant%3-1)*6,layer%2==0?3:-3);
+            }
+        }
         private void ShowcaseCamp(Transform root,Color team)
         {
             // Original scout shelter, enclosure and stone hearth; no borrowed camp prefab.

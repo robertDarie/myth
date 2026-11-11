@@ -38,6 +38,8 @@ namespace ThronesOfMyth
                 foreach(var at in new[]{new Vector3(-5.5f,0,-5.6f),new Vector3(5.5f,0,-5.6f),new Vector3(-5.5f,0,5.6f),new Vector3(5.5f,0,5.6f)})
                 {var home=new GameObject("Residential courtyard · scenery").transform;home.SetParent(parent,false);home.localPosition=at;home.localScale=Vector3.one*.68f;Imported(home,"GreekHome",MythInterfaceTheme.Teal);}
             }
+            else foreach(var at in new[]{new Vector3(-5.5f,0,-5.6f),new Vector3(5.5f,0,-5.6f),new Vector3(-5.5f,0,5.6f),new Vector3(5.5f,0,5.6f)})
+                ResidentialCourt(parent,culture,at);
             for(int side=-1;side<=1;side+=2)
             {
                 if(culture!="greek")

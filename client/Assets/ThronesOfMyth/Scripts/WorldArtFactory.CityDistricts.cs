@@ -39,6 +39,7 @@ namespace ThronesOfMyth
             else if(id=="quarry") { for(int i=0;i<4;i++)Ball(root,(i%2-.5f)*.6f,.35f+i*.03f,(i/2-.5f)*.5f,.6f,.5f,.5f,stone); }
             else if(id=="lumber") { for(int i=0;i<4;i++){var log=Pillar(root,(i%2-.5f)*.35f,.30f+i/2*.25f,0,.25f,1.0f,timber);log.localRotation=Quaternion.Euler(90,0,0);}Roof(root,1.1f,1.4f,1.2f,timber); }
             else if(id=="oracle") { var temple=new GameObject("Temple pavilion").transform;temple.SetParent(root,false);temple.localScale=Vector3.one*.38f;Temple(temple,team,false); }
+            else if(id=="menagerie"||id=="vault"||id=="oathhall"||id=="builders")InstitutionalCourt(root,id,culture,team);
             else if(id=="scoutcamp")
             {
                 Color roof=culture=="japanese"?new Color(.23f,.31f,.47f):culture=="chinese"?new Color(.22f,.46f,.35f):culture=="norse"?new Color(.24f,.31f,.29f):culture=="egyptian"?new Color(.72f,.58f,.28f):new Color(.62f,.28f,.18f);
@@ -84,11 +85,8 @@ namespace ThronesOfMyth
                 else
                 {
                     Box(root,0,.52f,0,1.03f,.8f,.88f,stone);DistrictRoof(root,culture,new Vector3(0,1.02f,0),1.36f,1.15f,roof);Box(root,0,.4f,-.47f,.26f,.50f,.06f,timber);
-                    if(id=="menagerie"){for(int i=-2;i<=2;i++)Box(root,i*.28f,.44f,-.64f,.06f,.64f,.06f,timber);Ball(root,0,.47f,-.35f,.40f,.40f,.40f,bronze);}
                     if(id=="market")for(int i=-1;i<=1;i++)Box(root,i*.35f,.75f,-.63f,.33f,.10f,.60f,i==0?team:bronze);
-                    if(id=="mint"||id=="vault"){for(int i=0;i<3;i++)Pillar(root,.45f,.23f+i*.09f,-.46f,.23f,.06f,bronze);Box(root,0,.48f,-.53f,.55f,.63f,.1f,darkStone);}
-                    if(id=="oathhall"){Pillar(root,.50f,1.02f,-.60f,.06f,1.7f,bronze);Box(root,.67f,1.45f,-.60f,.35f,.45f,.04f,team);}
-                    if(id=="builders"){Box(root,-.5f,.72f,0,.07f,1.3f,.07f,timber);Box(root,0,1.3f,0,1.1f,.07f,.07f,timber);}
+                    if(id=="mint"){for(int i=0;i<3;i++)Pillar(root,.45f,.23f+i*.09f,-.46f,.23f,.06f,bronze);Box(root,0,.48f,-.53f,.55f,.63f,.1f,darkStone);}
                 }
             }
             if(level>=2)Box(root,0,.10f,-.76f,1.45f,.10f,.15f,bronze);
