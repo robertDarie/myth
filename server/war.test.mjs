@@ -54,7 +54,7 @@ test('hospital cancellation is exact, stale cancellation cannot refund twice and
 });
 
 test('training capacity includes hospital and queued treatment; wounded cannot be deployed from reserves', () => {
-  const {w,b}=setup();b.wounded.infantry=36;b.reserveTroops=0; b.reserveUnits=emptyUnits();
+  const {w,b}=setup();b.wounded.infantry=56;b.reserveTroops=0; b.reserveUnits=emptyUnits();
   assert.throws(()=>command(w,b,'train'),/capacity/);
   command(w,b,'hospital-heal',{units:{...emptyUnits(),infantry:20}});assert.throws(()=>command(w,b,'train'),/capacity/);
   command(w,b,'unlock-commander',{targetId:'warden'});

@@ -252,17 +252,19 @@ export function filterFog(w, snapshot, p, context = visionContext(w, p)) {
     delete q.explored; delete q.scout; delete q.scouts; delete q.scoutReports; delete q.autoExplore; delete q.findings; delete q.reconReports; delete q.reconNotices;
     if (q.id !== p.id) { q.x = q.homeX; q.z = q.homeZ; }
   }
+  const terrainExplored = point => Array.isArray(p.explored) && p.explored.includes(cellIndex(point));
+  const stamp = (item, point) => ({ ...item, terrainExplored: terrainExplored(point) });
   for (const kind of ['strongholds', 'camps', 'nodes', 'flags', 'sites']) {
-    const actual = snapshot[kind], memory = recalled(p, kind), merged = new Map(memory.map(t => [t.id, t]));
-    for (const t of actual) if (seen(t) || (kind === 'flags' || kind === 'sites') && !!p.allianceId && t.allianceId === p.allianceId) merged.set(t.id, { ...t, lastKnown: false, observedAt: w.time });
+    const actual = snapshot[kind], memory = recalled(p, kind).map(t => stamp(t, t)), merged = new Map(memory.map(t => [t.id, t]));
+    for (const t of actual) if (seen(t) || (kind === 'flags' || kind === 'sites') && !!p.allianceId && t.allianceId === p.allianceId) merged.set(t.id, stamp({ ...t, lastKnown: false, observedAt: w.time }, t));
     snapshot[kind] = [...merged.values()];
   }
-  const cities = new Map(recalled(p, 'cities').map(c => [c.id, c]));
+  const cities = new Map(recalled(p, 'cities').map(c => [c.id, stamp(c, { x: c.homeX, z: c.homeZ })]));
   snapshot.players = snapshot.players.map(q => {
-    if (q.id === p.id) return { ...q, mapVisible: true };
-    if (seen({ x: q.homeX, z: q.homeZ })) return { ...q, mapVisible: true, lastKnown: false };
+    if (q.id === p.id) return { ...q, mapVisible: true, terrainExplored: true };
+    if (seen({ x: q.homeX, z: q.homeZ })) return { ...q, mapVisible: true, lastKnown: false, terrainExplored: terrainExplored({ x: q.homeX, z: q.homeZ }) };
     const memory = cities.get(q.id);
-    return memory ? { id: q.id, name: q.name, civilization: q.civilization, ...memory, mapVisible: true } : { id: q.id, name: q.name, civilization: q.civilization, allianceId: q.allianceId, construction: null, secondConstruction: null, research: null, mapVisible: false };
+    return memory ? { id: q.id, name: q.name, civilization: q.civilization, ...memory, mapVisible: true } : { id: q.id, name: q.name, civilization: q.civilization, allianceId: q.allianceId, construction: null, secondConstruction: null, research: null, mapVisible: false, terrainExplored: false };
   });
   snapshot.garrisons = snapshot.garrisons.filter(g => g.allianceId === p.allianceId); snapshot.sieges = snapshot.sieges.filter(s => { const t = [...w.sites, ...w.flags, ...w.strongholds].find(t => t.id === s.targetId); return t && seen(t); });
   snapshot.events = []; return snapshot;

@@ -52,7 +52,8 @@ test('independent gathering marches contribute to one treasury; player tokens ca
 });
 
 test('global training capacity counts all marches and commander/relic assignments are unique', () => {
-  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=40;p.reserveUnits.infantry=40;const a=deploy(w,p,'scout',40);
+  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=60;p.reserveUnits.infantry=60;const a=deploy(w,p,'scout',40);
+  assert.equal(p.troops + a.troops + p.reserveTroops, 80);
   assert.throws(()=>cmd(w,p,'train'),/capacity/);
   assert.throws(()=>cmd(w,p,'commander',{targetId:'scout'}),/already leads/);
   p.ownedRelics.push('aegis');cmd(w,p,'equip-relic',{targetId:'aegis'});
