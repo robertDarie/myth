@@ -60,6 +60,67 @@ namespace ThronesOfMyth.Editor
             if(errors.Count>0)throw new InvalidOperationException("Art import validation failed. See work/native-art-review/import-review.json. First issue: "+errors[0]);
             Debug.Log("Art import review passed for "+results.Count+" models. Report: "+Folder);
         }
+        [MenuItem("Thrones of Myth/Art Review/Capture Canopy Lighting")]
+        public static void CaptureCanopy()
+        {
+            if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null)throw new InvalidOperationException("Capture needs a graphics-enabled Unity Editor. Rerun without -nographics.");
+            var shader=Shader.Find("ThronesOfMyth/Vegetation");
+            if(shader==null||ShaderUtil.ShaderHasError(shader))throw new InvalidOperationException("Vegetation shader is missing or failed to compile.");
+            var previousShadows=QualitySettings.shadows;
+            var stage=new GameObject("Canopy lighting review");
+            var sunObject=new GameObject("Canopy sun");
+            var cameraObject=new GameObject("Canopy camera");
+            RenderTexture target=null;Texture2D image=null;
+            try
+            {
+                string[] models={"RealmOak1","PineTree"};
+                for(int i=0;i<models.Length;i++)
+                {
+                    var asset=AssetDatabase.LoadAssetAtPath<GameObject>(Root+"Models/"+models[i]+".fbx");
+                    if(asset==null)throw new InvalidOperationException("Missing canopy model: "+models[i]);
+                    var instance=UnityEngine.Object.Instantiate(asset,stage.transform,false);
+                    instance.transform.localPosition=new Vector3(i*4f-2f,0,0);
+                    foreach(var renderer in instance.GetComponentsInChildren<MeshRenderer>())
+                    {
+                        var source=renderer.sharedMaterials;var palette=new Material[source.Length];
+                        for(int slot=0;slot<source.Length;slot++)
+                        {
+                            string role=source[slot]==null?"Stone":source[slot].name;
+                            bool leaf=role.Contains("Leaf")||role.Contains("Green");
+                            Color tint=leaf?new Color(.30f,.45f,.23f):role.Contains("Bark")||role.Contains("Wood")?new Color(.31f,.21f,.13f):new Color(.62f,.58f,.48f);
+                            palette[slot]=leaf?new Material(shader){color=tint,name="Canopy review"}:new Material(Shader.Find("Diffuse")){color=tint};
+                        }
+                        renderer.sharedMaterials=palette;
+                    }
+                }
+                var sun=sunObject.AddComponent<Light>();sun.type=LightType.Directional;sun.intensity=1.15f;sun.color=Color.white;sun.shadows=LightShadows.Soft;sun.transform.rotation=Quaternion.Euler(48f,-28f,0);
+                var camera=cameraObject.AddComponent<Camera>();camera.enabled=false;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.15f,.20f,.22f);camera.orthographic=true;camera.orthographicSize=3.2f;camera.nearClipPlane=.1f;camera.farClipPlane=40f;camera.transform.position=new Vector3(2f,3.4f,9f);camera.transform.LookAt(new Vector3(0,1.6f,0));
+                target=new RenderTexture(960,640,24);camera.targetTexture=target;
+                var samples=new List<string>();
+                foreach(var pass in new[]{("shadows-on",ShadowQuality.All,LightShadows.Soft),("shadows-off",ShadowQuality.Disable,LightShadows.None)})
+                {
+                    QualitySettings.shadows=pass.Item2;sun.shadows=pass.Item3;camera.Render();
+                    RenderTexture.active=target;image=new Texture2D(target.width,target.height,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,target.width,target.height),0,0);image.Apply();
+                    var pixels=image.GetPixels32();long red=0,green=0,blue=0,count=0;
+                    foreach(var pixel in pixels)
+                    {
+                        bool background=Mathf.Abs(pixel.r-38)<12&&Mathf.Abs(pixel.g-51)<12&&Mathf.Abs(pixel.b-56)<12;
+                        if(background)continue;red+=pixel.r;green+=pixel.g;blue+=pixel.b;count++;
+                    }
+                    float r=count==0?0:red/(float)count,g=count==0?0:green/(float)count,b=count==0?0:blue/(float)count;
+                    string file=Path.Combine(Folder,"canopy-"+pass.Item1+".png");File.WriteAllBytes(file,image.EncodeToPNG());
+                    samples.Add("{\"pass\":\""+pass.Item1+"\",\"pixels\":"+count+",\"red\":"+r.ToString("F2")+",\"green\":"+g.ToString("F2")+",\"blue\":"+b.ToString("F2")+",\"nearBlack\":"+(r<12&&g<12&&b<12?"true":"false")+"}");
+                    UnityEngine.Object.DestroyImmediate(image);image=null;
+                }
+                File.WriteAllText(Path.Combine(Folder,"canopy-lighting.json"),"{\"graphics\":\""+SystemInfo.graphicsDeviceName+"\",\"samples\":["+string.Join(",",samples)+"]}");
+                Debug.Log("Canopy lighting capture saved in "+Folder);
+            }
+            finally
+            {
+                QualitySettings.shadows=previousShadows;RenderTexture.active=null;if(image!=null)UnityEngine.Object.DestroyImmediate(image);if(target!=null)target.Release();
+                UnityEngine.Object.DestroyImmediate(stage);UnityEngine.Object.DestroyImmediate(sunObject);UnityEngine.Object.DestroyImmediate(cameraObject);
+            }
+        }
         [MenuItem("Thrones of Myth/Art Review/Capture Greek Asset Lineup")]
         public static void CaptureGreek()
         {
