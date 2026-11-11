@@ -25,6 +25,11 @@ static class InterfacePolishContracts
   Check(InterfaceLayout.Duration(61)=="1m 1s"&&InterfaceLayout.Duration(3601)=="1h 0m","Duration format");Check(InterfaceLayout.Duration(-1)=="0s","Duration clamp");
   Check(InterfaceLayout.Countdown(2,4)==0&&InterfaceLayout.Countdown(10,100)==7,"Countdown must not extrapolate beyond short snapshot window");
   Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==16,"Release identity advances without a protocol change");
+  foreach(var size in new[]{(1024f,768f),(1280f,800f),(1920f,1080f)})
+  {
+   InterfaceLayout.CommanderWindow(size.Item1,size.Item2,1f,out float innerW,out float innerH);
+   Check(CommanderHallLayout.Separated(innerW,innerH),"Commander hall keeps the roster, figure and card apart at "+size.Item1+"x"+size.Item2);
+  }
   Check(ReconCopy.Depth(1).Contains("approximate strength")&&ReconCopy.Depth(2).Contains("quantities")&&ReconCopy.Depth(3).Contains("ordinary stores")&&ReconCopy.Stale.Contains("may have changed"),"Veil reading copy states depth and staleness");
   Check(LandmarkCopy.ShowRemembered(true)&&!LandmarkCopy.ShowRemembered(false),"Unexplored remembered markers stay concealed");
   Check(!LandmarkCopy.MapLabel(true,"Stone Cutting").Contains("Last seen")&&LandmarkCopy.MapLabel(true,"Stone Cutting").Contains("Recorded landmark"),"Explored landmarks keep their name without a last-seen label");

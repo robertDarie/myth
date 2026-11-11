@@ -11,6 +11,7 @@
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/OutcomeSummary.cs" Link="OutcomeSummary.cs" />
     <Compile Include="InterfacePolishContracts.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs" Link="InterfaceLayout.cs" />
+    <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/CommanderHallLayout.cs" Link="CommanderHallLayout.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/ReleaseVersion.cs" Link="ReleaseVersion.cs" />
     <Compile Include="CombatSpectacleContracts.cs" />
     <Compile Include="../../client/Assets/ThronesOfMyth/Scripts/SkillPresentation.cs" Link="SkillPresentation.cs" />

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -16,7 +17,11 @@ namespace ThronesOfMyth
         private readonly string[] specialties = { "+12% army damage · Minotaur", "+35% recovery · Sphinx Guardian", "+15% health · Frost Giant", "+25% gathering · Qilin Guardian", "+15% march speed · Tengu" };
         private string playerName, token, playerId, allianceName = "Dawnkeepers";
         private string status = "Your kingdom will be saved on this PC.";
-        private bool joining, processing, placeBeacon, focused,freshGuest;
+        private bool joining, processing, placeBeacon, focused,freshGuest,reviewCommanders;
+        private string reviewDirectory;
+        private int reviewStep,reviewResizeMisses;
+        private float reviewAt;
+        private GUIStyle hallInset;
         private int civilization, selectedBuilding;
         private string activeMarchId, inspectedHeroId = "captain";
         private string lastDrawId;
@@ -35,10 +40,17 @@ namespace ThronesOfMyth
         private void Awake()
         {
             Application.runInBackground = true;
-            var args=Environment.GetCommandLineArgs();for(int i=0;i<args.Length-1;i++)if(args[i]=="--thrones-server"&&Uri.TryCreate(args[i+1],UriKind.Absolute,out var address)&&(address.Scheme=="http"||address.Scheme=="https"))serverUrl=address.AbsoluteUri.TrimEnd('/');
+            var args=Environment.GetCommandLineArgs();
+            for(int i=0;i<args.Length;i++)
+            {
+                if(args[i]=="--thrones-review-commanders")reviewCommanders=true;
+                if(i<args.Length-1&&args[i]=="--thrones-server"&&Uri.TryCreate(args[i+1],UriKind.Absolute,out var address)&&(address.Scheme=="http"||address.Scheme=="https"))serverUrl=address.AbsoluteUri.TrimEnd('/');
+                if(i<args.Length-1&&args[i]=="--thrones-review-dir")reviewDirectory=args[i+1];
+            }
             StartCoroutine(PreloadPresentation());
             InitializeInterface();
             playerName = PlayerPrefs.GetString("ThronesOfMyth.name", "Commander");
+            if(reviewCommanders){playerName="Review"+DateTime.Now.ToString("HHmmss");PlayerPrefs.DeleteKey(SessionKey);}
             map = gameObject.AddComponent<WorldView>();
             map.occluded = point => InterfaceBlocksPoint(new Vector3(point.x, Screen.height - point.y, 0));
             var camera = Camera.main;
@@ -54,10 +66,12 @@ namespace ThronesOfMyth
             TickCityExperience();
             if(map!=null)map.hoveredId="";
             if (cameraControl != null) cameraControl.blockInput = string.IsNullOrEmpty(token) || cityExperience.BlocksWorld || PointerOverUI();
+            if (reviewCommanders) TickCommanderReview();
             if (me == null || LoadingActive) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { CloseInterface(); return; }
             if (HandleCityKeys()) return;
             if (HandleInterfaceKeys()) return;
+            if (HandleCommanderKeys()) return;
             if(!cityExperience.AllowsWorldInput(interfacePage==InterfacePage.World,false,GUIUtility.keyboardControl!=0))return;
             if (interfacePage != InterfacePage.World) return;
             if (Input.GetKeyDown(KeyCode.H)) cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);
@@ -329,6 +343,123 @@ namespace ThronesOfMyth
         {
             if (GUILayout.Button("Assemble a new march", theme.Primary, GUILayout.Height(44))) BeginFormation(false);
         }
+        private GUIStyle HallInset()
+        {
+            if (hallInset != null) return hallInset;
+            var tex = new Texture2D(1, 1) { hideFlags = HideFlags.HideAndDontSave };
+            tex.SetPixel(0, 0, new Color(0.09f, 0.14f, 0.2f, 1f));
+            tex.Apply();
+            hallInset = new GUIStyle(GUI.skin.box) { padding = new RectOffset(10, 10, 8, 8) };
+            hallInset.normal.background = tex;
+            hallInset.normal.textColor = new Color(0.93f, 0.9f, 0.82f);
+            return hallInset;
+        }
+        private void TickCommanderReview()
+        {
+            if (reviewStep == 0 && !joining && string.IsNullOrEmpty(token)) { reviewStep = 1; StartCoroutine(Join()); }
+            if (me == null || world == null || world.commanders == null || world.commanders.Length == 0) return;
+            if (reviewStep == 1) { reviewStep = 2; reviewAt = Time.unscaledTime + 6.2f; return; }
+            if (Time.unscaledTime < reviewAt) return;
+            if (reviewStep == 2)
+            {
+                inspectedHeroId = "captain";
+                heroDetailTab = 0;
+                if (interfacePage != InterfacePage.Heroes) OpenInterface(InterfacePage.Heroes);
+                reviewStep = 3;
+                reviewAt = Time.unscaledTime + 0.5f;
+                return;
+            }
+            var shots = new[] { (1024, 768, 0, "skills"), (1280, 800, 0, "skills"), (1920, 1080, 0, "skills"), (1280, 800, 1, "talents"), (1280, 800, 2, "development") };
+            int index = reviewStep - 3;
+            if (index >= shots.Length)
+            {
+                Directory.CreateDirectory(string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory);
+                File.WriteAllText(Path.Combine(string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory, "review-done.txt"), "done");
+                Application.Quit();
+                return;
+            }
+            var shot = shots[index];
+            if ((Screen.width != shot.Item1 || Screen.height != shot.Item2 || heroDetailTab != shot.Item3) && reviewResizeMisses < 4)
+            {
+                heroDetailTab = shot.Item3;
+                inspectedHeroId = "captain";
+                if (interfacePage != InterfacePage.Heroes) OpenInterface(InterfacePage.Heroes);
+                Screen.SetResolution(shot.Item1, shot.Item2, FullScreenMode.Windowed);
+                reviewResizeMisses++;
+                reviewAt = Time.unscaledTime + 0.7f;
+                return;
+            }
+            reviewResizeMisses = 0;
+            string folder = string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory;
+            Directory.CreateDirectory(folder);
+            string path = Path.Combine(folder, "hall-" + shot.Item1 + "x" + shot.Item2 + "-" + shot.Item4 + ".png");
+            reviewStep++;
+            reviewAt = Time.unscaledTime + 1.2f;
+            StartCoroutine(WriteReviewFrame(path));
+        }
+        private IEnumerator WriteReviewFrame(string path)
+        {
+            yield return new WaitForEndOfFrame();
+            int width = Screen.width, height = Screen.height;
+            var image = new Texture2D(width, height, TextureFormat.RGB24, false);
+            image.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            image.Apply();
+            File.WriteAllBytes(path, EncodeReviewPng(image.GetPixels32(), width, height));
+            Destroy(image);
+        }
+        private static byte[] EncodeReviewPng(Color32[] pixels, int width, int height)
+        {
+            int stride = width * 3;
+            var raw = new byte[(stride + 1) * height];
+            for (int y = 0; y < height; y++)
+            {
+                int row = (height - 1 - y) * stride + (height - 1 - y);
+                int source = y * width;
+                raw[row] = 0;
+                for (int x = 0; x < width; x++)
+                {
+                    var pixel = pixels[source + x];
+                    int at = row + 1 + x * 3;
+                    raw[at] = pixel.r; raw[at + 1] = pixel.g; raw[at + 2] = pixel.b;
+                }
+            }
+            var zlib = new System.Collections.Generic.List<byte> { 0x78, 0x01 };
+            int offset = 0;
+            while (offset < raw.Length)
+            {
+                int length = Math.Min(65535, raw.Length - offset);
+                bool last = offset + length >= raw.Length;
+                zlib.Add((byte)(last ? 1 : 0));
+                zlib.Add((byte)length); zlib.Add((byte)(length >> 8));
+                int complement = length ^ 0xffff;
+                zlib.Add((byte)complement); zlib.Add((byte)(complement >> 8));
+                for (int i = 0; i < length; i++) zlib.Add(raw[offset + i]);
+                offset += length;
+            }
+            uint s1 = 1, s2 = 0;
+            foreach (byte value in raw) { s1 = (s1 + value) % 65521; s2 = (s2 + s1) % 65521; }
+            uint adler = (s2 << 16) | s1;
+            zlib.Add((byte)(adler >> 24)); zlib.Add((byte)(adler >> 16)); zlib.Add((byte)(adler >> 8)); zlib.Add((byte)adler);
+            using var output = new MemoryStream();
+            output.Write(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }, 0, 8);
+            WritePngChunk(output, "IHDR", new byte[] { (byte)(width >> 24), (byte)(width >> 16), (byte)(width >> 8), (byte)width, (byte)(height >> 24), (byte)(height >> 16), (byte)(height >> 8), (byte)height, 8, 2, 0, 0, 0 });
+            WritePngChunk(output, "IDAT", zlib.ToArray());
+            WritePngChunk(output, "IEND", Array.Empty<byte>());
+            return output.ToArray();
+        }
+        private static void WritePngChunk(Stream output, string kind, byte[] data)
+        {
+            var name = System.Text.Encoding.ASCII.GetBytes(kind);
+            var crcSource = new byte[name.Length + data.Length];
+            Buffer.BlockCopy(name, 0, crcSource, 0, name.Length);
+            Buffer.BlockCopy(data, 0, crcSource, name.Length, data.Length);
+            uint crc = 0xffffffff;
+            foreach (byte value in crcSource) { crc ^= value; for (int i = 0; i < 8; i++) crc = (crc & 1) != 0 ? 0xedb88320 ^ (crc >> 1) : crc >> 1; }
+            crc ^= 0xffffffff;
+            var length = new[] { (byte)(data.Length >> 24), (byte)(data.Length >> 16), (byte)(data.Length >> 8), (byte)data.Length };
+            output.Write(length, 0, 4); output.Write(name, 0, 4); output.Write(data, 0, data.Length);
+            output.Write(new[] { (byte)(crc >> 24), (byte)(crc >> 16), (byte)(crc >> 8), (byte)crc }, 0, 4);
+        }
         private void DrawTalents(CommanderData hero, HeroProgress progress)
         {
             int open = progress.talentPoints - progress.talentPointsSpent;
@@ -341,12 +472,12 @@ namespace ThronesOfMyth
                 if (tree.nodes == null) continue;
                 foreach (var node in tree.nodes)
                 {
-                    GUILayout.BeginVertical(GUI.skin.box);
+                    GUILayout.BeginVertical(HallInset());
                     GUILayout.Label(node.name + " · rank " + node.rank + " / " + node.max, sectionStyle);
                     GUILayout.Label(node.effect, noteStyle);
                     if (!string.IsNullOrEmpty(node.requires)) GUILayout.Label("Requires the preceding oath in this tree.", noteStyle);
                     string reason = processing ? "Sending your order…" : pendingOrder != null ? "Confirm your previous order first." : node.lockedReason;
-                    if (theme.Action("Learn " + node.name, node.available && string.IsNullOrEmpty(reason), string.IsNullOrEmpty(reason) ? "" : reason, false))
+                    if (theme.Action("Learn " + node.name, node.available && string.IsNullOrEmpty(reason), string.IsNullOrEmpty(reason) ? "" : reason, false, false))
                         Send(new GameCommand { type = "talent-raise", targetId = hero.id, name = node.id });
                     GUILayout.EndVertical();
                 }
@@ -356,14 +487,14 @@ namespace ThronesOfMyth
             if (!confirming)
             {
                 string reason = !string.IsNullOrEmpty(progress.respecLockedReason) ? progress.respecLockedReason : me.mana < progress.respecMana ? "More Mana required: " + progress.respecMana : processing ? "Sending your order…" : pendingOrder != null ? "Confirm your previous order first." : "";
-                if (theme.Action("Respec · " + progress.respecMana + " Mana", string.IsNullOrEmpty(reason), reason, false)) talentConfirmId = hero.id;
+                if (theme.Action("Respec · " + progress.respecMana + " Mana", string.IsNullOrEmpty(reason), reason, false, false)) talentConfirmId = hero.id;
             }
             else
             {
                 GUILayout.Label("Clear every talent on " + hero.name + " for " + progress.respecMana + " Mana. The points return. The Mana does not.", noteStyle);
                 string reason = me.mana < progress.respecMana ? "More Mana required: " + progress.respecMana : processing ? "Sending your order…" : pendingOrder != null ? "Confirm your previous order first." : "";
-                if (theme.Action("Confirm respec", string.IsNullOrEmpty(reason), reason)) { talentConfirmId = null; Send(new GameCommand { type = "talent-respec", targetId = hero.id }); }
-                if (GUILayout.Button("Keep talents")) talentConfirmId = null;
+                if (theme.Action("Confirm respec", string.IsNullOrEmpty(reason), reason, true, false)) { talentConfirmId = null; Send(new GameCommand { type = "talent-respec", targetId = hero.id }); }
+                if (theme.Action("Keep talents", true, "", false)) talentConfirmId = null;
             }
         }
         private void DrawHeroSkills(CommanderData hero, HeroProgress progress)
@@ -375,16 +506,13 @@ namespace ThronesOfMyth
             var experience = GUILayoutUtility.GetRect(80, 9, GUILayout.ExpandWidth(true));
             theme.Bar(experience, progress.heroLevel >= progress.stars * 10 ? 1 : progress.xp % 100 / 100f, MythInterfaceTheme.Teal);
             GUILayout.Space(8);
-            GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20 && !processing;
-            if (GUILayout.Button("Mentor +100 XP · 40 gold / 20 food")) Send("mentor-commander", hero.id);
-            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.mana >= progress.stars * 10 && !processing;
-            if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana")) Send("promote-commander", hero.id);
-            GUI.enabled = true;
+            if (theme.Action("Mentor +100 XP · 40 gold / 20 food", progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20 && !processing, "Mentor needs room below the star cap, 40 gold and 20 food.", false, false)) Send("mentor-commander", hero.id);
+            if (theme.Action("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana", progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.mana >= progress.stars * 10 && !processing, "Promote needs the current star cap, " + progress.stars * 100 + " gold and " + progress.stars * 10 + " Mana.", false, false)) Send("promote-commander", hero.id);
                 return;
             }
             foreach (var skill in progress.skills)
             {
-                GUILayout.Space(10); GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Space(10); GUILayout.BeginVertical(HallInset());
                 GUILayout.BeginHorizontal();
                 var emblem = GUILayoutUtility.GetRect(46, 46, GUILayout.Width(46), GUILayout.Height(46));
                 var color = skill.level == 0 ? MythInterfaceTheme.Muted : skill.kind == "Active" ? RarityColor(hero.color) : MythInterfaceTheme.Teal;
@@ -397,9 +525,8 @@ namespace ThronesOfMyth
                 var pips = GUILayoutUtility.GetRect(80, 10, GUILayout.ExpandWidth(true));
                 for (int i = 0; i < 5; i++) MythInterfaceTheme.Fill(new Rect(pips.x + i * (pips.width / 5), pips.y + 3, pips.width / 5 - 4, 3), i < skill.level ? color : new Color(0.22f, 0.29f, 0.3f));
                 GUILayout.Label(skill.description + (skill.level == 0 ? " Unlocks at " + skill.unlockStar + " stars." : ""), noteStyle);
-                GUI.enabled = skill.level > 0 && skill.level < 5 && progress.shards >= 5 * (skill.level + 1) && me.gold >= 25 * (skill.level + 1) && !processing;
-                if (GUILayout.Button("Upgrade · " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold")) Send(new GameCommand { type = "upgrade-skill", targetId = hero.id, skillIndex = skill.index });
-                GUI.enabled = true; GUILayout.EndVertical();
+                if (theme.Action("Upgrade · " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold", skill.level > 0 && skill.level < 5 && progress.shards >= 5 * (skill.level + 1) && me.gold >= 25 * (skill.level + 1) && !processing, skill.level == 0 ? "Unlocks at " + skill.unlockStar + " stars." : skill.level >= 5 ? "This skill is at its highest level." : "Upgrade needs " + 5 * (skill.level + 1) + " Echo Shards and " + 25 * (skill.level + 1) + " gold.", false, false)) Send(new GameCommand { type = "upgrade-skill", targetId = hero.id, skillIndex = skill.index });
+                GUILayout.EndVertical();
             }
             GUILayout.Label((progress.expertise ? "EXPERTISE ACTIVE · " : "Expertise · ") + progress.expertiseDescription, noteStyle);
             GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Active skills fire automatically at 1,000 rage.", noteStyle);

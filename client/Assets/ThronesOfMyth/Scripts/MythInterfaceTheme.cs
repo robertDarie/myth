@@ -203,11 +203,11 @@ namespace ThronesOfMyth
         }
         public void Section(string title,string subtitle="")
         {GUILayout.Space(8);GUILayout.Label(title,Heading);if(!string.IsNullOrEmpty(subtitle))GUILayout.Label(subtitle,Small);GUILayout.Space(5);}
-        public bool Action(string title,bool available,string reason,bool primary=true)
+        public bool Action(string title,bool available,string reason,bool primary=true,bool showReason=true)
         {
             bool before=GUI.enabled;GUI.enabled=before&&available;
             bool pressed=GUILayout.Button(new GUIContent(title,available?"":reason),primary?Primary:Skin.button,GUILayout.MinHeight(42));GUI.enabled=before;Hint(GUILayoutUtility.GetLastRect(),available?"":reason);
-            if(!available&&!string.IsNullOrEmpty(reason))GUILayout.Label(reason,Small);
+            if(showReason&&!available&&!string.IsNullOrEmpty(reason))GUILayout.Label(reason,Small);
             return pressed;
         }
         public static void Fill(Rect rect, Color color)
