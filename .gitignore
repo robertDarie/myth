@@ -45,3 +45,10 @@ tests/PresentationContracts/obj/
 # Generated and restored by native playtest builders
 client/Assets/ThronesOfMyth/Resources/BuildIdentity.json
 client/Assets/ThronesOfMyth/Resources/BuildIdentity.json.meta
+
+# Local AI-loop state. Scripts and the roadmap stay tracked.
+.ai-loop/enabled
+.ai-loop/paused
+.ai-loop/handoff.md
+.ai-loop/last-decision.json
+.ai-loop/state/

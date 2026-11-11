@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "stop": [
+      {
+        "command": "python -X utf8 .cursor/hooks/ai-loop-stop.py",
+        "timeout": 45,
+        "loop_limit": 3,
+        "failClosed": false
+      }
+    ]
+  }
+}
