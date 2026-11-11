@@ -14,7 +14,8 @@ namespace ThronesOfMyth
         private readonly CityProgressFeedback cityProgress=new CityProgressFeedback();
         private bool cityModelView = true;
         private CommanderPreview commanderPreview;
-        private bool showCommanderModel;
+        private CaptainPresentation captainPresentation;
+        private bool showCommanderModel, preferCaptainStudy;
         private void RenderCityWindow(Rect r)
         {
             string[] labels = { "Training", "Hospital", "Athenaeum", "Temple", "Forge", "Market" };
@@ -142,11 +143,17 @@ namespace ThronesOfMyth
             MythInterfaceTheme.Fill(stage,new Color(0.05f,0.09f,0.16f,0.42f));
             MythInterfaceTheme.Fill(new Rect(stage.x,stage.yMax-stage.height*0.22f,stage.width,stage.height*0.22f),new Color(0.18f,0.14f,0.08f,0.28f));
             MythInterfaceTheme.Fill(new Rect(stage.x,stage.y,stage.width,2),HallBronze);
+            bool livingCaptain=selected.id=="captain"&&!showCommanderModel&&!preferCaptainStudy&&CaptainPresentation.Available;
             if(showCommanderModel)
             {
                 if(commanderPreview==null)commanderPreview=new CommanderPreview();
                 commanderPreview.Draw(new Rect(stage.x+8,stage.y+8,stage.width-16,stage.height-46),selected,theme,reducedMotion);
                 theme.OneLine(new Rect(stage.x+12,stage.yMax-32,stage.width-168,24),"Low-poly field model · poses are previews, not a live mesh",theme.Small);
+            }
+            else if(livingCaptain)
+            {
+                if(captainPresentation==null)captainPresentation=new CaptainPresentation();
+                captainPresentation.Draw(new Rect(stage.x+8,stage.y+8,stage.width-16,stage.height-46),theme,reducedMotion);
             }
             else if(selected.id=="captain"&&CaptainStudy!=null)
             {
@@ -171,7 +178,13 @@ namespace ThronesOfMyth
                 theme.Portrait(medallion,selected.id,RarityColor(selected.color));
                 theme.OneLine(new Rect(stage.x+12,stage.yMax-32,stage.width-168,24),"Painted portrait · the full-body study is the Frontier Captain",theme.Small);
             }
-            if(theme.Button(new Rect(stage.xMax-150,stage.yMax-36,138,28),showCommanderModel?"Painted study":"Field model"))showCommanderModel=!showCommanderModel;
+            string stageToggle=showCommanderModel?"Hall figure":livingCaptain?"Painted study":selected.id=="captain"&&CaptainPresentation.Available?"Living figure":"Field model";
+            if(theme.Button(new Rect(stage.xMax-150,stage.yMax-36,138,28),stageToggle))
+            {
+                if(showCommanderModel)showCommanderModel=false;
+                else if(selected.id=="captain"&&CaptainPresentation.Available)preferCaptainStudy=!preferCaptainStudy;
+                else showCommanderModel=true;
+            }
         }
         private void DrawHallRoster(Rect roster)
         {

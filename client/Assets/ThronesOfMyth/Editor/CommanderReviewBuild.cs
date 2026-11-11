@@ -18,6 +18,7 @@ namespace ThronesOfMyth.Editor
             try
             {
                 PrototypeSceneBuilder.EnsureBuildScene();
+                FrontierCaptainAnimatorSetup.Ensure();
                 PlayerSettings.productName = "Thrones of Myth";
                 PlayerSettings.defaultScreenWidth = 1280;
                 PlayerSettings.defaultScreenHeight = 800;

@@ -20,6 +20,7 @@ namespace ThronesOfMyth
         private bool joining, processing, placeBeacon, focused,freshGuest,reviewCommanders;
         private string reviewDirectory;
         private int reviewStep,reviewResizeMisses;
+        private string reviewHoldLabel;
         private float reviewAt;
         private GUIStyle hallInset;
         private int civilization, selectedBuilding;
@@ -369,7 +370,13 @@ namespace ThronesOfMyth
                 reviewAt = Time.unscaledTime + 0.5f;
                 return;
             }
-            var shots = new[] { (1024, 768, 0, "skills"), (1280, 800, 0, "skills"), (1920, 1080, 0, "skills"), (1280, 800, 1, "talents"), (1280, 800, 2, "development") };
+            var shots = new (int w, int h, int tab, string label, float yaw, string clip, float time)[] {
+                (1024, 768, 0, "skills", 0f, "Idle", 0.5f), (1280, 800, 0, "skills", 0f, "Idle", 0.5f), (1920, 1080, 0, "skills", 0f, "Idle", 0.5f),
+                (1280, 800, 1, "talents", 0f, "Idle", 0.5f), (1280, 800, 2, "development", 0f, "Idle", 0.5f),
+                (1024, 768, 0, "front", 0f, "Idle", 0.5f), (1024, 768, 0, "side", 90f, "Idle", 0.5f), (1024, 768, 0, "back", 180f, "Idle", 0.5f), (1024, 768, 0, "attack", 18f, "Attack", 0.27f),
+                (1280, 800, 0, "front", 0f, "Idle", 0.5f), (1280, 800, 0, "side", 90f, "Idle", 0.5f), (1280, 800, 0, "back", 180f, "Idle", 0.5f), (1280, 800, 0, "idle", 0f, "Idle", 0.12f), (1280, 800, 0, "attack", 18f, "Attack", 0.27f),
+                (1920, 1080, 0, "front", 0f, "Idle", 0.5f), (1920, 1080, 0, "side", 90f, "Idle", 0.5f), (1920, 1080, 0, "back", 180f, "Idle", 0.5f), (1920, 1080, 0, "attack", 18f, "Attack", 0.27f)
+            };
             int index = reviewStep - 3;
             if (index >= shots.Length)
             {
@@ -379,20 +386,40 @@ namespace ThronesOfMyth
                 return;
             }
             var shot = shots[index];
-            if ((Screen.width != shot.Item1 || Screen.height != shot.Item2 || heroDetailTab != shot.Item3) && reviewResizeMisses < 4)
+            if (captainPresentation == null && reviewResizeMisses < 8)
             {
-                heroDetailTab = shot.Item3;
+                heroDetailTab = shot.tab;
                 inspectedHeroId = "captain";
+                preferCaptainStudy = false;
+                showCommanderModel = false;
                 if (interfacePage != InterfacePage.Heroes) OpenInterface(InterfacePage.Heroes);
-                Screen.SetResolution(shot.Item1, shot.Item2, FullScreenMode.Windowed);
+                reviewResizeMisses++;
+                reviewAt = Time.unscaledTime + 0.4f;
+                return;
+            }
+            if ((Screen.width != shot.w || Screen.height != shot.h || heroDetailTab != shot.tab) && reviewResizeMisses < 6)
+            {
+                heroDetailTab = shot.tab;
+                inspectedHeroId = "captain";
+                preferCaptainStudy = false;
+                showCommanderModel = false;
+                if (interfacePage != InterfacePage.Heroes) OpenInterface(InterfacePage.Heroes);
+                Screen.SetResolution(shot.w, shot.h, FullScreenMode.Windowed);
                 reviewResizeMisses++;
                 reviewAt = Time.unscaledTime + 0.7f;
+                return;
+            }
+            if (captainPresentation != null) captainPresentation.LockReview(shot.yaw, shot.clip, shot.time);
+            if (reviewHoldLabel != shot.label + shot.w)
+            {
+                reviewHoldLabel = shot.label + shot.w;
+                reviewAt = Time.unscaledTime + 0.45f;
                 return;
             }
             reviewResizeMisses = 0;
             string folder = string.IsNullOrEmpty(reviewDirectory) ? "commander-review" : reviewDirectory;
             Directory.CreateDirectory(folder);
-            string path = Path.Combine(folder, "hall-" + shot.Item1 + "x" + shot.Item2 + "-" + shot.Item4 + ".png");
+            string path = Path.Combine(folder, "hall-" + shot.w + "x" + shot.h + "-" + shot.label + ".png");
             reviewStep++;
             reviewAt = Time.unscaledTime + 1.2f;
             StartCoroutine(WriteReviewFrame(path));

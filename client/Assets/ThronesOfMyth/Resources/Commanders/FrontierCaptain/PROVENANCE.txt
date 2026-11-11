@@ -1,0 +1,9 @@
+Frontier Captain presentation mesh
+
+Source: Meshy generation "Solar Centurion", archive Meshy_AI_Solar_Centurion_20261111_texture_fbx.zip, supplied 2026-11-11.
+Measured source: 877,267 vertices, 1,754,682 triangles, one UV map, one material, base color, normal, metallic and roughness at 2048. No skeleton and no animation.
+This derivative: 23,926 vertices, 48,000 triangles, the same UV map, a 21-bone humanoid skeleton, and four skeletal clips (Idle, Ready, Attack, Victory).
+Metallic and roughness were packed into FrontierCaptain_MetallicSmoothness.png (metallic in RGB, smoothness in alpha) for Unity's built-in Standard shader.
+
+Meshy's terms, last updated 2026-09-19, license free-plan output as CC BY 4.0 and state that Meshy retains ownership of free-plan output. Paid plans transfer ownership when the inputs belonged to the user. The plan used for this generation is not recorded in the archive. Until that plan is confirmed, credit the figure as "Model created with Meshy – CC BY 4.0 License" and do not treat the raw source as cleared for redistribution.
+The original zip and the 80 MB FBX stay in work/asset-inbox/solar-centurion/ and are not part of this commit.
