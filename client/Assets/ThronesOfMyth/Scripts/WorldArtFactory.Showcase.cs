@@ -31,7 +31,7 @@ namespace ThronesOfMyth
                 if(arch){int count=vertices.Count;for(int i=0;i<count;i++){var v=vertices[i];v.z=.32f;vertices.Add(v);uv.Add(uv[i]);}int countT=triangles.Count;for(int i=0;i<countT;i+=3)triangles.AddRange(new[]{triangles[i]+count,triangles[i+2]+count,triangles[i+1]+count});for(int i=0;i<sides;i++){int a=i,b=i+1;triangles.AddRange(new[]{a,b,a+count,b,b+count,a+count});a=i+sides+1;b=a+1;triangles.AddRange(new[]{a,a+count,b,b,a+count,b+count});}}
                 mesh=new Mesh{name="Original sculpt · "+key};mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();showcaseMeshes[key]=mesh;authoredMeshes.Add(mesh);
             }
-            var obj=new GameObject("Sculpted "+key);obj.transform.SetParent(parent,false);obj.transform.localPosition=at;obj.transform.localScale=scale;obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=MaterialFor(color);return obj.transform;
+            var obj=new GameObject("Sculpted "+key);obj.transform.SetParent(parent,false);obj.transform.localPosition=at;obj.transform.localScale=scale;obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=key.StartsWith("crown")||key.StartsWith("pine")?FoliageMaterial(color):MaterialFor(color);return obj.transform;
         }
         public Transform CityTerrace(Transform parent,Vector3 at,Vector3 scale,Color color)
         {
@@ -56,6 +56,17 @@ namespace ThronesOfMyth
                 float a=i*2.4f;var at=pine?new Vector3(0,.55f+i*.48f,0):new Vector3(Mathf.Cos(a)*.52f,.85f+(i%2)*.28f,Mathf.Sin(a)*.48f);
                 var scale=pine?Vector3.one*(.85f-i*.16f):new Vector3(.85f,.62f,.85f);
                 Sculpt(parent,(pine?"pine":"crown")+seed,at,scale,Color.Lerp(tint,new Color(.61f,.65f,.30f),i*.08f));
+            }
+        }
+        public void ProvinceRidge(Transform parent,Vector3 at,float yaw,int variant)
+        {
+            var root=new GameObject("Layered province escarpment").transform;root.SetParent(parent,false);root.localPosition=at;root.localRotation=Quaternion.Euler(0,yaw,0);
+            var pigment=variant>40?new Color(.42f,.48f,.45f):new Color(.57f,.51f,.38f);
+            for(int layer=0;layer<3;layer++)
+            {
+                float taper=1-layer*.20f;
+                var ledge=Sculpt(root,"rock"+(variant/4%3),new Vector3((layer%2-.5f)*.18f,layer*.48f,0),new Vector3(1.08f*taper,.65f,2.0f*taper),Color.Lerp(pigment,new Color(.70f,.67f,.51f),layer*.13f));
+                ledge.localRotation=Quaternion.Euler(0,(variant%3-1)*6,layer%2==0?3:-3);
             }
         }
         private void ShowcaseCamp(Transform root,Color team)

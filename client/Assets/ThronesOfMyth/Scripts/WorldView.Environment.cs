@@ -75,8 +75,9 @@ namespace ThronesOfMyth
             for (int i = 4; i < 80; i += 4)
             {
                 if (Mathf.Abs(i-20)<5 || Mathf.Abs(i-60)<5) continue;
-                art.EnvironmentModel(scenery,"BorderRock",new Vector3(40,0,i),1.4f,new Color(0.48f,0.51f,0.43f),i*17);
-                art.EnvironmentModel(scenery,"BorderRock",new Vector3(i,0,40),1.4f,new Color(0.48f,0.51f,0.43f),i*23);
+                // Layered outcrops follow the existing province barriers; gate openings remain clear.
+                art.ProvinceRidge(scenery,new Vector3(40,0,i),0,i);
+                if(i!=40)art.ProvinceRidge(scenery,new Vector3(i,0,40),90,i);
             }
             // Low vegetation punctuates meadows, without filling paths or site clearings.
             for(int i=0;i<480;i++)

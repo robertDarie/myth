@@ -5,6 +5,15 @@ namespace ThronesOfMyth
     public sealed partial class WorldArtFactory
     {
         private readonly Dictionary<string, GameObject> importedModels = new Dictionary<string, GameObject>();
+        private readonly bool legacyFoliage=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"--thrones-standard-vegetation")>=0;
+        private readonly Dictionary<Color,Material> foliageMaterials=new Dictionary<Color,Material>();
+        private Material FoliageMaterial(Color tint)
+        {
+            if(legacyFoliage)return MaterialFor(tint);
+            if(!foliageMaterials.TryGetValue(tint,out var m))
+            {m=new Material(Shader.Find("ThronesOfMyth/Vegetation")){color=tint,name="Opaque canopy pigment"};foliageMaterials[tint]=m;}
+            return m;
+        }
         private bool Imported(Transform parent, string model, Color team, string culture = "greek")
         {
             if (!importedModels.TryGetValue(model, out var asset)) { asset = Resources.Load<GameObject>("Art/Models/" + model); importedModels[model] = asset; }
@@ -18,7 +27,7 @@ namespace ThronesOfMyth
                 {
                     string role = source[i] == null ? "Stone" : source[i].name;
                     Color tint = role.Contains("LeafLight") ? Color.Lerp(team,new Color(.62f,.65f,.36f),.28f) : role.Contains("LeafDark") ? team*.72f : role.Contains("Recess") ? new Color(.16f,.21f,.23f) : role.Contains("Roof") ? roof : role.Contains("Banner") ? team : role.Contains("Gold") ? new Color(0.79f, 0.57f, 0.24f) : role.Contains("Window") ? new Color(0.98f, 0.75f, 0.31f) : role.Contains("Wood") || role.Contains("Bark") ? new Color(0.31f, 0.21f, 0.13f) : role.Contains("Green") ? team : role.Contains("Rock") ? new Color(0.48f, 0.51f, 0.43f) : role.Contains("Ground") ? new Color(0.51f, 0.57f, 0.35f) : new Color(0.83f, 0.77f, 0.61f);
-                    palette[i] = role.Contains("Roof")?RoofMaterial(tint):MaterialFor(tint);
+                    palette[i] = role.Contains("Leaf")||role.Contains("Green")?FoliageMaterial(tint):role.Contains("Roof")?RoofMaterial(tint):MaterialFor(tint);
                 }
                 renderer.sharedMaterials = palette;
             }
