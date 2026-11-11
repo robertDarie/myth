@@ -40,7 +40,7 @@ namespace ThronesOfMyth
         public float xp;
         public int rage, shield, skillCasts, attackSequence, marchSlots, constructionSlots, deployedTroops, deployedMythic, assignedTroops, assignedMythic;
         public bool questClaimed, hasOrder, offline;
-        public int reserveTroops, reserveMythic, stone, mana, sigils, troopCapacity, mythicCapacity, passiveLimit, epicPity, legendaryPity, offeringAmount;
+        public int reserveTroops, reserveMythic, stone, mana, sigils, troopCapacity, marchTroopCap, mythicCapacity, passiveLimit, epicPity, legendaryPity, offeringAmount;
         public bool offeringAvailable;
         public UnitCounts units, reserveUnits, wounded;
         public int woundedMythic, hospitalCapacity, hospitalTroops, hospitalMythic;

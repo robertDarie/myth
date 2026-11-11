@@ -84,7 +84,8 @@ namespace ThronesOfMyth
             }
             GUI.EndScrollView();
             theme.Text(new Rect(right.x + 18, right.y + 12, right.width - 36, 26), formationEditing ? "REFORM AT YOUR CITY" : "TROOPS LEAVING YOUR CITY", theme.Eyebrow);
-            theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), "Choose a patrol or set exact counts. Unselected units stay home.", theme.Small);
+            int marchShare = me.marchTroopCap;
+            theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), marchShare > 0 ? "This march can take " + marchShare + " mortal troops. The city store is " + me.troopCapacity + ". Unselected units stay home." : "Choose a patrol or set exact counts. Unselected units stay home.", theme.Small);
             bool captainFree=Array.IndexOf(me.ownedCommanders,"captain")>=0&&!OwnMarches().Exists(a=>a.id!=formationMarchId&&a.commanderId=="captain");
             bool patrolReady=captainFree&&ready.Get("infantry")>=15&&ready.Get("archers")>=5;
             if(theme.Button(new Rect(right.x+18,right.y+80,right.width-36,34),"Scout patrol · Captain · 15 infantry + 5 archers",false,patrolReady,"Needs the Captain, 15 ready infantry and 5 archers. Train archers in your city."))
@@ -102,12 +103,28 @@ namespace ThronesOfMyth
             var footer = new Rect(right.x + 18, right.yMax - 96, right.width - 36, 84);
             theme.OneLine(new Rect(footer.x, footer.y, footer.width - 200, 25), formationUnits.Total + " mortal · " + formationMythic + " mythic", theme.Body);
             if (theme.Button(new Rect(footer.xMax - 190, footer.y, 90, 27), "CLEAR")) { formationUnits = new UnitCounts(); formationMythic = 0; formationEntries.Clear(); GUIUtility.keyboardControl = 0; }
-            if (theme.Button(new Rect(footer.xMax - 92, footer.y, 92, 27), "ALL READY")) { formationUnits = ready.Copy(); formationMythic = readyMythic; formationEntries.Clear(); GUIUtility.keyboardControl = 0; }
+            if (theme.Button(new Rect(footer.xMax - 92, footer.y, 92, 27), "ALL READY"))
+            {
+                formationUnits = ready.Copy(); formationMythic = readyMythic;
+                if (marchShare > 0 && formationUnits.Total > marchShare)
+                {
+                    int over = formationUnits.Total - marchShare;
+                    for (int i = world.troopTypes.Length - 1; i >= 0 && over > 0; i--)
+                    {
+                        int have = formationUnits.Get(world.troopTypes[i].id);
+                        int drop = Math.Min(have, over);
+                        formationUnits.Set(world.troopTypes[i].id, have - drop);
+                        over -= drop;
+                    }
+                }
+                formationEntries.Clear(); GUIUtility.keyboardControl = 0;
+            }
             bool home = current != null && Vector2.Distance(new Vector2(current.x, current.z), new Vector2(me.homeX, me.homeZ)) < 2 && !current.hasOrder && current.recovery <= 0 && current.health >= current.maxHealth;
             bool room = formationEditing ? home : OwnMarches().Count < 5;
             bool commanderAvailable = hero != null && !OwnMarches().Exists(a => a.id != formationMarchId && a.commanderId == formationHeroId);
-            string reason = formationEditing && !home ? "Return and recover fully before changing this formation." : !room ? "Five home formations already prepared. Edit or disband one." : !commanderAvailable ? "Choose a recruited, unassigned commander first." : formationUnits.Total + formationMythic == 0 ? "Choose at least one unit." : "";
-            if (theme.Button(new Rect(footer.x, footer.y + 37, footer.width * 0.48f, 42), formationEditing ? "CONFIRM FORMATION" : "ASSEMBLE MARCH", true, room && commanderAvailable && formationUnits.Total + formationMythic > 0 && !processing))
+            bool overShare = marchShare > 0 && formationUnits.Total > marchShare;
+            string reason = overShare ? "This march can hold " + marchShare + " mortal troops. Leave the rest in the city." : formationEditing && !home ? "Return and recover fully before changing this formation." : !room ? "Five home formations already prepared. Edit or disband one." : !commanderAvailable ? "Choose a recruited, unassigned commander first." : formationUnits.Total + formationMythic == 0 ? "Choose at least one unit." : "";
+            if (theme.Button(new Rect(footer.x, footer.y + 37, footer.width * 0.48f, 42), formationEditing ? "CONFIRM FORMATION" : "ASSEMBLE MARCH", true, room && commanderAvailable && formationUnits.Total + formationMythic > 0 && !overShare && !processing))
             {
                 if (formationEditing) activeMarchId = formationMarchId;
                 Send(new GameCommand { type = formationEditing ? "configure-march" : "deploy-march", targetId = formationHeroId, units = formationUnits.Copy(), troops = formationUnits.Total, mythic = formationMythic });
