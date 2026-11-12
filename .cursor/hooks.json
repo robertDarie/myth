@@ -7,6 +7,12 @@
         "timeout": 45,
         "loop_limit": 3,
         "failClosed": false
+      },
+      {
+        "command": "python -X utf8 .cursor/hooks/publish_guard.py",
+        "timeout": 20,
+        "loop_limit": 1,
+        "failClosed": false
       }
     ]
   }
