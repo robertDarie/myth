@@ -45,3 +45,4 @@ tests/PresentationContracts/obj/
 # Generated and restored by native playtest builders
 client/Assets/ThronesOfMyth/Resources/BuildIdentity.json
 client/Assets/ThronesOfMyth/Resources/BuildIdentity.json.meta
+.cursor/publish-pending

@@ -1,0 +1,17 @@
+{
+  "description": "Tests that must pass before a verified task is pushed. Add a command when a new gameplay system needs a regression check.",
+  "tests": [
+    {
+      "name": "campaign persistence and local JSON downtime",
+      "command": ["node", "--test", "server/chapters.test.mjs", "server/storage.test.mjs"]
+    },
+    {
+      "name": "hosted downtime regressions",
+      "command": ["node", "--test", "--test-name-pattern", "downtime|offline", "server/persistence.test.mjs", "server/economy.test.mjs", "server/veterans.test.mjs"]
+    },
+    {
+      "name": "publish script offline checks",
+      "command": ["python", "-X", "utf8", "scripts/test_publish_offline.py"]
+    }
+  ]
+}
