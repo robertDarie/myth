@@ -6,7 +6,7 @@ Automation stopped after one functional slice. Live GPT review was not used.
 
 The OpenAI API can cost money outside a ChatGPT subscription. Live review calls are now disabled in `.ai-loop/engine.py`. The workflow says not to start the next feature until a reviewer approves. There is no zero-cost reviewer available, so the loop did not continue.
 
-Nothing was pushed. `main` was not merged.
+The march-share code was missing from `origin/main` at `4fbfd80` even though this report and TM-037 were already there. It was copied from `d0fa46b` onto main without the captain art commits, the AI-loop, or the branch roadmap. Schema stayed 18.
 
 ## Completed
 
@@ -114,4 +114,10 @@ Of 776 register rows, 772 remain `NOT AUDITED`. Fifty-seven are marked deferred 
 
 Hosted SQLite already advanced paid city timers and up to eight hours of passive production across a restart. The local JSON save used by playtests did not. `WorldStore` now stores `savedAt` beside schema 18, without putting it in the world object or changing protocol 16. On load, a gap of at least one second uses the existing `advanceDowntime`. A file with no timestamp is not paid for the time it sat on disk. The next save starts the clock.
 
-`node --test server/storage.test.mjs`: 17 passed, 0 failed. Thirty seconds produced food and wood, left a full stone stock and the army in place, and a second load did not pay again. Sixty seconds finished one Citadel timer once. An old file without `savedAt` kept its food and wood. Filtered downtime tests: 5 passed, 0 failed. This was not clicked through in Unity. No API was called. Nothing was pushed.
+`node --test server/storage.test.mjs`: 17 passed, 0 failed. Thirty seconds produced food and wood, left a full stone stock and the army in place, and a second load did not pay again. Sixty seconds finished one Citadel timer once. An old file without `savedAt` kept its food and wood. Filtered downtime tests: 5 passed, 0 failed. This was not clicked through in Unity. No API was called.
+
+## Recovered onto main
+
+`origin/main` at `4fbfd80` had this report and the TM-037 row, but not `marchTroopCap`. The five gameplay files were taken from `d0fa46b` and applied on the main worktree. Captain art, the AI-loop, and the branch roadmap were not included.
+
+`node --test server/gameplay-parity.test.mjs server/troops.test.mjs`: 18 passed, 0 failed. The new test checks Citadel 1 share 40, Citadel 2 store 80 and share 40, a rejected 41-troop deploy, a reinforce that stops at 40, and an old oversized march that still loads at schema 18. The formation screen was not opened in Unity on this main build. The earlier isolated Unity check remains the only playtest.

@@ -23,6 +23,10 @@ export const buildingLevel = (p, id) => id === 'citadel' ? p.cityLevel : p.build
 // Hall of Spears still adds 5 per level beyond the first. This is original tuning, not a RoK table.
 export const CITADEL_TROOP_CAPACITY = [0, 40, 80, 140, 220, 340];
 export const capacity = p => (CITADEL_TROOP_CAPACITY[p.cityLevel] ?? 40) + Math.max(0, (p.buildings.barracks ?? 1) - 1) * 5;
+// Original share. The first march slot may carry the whole city store.
+// Each further slot divides that store. This is not a copied reference-game capacity.
+// Mythic escorts stay on mythicCapacity and do not consume this share.
+export const marchTroopCap = p => Math.ceil(capacity(p) / Math.max(1, age(p).marches));
 export const mythicCapacity = p => p.cityLevel + Math.max(0, p.buildings.menagerie - 1);
 export const passiveCap = p => 500 + p.buildings.vault * 250 + p.cityLevel * 50;
 const scaled = (cost, factor) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * factor)]));
@@ -66,7 +70,7 @@ export function technologyCard(p, t) {
 export function citySnapshot(world, p) {
   return { trainingOptions: trainingOptions(p), ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), assignedTroops:totalTroops(p),assignedMythic:totalMythic(p),deployedTroops:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.troops,0),deployedMythic:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.mythic,0), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
     trainingBatch: trainingBatch(p), trainingDuration: 8 * trainingBatch(p) / 5 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
-    troopCapacity: capacity(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
+    troopCapacity: capacity(p), marchTroopCap: marchTroopCap(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
     offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),
     offeringAmount: p.buildings.oracle >= 5 ? 3 : p.buildings.oracle >= 3 ? 2 : 1,

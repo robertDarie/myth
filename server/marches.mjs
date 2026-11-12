@@ -7,11 +7,17 @@ import { TROOP_TYPES, selection, readyFor, transfer, unitTotal, countOf, changeU
 import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
 import { armyList, ensureHero } from './progression.mjs';
+import { marchTroopCap } from './city.mjs';
+const withinMarchShare = (p, troops, fail) => {
+  const cap = marchTroopCap(p);
+  if (troops > cap) fail(`A single march can hold ${cap} mortal troops. Leave the rest in the city or use another march slot.`);
+};
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const point = c => [c.x, c.z].every(n => Number.isFinite(n) && n >= 1 && n <= 79);
 export function marchCommand(world, p, c, fail) {
   if (c.type === 'deploy-march') {
     const chosen = selection(c, fail), { troops, mythic, units } = chosen;
+    withinMarchShare(p, troops, fail);
     if(armyList(p).length>=5)fail('Five prepared formations already exist. Edit or disband a home formation.');
     if (!readyFor(p, null, chosen)) fail('Not enough ready reserves of that troop type. Train units first.');
     if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
@@ -57,6 +63,7 @@ export function marchCommand(world, p, c, fail) {
       world.requireHome(a);
       if (a.health + 0.001 < world.stats(a).maxHealth) fail('Recover fully at home before assembling a different formation.');
       const chosen = selection(c, fail);
+      withinMarchShare(p, chosen.troops, fail);
       if (!readyFor(p, a, chosen)) fail('Not enough ready reserves of that troop type.');
       const commanderId = c.targetId || a.commanderId;
       if (!p.ownedCommanders.includes(commanderId) || armyList(p).some(other => other.id !== a.id && other.commanderId === commanderId)) fail('Choose a recruited commander who is not leading another march.');
@@ -65,9 +72,17 @@ export function marchCommand(world, p, c, fail) {
     }
     case 'reinforce': {
       world.requireHome(a); if (!p.reserveTroops && !p.reserveMythic) fail('No reserves are ready.');
+      const cap = marchTroopCap(p), room = Math.max(0, cap - a.troops);
+      if (room === 0 && p.reserveTroops > 0 && !p.reserveMythic) fail(`This march already holds ${cap} mortal troops.`);
       const oldMax = world.stats(a).maxHealth;
-      for (const t of TROOP_TYPES) { changeUnits(a.units,t.id,countOf(p.reserveUnits,t.id));changeUnits(p.reserveUnits,t.id,-countOf(p.reserveUnits,t.id)); }
-      a.troops = unitTotal(a.units); a.mythic += p.reserveMythic; p.reserveTroops = 0; p.reserveMythic = 0;
+      let left = room;
+      for (const t of TROOP_TYPES) {
+        const take = Math.min(left, countOf(p.reserveUnits, t.id));
+        if (!take) continue;
+        changeUnits(a.units, t.id, take); changeUnits(p.reserveUnits, t.id, -take); left -= take;
+      }
+      a.troops = unitTotal(a.units); p.reserveTroops = unitTotal(p.reserveUnits);
+      a.mythic += p.reserveMythic; p.reserveMythic = 0;
       a.health = Math.min(world.stats(a).maxHealth, a.health + world.stats(a).maxHealth - oldMax); return true;
     }
     case 'disband-march':
