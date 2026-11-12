@@ -133,3 +133,9 @@ TM-064, TM-039, TM-053, and TM-027 were checked against the current server, not 
 The live city loop adds about 100 ms per tick. One hundred seconds of those ticks paid 19 cycles, 38 food, from a level-one Blessed Fields instead of 20 cycles and 40 food, because the sum lands an ulp under five seconds. The cycle now completes with the same small tolerance construction already uses. Once the Citadel allows the farm upgrade, an empty store still cannot start it. After the upgrade the next cycle pays 4. A neighbor's farm pays its own 2. The building card quotes that same five-second yield, and eight hours of downtime fills the stockpile without paying a ninth hour. A reload keeps the food and the new level at schema 18.
 
 `research/MYTH_FUNCTIONAL_SCOPE.md` was restored from `d0fa46b`. The private workbooks were not added. Unity was not opened for the resource numbers, the training button, the talent list, or the Citadel. The talent diagram and any further city ages stay open.
+
+## Fog and discovery
+
+TM-001 and TM-002 already separated permanent land from live military vision. Sectors seen by a city, army or scout stay discovered. Unexplored camps, sites and strongholds are absent from another player's snapshot. A remembered camp keeps its old health, and a distant city keeps its old level, after those values change outside vision. An enemy march is included only while it is in allied vision, without its order or route, and it disappears when vision is lost. Scout reports stay private and do not update after the scout leaves. Invalid map coordinates are rejected. Schema stayed 18.
+
+`node --test server/exploration.test.mjs server/scouting.test.mjs`: 17 passed, 0 failed. The two static-intelligence tests in `server/core-corrections.test.mjs` passed. Fifty snapshots of a small kingdom took about 73 ms on this machine; that does not say anything about thousands of players. Unity was not opened. No fog art was added.

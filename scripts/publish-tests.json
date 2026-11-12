@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "fog discovery and scout privacy",
+      "command": ["node", "--test", "server/exploration.test.mjs", "server/scouting.test.mjs"]
+    },
+    {
       "name": "completed camp cycle does not pay twice",
       "command": ["node", "--test", "--test-name-pattern", "completed camp cycle", "server/world.test.mjs"]
     },
