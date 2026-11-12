@@ -9,6 +9,7 @@ import { activeSkill, armyList } from './progression.mjs';
 import { validUnits } from './troops.mjs';
 
 export const CAMPAIGN_LIMITS = { rallyMarches: 5, rallyLoad: 200, garrisonMarches: 5, garrisonLoad: 150, reportEntries: 64 };
+export const TERRITORY_RULES = Object.freeze({ supplyRadius: 12, linkRadius: 12, placeRadius: 4, rootRadius: 6, enemyGap: 10, beaconSpacing: 4, beaconLimit: 20 });
 const distance = (a,b) => Math.hypot(a.x-b.x,a.z-b.z);
 const load = a => a.troops+a.mythic*5;
 const managed = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
@@ -23,10 +24,10 @@ export function refreshBeacons(w) {
   for(const alliance of w.alliances.values()) {
     const built=w.flags.filter(f=>f.allianceId===alliance.id&&f.buildRemaining<=0&&f.health>0);
     const queue=built.filter(f=>f.isRoot);for(const root of queue)root.connected=true;
-    for(let i=0;i<queue.length;i++)for(const f of built)if(!f.connected&&distance(queue[i],f)<=12){f.connected=true;queue.push(f);}
+    for(let i=0;i<queue.length;i++)for(const f of built)if(!f.connected&&distance(queue[i],f)<=TERRITORY_RULES.linkRadius){f.connected=true;queue.push(f);}
   }
 }
-export const territoryNear = (w,allianceId,target) => w.flags.some(f=>f.allianceId===allianceId&&f.connected&&f.health>0&&f.buildRemaining<=0&&distance(f,target)<=12);
+export const territoryNear = (w,allianceId,target) => w.flags.some(f=>f.allianceId===allianceId&&f.connected&&f.health>0&&f.buildRemaining<=0&&distance(f,target)<=TERRITORY_RULES.supplyRadius);
 export function campaignFor(w,id) {
   const rally=w.rallies.find(r=>r.armyIds.includes(id));if(rally)return {kind:'rally',group:rally};
   const garrison=w.garrisons.find(g=>g.armyIds.includes(id));return garrison?{kind:'garrison',group:garrison}:null;
@@ -260,7 +261,7 @@ export function tickCampaign(w,dt) {
 }
 export function campaignSnapshot(w,viewerId) {
   const allianceId=w.players.get(viewerId)?.allianceId;
-  return {campaignLimits:CAMPAIGN_LIMITS,rallies:w.rallies.filter(r=>!viewerId||r.allianceId===allianceId).map(r=>({...r,troopLoad:totalLoad(w,r.armyIds)})),
+  return {territoryRules:TERRITORY_RULES,campaignLimits:CAMPAIGN_LIMITS,rallies:w.rallies.filter(r=>!viewerId||r.allianceId===allianceId).map(r=>({...r,troopLoad:totalLoad(w,r.armyIds)})),
     garrisons:w.garrisons.map(g=>({...g,troopLoad:totalLoad(w,g.armyIds)})),sieges:w.sieges.map(s=>({id:s.id,targetId:s.targetId,rounds:s.report.rounds,started:s.report.started}))};
 }
 export function groupReports(w,p) {return [...w.sieges.filter(s=>s.report.participants.some(e=>e.playerId===p.id)).map(s=>structuredClone(s.report)),...p.groupReports];}

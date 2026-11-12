@@ -139,3 +139,13 @@ The live city loop adds about 100 ms per tick. One hundred seconds of those tick
 TM-001 and TM-002 already separated permanent land from live military vision. Sectors seen by a city, army or scout stay discovered. Unexplored camps, sites and strongholds are absent from another player's snapshot. A remembered camp keeps its old health, and a distant city keeps its old level, after those values change outside vision. An enemy march is included only while it is in allied vision, without its order or route, and it disappears when vision is lost. Scout reports stay private and do not update after the scout leaves. Invalid map coordinates are rejected. Schema stayed 18.
 
 `node --test server/exploration.test.mjs server/scouting.test.mjs`: 17 passed, 0 failed. The two static-intelligence tests in `server/core-corrections.test.mjs` passed. Fifty snapshots of a small kingdom took about 73 ms on this machine; that does not say anything about thousands of players. Unity was not opened. No fog art was added.
+
+## Territory ownership
+
+TM-020 and TM-076 already had a working beacon graph. A completed connected beacon supplies capture and rallies within 12 units. The first fort must be placed by the leader near their city. Later beacons must link to that supply. A disconnected or unfinished beacon does not supply anything. Sacred sites stay point objectives. Destroying the root drops the branch. Closing an empty alliance clears its territory.
+
+Filled alliance provinces, roads, territory gather bonuses and seasonal safety rules are not this model. They were recorded as open design choices and were not added.
+
+The snapshot now includes those radii at protocol 16. The map can show or hide a ring of that radius around each live connected beacon. A remembered beacon draws no ring. Allied and visible enemy rings use different colors. A site says whether it is inside the viewer's supply. Hidden enemy beacons stay out of the snapshot.
+
+`node --test server/campaign.test.mjs`: 18 passed, 0 failed. `node --test --test-name-pattern "flag|territory|shrine|beacon" server/world.test.mjs server/social.test.mjs`: 5 passed, 0 failed. Schema stayed 18. Unity was not opened, so the ring toggle is not player-verified.

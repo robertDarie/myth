@@ -146,6 +146,7 @@ namespace ThronesOfMyth
                 Destroy(pair.Value.root);removed.Add(pair.Key);
             }
             foreach (var id in removed) pieces.Remove(id);synchronizedAt=Time.unscaledTime;
+            DrawSupply(world, allianceId);
         }
         private void StampRecord(string id){if(pieces.TryGetValue(id,out var piece)){piece.health=-1;piece.healthTrace.Observe(-1,Time.unscaledTime);}}
         private void Update()
@@ -214,7 +215,7 @@ namespace ThronesOfMyth
         }
         public void Clear()
         {
-            foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();synchronizedAt=-100;fogGrid.Reset();reportGuard.Reset();ClearInteraction();
+            foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();synchronizedAt=-100;fogGrid.Reset();reportGuard.Reset();ClearInteraction();ClearSupply();
         }
         private void OnDestroy()
         {

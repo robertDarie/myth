@@ -326,7 +326,7 @@ namespace ThronesOfMyth
             {
                 title = site.name; subtitle = "HELD BY · " + AllianceName(site.allianceId); emblem = "temple";
                 bool routeOpen = (site.x <= 40 || Array.Exists(world.sites, s => s.id == "gate-east" && !string.IsNullOrEmpty(me.allianceId) && s.allianceId == me.allianceId)) && (site.z <= 40 || Array.Exists(world.sites, s => s.id == "gate-north" && !string.IsNullOrEmpty(me.allianceId) && s.allianceId == me.allianceId));
-                bool connected = Array.Exists(world.flags, f => f.allianceId == me.allianceId && f.connected && f.buildRemaining <= 0 && Vector2.Distance(new Vector2(f.x, f.z), new Vector2(site.x, site.z)) <= 12);
+                bool connected = TerritoryReach.AllianceCovers(world, me.allianceId, site.x, site.z);
                 health = site.health / Mathf.Max(1, site.maxHealth);
                 bool own = !string.IsNullOrEmpty(me.allianceId) && site.allianceId == me.allianceId;
                 bool hostile = !string.IsNullOrEmpty(site.allianceId) && !own;

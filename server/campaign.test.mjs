@@ -3,7 +3,7 @@ import { testWorld, openKingdom } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
-import { initializeFortification, refreshBeacons, campaignFor, CAMPAIGN_LIMITS } from './campaign.mjs';
+import { initializeFortification, refreshBeacons, campaignFor, CAMPAIGN_LIMITS, TERRITORY_RULES, territoryNear } from './campaign.mjs';
 import { wardTroops, wardMythic } from './war.mjs';
 const advance=(w,s)=>{for(let i=0;i<Math.ceil(s*10);i++)w.tick(0.1);};
 const until=(w,predicate,seconds=120)=>{for(let i=0;i<seconds*10&&!predicate();i++)w.tick(0.1);assert.ok(predicate(),'Timed out waiting for campaign state');};
@@ -197,4 +197,28 @@ test('authenticated rally and reinforcement HTTP commands preserve permissions, 
  assert.equal(outside.players.find(p=>p.id===observer.id).groupReports.length,0);
  assert.equal((await post(1,{type:'rally-join',targetId:rallyId})).status,400);
  assert.equal(census(a),20);assert.equal(census(b),20);assert.equal(census(c),20);
+});
+
+test('territory rules stay beacon supply, and a hidden enemy beacon is omitted',()=>{
+ const {w,a,c,supply}=setup();
+ const edge={x:supply.x+TERRITORY_RULES.supplyRadius,z:supply.z};
+ assert.equal(territoryNear(w,a.allianceId,edge),true);
+ assert.equal(territoryNear(w,a.allianceId,{x:edge.x+0.2,z:edge.z}),false);
+ supply.buildRemaining=1;refreshBeacons(w);assert.equal(territoryNear(w,a.allianceId,edge),false);supply.buildRemaining=0;refreshBeacons(w);
+ a.x=supply.x;a.z=supply.z;
+ const rival={id:'rival-root',allianceId:c.allianceId,x:supply.x+8,z:supply.z,health:250,maxHealth:250,buildRemaining:0,isRoot:true,connected:false};
+ w.flags.push(rival);refreshBeacons(w);
+ assert.equal(rival.connected,true);assert.equal(territoryNear(w,a.allianceId,edge),true);assert.equal(territoryNear(w,c.allianceId,{x:rival.x,z:rival.z}),true);
+ const hidden={id:'far-dusk',allianceId:c.allianceId,x:78,z:78,health:250,maxHealth:250,buildRemaining:0,isRoot:false,connected:false};
+ w.flags.push(hidden);refreshBeacons(w);assert.equal(hidden.connected,false);
+ const view=w.snapshot(a.id);
+ assert.equal(view.version,16);assert.deepEqual(view.territoryRules,TERRITORY_RULES);
+ const own=view.flags.find(f=>f.id===supply.id),seenRival=view.flags.find(f=>f.id===rival.id);
+ assert.equal(own.connected,true);assert.equal(own.lastKnown,false);assert.equal(own.health>0,true);
+ assert.equal(seenRival.connected,true);assert.equal(seenRival.lastKnown,false);assert.notEqual(seenRival.allianceId,own.allianceId);
+ assert.equal(view.flags.some(f=>f.id==='far-dusk'),false);
+ const restored=World.fromSave(w.toSave());
+ assert.equal(restored.flags.find(f=>f.id===supply.id).connected,true);
+ assert.equal(restored.flags.find(f=>f.id==='far-dusk').connected,false);
+ assert.equal(restored.snapshot(a.id).flags.some(f=>f.id==='far-dusk'),false);
 });

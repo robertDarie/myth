@@ -355,6 +355,13 @@ namespace ThronesOfMyth
                 Event.current.Use();
             }
         }
+        private bool SupplyReachShown() => PlayerPrefs.GetInt("ThronesOfMyth.supplyReach", 1) == 1;
+        private void ApplySupplyReach()
+        {
+            if (map == null || world == null || me == null) return;
+            map.showSupply = SupplyReachShown();
+            map.Sync(world, playerId, me.allianceId);
+        }
         private void DrawBottomNavigation()
         {
             float width=148,start=(ViewWidth-(width*5+24))/2;
@@ -364,7 +371,7 @@ namespace ThronesOfMyth
                 if(theme.NavigationButton(rect,PrimaryTitles[i],PrimaryIcons[i],interfacePage==PrimaryPages[i],i==4?"Every screen and action":"Open "+PrimaryTitles[i]))
                 {if(interfacePage!=PrimaryPages[i])Navigate(PrimaryPages[i]);else CloseInterface();}
             }
-            if(interfacePage==InterfacePage.World){if(theme.Button(new Rect(18,ViewHeight-68,166,28),"Home [H]"))cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);if(theme.Button(new Rect(18,ViewHeight-36,166,28),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);}
+            if(interfacePage==InterfacePage.World){if(theme.Button(new Rect(18,ViewHeight-100,166,28),SupplyReachShown()?"Hide supply reach":"Show supply reach")){PlayerPrefs.SetInt("ThronesOfMyth.supplyReach",SupplyReachShown()?0:1);ApplySupplyReach();}if(theme.Button(new Rect(18,ViewHeight-68,166,28),"Home [H]"))cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);if(theme.Button(new Rect(18,ViewHeight-36,166,28),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);}
         }
         private void DrawInterfaceToast()
         {

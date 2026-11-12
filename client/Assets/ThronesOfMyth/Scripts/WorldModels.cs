@@ -140,6 +140,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class RewardGrant { public string id,name; public int count; }
     [Serializable] public sealed class AllianceJobCard {public string id,type;public float remaining,duration;public bool canHelp;}
     [Serializable] public sealed class AllianceMemberCard {public string id,name,role;public AllianceJobCard[] jobs;}
+    [Serializable] public sealed class TerritoryRules { public float supplyRadius, linkRadius, placeRadius, rootRadius, enemyGap, beaconSpacing; public int beaconLimit; }
     [Serializable] public sealed class WorldSnapshot
     {
         public AllianceMemberCard[] allianceRoster;
@@ -167,6 +168,7 @@ namespace ThronesOfMyth
         public NodeData[] nodes;
         public SiteData[] sites;
         public FlagData[] flags;
+        public TerritoryRules territoryRules;
         public AllianceData[] alliances;
         public CommanderData[] commanders;
         public CivilizationData[] civilizations;

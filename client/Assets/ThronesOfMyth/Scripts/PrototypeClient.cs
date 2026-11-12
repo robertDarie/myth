@@ -288,15 +288,22 @@ namespace ThronesOfMyth
             if (GUILayout.Button("Alliance warfare · rallies, garrisons and structures", theme.Primary)) OpenInterface(InterfacePage.Warfare);
             GUILayout.Label(AllianceName(me.allianceId) + " · " + me.allianceRole, sectionStyle);
             DrawAllianceMembers();
-            GUILayout.Label("The leader places the first beacon within 6 units of their city. Further beacons connect within 12 units. Your army must be within 4 units of placement.", noteStyle);
+            var rules = world.territoryRules;
+            if (rules == null) GUILayout.Label("Territory rules have not arrived from the kingdom yet.", noteStyle);
+            else
+            {
+                GUILayout.Label("The leader places the first beacon within " + rules.rootRadius.ToString("0") + " units of their city. Further beacons connect within " + rules.linkRadius.ToString("0") + " units. Your army must be within " + rules.placeRadius.ToString("0") + " units of placement.", noteStyle);
+                GUILayout.Label("The root fort builds in 30 seconds; connected beacons take 10 seconds. Only completed, connected territory supplies captures and rallies.", noteStyle);
+                GUILayout.Label("Bring territory within " + rules.supplyRadius.ToString("0") + " units of a site, then send your army to capture it. Uncontested occupation takes 15 seconds. The map ring is that supply radius, not a filled province.", noteStyle);
+            }
+            if (GUILayout.Button(SupplyReachShown() ? "Hide supply reach" : "Show supply reach")) { PlayerPrefs.SetInt("ThronesOfMyth.supplyReach", SupplyReachShown() ? 0 : 1); ApplySupplyReach(); }
             GUI.enabled = me.allianceRole == "Leader" || me.allianceRole == "Officer";
             if (GUILayout.Button(placeBeacon ? "Cancel beacon placement" : "Place fort / beacon · 60 wood / 20 gold")) placeBeacon = !placeBeacon;
             GUI.enabled = true;
-            GUILayout.Label("The root fort builds in 30 seconds; connected beacons take 10 seconds. Only completed, connected territory supplies captures and rallies.", noteStyle);
-            GUILayout.Label("Bring territory within 12 units of a site, then send your army to capture it. Uncontested occupation takes 15 seconds.", noteStyle);
             foreach (var site in world.sites)
             {
-                if (GUILayout.Button(site.name + (site.allianceId == me.allianceId ? " ✓" : ""))) { Select(site.id, "site"); FocusGameplay(site.x,site.z); }
+                string reach = site.lastKnown ? "Last observation" : TerritoryReach.AllianceCovers(world, me.allianceId, site.x, site.z) ? "Inside your supply" : "Outside your supply";
+                if (GUILayout.Button(site.name + (site.allianceId == me.allianceId ? " · Held" : "") + " · " + reach)) { Select(site.id, "site"); FocusGameplay(site.x,site.z); }
             }
         }
         private void DrawJournal()
@@ -480,6 +487,7 @@ namespace ThronesOfMyth
                             }
                             else if (lastDrawId == null) lastDrawId = "";
                             if (!worldReady) { loadingStage = "Preparing your civilization";if(cityDiorama==null)cityDiorama=new CityDiorama();cityDiorama.Prepare(me);yield return null; }
+                            map.showSupply = PlayerPrefs.GetInt("ThronesOfMyth.supplyReach", 1) == 1;
                             map.Sync(world, playerId, me.allianceId);ObserveSessionFeel();
                             worldReady = true; loadingError = "";RestorePendingOrder();
                             if (!string.IsNullOrEmpty(pendingFormationHero))

@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "alliance territory supply and hidden beacons",
+      "command": ["node", "--test", "--test-name-pattern", "territory rules stay beacon supply", "server/campaign.test.mjs"]
+    },
+    {
       "name": "fog discovery and scout privacy",
       "command": ["node", "--test", "server/exploration.test.mjs", "server/scouting.test.mjs"]
     },
