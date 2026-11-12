@@ -1,6 +1,7 @@
 """Run the publish test plan and fast-forward origin/main. Never force-pushes."""
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -8,10 +9,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "scripts" / "publish-tests.json"
 MARKER = ROOT / ".cursor" / "publish-pending"
-FORBIDDEN_NAMES = {
-    "Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx",
-    "Thrones_of_Myth_RoK_Video_Research_v1.xlsx",
-}
+# Names and renamed copies of the two private research workbooks. Spaces and punctuation are ignored.
+PRIVATE_WORKBOOK = re.compile(
+    r"rokvideoresearch|videoresearchv1|riseofkingdomscallofdragonscompletereference|callofdragonscompletereference|riseofkingdomscompletereference"
+)
+SECRET = re.compile(r"(^|/)(\.env($|\.)|credentials(\.[^/]+)?$|.*\.pem$|id_rsa$|.*api[-_]?key.*|secrets?\.(json|ya?ml|txt)$)", re.I)
 
 
 def git(*args, cwd=ROOT, check=True):
@@ -41,18 +43,41 @@ def run_plan(tests, cwd=ROOT):
     return failed
 
 
+def compact_name(path):
+    return re.sub(r"[^a-z0-9]", "", Path(path).name.lower())
+
+
 def forbidden(paths):
     blocked = []
     for path in paths:
         name = Path(path).name
         lowered = path.replace("\\", "/").lower()
-        if name in FORBIDDEN_NAMES or name == ".env" or name.startswith(".env."):
+        if PRIVATE_WORKBOOK.search(compact_name(path)) or SECRET.search(lowered):
             blocked.append(path)
-        elif name.endswith(".sqlite") or name.endswith(".sqlite-wal") or name.endswith(".sqlite-shm"):
+        elif name.lower().endswith((".sqlite", ".sqlite-wal", ".sqlite-shm")):
             blocked.append(path)
-        elif lowered.endswith("/world.json") or "/saves/" in lowered or lowered.endswith(".env"):
+        elif lowered.endswith("/world.json") or lowered == "world.json" or "/saves/" in lowered:
             blocked.append(path)
     return blocked
+
+
+def worktrees(cwd=ROOT):
+    text = git("worktree", "list", "--porcelain", cwd=cwd).stdout
+    items, current = [], {}
+    for line in text.splitlines():
+        if line.startswith("worktree "):
+            if current:
+                items.append(current)
+            current = {"path": line.split(" ", 1)[1]}
+        elif line.startswith("branch "):
+            current["branch"] = line.split(" ", 1)[1]
+    if current:
+        items.append(current)
+    return items
+
+
+def dirty(cwd=ROOT):
+    return [line for line in git("status", "--porcelain", cwd=cwd).stdout.splitlines() if line.strip()]
 
 
 def commits_ahead(remote_ref="origin/main", cwd=ROOT):
@@ -74,8 +99,16 @@ def assert_fast_forward(remote_ref="origin/main", cwd=ROOT):
 
 def push_main(cwd=ROOT):
     branch = git("rev-parse", "--abbrev-ref", "HEAD", cwd=cwd).stdout.strip()
+    main_tree = next((item for item in worktrees(cwd) if item.get("branch") == "refs/heads/main"), None)
     if branch != "main":
-        raise RuntimeError(f"Refusing to push from {branch}. Publish from main so unrelated branch commits stay out.")
+        where = f" Main is checked out at {main_tree['path']}." if main_tree else " Check out main in its own worktree first."
+        raise RuntimeError(f"Refusing to push from {branch}.{where} This command will not switch branches or merge another branch.")
+    toplevel = Path(git("rev-parse", "--show-toplevel", cwd=cwd).stdout.strip())
+    if main_tree and toplevel.resolve() != Path(main_tree["path"]).resolve():
+        raise RuntimeError(f"Refusing to publish from {toplevel}. Main is checked out at {main_tree['path']}.")
+    pending = dirty(cwd)
+    if pending:
+        raise RuntimeError("Refusing to publish because this worktree has uncommitted files. Nothing was reset or overwritten:\n" + "\n".join(pending[:20]))
     git("fetch", "origin", "main", cwd=cwd)
     head, remote = assert_fast_forward(cwd=cwd)
     if head == remote:
@@ -115,7 +148,7 @@ def main(argv=None):
     if failed:
         print("Tests failed; nothing was published: " + "; ".join(failed), file=sys.stderr)
         return 1
-    print(f"{len(tests)} publish-plan checks passed.")
+    print(f"{len(tests)} required regression checks passed. This plan is not a full game audit.")
     if not args.push:
         print("Publish was not requested.")
         return 0

@@ -41,12 +41,15 @@ def test_plan_and_forbidden():
     blocked = publish_task.forbidden([
         "research/Thrones_of_Myth_RoK_Video_Research_v1.xlsx",
         "research/Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx",
+        "incoming/Copy of Thrones of Myth RoK Video Research v1.xlsx",
+        "notes/Call-of-Dragons Complete Reference (2).xlsx",
         ".env",
         "ops/kingdom/world.json",
         "data/kingdom.sqlite",
+        "secrets/api-key.txt",
     ])
-    check(len(blocked) == 5, "Private workbooks, secrets, or saves were allowed.")
-    check(publish_task.forbidden(["server/storage.mjs", "docs/roadmap/notes.md"]) == [], "Ordinary source files were blocked.")
+    check(len(blocked) == 8, "Private workbooks, renamed copies, secrets, or saves were allowed.")
+    check(publish_task.forbidden(["server/storage.mjs", "docs/roadmap/Thrones_of_Myth_Master_Development_Roadmap_v2.xlsx"]) == [], "Ordinary source files were blocked.")
 
 
 def pair(temp):
@@ -102,6 +105,20 @@ def test_fast_forward_push_updates_origin():
         check(confirmed == git(local, "rev-parse", "HEAD"), "The confirmed SHA is not the local commit.")
 
 
+def test_dirty_worktree_is_left_untouched():
+    with tempfile.TemporaryDirectory() as temp:
+        seed, origin, local = pair(temp)
+        (local / "notes.txt").write_text("keep me\n", encoding="utf-8")
+        try:
+            publish_task.push_main(local)
+        except RuntimeError as error:
+            check("uncommitted" in str(error), "A dirty main worktree was not refused.")
+        else:
+            raise SystemExit("A dirty worktree was published.")
+        check((local / "notes.txt").read_text(encoding="utf-8") == "keep me\n", "The uncommitted file was overwritten.")
+        check(git(origin, "rev-parse", "main") == git(local, "rev-parse", "HEAD"), "A dirty worktree still moved the remote.")
+
+
 def test_guard_is_quiet_without_a_marker():
     script = ROOT / ".cursor" / "hooks" / "publish_guard.py"
     result = subprocess.run([sys.executable, "-X", "utf8", str(script)], input='{"status":"completed"}\n', text=True, capture_output=True, check=True)
@@ -125,8 +142,9 @@ def main():
     test_plan_and_forbidden()
     test_push_refuses_feature_branch_and_divergence()
     test_fast_forward_push_updates_origin()
+    test_dirty_worktree_is_left_untouched()
     test_guard_is_quiet_without_a_marker()
-    print("Publish offline checks: 4 passed.")
+    print("Publish offline checks: 5 passed.")
 
 
 if __name__ == "__main__":

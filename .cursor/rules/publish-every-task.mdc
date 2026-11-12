@@ -10,10 +10,10 @@ This rule is permanent. It applies to every Thrones of Myth development task, no
 After a task is implemented, tested, and recorded in the coverage register, finish it in this order:
 
 1. Implement the functional change.
-2. Run the tests in `scripts/publish-tests.json`, plus any tests the change requires.
+2. Run the tests in `scripts/publish-tests.json`, plus the regression tests for the system you changed. That plan covers only the systems it names. It is not a full game audit. Add the new test command to the plan before publishing.
 3. Update the coverage register and the development report with the commands that actually ran.
 4. Commit only the verified files. The message must say why the change exists.
-5. Push that commit to `origin/main` with `python scripts/publish_task.py --push`.
+5. From the worktree where `main` is checked out (`C:\Users\rober\Documents\GitHub\myth-integration`), push with `python scripts/publish_task.py --push`. The script refuses any other branch, a dirty worktree, and a diverged remote. It does not switch branches, merge, reset, or overwrite uncommitted files.
 6. Report the commit, the push, and the remote SHA only after `git rev-parse origin/main` matches the pushed commit.
 
 Do not start the next feature while a completed feature is still unpushed. Write `.cursor/publish-pending` after the tests pass, and remove it only after `origin/main` confirms the commit. If that marker is still present at the end of a turn, the stop hook reminds you to publish before any new feature.

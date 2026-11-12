@@ -1,6 +1,10 @@
 {
-  "description": "Tests that must pass before a verified task is pushed. Add a command when a new gameplay system needs a regression check.",
+  "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
+    {
+      "name": "march share and gameplay parity",
+      "command": ["node", "--test", "server/gameplay-parity.test.mjs"]
+    },
     {
       "name": "campaign persistence and local JSON downtime",
       "command": ["node", "--test", "server/chapters.test.mjs", "server/storage.test.mjs"]
