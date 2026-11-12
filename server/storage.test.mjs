@@ -164,3 +164,48 @@ test('schema-10 migration archives the original world and preserves captured gat
  const save=w.toSave();save.schema=10;delete save.world.kingdom;for(const p of save.world.players)delete p.kingdomClaims;const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
  assert.equal(loaded.toSave().schema,18);assert.equal(loaded.kingdom.completed[1].id,'gates');assert.equal(loaded.kingdom.completed[1].legacy,true);store.save(loaded);assert.equal(readFileSync(path+'.schema10.bak','utf8'),original);assert.equal(store.load().kingdom.completed.length,2);
 });
+
+test('a local JSON restart accrues capped field production once and leaves the army where it was', t => {
+  const path = fixture(t), w = testWorld(), session = w.join('Offline Fields'), p = w.authenticate(session.token);
+  const x = p.x, z = p.z;
+  p.food = 0; p.wood = 0; p.stone = 100000;
+  const store = new WorldStore(path); store.save(w);
+  const stamped = JSON.parse(readFileSync(path, 'utf8'));
+  stamped.savedAt = Date.now() - 30000;
+  writeFileSync(path, JSON.stringify(stamped));
+  const loaded = store.load(), q = loaded.authenticate(session.token);
+  assert.ok(q.food >= 12 && q.food <= 20 && q.food % 2 === 0);
+  assert.equal(q.wood, q.food);
+  assert.equal(q.stone, 100000);
+  assert.equal(q.x, x); assert.equal(q.z, z); assert.equal(q.kills, 0); assert.equal(q.cityLevel, 1);
+  assert.equal(loaded.toSave().schema, 18);
+  const again = new WorldStore(path).load().authenticate(session.token);
+  assert.equal(again.food, q.food); assert.equal(again.wood, q.wood); assert.equal(again.stone, 100000);
+});
+
+test('a JSON save without a downtime timestamp does not grant retroactive production', t => {
+  const path = fixture(t), w = testWorld(), session = w.join('Old Save'), p = w.authenticate(session.token);
+  p.food = 10; p.wood = 10;
+  writeFileSync(path, JSON.stringify(w.toSave()));
+  const loaded = new WorldStore(path).load(), q = loaded.authenticate(session.token);
+  assert.equal(q.food, 10); assert.equal(q.wood, 10); assert.equal(loaded.toSave().schema, 18);
+});
+
+test('a JSON restart finishes one paid Citadel timer and a second restart does not pay it again', t => {
+  const path = fixture(t), w = testWorld(), session = w.join('Timer'), p = w.authenticate(session.token);
+  const x = p.x, kills = p.kills, gold = p.gold;
+  w.command(p, { type: 'upgrade' });
+  assert.equal(p.cityLevel, 1); assert.ok(p.construction && p.construction.remaining <= 60);
+  const spent = p.gold;
+  assert.ok(spent < gold);
+  const store = new WorldStore(path); store.save(w);
+  const stamped = JSON.parse(readFileSync(path, 'utf8'));
+  stamped.savedAt = Date.now() - 60000;
+  writeFileSync(path, JSON.stringify(stamped));
+  const loaded = store.load(), q = loaded.authenticate(session.token);
+  assert.equal(q.cityLevel, 2); assert.equal(q.construction, null);
+  assert.equal(q.kills, kills); assert.equal(q.x, x); assert.equal(q.gold, spent);
+  assert.equal(loaded.toSave().schema, 18);
+  const twice = new WorldStore(path).load().authenticate(session.token);
+  assert.equal(twice.cityLevel, 2); assert.equal(twice.construction, null); assert.equal(twice.gold, spent);
+});
