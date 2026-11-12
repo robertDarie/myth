@@ -50,7 +50,8 @@ export function buildingCard(p, b) {
   if (!lockedReason && !affordable(p, nextCost)) lockedReason = 'Not enough resources.';
   const dependencies=[...(b.id==='citadel'?CITADEL_REQUIREMENTS[next]??[]:b.requirements??[])];
   if(b.id!=='citadel')dependencies.unshift({id:'citadel',level:Math.max(b.unlock,next)});
-  const card = { ...b, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason };
+  const eachFive = b.resource && level ? (b.resource === 'mana' ? 1 : 2) * level * (1 + 0.15 * (p.technologies.harvest ?? 0)) : 0;
+  const card = { ...b, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason, productionPerFive: eachFive };
   if (b.id === 'scoutcamp') card.scoutCamp = scoutCampCard(level);
   return card;
 }
@@ -157,8 +158,9 @@ function summon(world, p) {
 }
 export function tickCity(world, p, dt, { production = true } = {}) {
   p.economyClock += production ? dt : 0;
-  while (p.economyClock >= 5) {
-    p.economyClock -= 5;
+  // The live loop adds about 100 ms per tick. Summing that interval falls an ulp short of five seconds, so the payout uses the same completion tolerance as construction.
+  while (p.economyClock >= 5 - 0.00001) {
+    p.economyClock = Math.max(0, p.economyClock - 5);
     for (const b of BUILDINGS.filter(b => b.resource)) {
       const level = p.buildings[b.id]; if (!level) continue;
       const cap = passiveCap(p);

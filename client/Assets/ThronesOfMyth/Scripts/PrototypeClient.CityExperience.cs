@@ -84,6 +84,8 @@ namespace ThronesOfMyth
             selectedBuilding=Mathf.Clamp(selectedBuilding,0,me.cityBuildings.Length-1);var selected=me.cityBuildings[selectedBuilding];
             GUILayout.Label(selected.category.ToUpperInvariant(),theme.Eyebrow);GUILayout.Label(selected.name,theme.Heading);GUILayout.Label("Level "+selected.level+" / "+selected.maxLevel,theme.Small);
             GUILayout.Label(selected.description,theme.Body);
+            var productionLine=CityPresentationData.ProductionLine(selected,me.passiveLimit);
+            if(productionLine.Length>0)GUILayout.Label(productionLine,theme.Small);
             if(selected.id=="scoutcamp")DrawScoutCampPanel(selected.scoutCamp);
             var job=CityPresentationData.Job(me,selected.id);
             if(job!=null&&!string.IsNullOrEmpty(job.id))DrawJob(job,JobName(job),false);

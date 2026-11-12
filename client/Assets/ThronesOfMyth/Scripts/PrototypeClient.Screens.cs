@@ -53,6 +53,8 @@ namespace ThronesOfMyth
             GUILayout.Label(selected.name, theme.Title);
             GUILayout.Label("Level " + selected.level + " / " + selected.maxLevel, theme.Heading);
             GUILayout.Space(10); GUILayout.Label(selected.description, theme.Body);
+            var productionLine = CityPresentationData.ProductionLine(selected, me.passiveLimit);
+            if (productionLine.Length > 0) GUILayout.Label(productionLine, theme.Small);
             if (selected.id == "scoutcamp") DrawScoutCampPanel(selected.scoutCamp);
             if (selected.level < selected.maxLevel)
             {

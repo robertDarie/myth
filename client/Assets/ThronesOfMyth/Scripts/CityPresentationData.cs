@@ -18,5 +18,10 @@ namespace ThronesOfMyth
             if(id=="barracks"&&city.trainingQueue!=null&&city.trainingQueue.Length>0)return city.trainingQueue[0];
             return null;
         }
+        public static string ProductionLine(BuildingCard building, int passiveLimit)
+        {
+            if (building == null || building.productionPerFive <= 0 || string.IsNullOrEmpty(building.resource)) return "";
+            return "Produces " + building.productionPerFive.ToString("0.##") + " " + building.resource + " every five seconds, until the stockpile of " + passiveLimit.ToString("N0") + ".";
+        }
     }
 }

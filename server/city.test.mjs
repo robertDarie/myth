@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { BUILDINGS, TECHNOLOGIES, resourceNodes, SUMMON_RULES } from './city-content.mjs';
 import { buildingCard, technologyCard, capacity, passiveCap } from './city.mjs';
+import { advanceDowntime, OFFLINE_PRODUCTION_CAP } from './downtime.mjs';
 const advance = (w, seconds) => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
 const setup = options => { const w = testWorld(options), s = w.join('A'), p = w.authenticate(s.token); for (const id of ['wood', 'food', 'gold', 'stone', 'mana']) p[id] = 10000; return { w, p, s }; };
 const cmd = (w, p, type, targetId, extra = {}) => w.command(p, { type, targetId, ...extra });
@@ -182,4 +183,48 @@ test('schema-1 saves migrate once without losing queues, resources, commanders o
 test('fractional economic bonuses produce the advertised gain even at a level-one farm', () => {
   const { w, p } = setup(); p.food = 0; p.technologies.harvest = 1;
   advance(w, 50.1); assert.equal(p.food, 23); // baseline 20 plus 15%
+});
+
+test('Blessed Fields pay a five-second cycle after 100 ms ticks, and a finished upgrade changes the next cycle', () => {
+  const { w, p, s } = setup();
+  p.food = 0; p.economyClock = 0; advance(w, 100); assert.equal(p.food, 40);
+  assert.throws(() => cmd(w, p, 'building-upgrade', 'farm'), /Upgrade the Citadel first/);
+  p.cityLevel = 2; p.wood = 0; p.gold = 0;
+  assert.throws(() => cmd(w, p, 'building-upgrade', 'farm'), /Not enough resources/);
+  assert.equal(p.buildings.farm, 1);
+  p.wood = 10000; p.gold = 10000;
+  cmd(w, p, 'building-upgrade', 'farm');
+  advance(w, p.construction.duration + 0.2);
+  assert.equal(p.buildings.farm, 2); assert.equal(p.construction, null);
+  p.economyClock = 0; const food = p.food; advance(w, 5); assert.equal(p.food, food + 4);
+  const other = w.authenticate(w.join('Neighbor').token);
+  other.food = 0; other.economyClock = 0; p.economyClock = 0;
+  const mine = p.food; advance(w, 5);
+  assert.equal(p.food, mine + 4); assert.equal(other.food, 2);
+  const loaded = World.fromSave(w.toSave()), q = loaded.authenticate(s.token);
+  assert.equal(q.food, p.food); assert.equal(q.buildings.farm, 2); assert.equal(loaded.toSave().schema, 18);
+});
+
+test('the city card quotes the same five-second yield the server adds', () => {
+  const { w, p } = setup();
+  p.food = 0; p.wood = 0; p.stone = 0; p.gold = 0; p.mana = 0;
+  const card = () => w.snapshot(p.id).players.find(player => player.id === p.id).cityBuildings.find(b => b.id === 'farm');
+  assert.equal(card().productionPerFive, 2);
+  advance(w, 5); assert.equal(p.food, 2);
+  p.technologies.harvest = 1;
+  assert.ok(Math.abs(card().productionPerFive - 2.3) < 1e-9);
+  const before = p.food; advance(w, 5); assert.equal(p.food, before + 2);
+  assert.equal(p.wood, 4); assert.equal(p.stone, 0); assert.equal(p.gold, 0); assert.equal(p.mana, 0);
+});
+
+test('eight hours of downtime fills the stockpile and another hour does not', () => {
+  const at = Date.UTC(2026, 10, 9, 12);
+  const w = testWorld({ now: () => at }), s = w.join('Fields'), p = w.authenticate(s.token);
+  p.food = 0; p.wood = 0;
+  const stone = p.stone, cap = passiveCap(p);
+  advanceDowntime(w, at, at + OFFLINE_PRODUCTION_CAP * 1000);
+  assert.equal(p.food, cap); assert.equal(p.wood, cap); assert.equal(p.stone, stone);
+  advanceDowntime(w, at + OFFLINE_PRODUCTION_CAP * 1000, at + (OFFLINE_PRODUCTION_CAP + 3600) * 1000);
+  assert.equal(p.food, cap); assert.equal(p.wood, cap); assert.equal(p.stone, stone);
+  assert.equal(w.toSave().schema, 18);
 });

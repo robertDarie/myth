@@ -2,8 +2,8 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
-      "name": "march share and gameplay parity",
-      "command": ["node", "--test", "server/gameplay-parity.test.mjs"]
+      "name": "city production, training quotes, and citadel rules",
+      "command": ["node", "--test", "server/city.test.mjs", "server/gameplay-parity.test.mjs"]
     },
     {
       "name": "campaign persistence and local JSON downtime",

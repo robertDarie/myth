@@ -121,3 +121,11 @@ Hosted SQLite already advanced paid city timers and up to eight hours of passive
 `origin/main` at `4fbfd80` had this report and the TM-037 row, but not `marchTroopCap`. The five gameplay files were taken from `d0fa46b` and applied on the main worktree. Captain art, the AI-loop, and the branch roadmap were not included.
 
 `node --test server/gameplay-parity.test.mjs server/troops.test.mjs`: 18 passed, 0 failed. The new test checks Citadel 1 share 40, Citadel 2 store 80 and share 40, a rejected 41-troop deploy, a reinforce that stops at 40, and an old oversized march that still loads at schema 18. The formation screen was not opened in Unity on this main build. The earlier isolated Unity check remains the only playtest.
+
+## Production cycle
+
+TM-064, TM-039, TM-053, and TM-027 were checked against the current server, not the old register text. Production rates, the vault cap, harvest, and the eight-hour catch-up were already present. Hall batches, talent points, and the five Citadel ages were already present. No age was added and no production rate was rebalanced.
+
+The live city loop adds about 100 ms per tick. One hundred seconds of those ticks paid 19 cycles, 38 food, from a level-one Blessed Fields instead of 20 cycles and 40 food, because the sum lands an ulp under five seconds. The cycle now completes with the same small tolerance construction already uses. Once the Citadel allows the farm upgrade, an empty store still cannot start it. After the upgrade the next cycle pays 4. A neighbor's farm pays its own 2. The building card quotes that same five-second yield, and eight hours of downtime fills the stockpile without paying a ninth hour. A reload keeps the food and the new level at schema 18.
+
+`research/MYTH_FUNCTIONAL_SCOPE.md` was restored from `d0fa46b`. The private workbooks were not added. Unity was not opened for the resource numbers, the training button, the talent list, or the Citadel. The talent diagram and any further city ages stay open.

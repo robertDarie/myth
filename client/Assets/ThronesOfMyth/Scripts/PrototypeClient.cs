@@ -314,7 +314,7 @@ namespace ThronesOfMyth
             foreach (var e in world.events) GUILayout.Label($"[{Mathf.FloorToInt(e.time)}s] {e.message}", noteStyle);
             if (world.persistence != null)
                 GUILayout.Label(world.persistence.enabled ? "Autosave: " + (string.IsNullOrEmpty(world.persistence.error) ? world.persistence.lastSaved : world.persistence.error) : "This server has persistence disabled.", noteStyle);
-            GUILayout.Space(10); GUILayout.Label("Your city and queues are saved locally by the server. Return with the same name and local profile. Time pauses while the server is closed; field orders stop safely on reload.", noteStyle);
+            GUILayout.Space(10); GUILayout.Label("Your city and queues are saved by the server. Return with the same name and local profile. A restart finishes paid city timers and up to eight hours of passive production. Field orders do not keep fighting through the restart.", noteStyle);
         }
         private bool AssignedElsewhere(string heroId) => OwnMarches().Exists(a => a.id != ActiveArmy.id && a.commanderId == heroId);
         private void DrawConstructionJobs()
