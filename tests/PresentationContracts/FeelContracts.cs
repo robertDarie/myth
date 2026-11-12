@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ThronesOfMyth;
 static class FeelContracts
 {
@@ -39,7 +40,10 @@ static class FeelContracts
         reports.Begin("bounded archive",10);for(int i=0;i<220;i++)reports.Observe("entry-"+i);
         reports.Begin("bounded archive",10.2f);bool replay=false;for(int i=0;i<220;i++)replay|=reports.Observe("entry-"+i);
         check(!replay,"A full combined archive must not churn the replay guard and repeat notifications");
-        var guide=new FirstSessionGuide();guide.Profile("city");
+        var memory=new Dictionary<string,bool>();
+        Func<string,string,bool> load=(id,flag)=>memory.TryGetValue(id+"\n"+flag,out var seen)&&seen;
+        Action<string,string,bool> store=(id,flag,value)=>memory[id+"\n"+flag]=value;
+        var guide=new FirstSessionGuide(load,store);guide.Profile("city");
         var tasks=new[]{new JourneyTask{id="train-ten"},new JourneyTask{id="gather-wood"},new JourneyTask{id="gather-food"}};
         var city=new ArmyData{cityLevel=1,homeX=5,homeZ=5,trainingQueue=new QueueJob[0],journeyCampaign=new JourneyCampaign{chapters=new[]{new JourneyChapter{tasks=tasks}}}};
         var army=new ArmyData{x=5,z=5};
@@ -49,12 +53,22 @@ static class FeelContracts
         city.reserveUnits=new UnitCounts{archers=5};check(guide.Next(city,army).Number==4,"Ready reserves should expose patrol preparation");guide.ArmyPrepared=true;
         check(guide.Next(city,army).Number==5,"Patrol should lead to real Scouts before gathering chores");city.kills=1;
         check(guide.Next(city,army).Number==6,"Outcome guidance missing");guide.OutcomeViewed=true;army.x=12;
-        check(guide.Next(city,army).Number==7,"Survivor return missing");army.x=5;
+        check(guide.Next(city,army).Number==7,"Survivor return missing");
+        var restarted=new FirstSessionGuide(load,store);restarted.Profile("city");
+        check(restarted.Next(city,army).Number==7,"Reviewed victory must not fall back to step 6 after the guide restarts");
+        var blank=new FirstSessionGuide();blank.Profile("city");
+        check(blank.Next(city,army).Number==6,"A guide with no remembered review starts at the victory report");
+        restarted.Profile("other");
+        check(restarted.Next(city,army).Number==6,"Another profile does not inherit the reviewed victory");
+        restarted.Profile("city");
+        check(restarted.Next(city,army).Number==7,"Returning to the reviewed profile restores step 7");
+        army.x=5;
         check(guide.Next(city,army).Number==8,"Victory should lead back to city progression");city.cityLevel=2;
         check(guide.Next(city,army)==null,"Optional showcase should finish after first age");
-        army.recovery=8;check(guide.Next(city,army).Guide=="city","Recovery should guide city work rather than another attack");army.recovery=0;
+        army.recovery=8;var recovering=guide.Next(city,army);check(recovering.Guide=="city"&&recovering.Title=="Recover at home","Recovery should guide city work rather than another attack");army.recovery=0;
         city.cityLevel=3;guide.Profile("another");check(guide.Next(city,army)==null,"Advanced cities must not be forced through intro");
         city.cityLevel=1;city.kills=0;check(guide.Next(city,army).Number==1,"Switching profiles should clear local introduction advice");
+        OpeningMatrix(check);
         var json="{\"id\":\"owner\",\"activeMarches\":0,\"homeFormations\":[{\"id\":\"march\",\"deployed\":false,\"carryCapacity\":320,\"cargo\":{\"wood\":12}}],\"reports\":[{\"type\":\"gathering\",\"outcome\":\"Delivered\",\"resources\":{\"wood\":12},\"sources\":[{\"nodeId\":\"grove\",\"amount\":12}]}]}";
         var dto=System.Text.Json.JsonSerializer.Deserialize<ArmyData>(json,new System.Text.Json.JsonSerializerOptions{IncludeFields=true});
         check(dto.homeFormations.Length==1&&!dto.homeFormations[0].deployed&&dto.activeMarches==0,"Protocol must distinguish home formations from active marches");
@@ -70,5 +84,72 @@ static class FeelContracts
         var rewardDto=System.Text.Json.JsonSerializer.Deserialize<JourneyRewards>("{\"mana\":10,\"aether\":2,\"itemRewards\":[{\"id\":\"ap-tonic-20\",\"name\":\"Pilgrim tonic\",\"count\":1}]}",new System.Text.Json.JsonSerializerOptions{IncludeFields=true});
         check(rewardDto.mana==10&&rewardDto.aether==2&&rewardDto.itemRewards[0].count==1,"Reward previews must show distinct currencies and exact stored items");
         Console.WriteLine("Gameplay-feel contracts: "+checks+" passed.");return checks;
+    }
+    static ArmyData OpeningCity()
+    {
+        var tasks=new[]{new JourneyTask{id="train-ten"},new JourneyTask{id="gather-wood"}};
+        return new ArmyData{cityLevel=1,homeX=5,homeZ=5,kills=0,journeyCampaign=new JourneyCampaign{chapters=new[]{new JourneyChapter{tasks=tasks}}}};
+    }
+    static ArmyData OpeningArmy()=>new ArmyData{x=5,z=5,health=100,maxHealth=100,recovery=0,units=new UnitCounts()};
+    static FirstSessionGuide Stored(Dictionary<string,bool> memory,string profile)
+    {
+        var guide=new FirstSessionGuide((id,flag)=>memory.TryGetValue(id+"\n"+flag,out var seen)&&seen,(id,flag,value)=>memory[id+"\n"+flag]=value);
+        guide.Profile(profile);return guide;
+    }
+    static void OpeningMatrix(Action<bool,string> check)
+    {
+        var memory=new Dictionary<string,bool>();
+        var city=OpeningCity();var army=OpeningArmy();
+        int[] expected={1,2,3,4,5,6,7};
+        string[] titles={"Discover your city","Meet your Frontier Captain","Train five archers","Prepare a Scout patrol","Challenge Forsaken Scouts","Review your victory","Return to your civilization"};
+        Func<int,OpeningCue> at=number=>{
+            var fresh=Stored(memory,"city");var cue=fresh.Next(city,army);
+            check(cue!=null&&cue.Number==number,"Restart at First Steps "+number+"/8 returned "+(cue==null?"nothing":cue.Number.ToString()));
+            check(FirstSessionGuide.Operation(cue)!="unknown","First Steps "+number+" has no real button action");
+            return cue;
+        };
+        check(at(1).Title==titles[0],"Stage 1 title");
+        Stored(memory,"city").CityViewed=true;check(at(2).Title==titles[1],"Stage 2 title");
+        Stored(memory,"city").CommanderViewed=true;check(at(3).Guide=="training","Stage 3 trains");
+        city.reserveUnits=new UnitCounts{archers=5};check(at(4).Guide=="prepare","Stage 4 prepares a march");
+        Stored(memory,"city").ArmyPrepared=true;check(at(5).Guide=="combat","Stage 5 selects a camp");
+        city.kills=1;army.x=12;check(at(6).Guide=="outcome","Stage 6 opens the victory report");
+        var viewed=Stored(memory,"city");viewed.OutcomeViewed=true;viewed.OutcomeViewed=true;
+        check(city.kills==1&&at(7).Guide=="return","Reading the victory again must not move the guide or the kill");
+        var otherDevice=new Dictionary<string,bool>();
+        var guest=Stored(otherDevice,"city");
+        check(guest.Next(city,army).Number==6&&guest.Next(city,army).Guide=="outcome","A second device without local advice starts at the unread victory");
+        check(at(7).Number==7,"The first device keeps the reviewed victory");
+        army.recovery=9;var wounded=at(7);
+        check(wounded.Title=="Recover at home"&&wounded.Guide=="city"&&wounded.Number==7,"Recovery keeps stage 7 instead of pretending the guide moved");
+        var reconnected=Stored(memory,"city").Next(city,army);
+        check(reconnected.Title=="Recover at home"&&reconnected.Number==7,"Recovery remains after the guide is constructed again");
+        army.recovery=0;army.health=100;check(at(7).Guide=="return","Healing restores the return action without falling back to the report");
+        army.x=5;army.health=40;var homeWound=Stored(memory,"city").Next(city,army);
+        check(homeWound.Number==8&&homeWound.Title=="Recover at home","A wounded army already home keeps the Citadel stage while it heals");
+        army.health=100;var raised=Stored(memory,"city").Next(city,army);
+        check(raised.Number==8&&raised.Guide=="city"&&FirstSessionGuide.Operation(raised)=="navigate","Opening the report at home advances to the Citadel, once");
+        Stored(memory,"city").OutcomeViewed=true;check(Stored(memory,"city").Next(city,army).Number==8,"Opening the same home report again does not skip or rewind");
+        city.cityLevel=2;check(Stored(memory,"city").Next(city,army)==null,"The guide ends after the first age instead of looping");
+        city.cityLevel=1;army.x=12;check(at(7).Number==7,"Leaving home after the report returns to recall, not to an earlier stage");
+        int previous=0;
+        foreach(var number in expected){check(number>previous,"Stage order");previous=number;}
+        check(titles.Length==7,"Stage titles cover 1 through 7");
+        var homeMemory=new Dictionary<string,bool>();
+        var homeCity=OpeningCity();homeCity.kills=1;homeCity.reserveUnits=new UnitCounts{archers=5};
+        var homeArmy=OpeningArmy();
+        var homeGuide=Stored(homeMemory,"city");
+        homeGuide.CityViewed=true;homeGuide.CommanderViewed=true;homeGuide.ArmyPrepared=true;
+        var unread=homeGuide.Next(homeCity,homeArmy);
+        check(unread.Number==6&&unread.Guide=="outcome","A victory whose army is already home still asks for the report");
+        homeGuide.OutcomeViewed=true;homeGuide.OutcomeViewed=true;
+        var afterHome=Stored(homeMemory,"city").Next(homeCity,homeArmy);
+        check(afterHome.Number==8&&homeCity.kills==1,"Opening that report once reaches the Citadel, and opening it again does not move the guide");
+        var early=new Dictionary<string,bool>();
+        var earlyCity=OpeningCity();var earlyArmy=OpeningArmy();earlyArmy.health=20;
+        check(Stored(early,"city").Next(earlyCity,earlyArmy).Number==1,"A wounded first stage does not jump to stage 7");
+        earlyArmy.health=100;
+        var healed=Stored(early,"city").Next(earlyCity,earlyArmy);
+        check(healed.Number==1&&healed.Title=="Discover your city","Healing resumes the same stage");
     }
 }

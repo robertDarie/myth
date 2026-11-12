@@ -81,6 +81,23 @@ test('chapter claims and legacy Atalanta rewards share one grant even when invok
  }
 });
 
+test('a claimed objective and an unfinished field victory survive restart without a second reward',()=>{
+ const {w,p,session}=setup();p.food=p.gold=p.wood=5000;
+ const wood=w.nodes.find(n=>n.resource==='wood');
+ cmd(w,p,'move',{x:wood.x,z:wood.z});advance(w,20);cmd(w,p,'gather',{targetId:wood.id});advance(w,80);cmd(w,p,'return');advance(w,20);
+ assert.equal(p.journey.progress['gather-wood'],40);assert.equal(p.journey.claimed.includes('gather-wood'),false);
+ const before=p.gold;cmd(w,p,'journey-claim',{targetId:'gather-wood'});assert.equal(p.gold,before+20);
+ const camp=w.camps.find(c=>c.id==='forsaken-1');
+ cmd(w,p,'move',{x:camp.x,z:camp.z});advance(w,30);cmd(w,p,'attack',{targetId:camp.id});
+ for(let i=0;i<1200&&p.kills<1&&p.recovery<=0;i++)w.tick(0.1);
+ assert.equal(p.kills,1);assert.ok(Math.hypot(p.x-p.homeX,p.z-p.homeZ)>2);assert.equal(p.journey.progress.forsaken,1);assert.equal(p.journey.claimed.includes('forsaken'),false);
+ const paid=p.gold;
+ const reloaded=World.fromSave(w.toSave()),q=reloaded.authenticate(session.token);
+ assert.equal(q.kills,1);assert.equal(q.journey.progress['gather-wood'],40);assert.equal(q.journey.progress.forsaken,1);assert.deepEqual(q.journey.claimed,['gather-wood']);assert.equal(q.gold,paid);
+ assert.throws(()=>cmd(reloaded,q,'journey-claim',{targetId:'gather-wood'}),/already claimed/);assert.equal(q.gold,paid);
+ assert.throws(()=>cmd(reloaded,q,'journey-claim',{targetId:'forsaken'}),/locked|incomplete|already/);assert.equal(q.journey.progress.forsaken,1);
+});
+
 test('save migration preserves proven training without fabricating historical gathering and validates all claims',()=>{
  const {w,p,session}=setup();p.reserveUnits.infantry=10;p.reserveTroops=10;const old=w.toSave();old.schema=7;delete old.world.players[0].journey;
  const restored=World.fromSave(old),q=restored.authenticate(session.token);assert.equal(q.journey.metrics.trained,10);assert.equal(q.journey.metrics.wood,0);assert.equal(q.journey.metrics.food,0);

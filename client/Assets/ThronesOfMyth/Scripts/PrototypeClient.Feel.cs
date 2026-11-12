@@ -1,11 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private readonly FirstSessionGuide opening=new FirstSessionGuide();
+        private readonly FirstSessionGuide opening=new FirstSessionGuide(LoadOpeningFlag,SaveOpeningFlag);
+        private static string OpeningKey(string identity,string flag)
+        {
+            using var sha=SHA256.Create();
+            var hex=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(identity??"")),0,8).Replace("-","");
+            return "ThronesOfMyth.opening."+flag+"."+hex;
+        }
+        private static bool LoadOpeningFlag(string identity,string flag)=>PlayerPrefs.GetInt(OpeningKey(identity,flag),0)==1;
+        private static void SaveOpeningFlag(string identity,string flag,bool value){PlayerPrefs.SetInt(OpeningKey(identity,flag),value?1:0);PlayerPrefs.Save();}
         private readonly HashSet<string> claimedFeedback=new HashSet<string>();
         private string feelProfile;
         private int encounterShown;
@@ -25,15 +35,16 @@ namespace ThronesOfMyth
         }
         private void GuideOpening(OpeningCue cue)
         {
-            if(cue.Guide=="prepare"){PrepareCityMarch();return;}
-            if(cue.Guide=="outcome"){opening.OutcomeViewed=true;GuidePage(InterfacePage.Reports);return;}
-            if(cue.Guide=="return")
+            switch(FirstSessionGuide.Operation(cue))
             {
-                if(ActiveArmy.state=="Returning")GuidePage(InterfacePage.City);
-                else {Send("return");interfacePage=InterfacePage.World;cameraControl?.Focus(ActiveArmy.x,ActiveArmy.z);}
-                return;
+                case "formation":PrepareCityMarch();return;
+                case "reports":opening.OutcomeViewed=true;GuidePage(InterfacePage.Reports);return;
+                case "return":
+                    if(ActiveArmy.state=="Returning")GuidePage(InterfacePage.City);
+                    else {Send("return");interfacePage=InterfacePage.World;cameraControl?.Focus(ActiveArmy.x,ActiveArmy.z);}
+                    return;
+                default:GuideObjective(new JourneyTask{guide=cue.Guide,targetId=cue.Target});return;
             }
-            GuideObjective(new JourneyTask{guide=cue.Guide,targetId=cue.Target});
         }
         private string ClaimRewardPreview(GameCommand command)
         {
