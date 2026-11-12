@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "completed camp cycle does not pay twice",
+      "command": ["node", "--test", "--test-name-pattern", "completed camp cycle", "server/world.test.mjs"]
+    },
+    {
       "name": "city production, training quotes, and citadel rules",
       "command": ["node", "--test", "server/city.test.mjs", "server/gameplay-parity.test.mjs"]
     },

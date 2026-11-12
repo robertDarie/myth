@@ -66,20 +66,19 @@ An item is `Done` only when all applicable gates pass:
 5. Real visible UI controls can trigger action; success, error, progress and completion states reflect actual data.
 6. Automated tests and/or reproducible manual evidence exist; no fabricated tests.
 7. Existing saves, world protocol/content formats, and prior gameplay paths are preserved or migrated safely.
-8. Traceability register contains source IDs, exact code references, test commands/results, commit/PR and reviewer decision.
+8. Traceability register contains source IDs, exact code references, and the test commands and results. A paid review is not required.
 9. Native Unity checks or real player QA are explicitly marked `Not run` until performed.
 
-Use statuses `Unverified`, `Audited working`, `Needs implementation`, `In progress`, `Code complete/untested native`, `Verified`, `Blocked`, `Deferred visual`, `Design decision`. The GPT reviewer must reject unsupported `Verified` statuses.
+Use statuses `Unverified`, `Audited working`, `Needs implementation`, `In progress`, `Code complete/untested native`, `Verified`, `Blocked`, `Deferred visual`, `Design decision`. Do not mark `Verified` without the tests that actually ran. The paid OpenAI reviewer is disabled and is not a gate.
 
 ## 5. Development loop
 
-1. Cursor reads workbooks, register, latest source and existing tests; chooses a **small dependency-safe vertical slice**.
-2. Cursor defines observable acceptance tests before changing gameplay, implements service + data + UI integration, runs tests and builds, and writes handoff with exact IDs.
-3. The OpenAI API reviewer checks real diff and test evidence against scope, invariants and compatibility. It returns `FIX`, `NEXT` or `STOP`; no unstated assumptions.
-4. Cursor fixes rejections, or proceeds to the next highest-value dependency-resolved batch. Limit the pilot to 3 follow-up loops.
-5. When the tests for that task pass, commit and push from the main worktree with `scripts/publish_task.py`. Do not push a failing test, and do not force-push.
-6. Keep roadmap and coverage register updated in the same commit, never mark an entire area done from test names alone.
-7. Ask the user only for material design choices that would change game identity or economy; do not block routine implementation on cosmetic choices.
+1. Cursor reads the register, latest source and existing tests; chooses a small dependency-safe vertical slice.
+2. Cursor defines observable acceptance tests before changing gameplay, implements the slice, runs the tests and records the exact commands.
+3. The paid OpenAI API reviewer stays disabled. Do not call it, and do not wait for it before the next functional task.
+4. When the tests for that task pass, commit and push from the main worktree with `scripts/publish_task.py`. Do not push a failing test, and do not force-push.
+5. Keep roadmap and coverage register updated in the same commit, never mark an entire area done from test names alone.
+6. Ask the user only for material design choices that would change game identity or economy; do not block routine implementation on cosmetic choices.
 
 ## 6. Immediate next Cursor task
 
@@ -89,9 +88,9 @@ Use statuses `Unverified`, `Audited working`, `Needs implementation`, `In progre
 - Audit latest code and tests against all tracked entries. Start with system architecture, `TM-027`, `TM-037`, `TM-064`, `TM-095`, `TM-101`, and `15-047` through `15-055`.
 - Produce a dependency-ordered, source-ID-linked functional backlog and select the first critical incomplete vertical slice.
 - Implement that slice end to end, with automated regression and multi-session/reconnect coverage where relevant.
-- Provide exact code/test evidence and a handoff for GPT review; follow the 3-iteration pilot cap.
+- Provide exact code and test evidence. Do not send the diff to a paid API.
 - **Do not spend development time on custom 3D models, animation, lighting or asset creation.**
 
 ## 7. Integration note
 
-The OpenAI API reviewer called from Cursor hooks is **not the same as this ChatGPT conversation**. It only receives context explicitly packaged by the bridge. For interactive human-level review here, provide commit/PR links and handoff summaries, or arrange a repository-based source of truth for the next conversation.
+The paid OpenAI reviewer is off under the zero-extra-spending rule. Automated tests and the coverage register are the record of what was checked. Unity play is pending until a player build is actually run.

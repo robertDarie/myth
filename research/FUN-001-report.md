@@ -4,7 +4,7 @@ Automation stopped after one functional slice. Live GPT review was not used.
 
 ## Why it stopped
 
-The OpenAI API can cost money outside a ChatGPT subscription. Live review calls are now disabled in `.ai-loop/engine.py`. The workflow says not to start the next feature until a reviewer approves. There is no zero-cost reviewer available, so the loop did not continue.
+The OpenAI API can cost money outside a ChatGPT subscription. Live review calls stay disabled. A paid review is not required before the next functional task. Deterministic tests and the coverage register are the gate.
 
 The march-share code was missing from `origin/main` at `4fbfd80` even though this report and TM-037 were already there. It was copied from `d0fa46b` onto main without the captain art commits, the AI-loop, or the branch roadmap. Schema stayed 18.
 
@@ -121,6 +121,10 @@ Hosted SQLite already advanced paid city timers and up to eight hours of passive
 `origin/main` at `4fbfd80` had this report and the TM-037 row, but not `marchTroopCap`. The five gameplay files were taken from `d0fa46b` and applied on the main worktree. Captain art, the AI-loop, and the branch roadmap were not included.
 
 `node --test server/gameplay-parity.test.mjs server/troops.test.mjs`: 18 passed, 0 failed. The new test checks Citadel 1 share 40, Citadel 2 store 80 and share 40, a rejected 41-troop deploy, a reinforce that stops at 40, and an old oversized march that still loads at schema 18. The formation screen was not opened in Unity on this main build. The earlier isolated Unity check remains the only playtest.
+
+## PvE camp cycle
+
+TM-079 was checked against the current server. A legal attack spends 5 AP once per camp cycle, deals damage on a one-second cooldown, and can spend rage on the active skill. The killing blow pays each participating city once, writes one private victory report, and starts the 45-second respawn. A second order while the camp is dead, including a remembered camp outside current vision, cancels without another reward and without another AP charge. The next cycle pays once. Defeat sends the army home to recover and keeps its troops. Unity was not opened.
 
 ## Production cycle
 

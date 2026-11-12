@@ -29,6 +29,45 @@ test('five civilizations provide distinct functional bonuses; four commander rar
   assert.equal(new Set(COMMANDERS.map(c => c.rarity)).size, 4);
   assert.throws(() => w.join('X', 'unknown'));
 });
+test('a completed camp cycle does not pay a stale or overlapping order again', () => {
+  const w = testWorld(), joined = w.join('A'), p = w.authenticate(joined.token), q = player(w, 'Neighbor'), c = w.camps[0];
+  const troops = p.troops;
+  p.x = c.x; p.z = c.z;
+  cmd(w, p, 'attack', { targetId: c.id });
+  advance(w, 15);
+  assert.equal(c.health, 0); assert.equal(p.kills, 1); assert.equal(p.troops, troops);
+  const gold = p.gold, sigils = p.sigils;
+  assert.equal(p.coreReports.filter(r => r.type === 'pve' && r.outcome === 'Victory').length, 1);
+  const outsider = w.snapshot(q.id);
+  assert.equal(outsider.players.find(row => row.id === p.id).reports, undefined);
+  assert.equal(q.kills, 0); assert.equal(q.gold, 150);
+  c.respawn = 600;
+  assert.throws(() => cmd(w, p, 'attack', { targetId: c.id }), /unavailable/);
+  p.target = { type: 'attack', id: c.id }; w.tick(0.1);
+  assert.equal(p.target, null); assert.equal(p.state, 'Target unavailable');
+  assert.equal(p.gold, gold); assert.equal(p.kills, 1); assert.equal(p.sigils, sigils); assert.equal(p.ap, 95);
+  cmd(w, p, 'return'); advance(w, 20); assert.equal(Math.hypot(p.x - p.homeX, p.z - p.homeZ) < 2, true);
+  const ap = p.ap;
+  cmd(w, p, 'attack', { targetId: c.id });
+  for (let i = 0; i < 400 && p.target; i++) w.tick(0.1);
+  assert.equal(p.target, null); assert.equal(p.state, 'Target unavailable');
+  assert.equal(p.kills, 1); assert.equal(p.gold, gold); assert.equal(p.sigils, sigils); assert.ok(p.ap >= ap);
+  const loaded = World.fromSave(w.toSave()), restored = loaded.authenticate(joined.token), camp = loaded.camps[0];
+  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 18);
+  camp.respawn = 0.05; loaded.tick(0.1);
+  assert.equal(camp.cycle, 2); assert.equal(camp.health, camp.maxHealth); assert.deepEqual(camp.contributors, {});
+  restored.x = camp.x; restored.z = camp.z;
+  const next = restored.ap;
+  loaded.command(restored, { type: 'attack', targetId: camp.id }); loaded.tick(0.1);
+  assert.equal(restored.ap, next - 5); assert.equal(restored.kills, 1);
+  for (let i = 0; i < 200 && camp.health > 0; i++) loaded.tick(0.1);
+  assert.equal(camp.health, 0); assert.equal(restored.kills, 2); assert.equal(restored.gold, gold + 50);
+  assert.equal(restored.coreReports.filter(r => r.type === 'pve' && r.outcome === 'Victory').length, 2);
+  const paid = restored.gold;
+  restored.target = { type: 'attack', id: camp.id }; loaded.tick(0.1);
+  assert.equal(restored.gold, paid); assert.equal(restored.kills, 2); assert.equal(restored.ap, next - 5);
+});
+
 test('camp attacks approach, retaliate, reward once, and respawn', () => {
   const w = testWorld(), p = player(w), c = w.camps[0];
   cmd(w,p,'move',{x:c.x-5,z:c.z});advance(w,3);
