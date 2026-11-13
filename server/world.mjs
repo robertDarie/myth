@@ -311,6 +311,7 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
+    ensureSeason(this);
     return { schema: 25, world: { kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
@@ -427,7 +428,7 @@ export class World {
     if (data.schema < 22) for (const p of world.players.values()) delete p.events;
     if (data.schema >= 22) validateEvents(world, w.activityClockMs);
     if (data.schema >= 23) { world.diplomacy = w.diplomacy; validateDiplomacy(world); } else world.diplomacy = { proposals: [], pacts: [] };
-    if (data.schema >= 25) { world.season = w.season; validateSeason(world); } else world.season = null;
+    if (data.schema >= 25 && w.season) { world.season = w.season; validateSeason(world); } else world.season = null;
     for (const p of world.players.values()) ensureEvents(world, p);
     if (data.schema < 11) initializeKingdom(world, true); else { world.kingdom = w.kingdom; validateKingdom(world); }
     for(const a of world.armies()){
