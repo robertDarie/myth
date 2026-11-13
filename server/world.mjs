@@ -7,7 +7,7 @@ import { initializeKingdom, tickKingdom, siteIsOpen, recordKingdomVictory, kingd
 import { activityClock, initializeActivity, ensureActivity, recordActivity, activityCommand, activitySnapshot, validateActivity, emptyLogin } from './activity.mjs';
 import { ensureEvents, recordEvent, eventSnapshot, eventCommand, validateEvents } from './events.mjs';
 import { ensureDiplomacy, diplomacyCommand, diplomacySnapshot, validateDiplomacy, coalitionCommand, coalitionSnapshot, validateCoalitions, coalitionOf } from './diplomacy.mjs';
-import { ensureSeason, seasonSnapshot, validateSeason } from './season.mjs';
+import { ensureSeason, seasonSnapshot, validateSeason, seasonCommand } from './season.mjs';
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
 import { route, travel } from './navigation.mjs';
@@ -130,7 +130,7 @@ export class World {
   applyCommand(p, c) {
     if (!c || typeof c !== 'object') throw new GameError('Invalid command.');
     const fail = message => { throw new GameError(message); };
-    if (kingdomCommand(this, p, c, fail) || eventCommand(this, p, c, fail) || diplomacyCommand(this, p, c, fail) || coalitionCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || findingCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
+    if (kingdomCommand(this, p, c, fail) || eventCommand(this, p, c, fail) || diplomacyCommand(this, p, c, fail) || coalitionCommand(this, p, c, fail) || seasonCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || findingCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
     switch (c.type) {
       case 'promote': case 'train': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');

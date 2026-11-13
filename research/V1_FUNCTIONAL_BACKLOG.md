@@ -30,15 +30,15 @@ Acceptance is `server/events.test.mjs`.
 
 Acceptance is `server/diplomacy.test.mjs` and `server/coalition.test.mjs`.
 
-- **TM-072 checkpoint A — Season of the First Throne.** A 28-day UTC season with four phases. Finished gathering, training, building, research, surveys, camps, assistance, territory, and strongholds score on the server, with category caps. Alliance points stay with the alliance that earned them. Schema 25. Protocol 16. Settlement, claims, and the next season are the following checkpoint. The rules are in `docs/tm-072-seasons.md`.
+- **TM-072 — Season of the First Throne.** A 28-day UTC season with four phases, capped scores, personal and alliance boards, milestones, one-time placement rewards, a 28-day claim window, and a frozen archive. The next season starts without resetting the city, army, alliance, coalition, or territory. Schema 25. Protocol 16. The rules are in `docs/tm-072-seasons.md`.
 
-Acceptance for this checkpoint is `server/season.test.mjs`.
+Acceptance is `server/season.test.mjs`.
 
-## Next checkpoint
+## Next package
 
-### A. Season settlement
+### A. Multiple kingdoms
 
-TM-072 checkpoint B freezes rankings, pays ordinary milestone and placement rewards once, archives the season, and opens the next season without resetting cities, armies, alliances, or territory. Multiple kingdoms (TM-017) follow the completed season package.
+TM-017 is the next functional package: separate realms so a city, alliance, and season in one kingdom cannot see or command another. Large-world battle scale (TM-025 / TM-084) remains later.
 
 ## Later functional packages
 
@@ -56,7 +56,7 @@ Beacons, supply radius, rallies, garrisons, and strongholds exist. Non-aggressio
 
 ### E. Daily progression, events and seasons
 
-Daily, weekly, seven-day, and the two recurring event claims exist and are server-tested. Seasons (TM-072) are the next package and are not built.
+Daily, weekly, seven-day, the two recurring event claims, and Season of the First Throne exist and are server-tested.
 
 ### F. Multiplayer infrastructure and operations
 

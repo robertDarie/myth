@@ -169,6 +169,8 @@ namespace ThronesOfMyth
                 case "coalition-withdraw": return "The coalition invitation was withdrawn.";
                 case "coalition-leave": return "Your alliance left the coalition.";
                 case "coalition-disband": return "The coalition has been disbanded.";
+                case "season-milestone": return "Season milestone claimed.";
+                case "season-reward": return "Season reward claimed.";
                 case "flag": return "An Oath Beacon extends your alliance's reach.";
                 case "capture": return "Your march advances to hold the sacred site.";
                 case "trade": return "The exchange is complete.";

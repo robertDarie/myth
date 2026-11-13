@@ -192,7 +192,11 @@ namespace ThronesOfMyth
     [Serializable] public sealed class SeasonContribution { public string id, label; public int raw, points, cap; }
     [Serializable] public sealed class SeasonObjective { public string id, phaseName, label, lockedReason; public int progress, goal; public bool complete; }
     [Serializable] public sealed class SeasonRank { public int rank, points, contributors; public string playerId, allianceId, name; public bool self; }
-    [Serializable] public sealed class SeasonState { public string id, title, phaseId, phaseName, startsUtc, endsUtc, phaseEndsUtc, allianceId, allianceName; public int index, phaseIndex, dayNumber, length, remainingSeconds, phaseRemainingSeconds, score, rank, allianceScore, allianceRank; public bool settled; public SeasonContribution[] contributions; public SeasonObjective[] objectives; public SeasonRank[] personal, allianceBoard; }
+    [Serializable] public sealed class SeasonReward { public int wood, food, stone, gold, mana; }
+    [Serializable] public sealed class SeasonMilestone { public string id, lockedReason; public int points; public bool claimed, canClaim; public SeasonReward reward; }
+    [Serializable] public sealed class SeasonClaim { public string id, seasonId, label, expiresUtc, lockedReason; public int rank; public bool claimed, canClaim; public SeasonReward reward; }
+    [Serializable] public sealed class SeasonHistory { public string id, title, startsUtc, endsUtc; public int index; public SeasonRank[] personal, alliances; }
+    [Serializable] public sealed class SeasonState { public string id, title, phaseId, phaseName, startsUtc, endsUtc, phaseEndsUtc, allianceId, allianceName; public int index, phaseIndex, dayNumber, length, remainingSeconds, phaseRemainingSeconds, score, rank, allianceScore, allianceRank; public bool settled; public SeasonContribution[] contributions; public SeasonObjective[] objectives; public SeasonRank[] personal, allianceBoard; public SeasonMilestone[] milestones; public SeasonClaim[] claims; public SeasonHistory[] history; }
     [Serializable] public sealed class WorldSnapshot
     {
         public AllianceMemberCard[] allianceRoster;
