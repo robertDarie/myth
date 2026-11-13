@@ -57,6 +57,7 @@ namespace ThronesOfMyth
             if (me == null || LoadingActive) return;
             if (Input.GetKeyDown(KeyCode.Escape)) { CloseInterface(); return; }
             if (HandleCityKeys()) return;
+            if (HandleCommanderKeys()) return;
             if (HandleInterfaceKeys()) return;
             if(!cityExperience.AllowsWorldInput(interfacePage==InterfacePage.World,false,GUIUtility.keyboardControl!=0))return;
             if (interfacePage != InterfacePage.World) return;

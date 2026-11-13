@@ -12,7 +12,11 @@ namespace ThronesOfMyth
         private readonly CityProgressFeedback cityProgress=new CityProgressFeedback();
         private bool cityModelView = true;
         private CommanderPreview commanderPreview;
-        private bool showCommanderModel;
+        private CaptainPresentation captainPresentation;
+        private Texture2D captainStudy;
+        private bool showCommanderModel, preferCaptainStudy;
+        private Vector2 heroRosterScroll, heroBodyScroll;
+        private const string CaptainCredit = "Model created with Meshy – CC BY 4.0 License";
         private void RenderCityWindow(Rect r)
         {
             string[] labels = { "Training", "Hospital", "Athenaeum", "Temple", "Forge", "Market" };
@@ -68,86 +72,245 @@ namespace ThronesOfMyth
             GUILayout.Space(12); GUILayout.Label("Production rests at " + me.passiveLimit.ToString("N0") + " of each resource. Gathering and rewards can exceed this limit.", theme.Small);
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }
-        private void RenderHeroesWindow(Rect r)
+        private static readonly Color HallBronze=new Color(0.72f,0.55f,0.28f,1f);
+        private static readonly Color HallMarble=new Color(0.78f,0.74f,0.66f,0.16f);
+        private static Rect HallRect(Rect origin,HallFrame frame)=>new Rect(origin.x+frame.X,origin.y+frame.Y,frame.W,frame.H);
+        private Texture2D CaptainStudy=>captainStudy!=null?captainStudy:captainStudy=Resources.Load<Texture2D>("Art/FrontierCaptainShowcase");
+        private List<CommanderData> VisibleCommanders()
         {
-            var roster = new Rect(r.x, r.y, 348, r.height); var detail = new Rect(r.x + 366, r.y, r.width - 366, r.height);
-            theme.Panel(roster, false, true); theme.Panel(detail, false, true);
-            heroSearch = GUI.TextField(new Rect(roster.x + 14, roster.y + 14, roster.width - 28, 38), heroSearch, 32);
-            if (string.IsNullOrEmpty(heroSearch)) theme.Text(new Rect(roster.x + 27, roster.y + 22, roster.width - 52, 24), "Search commanders…", theme.Small);
-            string[] filters = { "All", "Green", "Blue", "Epic", "Gold" };
-            for (int i = 0; i < filters.Length; i++)
-                if (GUI.Toggle(new Rect(roster.x + 12 + i * 64, roster.y + 62, 60, 30), heroFilter == i, filters[i], theme.Tab) && heroFilter != i) { heroFilter = i; rosterScroll = Vector2.zero; }
-            onlyOwnedHeroes = GUI.Toggle(new Rect(roster.x + 15, roster.y + 103, 300, 27), onlyOwnedHeroes, "Recruited commanders only");
-            var heroes = new List<CommanderData>();
-            foreach (var hero in world.commanders)
+            var heroes=new List<CommanderData>();
+            if(world?.commanders==null)return heroes;
+            foreach(var hero in world.commanders)
             {
-                bool owned = Array.IndexOf(me.ownedCommanders, hero.id) >= 0;
-                if (onlyOwnedHeroes && !owned) continue;
-                if (!string.IsNullOrEmpty(heroSearch) && hero.name.IndexOf(heroSearch, StringComparison.OrdinalIgnoreCase) < 0) continue;
-                if (heroFilter != 0 && hero.rarity != new[] { "", "Common", "Rare", "Epic", "Legendary" }[heroFilter]) continue;
+                bool owned=Array.IndexOf(me.ownedCommanders,hero.id)>=0;
+                if(onlyOwnedHeroes&&!owned)continue;
+                if(!string.IsNullOrEmpty(heroSearch)&&hero.name.IndexOf(heroSearch,StringComparison.OrdinalIgnoreCase)<0)continue;
+                if(heroFilter!=0&&hero.rarity!=new[]{"","Common","Rare","Epic","Legendary"}[heroFilter])continue;
                 heroes.Add(hero);
             }
-            var list = new Rect(roster.x + 10, roster.y + 140, roster.width - 20, roster.height - 150);
-            rosterScroll = GUI.BeginScrollView(list, rosterScroll, new Rect(0, 0, list.width - 15, Mathf.Ceil(heroes.Count / 2f) * 164 + 8));
-            for (int i = 0; i < heroes.Count; i++)
+            return heroes;
+        }
+        private void CycleCommander(int direction)
+        {
+            var heroes=VisibleCommanders();
+            if(heroes.Count==0)return;
+            int index=heroes.FindIndex(hero=>hero.id==inspectedHeroId);
+            if(index<0)index=0;
+            inspectedHeroId=heroes[(index+direction+heroes.Count)%heroes.Count].id;
+            heroBodyScroll=Vector2.zero;
+        }
+        private void RenderHeroesWindow(Rect r)
+        {
+            CommanderHallLayout.Place(r.width,r.height,out var rosterFrame,out var stageFrame,out var cardFrame,out var figureFrame);
+            DrawHallStage(HallRect(r,stageFrame),HallRect(r,figureFrame));
+            DrawHallRoster(HallRect(r,rosterFrame));
+            DrawHallCard(HallRect(r,cardFrame));
+        }
+        private void DrawSkillGlyph(Rect rect,int index)
+        {
+            var ink=MythInterfaceTheme.Gold;
+            float u=rect.width/24f;
+            var center=rect.center;
+            if(index==0)
             {
-                var hero = heroes[i]; var cell = new Rect(5 + (i % 2) * 153, (i / 2) * 164, 143, 154);
-                bool owned = Array.IndexOf(me.ownedCommanders, hero.id) >= 0;
-                theme.Panel(cell, inspectedHeroId == hero.id);
-                theme.Portrait(new Rect(cell.center.x - 30, cell.y + 12, 60, 60), hero.id, RarityColor(hero.color));
-                theme.Text(new Rect(cell.x + 6, cell.y + 78, cell.width - 12, 46), hero.name, theme.Center);
-                theme.Text(new Rect(cell.x + 9, cell.y + 130, cell.width - 18, 20), owned ? hero.rarity.ToUpperInvariant() : "NOT RECRUITED", theme.Eyebrow);
-                if (GUI.Button(cell, GUIContent.none, GUIStyle.none)) { inspectedHeroId = hero.id; contentScroll = Vector2.zero; }
+                MythInterfaceTheme.Line(new Vector2(center.x,rect.y+u),new Vector2(center.x,rect.yMax-u),2.2f*u,ink);
+                theme.Diamond(new Rect(center.x-3.5f*u,rect.y,7*u,9*u),ink);
             }
-            GUI.EndScrollView();
-            var selected = Array.Find(world.commanders, h => h.id == inspectedHeroId) ?? world.commanders[0];
-            var progress = Array.Find(me.heroProgress, h => h.id == selected.id);
-            bool recruited = Array.IndexOf(me.ownedCommanders, selected.id) >= 0;
-            var portrait = new Rect(detail.x + 24, detail.y + 22, 156, 208);
-            if (showCommanderModel)
+            else if(index==1)
             {
-                if (commanderPreview == null) commanderPreview = new CommanderPreview();
-                commanderPreview.Draw(portrait, selected, theme, reducedMotion);
+                theme.Circle(new Rect(rect.x+3*u,rect.y+2*u,18*u,20*u),ink);
+                theme.Diamond(new Rect(center.x-4*u,center.y-4*u,8*u,8*u),new Color(0.12f,0.2f,0.32f));
             }
-            else theme.PortraitCard(portrait, selected.id, RarityColor(selected.color));
-            if (theme.Button(new Rect(detail.x + 24, detail.y + 237, 156, 27), showCommanderModel ? "Painted portrait" : "Pose preview")) showCommanderModel = !showCommanderModel;
-            theme.Text(new Rect(detail.x + 205, detail.y + 20, detail.width - 229, 22), selected.rarity.ToUpperInvariant() + " COMMANDER", theme.Eyebrow);
-            theme.Text(new Rect(detail.x + 205, detail.y + 50, detail.width - 229, 42), selected.name, theme.Title);
-            theme.Text(new Rect(detail.x + 205, detail.y + 98, detail.width - 229, 54), selected.description, theme.Body);
-            if (progress != null)
+            else if(index==2)
             {
-                theme.Text(new Rect(detail.x + 205, detail.y + 159, detail.width - 229, 25), recruited ? "STARS  " + progress.stars + "    ·    ASCENSION  " + progress.rank : "A legend waiting to be remembered", theme.Eyebrow);
-            }
-            var actions = new Rect(detail.x + 205, detail.y + 191, detail.width - 229, 42);
-            if (!recruited)
-            {
-                if (theme.Button(actions, "Recruit · 10 matching shards", true, progress!=null && progress.shards>=10 && !processing)) Send("recruit-shards", selected.id);
+                MythInterfaceTheme.Line(new Vector2(rect.x+4*u,rect.yMax-4*u),new Vector2(rect.x+14*u,rect.y+8*u),3*u,ink);
+                MythInterfaceTheme.Line(new Vector2(rect.x+14*u,rect.y+8*u),new Vector2(rect.xMax-2*u,rect.y+3*u),2*u,ink);
+                theme.Circle(new Rect(rect.xMax-8*u,rect.y+u,7*u,7*u),ink);
             }
             else
             {
-                string action = ActiveArmy.commanderId == selected.id ? "Leading selected march" : AssignedElsewhere(selected.id) ? "Assigned to another march" : CanEditArmy ? "Assign to selected march" : "Return selected march home to assign";
-                if (theme.Button(actions, action, true, CanEditArmy && ActiveArmy.commanderId != selected.id && !AssignedElsewhere(selected.id) && !processing)) Send("commander", selected.id);
+                theme.Circle(new Rect(center.x-4*u,center.y-4*u,8*u,8*u),ink);
+                for(int ray=0;ray<8;ray++)
+                {
+                    float angle=ray*45f*Mathf.Deg2Rad;
+                    var dir=new Vector2(Mathf.Cos(angle),Mathf.Sin(angle));
+                    MythInterfaceTheme.Line(center+dir*6*u,center+dir*11*u,1.6f*u,ink);
+                }
             }
-            GUILayout.BeginArea(new Rect(detail.x + 24, detail.y + 278, detail.width - 48, detail.height - 293));
-            contentScroll = GUILayout.BeginScrollView(contentScroll);
-            if (recruited && progress != null)
+        }
+        private void DrawHallStage(Rect stage,Rect figure)
+        {
+            var selected=Array.Find(world.commanders,hero=>hero.id==inspectedHeroId)??world.commanders[0];
+            bool livingCaptain=selected.id=="captain"&&!showCommanderModel&&!preferCaptainStudy&&CaptainPresentation.Available;
+            theme.Backdrop(stage,livingCaptain?0.15f:0.72f);
+            if(!livingCaptain)
+            {
+                MythInterfaceTheme.Fill(stage,new Color(0.05f,0.09f,0.16f,0.42f));
+                MythInterfaceTheme.Fill(new Rect(stage.x,stage.yMax-stage.height*0.22f,stage.width,stage.height*0.22f),new Color(0.18f,0.14f,0.08f,0.28f));
+            }
+            MythInterfaceTheme.Fill(new Rect(stage.x,stage.y,stage.width,2),HallBronze);
+            if(showCommanderModel)
+            {
+                if(commanderPreview==null)commanderPreview=new CommanderPreview();
+                commanderPreview.Draw(new Rect(stage.x+8,stage.y+8,stage.width-16,stage.height-46),selected,theme,reducedMotion);
+                theme.OneLine(new Rect(stage.x+12,stage.yMax-32,stage.width-168,24),"Low-poly field model · poses are previews, not a live mesh",theme.Small);
+            }
+            else if(livingCaptain)
+            {
+                if(captainPresentation==null)captainPresentation=new CaptainPresentation();
+                captainPresentation.Draw(new Rect(stage.x+8,stage.y+8,stage.width-16,stage.height-46),theme,reducedMotion);
+                theme.OneLine(new Rect(stage.x+12,stage.yMax-32,stage.width-168,24),CaptainCredit,theme.Small);
+            }
+            else if(selected.id=="captain"&&CaptainStudy!=null)
+            {
+                GUI.BeginGroup(stage);
+                float bob=reducedMotion?0:Mathf.Sin(Time.unscaledTime*0.9f)*3f;
+                var local=new Rect(figure.x-stage.x,figure.y-stage.y+bob,figure.width,figure.height);
+                theme.Circle(new Rect(local.x+local.width*0.18f,local.yMax-local.height*0.16f,local.width*0.64f,local.height*0.1f),new Color(0.72f,0.55f,0.28f,0.32f));
+                if(!reducedMotion)for(int i=0;i<6;i++)
+                {
+                    float travel=Mathf.Repeat(Time.unscaledTime*14f+i*48f,stage.height-24f);
+                    theme.Diamond(new Rect(18f+i*(stage.width-36f)/6f,stage.height-20f-travel,5,5),new Color(0.9f,0.76f,0.46f,0.28f));
+                }
+                GUI.DrawTexture(local,CaptainStudy,ScaleMode.ScaleToFit,true);
+                GUI.EndGroup();
+                theme.OneLine(new Rect(stage.x+12,stage.yMax-32,stage.width-168,24),"Painted study · "+CaptainCredit,theme.Small);
+            }
+            else
+            {
+                float diameter=Mathf.Min(stage.width*0.62f,stage.height*0.58f);
+                var medallion=new Rect(stage.center.x-diameter*0.5f,stage.y+28,diameter,diameter);
+                theme.Circle(new Rect(medallion.x-10,medallion.y-10,diameter+20,diameter+20),new Color(0.72f,0.55f,0.28f,0.35f));
+                theme.Portrait(medallion,selected.id,RarityColor(selected.color));
+                theme.OneLine(new Rect(stage.x+12,stage.yMax-32,stage.width-168,24),"Painted portrait · the full-body study is the Frontier Captain",theme.Small);
+            }
+            string stageToggle=showCommanderModel?"Hall figure":livingCaptain?"Painted study":selected.id=="captain"&&CaptainPresentation.Available?"Living figure":"Field model";
+            if(theme.Button(new Rect(stage.xMax-150,stage.yMax-36,138,28),stageToggle))
+            {
+                if(showCommanderModel)showCommanderModel=false;
+                else if(selected.id=="captain"&&CaptainPresentation.Available)preferCaptainStudy=!preferCaptainStudy;
+                else showCommanderModel=true;
+            }
+        }
+        private void DrawHallRoster(Rect roster)
+        {
+            MythInterfaceTheme.Fill(roster,new Color(0.04f,0.065f,0.1f,0.92f));
+            MythInterfaceTheme.Fill(new Rect(roster.xMax-2,roster.y,2,roster.height),HallBronze);
+            GUI.SetNextControlName("CommanderSearch");
+            heroSearch=GUI.TextField(new Rect(roster.x+6,roster.y+4,roster.width-12,28),heroSearch??"",24);
+            if(string.IsNullOrEmpty(heroSearch)&&GUI.GetNameOfFocusedControl()!="CommanderSearch")theme.Text(new Rect(roster.x+12,roster.y+8,roster.width-20,18),"Search",theme.Small);
+            string[] filters={"All","Common","Rare","Epic","Legend"};
+            if(theme.Button(new Rect(roster.x+6,roster.y+36,roster.width-12,24),filters[Mathf.Clamp(heroFilter,0,4)])){heroFilter=(heroFilter+1)%5;heroRosterScroll=Vector2.zero;}
+            if(theme.Button(new Rect(roster.x+6,roster.y+62,roster.width-12,24),onlyOwnedHeroes?"Mine":"Any"))onlyOwnedHeroes=!onlyOwnedHeroes;
+            var heroes=VisibleCommanders();
+            var list=new Rect(roster.x+4,roster.y+92,roster.width-8,roster.height-98);
+            float step=62f;
+            heroRosterScroll=GUI.BeginScrollView(list,heroRosterScroll,new Rect(0,0,list.width-16,Mathf.Max(list.height,heroes.Count*step+8)));
+            for(int i=0;i<heroes.Count;i++)
+            {
+                var hero=heroes[i];
+                bool owned=Array.IndexOf(me.ownedCommanders,hero.id)>=0;
+                var cell=new Rect((list.width-16-52)*0.5f,6+i*step,52,52);
+                bool chosen=inspectedHeroId==hero.id;
+                bool hover=cell.Contains(Event.current.mousePosition);
+                if(chosen)theme.Circle(new Rect(cell.x-4,cell.y-4,60,60),HallBronze);
+                else if(hover)theme.Circle(new Rect(cell.x-3,cell.y-3,58,58),new Color(0.9f,0.76f,0.46f,0.85f));
+                theme.Portrait(cell,hero.id,owned?RarityColor(hero.color):new Color(0.25f,0.28f,0.3f));
+                theme.Hint(cell,hero.name+" · "+(owned?hero.rarity:"Not recruited"));
+                if(GUI.Button(cell,GUIContent.none,GUIStyle.none)){inspectedHeroId=hero.id;heroBodyScroll=Vector2.zero;}
+            }
+            GUI.EndScrollView();
+        }
+        private void DrawHallCard(Rect card)
+        {
+            var selected=Array.Find(world.commanders,hero=>hero.id==inspectedHeroId)??world.commanders[0];
+            var progress=Array.Find(me.heroProgress,hero=>hero.id==selected.id);
+            bool recruited=Array.IndexOf(me.ownedCommanders,selected.id)>=0;
+            MythInterfaceTheme.Fill(card,new Color(0.07f,0.11f,0.18f,0.94f));
+            MythInterfaceTheme.Fill(new Rect(card.x,card.y,card.width,2),HallBronze);
+            MythInterfaceTheme.Fill(new Rect(card.x,card.yMax-2,card.width,2),HallBronze);
+            MythInterfaceTheme.Fill(new Rect(card.x,card.y,2,card.height),HallMarble);
+            float x=card.x+16,width=card.width-32,y=card.y+12;
+            theme.Text(new Rect(x,y,width,18),selected.rarity.ToUpperInvariant()+" COMMANDER",theme.Eyebrow);
+            theme.Text(new Rect(x,y+20,width,34),selected.name,theme.Title);
+            MythInterfaceTheme.Fill(new Rect(x,y+54,72,2),MythInterfaceTheme.Gold);
+            theme.Text(new Rect(x,y+60,width,42),selected.description,theme.Body);
+            theme.Hint(new Rect(x,y+56,width,42),selected.description);
+            if(progress!=null)
+            {
+                for(int i=0;i<6;i++)theme.Diamond(new Rect(x+i*24,y+106,18,18),i<progress.stars?MythInterfaceTheme.Gold:new Color(0.24f,0.28f,0.32f));
+                theme.OneLine(new Rect(x+140,y+100,width-140,20),recruited?"STARS "+progress.stars+" / 6":"Not recruited",theme.Eyebrow);
+                int cap=Math.Max(1,progress.stars*10);
+                bool capped=progress.heroLevel>=cap;
+                float into=progress.xp%100f;
+                theme.OneLine(new Rect(x,y+124,width,18),"LEVEL "+progress.heroLevel,theme.Heading);
+                theme.Bar(new Rect(x,y+146,width,10),capped?1f:into/100f,MythInterfaceTheme.Gold);
+                theme.OneLine(new Rect(x,y+158,width,18),capped?(int)progress.xp+" XP · star cap "+cap:(int)progress.xp+" XP · "+(int)into+" / 100 toward the next level",theme.Small);
+            }
+            float skillsY=progress==null?y+108:y+182;
+            if(progress?.skills!=null)
+            {
+                int shown=Math.Min(4,progress.skills.Length);
+                for(int i=0;i<shown;i++)
+                {
+                    var skill=progress.skills[i];
+                    var box=new Rect(x+i*58,skillsY,48,48);
+                    theme.Circle(box,new Color(0.1f,0.16f,0.24f,1f));
+                    theme.Circle(new Rect(box.x+3,box.y+3,42,42),i==0?new Color(0.13f,0.24f,0.38f):new Color(0.28f,0.2f,0.1f));
+                    DrawSkillGlyph(new Rect(box.x+8,box.y+8,32,32),i);
+                    theme.Hint(box,skill.name+" · "+skill.description);
+                    if(GUI.Button(box,GUIContent.none,GUIStyle.none))heroDetailTab=0;
+                }
+                skillsY+=56;
+            }
+            var action=new Rect(x,skillsY,width,36);
+            if(!recruited)
+            {
+                int shards=progress?.shards??0;
+                if(theme.Button(action,"Recruit · "+shards+" / 10 Echo Shards",true,progress!=null&&shards>=10&&!processing,shards>=10?"":"Collect matching Echo Shards at the Temple of Echoes."))Send("recruit-shards",selected.id);
+            }
+            else
+            {
+                string label=ActiveArmy.commanderId==selected.id?"Leading selected march":AssignedElsewhere(selected.id)?"Assigned to another march":CanEditArmy?"Assign to selected march":"Return selected march home to assign";
+                bool canAssign=CanEditArmy&&ActiveArmy.commanderId!=selected.id&&!AssignedElsewhere(selected.id)&&!processing;
+                if(theme.Button(action,label,true,canAssign,canAssign?"":label))Send("commander",selected.id);
+            }
+            var body=new Rect(card.x+12,action.yMax+8,card.width-24,card.yMax-action.yMax-16);
+            if(body.height<80)return;
+            GUILayout.BeginArea(body);
+            if(recruited&&progress!=null)
             {
                 if(Opening?.Guide=="training"&&theme.Action("Next · Train five archers",!processing,"Wait for your order.")){trainingTier=0;GuidePage(InterfacePage.Training);}
                 DrawCommanderComparison(selected,recruited);
-                heroDetailTab=theme.Tabs(heroDetailTab,new[]{"Skills","Talents","Development"},detail.width-48);
-                DrawHeroSkills(selected, progress);
-                if(heroDetailTab==2){GUILayout.Space(18); GUILayout.Label("ASCENSION · RANK " + progress.rank + " / 5", theme.Eyebrow);
-                GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.", theme.Small);
-                string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";
-                if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);}
+                var tabRow=GUILayoutUtility.GetRect(10,34,GUILayout.ExpandWidth(true));
+                string[] tabNames={"Skills","Talents","Development"};
+                float tabGap=6,tabWidth=(tabRow.width-tabGap*2)/3f;
+                for(int tab=0;tab<3;tab++)
+                {
+                    var tabRect=new Rect(tabRow.x+tab*(tabWidth+tabGap),tabRow.y,tabWidth,32);
+                    if(theme.Button(tabRect,tabNames[tab],heroDetailTab==tab))heroDetailTab=tab;
+                    if(heroDetailTab==tab)MythInterfaceTheme.Fill(new Rect(tabRect.x+8,tabRect.yMax-3,tabRect.width-16,2),MythInterfaceTheme.Gold);
+                }
+                heroBodyScroll=GUILayout.BeginScrollView(heroBodyScroll);
+                DrawHeroSkills(selected,progress);
+                if(heroDetailTab==2)
+                {
+                    GUILayout.Space(18);GUILayout.Label("ASCENSION · RANK "+progress.rank+" / 5",theme.Eyebrow);
+                    GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.",theme.Small);
+                    string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";
+                    if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);
+                }
+                GUILayout.EndScrollView();
             }
             else
             {
-                GUILayout.Label("SIGNATURE & PASSIVES", theme.Eyebrow);
-                if (progress != null) foreach (var skill in progress.skills) { GUILayout.Label(skill.name, theme.Heading); GUILayout.Label(skill.description, theme.Body); }
-                GUILayout.Space(12); GUILayout.Label("Recruit this commander to develop its individual experience, stars and skills.", theme.Small);
+                heroBodyScroll=GUILayout.BeginScrollView(heroBodyScroll);
+                GUILayout.Label("SIGNATURE & PASSIVES",theme.Eyebrow);
+                if(progress!=null)foreach(var skill in progress.skills){GUILayout.Label(skill.name,theme.Heading);GUILayout.Label(skill.description,theme.Body);}
+                GUILayout.Space(12);GUILayout.Label("Recruit this commander to develop its individual experience, stars and skills.",theme.Small);
+                GUILayout.EndScrollView();
             }
-            GUILayout.EndScrollView(); GUILayout.EndArea();
+            GUILayout.EndArea();
         }
         private void RenderTempleWindow(Rect r)
         {

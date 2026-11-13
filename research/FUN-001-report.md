@@ -169,3 +169,13 @@ Proposed slots, if approved later: Weapon, Armor, and Banner, owned by the comma
 ## Manual playtest
 
 `docs/playtest-functional-checklist.md` lists the isolated Windows steps. Playing that list is still pending.
+
+## Repository consolidation
+
+13 November 2026. `main` is the only development line. The Frontier Captain presentation was copied from `feature/captain-3d` at `6195bdb` onto this main without merging that branch's older city, march, storage, or publish-script trees. The paid review loop on that branch was not copied. Local archive tags `archive/2026-11-13/*` record every branch tip. The two Excel workbooks were copied to `C:\Users\rober\Documents\GitHub\myth-private-backup` and stay untracked.
+
+The hall uses `CaptainPresentation.cs`, `CommanderHallLayout.cs`, the 4,076,588-byte `FrontierCaptainPresentation.fbx` (Kaydara binary, not an LFS pointer), the captain albedo/normal/metallic maps, the Suncrest Aegis, and the Sunforged Spear. `PROVENANCE.txt` credits the derivative "Model created with Meshy – CC BY 4.0 License". The generation plan is not recorded, so the raw Meshy zips stay out of git.
+
+`python scripts/run_presentation_contracts.py` passed: Presentation contracts 16746 passed, including hall separation at 1024x768, 1280x800, and 1920x1080.
+
+Unity 6000.3.0f1 imported `FrontierCaptainPresentation.fbx` and exited batch mode with `Build Finished, Result: Success`. The rebuilt player launched against the isolated server on port 8091. The Hall of Commanders showed the rigged Frontier Captain, spear, and sun shield. Dragging the figure turned it to profile. The Victory preview raised the spear. The isolated city still showed Age of Oaths, Citadel 2, after the earlier session. The real kingdom save was not opened.

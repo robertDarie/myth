@@ -24,7 +24,7 @@ namespace ThronesOfMyth
         private Rect QuestRect => new Rect(18,150,242,Opening==null?142:200);
         private Rect ActivityRect => new Rect(18,112,242,28);
         private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);
-        private Rect NotificationRect => new Rect((ViewWidth-560)/2,108,560,88);
+        private Rect NotificationRect => interfacePage==InterfacePage.World||LoadingActive||pendingOrder!=null?new Rect((ViewWidth-560)/2,108,560,88):new Rect(WindowRect.x+24,WindowRect.yMax-42,Mathf.Min(640,WindowRect.width-48),34);
         private float MarchStep => InterfaceLayout.MarchStep;
         private Rect MarchRail => new Rect(ViewWidth-232,112,InterfaceLayout.RailWidth,32+5*MarchStep);
         private string hoveredTooltip="";
@@ -90,6 +90,15 @@ namespace ThronesOfMyth
             for (int i = 0; i < own.Count; i++)
                 if (Input.GetKeyDown((KeyCode)((int)KeyCode.Alpha1 + i)))
                 { activeMarchId = own[i].id; Select(own[i].id, "army"); cameraControl?.Focus(own[i].x, own[i].z); return true; }
+            return false;
+        }
+        private bool HandleCommanderKeys()
+        {
+            if (interfacePage != InterfacePage.Heroes || GUI.GetNameOfFocusedControl() == "CommanderSearch") return false;
+            if (Input.GetKeyDown(KeyCode.UpArrow)) { CycleCommander(-1); return true; }
+            if (Input.GetKeyDown(KeyCode.DownArrow)) { CycleCommander(1); return true; }
+            if (Input.GetKeyDown(KeyCode.LeftArrow)) { heroDetailTab = (heroDetailTab + 2) % 3; return true; }
+            if (Input.GetKeyDown(KeyCode.RightArrow)) { heroDetailTab = (heroDetailTab + 1) % 3; return true; }
             return false;
         }
         private string OrderFeedback(GameCommand command)
@@ -392,6 +401,7 @@ namespace ThronesOfMyth
                 theme.OneLine(new Rect(r.x+14,r.y+30,r.width-138,32),message,theme.Small);
                 if(theme.Button(new Rect(r.xMax-116,r.y+29,102,36),processing?"Confirming…":"Retry order",true,!processing&&!accountBusy&&!string.IsNullOrEmpty(pendingOrder.key)))StartCoroutine(RetryPendingOrder());
             }
+            else if(r.height<48){theme.Panel(r);theme.OneLine(new Rect(r.x+12,r.y+6,r.width-24,22),heading+" · "+message,theme.Small);}
             else theme.Notice(r,heading,message,accent,Time.unscaledTime-orderNoticeAt);
         }
         private void DrawInterfaceWindow()

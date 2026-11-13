@@ -36,6 +36,10 @@
     {
       "name": "publish script offline checks",
       "command": ["python", "-X", "utf8", "scripts/test_publish_offline.py"]
+    },
+    {
+      "name": "commander hall layout",
+      "command": ["python", "-X", "utf8", "scripts/run_presentation_contracts.py"]
     }
   ]
 }
