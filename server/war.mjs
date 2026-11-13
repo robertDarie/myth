@@ -1,4 +1,5 @@
 import { loseCargo } from './field-logistics.mjs';
+import { protectedAlliance } from './diplomacy.mjs';
 import { randomUUID } from 'node:crypto';
 import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
 import { activeSkill, armyList } from './progression.mjs';
@@ -14,6 +15,7 @@ export function attackReason(w, a, b) {
   const p = w.owner(a), q = w.owner(b);
   if (p.cityLevel < 2 || q.cityLevel < 2) return 'First-age cities are protected. Both cities must reach the Age of Oaths.';
   if (p.allianceId && p.allianceId === q.allianceId) return 'You cannot attack an alliance member.';
+  if (protectedAlliance(w, p.allianceId, q.allianceId)) return 'A non-aggression pact protects this alliance.';
   if (a.recovery > 0 || b.recovery > 0 || a.health <= 0 || b.health <= 0) return 'That army is recovering.';
   if (w.atHome(a) || w.atHome(b)) return 'Armies at their own city are protected. Move both armies into the field.';
   if (!w.canEnter(p, b)) return 'Target is behind a locked Divine Gate.';

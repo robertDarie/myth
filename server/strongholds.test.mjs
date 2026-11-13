@@ -87,7 +87,7 @@ test('malformed stronghold state, generations and reward ledgers are rejected ra
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad),/stronghold/);
  }
  until(w,()=>t.respawn>0);for(const mutate of[r=>r.rewards[0].resources.gold++,r=>r.rewards[0].xp++,r=>r.guardHealthAfter=1]){const bad=structuredClone(w.toSave());mutate(bad.world.players[0].groupReports[0]);assert.throws(()=>World.fromSave(bad),/stronghold/);}
- const old=structuredClone(w.toSave());old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,5);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,22);
+ const old=structuredClone(w.toSave());old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,5);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,23);
 });
 
 test('ordinary members can lead PvE rallies, while higher tiers enforce gate access and stronger armies',()=>{

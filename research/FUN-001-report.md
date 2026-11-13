@@ -207,3 +207,7 @@ Drills of the Dawn adds 4% training and promotion speed per rank, multiplied by 
 ## Event hub
 
 Oath of the Builders is open Monday 00:00 UTC through Thursday 00:00 UTC. Two completed building upgrades or research projects pay 200 wood, 150 stone, and 100 gold. Frontier Vigil is open Thursday 00:00 UTC through Monday 00:00 UTC. Two completed surveys and one Forsaken camp victory pay 200 food, 150 gold, and 10 Mana. A queued or cancelled job, a recalled scout, and a camp that is still standing do not count. Each period pays once. Schema 22 adds the event record. Older schemas load a fresh period without changing the city. Protocol stays 16. The Activity screen adds an Event hub tab and leaves the daily, weekly, and seven-day tabs in place. No manual playthrough was run.
+
+## Alliance non-aggression pacts
+
+Alliance leaders propose, accept, decline, withdraw, and terminate a bilateral pact. A proposal expires after 24 hours on the activity clock. Acceptance waits until battles, attack orders, rallies, and sieges between the alliances have ended. An active pact blocks field PvP and hostile rallies against beacons, forts, and occupied sacred sites in both directions. It does not pay resources or change neutral combat. Schema 23 stores the book. Schema 22 loads with no treaties. Protocol stays 16. No manual playthrough was run.

@@ -92,7 +92,7 @@ test('malformed daily counters, chest claims, alliance contribution rows and clo
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad,{now:()=>Date.UTC(2026,10,2,12)}),/activity|claims/);
  }
  const old=structuredClone(w.toSave());old.schema=9;delete old.world.activityClockMs;for(const p of old.world.players){delete p.daily;delete p.weeklyClaims;}for(const a of old.world.alliances)delete a.weekly;
- const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,22);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
+ const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,23);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
 });
 
 test('all three weekly goals unlock individual rewards only for members who earned the required contributions',()=>{

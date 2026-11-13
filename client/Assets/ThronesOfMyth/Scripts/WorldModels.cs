@@ -182,9 +182,14 @@ namespace ThronesOfMyth
     [Serializable] public sealed class AllianceJobCard {public string id,type;public float remaining,duration;public bool canHelp;}
     [Serializable] public sealed class AllianceMemberCard {public string id,name,role;public AllianceJobCard[] jobs;}
     [Serializable] public sealed class TerritoryRules { public float supplyRadius, linkRadius, placeRadius, rootRadius, enemyGap, beaconSpacing; public int beaconLimit; }
+    [Serializable] public sealed class DiplomacyAlliance { public string id, name, relationship, leaderName; }
+    [Serializable] public sealed class DiplomacyOffer { public string id, allianceId, allianceName, expiresUtc; public int remainingSeconds; }
+    [Serializable] public sealed class DiplomacyPact { public string id, allianceId, allianceName; }
+    [Serializable] public sealed class DiplomacyState { public bool canLead; public string role, lockReason; public DiplomacyAlliance[] alliances; public DiplomacyOffer[] incoming, outgoing; public DiplomacyPact[] pacts; }
     [Serializable] public sealed class WorldSnapshot
     {
         public AllianceMemberCard[] allianceRoster;
+        public DiplomacyState diplomacy;
         public int version, size;
         public KingdomChronicle kingdom;
         public ActivityState activity;

@@ -24,4 +24,4 @@ If a test fails, do not commit or push. If GitHub rejects the push, or `origin/m
 
 Keep these untracked and out of every commit: the two original Excel research workbooks, credentials, `.env` files, kingdom saves, and SQLite databases. A machine-local hook path must not be committed.
 
-Mana stays an ordinary resource. Aether stays premium. Do not change world schema 22 or health protocol 16 unless the task says so and a migration test exists. Do not build custom 3D assets unless the task asks for them. Do not call a paid OpenAI API. Do not start a paid review loop or generate automatic follow-up prompts. This rule is about Git publication on `main`.
+Mana stays an ordinary resource. Aether stays premium. Do not change world schema 23 or health protocol 16 unless the task says so and a migration test exists. Do not build custom 3D assets unless the task asks for them. Do not call a paid OpenAI API. Do not start a paid review loop or generate automatic follow-up prompts. This rule is about Git publication on `main`.

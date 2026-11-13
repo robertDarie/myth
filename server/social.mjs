@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { releaseAllianceDiplomacy } from './diplomacy.mjs';
 export const allianceRole = (w, p) => { const a = w.alliances.get(p.allianceId); return !a ? 'None' : a.leaderId === p.id ? 'Leader' : a.officers.includes(p.id) ? 'Officer' : 'Member'; };
 export function initializeSocial(p) { p.lastChatAt = -10; }
 const canManage = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
@@ -31,7 +32,7 @@ export function socialCommand(w,p,c,fail) {
     if(leader&&members.length>1)fail('Transfer leadership before leaving your alliance.');
     p.allianceId='';alliance.officers=alliance.officers.filter(id=>id!==p.id);
     if(leader) {
-      w.alliances.delete(alliance.id);w.flags=w.flags.filter(f=>f.allianceId!==alliance.id);w.markers=w.markers.filter(m=>m.allianceId!==alliance.id);
+      w.alliances.delete(alliance.id);releaseAllianceDiplomacy(w,alliance.id);w.flags=w.flags.filter(f=>f.allianceId!==alliance.id);w.markers=w.markers.filter(m=>m.allianceId!==alliance.id);
       for(const site of w.sites){if(site.allianceId===alliance.id)site.allianceId='';if(site.challengerId===alliance.id){site.challengerId='';site.progress=0;}}
     }
     w.event(`${p.name} left ${alliance.name}.`);return true;

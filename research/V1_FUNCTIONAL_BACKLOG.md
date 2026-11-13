@@ -30,7 +30,7 @@ Acceptance is `server/events.test.mjs`.
 
 ### A. Alliance diplomacy
 
-Beacons, rallies, and strongholds exist. The next package is TM-077, alliance diplomacy and coalitions. Seasons (TM-072), multiple kingdoms (TM-017), and large-world battle scale (TM-025 / TM-084) follow that.
+Beacons, rallies, and strongholds exist. Non-aggression pacts are in place. The next checkpoint is coalitions under TM-077. Seasons (TM-072), multiple kingdoms (TM-017), and large-world battle scale (TM-025 / TM-084) follow the coalition checkpoint.
 
 ## Later functional packages
 
@@ -44,7 +44,7 @@ Fog, camps, gathering, and one relic per march exist. Kingdom provinces, multipl
 
 ### D. Alliances, diplomacy and warfare
 
-Beacons, supply radius, rallies, garrisons, and strongholds exist. Coalitions and diplomacy (TM-077) are not built. Territory is a beacon supply radius, not an ownership polygon or a resource bonus.
+Beacons, supply radius, rallies, garrisons, and strongholds exist. Non-aggression pacts block hostile action between two alliances. Coalitions are the next checkpoint. Territory is a beacon supply radius, not an ownership polygon or a resource bonus.
 
 ### E. Daily progression, events and seasons
 
@@ -52,7 +52,7 @@ Daily, weekly, seven-day, and the two recurring event claims exist and are serve
 
 ### F. Multiplayer infrastructure and operations
 
-Protocol 16 and schema 22 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
+Protocol 16 and schema 23 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
 
 ### G. Functional UI and accessibility
 

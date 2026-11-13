@@ -157,6 +157,11 @@ namespace ThronesOfMyth
                 case "equip-relic": case "unequip-relic": return "Your march's relic loadout has been updated.";
                 case "alliance-create": case "alliance-join": return "Your oath has been sworn.";
                 case "alliance-help": return "Your aid has reached your ally.";
+                case "diplomacy-propose": return "Non-aggression proposal sent.";
+                case "diplomacy-accept": return "Non-aggression pact is now active.";
+                case "diplomacy-decline": return "The proposal was declined.";
+                case "diplomacy-withdraw": return "The proposal was withdrawn.";
+                case "diplomacy-terminate": return "The non-aggression pact has ended.";
                 case "flag": return "An Oath Beacon extends your alliance's reach.";
                 case "capture": return "Your march advances to hold the sacred site.";
                 case "trade": return "The exchange is complete.";
