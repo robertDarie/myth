@@ -390,7 +390,7 @@ namespace ThronesOfMyth
             var positions = new Dictionary<string, Vector2Int>();int rows=0,additional=0;
             foreach(var technology in me.researchOptions)
             {
-                int slot=InterfaceLayout.ResearchSlot(technology.id,additional);if(slot>=15)additional++;
+                int slot=InterfaceLayout.ResearchSlot(technology.id,additional);if(slot>=21)additional++;
                 positions[technology.id]=new Vector2Int(slot%3,slot/3);rows=Mathf.Max(rows,slot/3+1);
             }
             float step = (diagram.width - 34) / 3, cardWidth = step - 18;
@@ -419,7 +419,13 @@ namespace ThronesOfMyth
             if(HasJob(me.research)){theme.Section("Research in progress");DrawJob(me.research,JobName(me.research),false);}
             GUILayout.Label(selected.branch.ToUpperInvariant(), theme.Eyebrow); GUILayout.Label(selected.name, theme.Title);
             GUILayout.Label("Rank " + selected.level + " / " + selected.maxLevel, theme.Heading); GUILayout.Space(12);
-            GUILayout.Label(selected.description, theme.Body); GUILayout.Space(16);
+            GUILayout.Label(selected.description, theme.Body);
+            if (selected.percent > 0)
+            {
+                GUILayout.Label("Current effect · +" + selected.currentBonus + "%", theme.Body);
+                if (selected.level < selected.maxLevel) GUILayout.Label("Next rank · +" + selected.nextBonus + "%", theme.Body);
+            }
+            GUILayout.Space(16);
             if (selected.level < selected.maxLevel)
             {
                 DrawPrerequisites(selected.prerequisites);GUILayout.Label(Cost(selected.cost), theme.Body); GUILayout.Label(Mathf.CeilToInt(selected.duration) + " seconds", theme.Small);

@@ -18,7 +18,7 @@ export function initializeLogistics(p,legacy=false){
 export function carryCapacity(w,a){
  const u=a.units,p=w.owner(a);
  const classes=classCounts(u);const base=classes.infantry*16+classes.archers*12+classes.cavalry*24+a.mythic*80;
- return Math.floor(base*(1+.08*p.technologies.logistics));
+ return Math.floor(base*(1+.08*(p.technologies.logistics??0))*(1+.06*Math.max(0,Math.min(3,p.technologies.caravan??0))));
 }
 export function coreReport(w,p,report){
  if(p.coreReports.some(r=>r.id===report.id))return;

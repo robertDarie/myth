@@ -18,11 +18,15 @@ Acceptance for the commander package is `server/armament.test.mjs`. Acceptance f
 
 Acceptance for the seven-day streak is `server/login.test.mjs`.
 
+- **Expanded Athenaeum research.** Drills of the Dawn, Mercy of the Healers, Stores of the Ages, and Caravan Pledges. Three ranks each. Training and healing orders keep the duration they were paid with. Schema stays 21. The values are in `docs/tm-060-expanded-research.md`.
+
+Acceptance is `server/research-expansion.test.mjs`.
+
 ## Next package
 
-### A. Expanded research
+### A. Event hub
 
-Daily, weekly, and seven-day claims now exist. The event hub (TM-071) and seasons (TM-072) are still unbuilt. The next functional package should add more military and civic research whose effects already have a stat to change, before opening a separate event calendar.
+Daily, weekly, and seven-day claims exist. The next package is a real event calendar with two recurring events, server progress, and one claim per period. Seasons stay later.
 
 ## Later functional packages
 

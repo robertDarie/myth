@@ -199,3 +199,7 @@ A march whose mortal troops are at least 15% infantry, 15% archers, and 15% cava
 ## Seven-day offerings
 
 The Activity screen has a Seven-day rewards tab. The server pays one ordinary claim per UTC day: food, wood, stone, gold, and Mana, with no Aether. The next UTC day advances the streak. A missed day returns it to Day 1. The day after Day 7 starts Day 1 again. Opening the screen does not pay the reward. Daily tasks and weekly goals keep their own claims. Schema 21 stores the streak. Schemas 19 and 20 load with a fresh unclaimed streak. Protocol stays 16. No manual playthrough was run.
+
+## Expanded Athenaeum research
+
+Drills of the Dawn adds 4% training and promotion speed per rank, multiplied by Hall of Spears speed. Mercy of the Healers adds 6% hospital treatment speed per rank, multiplied by House of Renewal speed. Stores of the Ages adds 8% to the passive stockpile per rank. Caravan Pledges adds 6% gathering cargo per rank for mortal and mythic marches, multiplied by Pilgrim Logistics. Each has three ranks. A paid training or healing order keeps its duration. Schema stays 21. Protocol stays 16. No manual playthrough was run.

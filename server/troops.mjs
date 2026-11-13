@@ -63,8 +63,9 @@ export const TRAINING_BATCHES = { 1: 5, 2: 5, 3: 10, 4: 20, 5: 40 };
 export const trainingBatch = p => TRAINING_BATCHES[Math.max(1, Math.min(5, p.buildings?.barracks ?? 1))] ?? 5;
 export const batchCost = (cost, amount) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * amount / 5)]));
 const hallSpeed = p => 1 + 0.1 * Math.max(0, (p.buildings?.barracks ?? 1) - 1);
+export const trainingSpeed = p => hallSpeed(p) * (1 + 0.04 * Math.max(0, Math.min(3, p.technologies?.drills ?? 0)));
 export function trainingOptions(p) {
-  const amount = trainingBatch(p), speed = hallSpeed(p);
+  const amount = trainingBatch(p), speed = trainingSpeed(p);
   return TROOP_TYPES.map(t => {
     const quote = { orderAmount: amount, orderSeconds: t.duration * (amount / 5) / speed, orderCost: batchCost(t.cost, amount) };
     const source = sourceType(t);

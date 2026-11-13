@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
 import { activeSkill, armyList } from './progression.mjs';
 export const hospitalCapacity = p => 25 + 15 * p.buildings.infirmary;
+export const treatmentSpeed = p => (1 + 0.15 * Math.max(0, (p.buildings.infirmary ?? 0) - 1)) * (1 + 0.06 * Math.max(0, Math.min(3, p.technologies?.mercy ?? 0)));
 export const wardTroops = p => unitTotal(p.wounded) + (p.healing ? unitTotal(p.healing.units) : 0);
 export const wardMythic = p => p.woundedMythic + (p.healing?.mythic ?? 0);
 export function initializeWar(p) { p.wounded = emptyUnits(); p.woundedMythic = 0; p.healing = null; p.battleReports = []; }
@@ -110,7 +111,7 @@ export function warCommand(w, p, c, fail) {
     const cost = { food: healingWeight * 2 + mythic * 20, gold: healingWeight + mythic * 15 };
     w.spend(p, cost);
     for (const t of TROOP_TYPES) changeUnits(p.wounded,t.id,-countOf(units,t.id)); p.woundedMythic -= mythic;
-    const duration = Math.max(2, (healingWeight * 1.2 + mythic * 8) / (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)));
+    const duration = Math.max(2, (healingWeight * 1.2 + mythic * 8) / treatmentSpeed(p));
     p.healing = { id: randomUUID(), units: { ...units }, mythic, cost, duration, remaining: duration }; return true;
   }
   if (c.type === 'hospital-cancel') {

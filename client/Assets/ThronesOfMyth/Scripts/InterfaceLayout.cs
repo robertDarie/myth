@@ -11,10 +11,11 @@ namespace ThronesOfMyth
         {
             switch(id)
             {
-                case "harvest":return 0;case "masonry":return 1;case "writing":return 4;
-                case "logistics":return 6;case "march":return 7;case "drill":return 9;
+                case "harvest":return 0;case "masonry":return 1;case "stores":return 2;case "writing":return 4;
+                case "logistics":return 6;case "march":return 7;case "caravan":return 8;case "drill":return 9;
                 case "vitality":return 10;case "beastlore":return 11;case "veterans":return 12;
-                case "veilreading":return 13;default:return 15+Math.Max(0,fallbackIndex);
+                case "veilreading":return 13;case "columns":return 15;case "bulwarks":return 16;case "titanhost":return 17;
+                case "drills":return 18;case "mercy":return 19;default:return 21+Math.Max(0,fallbackIndex);
             }
         }
         public static float Scale(float width,float height,float preference)=>Math.Min(Math.Min(width/(width<1280?1440f:1600f),height/900f)*preference,Math.Min(width/1280f,height/720f));

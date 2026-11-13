@@ -14,7 +14,7 @@ import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf } from './troops.mjs';
+import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
@@ -144,7 +144,7 @@ export class World {
         this.spend(p,cost);
         if(promoting){changeUnits(p.reserveUnits,source.id,-5);p.reserveTroops-=5;}
         const baseDuration=promoting?type.duration-source.duration:type.duration;
-        const job = this.job(promoting?'promote':'train', baseDuration * (promoting?1:amount/5) / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), { ...cost }, amount);
+        const job = this.job(promoting?'promote':'train', baseDuration * (promoting?1:amount/5) / trainingSpeed(p), { ...cost }, amount);
         job.targetId = type.id;if(promoting)job.sourceId=source.id; p.trainingQueue.push(job); return;
       }
       case 'recruit': {
@@ -333,7 +333,12 @@ export class World {
       if (data.schema < 17) initializeFindings(p); else validateFindings(p);
       if (data.schema < 18) initializeRecon(p); else validateRecon(p);
       if (data.schema < 19) ensureArmaments(p);
-      p.technologies ??= {}; for (const tech of TECHNOLOGIES) if (!Number.isInteger(p.technologies[tech.id])) p.technologies[tech.id] = 0;
+      p.technologies ??= {};
+      for (const tech of TECHNOLOGIES) {
+        const value = p.technologies[tech.id];
+        if (value === undefined) p.technologies[tech.id] = 0;
+        else if (!Number.isInteger(value)) throw new Error('Invalid saved city progression.');
+      }
       if (data.schema < 8) initializeJourney(p, true); else validateJourney(p);
       if (data.schema < 9) p.strongholdVictories = 0;
       if (!Number.isSafeInteger(p.strongholdVictories) || p.strongholdVictories < 0) throw new Error('Invalid saved stronghold victories.');

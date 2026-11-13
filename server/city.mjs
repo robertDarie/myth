@@ -1,4 +1,4 @@
-import { trainingOptions, trainingBatch } from './troops.mjs';
+import { trainingOptions, trainingBatch, trainingSpeed } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, ARMAMENTS, ARMAMENT_SET, ARMAMENT_SLOTS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { scoutCampCard } from './scout-camp.mjs';
@@ -52,7 +52,7 @@ export const capacity = p => (CITADEL_TROOP_CAPACITY[p.cityLevel] ?? 40) + Math.
 // Mythic escorts stay on mythicCapacity and do not consume this share.
 export const marchTroopCap = p => Math.ceil(capacity(p) / Math.max(1, age(p).marches));
 export const mythicCapacity = p => p.cityLevel + Math.max(0, p.buildings.menagerie - 1);
-export const passiveCap = p => 500 + p.buildings.vault * 250 + p.cityLevel * 50;
+export const passiveCap = p => Math.floor((500 + p.buildings.vault * 250 + p.cityLevel * 50) * (1 + 0.08 * Math.max(0, Math.min(3, p.technologies?.stores ?? 0))));
 const scaled = (cost, factor) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * factor)]));
 const requirement=(p,r,kind='building')=>({kind,id:r.id,name:(kind==='building'?BUILDINGS:TECHNOLOGIES).find(v=>v.id===r.id).name,level:r.level,current:kind==='building'?buildingLevel(p,r.id):p.technologies[r.id],met:(kind==='building'?buildingLevel(p,r.id):p.technologies[r.id])>=r.level});
 const affordable = (p, cost) => Object.entries(cost).every(([id, value]) => p[id] >= value);
@@ -80,10 +80,11 @@ export function buildingCard(p, b) {
   return card;
 }
 export function technologyCard(p, t) {
-  const level = p.technologies[t.id], next = level + 1, cost = scaled(t.base, next * next);
+  const level = p.technologies[t.id] ?? 0, next = level + 1, cost = scaled(t.base, next * next);
+  const maxLevel = t.maxLevel ?? 3;
   const duration = 12 * (t.pace ?? 1) * next / (1 + 0.05 * p.technologies.writing);
   let lockedReason = '';
-  if (level >= (t.maxLevel??3)) lockedReason = 'Maximum research rank.';
+  if (level >= maxLevel) lockedReason = 'Maximum research rank.';
   else if (p.research) lockedReason = 'Research lane is busy.';
   else if (p.buildings.academy < Math.max(t.academy, next)) lockedReason = `Athenaeum level ${Math.max(t.academy, next)} required.`;
   else if (t.prerequisite && p.technologies[t.prerequisite] < 1) lockedReason = `${TECHNOLOGIES.find(k => k.id === t.prerequisite).name} rank 1 required.`;
@@ -92,11 +93,11 @@ export function technologyCard(p, t) {
   else if (t.building && !p.buildings[t.building]) lockedReason = `${BUILDINGS.find(b => b.id === t.building).name} required.`;
   else if (!affordable(p, cost)) lockedReason = 'Not enough resources.';
   const dependencies=[requirement(p,{id:'academy',level:Math.max(t.academy,next)})];if(t.prerequisite)dependencies.push(requirement(p,{id:t.prerequisite,level:1},'research'));if(t.citadel)dependencies.push(requirement(p,{id:'citadel',level:t.citadel}));if(t.hall)dependencies.push(requirement(p,{id:'barracks',level:t.hall}));if(t.building)dependencies.push(requirement(p,{id:t.building,level:1}));
-  return { ...t, prerequisites:level>=(t.maxLevel??3)?[]:dependencies,level, maxLevel: t.maxLevel??3, cost, duration, canResearch: !lockedReason, lockedReason };
+  return { ...t, prerequisites:level>=maxLevel?[]:dependencies,level, maxLevel, cost, duration, currentBonus: (t.percent ?? 0) * level, nextBonus: level >= maxLevel ? (t.percent ?? 0) * level : (t.percent ?? 0) * next, canResearch: !lockedReason, lockedReason };
 }
 export function citySnapshot(world, p) {
   return { trainingOptions: trainingOptions(p), ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), assignedTroops:totalTroops(p),assignedMythic:totalMythic(p),deployedTroops:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.troops,0),deployedMythic:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.mythic,0), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
-    trainingBatch: trainingBatch(p), trainingDuration: 8 * trainingBatch(p) / 5 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
+    trainingBatch: trainingBatch(p), trainingDuration: 8 * trainingBatch(p) / 5 / trainingSpeed(p), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
     troopCapacity: capacity(p), marchTroopCap: marchTroopCap(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
     armamentLoadout: (p.ownedCommanders ?? []).map(id => ({ commanderId: id, ...(p.commanderArmaments?.[id] ?? emptyArmamentSlots()) })),
@@ -243,6 +244,7 @@ export function validateCity(p) {
   if (!p.productionCarry || RESOURCES.some(id => !Number.isFinite(p.productionCarry[id]) || p.productionCarry[id] < 0 || p.productionCarry[id] >= 1)) throw new Error('Invalid saved production carry.');
   for (const [levels, definitions, cap] of [[p.buildings, BUILDINGS.filter(b => b.id !== 'citadel'), 5], [p.technologies, TECHNOLOGIES, 3]])
     if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > (item.maxLevel??cap))) throw new Error('Invalid saved city progression.');
+  if (TECHNOLOGIES.some(t => t.prerequisite && p.technologies[t.id] > 0 && (p.technologies[t.prerequisite] ?? 0) < 1)) throw new Error('Invalid saved research prerequisites.');
   if (!Array.isArray(p.ownedRelics) || p.ownedRelics.some(id => !RELICS.some(r => r.id === id)) || (p.equippedRelic && !p.ownedRelics.includes(p.equippedRelic))) throw new Error('Invalid saved relic.');
   ensureArmaments(p);
   if (!Array.isArray(p.ownedArmaments) || new Set(p.ownedArmaments).size !== p.ownedArmaments.length || p.ownedArmaments.some(id => !ARMAMENTS.some(item => item.id === id))) throw new Error('Invalid saved armament.');
