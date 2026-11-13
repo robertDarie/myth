@@ -244,7 +244,7 @@ export function validateCity(p) {
   if (!p.productionCarry || RESOURCES.some(id => !Number.isFinite(p.productionCarry[id]) || p.productionCarry[id] < 0 || p.productionCarry[id] >= 1)) throw new Error('Invalid saved production carry.');
   for (const [levels, definitions, cap] of [[p.buildings, BUILDINGS.filter(b => b.id !== 'citadel'), 5], [p.technologies, TECHNOLOGIES, 3]])
     if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > (item.maxLevel??cap))) throw new Error('Invalid saved city progression.');
-  if (TECHNOLOGIES.some(t => t.prerequisite && p.technologies[t.id] > 0 && (p.technologies[t.prerequisite] ?? 0) < 1)) throw new Error('Invalid saved research prerequisites.');
+  if (['drills', 'mercy', 'stores', 'caravan'].some(id => { const tech = TECHNOLOGIES.find(t => t.id === id); return p.technologies[id] > 0 && (p.technologies[tech.prerequisite] ?? 0) < 1; })) throw new Error('Invalid saved research prerequisites.');
   if (!Array.isArray(p.ownedRelics) || p.ownedRelics.some(id => !RELICS.some(r => r.id === id)) || (p.equippedRelic && !p.ownedRelics.includes(p.equippedRelic))) throw new Error('Invalid saved relic.');
   ensureArmaments(p);
   if (!Array.isArray(p.ownedArmaments) || new Set(p.ownedArmaments).size !== p.ownedArmaments.length || p.ownedArmaments.some(id => !ARMAMENTS.some(item => item.id === id))) throw new Error('Invalid saved armament.');
