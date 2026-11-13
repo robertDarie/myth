@@ -211,7 +211,7 @@ namespace ThronesOfMyth
                     {
                         DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
                         if (theme.Button(CityShortcutRect, "City [C]", true)) OpenInterface(InterfacePage.City);
-                        theme.OneLine(new Rect(18,ViewHeight-194,242,24),"THRONES OF MYTH",theme.Eyebrow);
+                        theme.OneLine(new Rect(18,ViewHeight-194,360,24),kingdomName,theme.Eyebrow);
                     }
                     else if(interfacePage!=InterfacePage.World)DrawInterfaceWindow();
                     DrawBottomNavigation();
@@ -239,12 +239,25 @@ namespace ThronesOfMyth
             var brand = new GUIStyle(theme.Title) { fontSize = 58 };
             theme.Text(new Rect(116, centerY + 8, 650, 140), "THRONES\nOF MYTH", brand);
             theme.Text(new Rect(120, centerY + 170, 480, 100), "Raise a civilization. Command heroes and beasts.\nReclaim the thrones of the gods.", theme.Heading);
-            var panel = new Rect(ViewWidth - 594, Mathf.Max(50, centerY - 340), 514, 680);
+            var panel = new Rect(ViewWidth - 594, Mathf.Max(24, centerY - 390), 514, 780);
             theme.Panel(panel);
             GUILayout.BeginArea(new Rect(panel.x + 30, panel.y + 24, panel.width - 60, panel.height - 48));
             GUILayout.Label("YOUR LEGEND BEGINS", theme.Eyebrow);
             GUILayout.Label("Enter your kingdom", theme.Title);
-            GUILayout.Space(16); GUILayout.Label("Commander name", theme.Small);
+            GUILayout.Space(12); GUILayout.Label("KINGDOM", theme.Eyebrow);
+            if (kingdoms != null && kingdoms.Length > 0)
+            {
+                var names = new string[kingdoms.Length];
+                for (int i = 0; i < kingdoms.Length; i++) names[i] = kingdoms[i].name;
+                int next = GUILayout.SelectionGrid(kingdomIndex, names, 1, GUILayout.Height(Mathf.Min(120, 32 * kingdoms.Length)));
+                if (next != kingdomIndex) ApplyKingdom(next);
+                var card = kingdoms[kingdomIndex];
+                GUILayout.Label(card.players + " / " + card.capacity + " cities · " + (card.join == "open" ? "Open for a new city" : "Closed to new cities") + " · " + (card.status == "ok" ? "Available" : "Degraded"), theme.Heading);
+                if (!string.IsNullOrEmpty(card.description)) GUILayout.Label(card.description, theme.Small);
+            }
+            else GUILayout.Label(loadingKingdoms ? "Asking the server which kingdoms are open." : "This server did not publish a kingdom list. Entry uses the local kingdom.", theme.Small);
+            if (GUILayout.Button(loadingKingdoms ? "Checking kingdoms…" : "Refresh kingdoms", theme.Tab, GUILayout.Height(28)) && !loadingKingdoms) StartCoroutine(LoadKingdoms());
+            GUILayout.Space(12); GUILayout.Label("Commander name", theme.Small);
             playerName = GUILayout.TextField(playerName, 24, GUILayout.Height(44));
             GUILayout.Space(16); GUILayout.Label("CHOOSE YOUR CIVILIZATION", theme.Eyebrow);
             civilization = GUILayout.SelectionGrid(civilization, civilizationNames, 3, GUILayout.Height(90));
@@ -253,7 +266,8 @@ namespace ThronesOfMyth
                 GUILayout.Space(10); GUILayout.Label(specialties[civilization], theme.Heading);
                 GUILayout.Label("Civilizations share the same world and can join the same alliance.", theme.Body);
             }
-            GUILayout.Space(20); GUI.enabled = !joining && !string.IsNullOrWhiteSpace(playerName);
+            bool kingdomClosed = kingdoms != null && kingdoms.Length > kingdomIndex && kingdoms[kingdomIndex].join == "closed";
+            GUILayout.Space(16); GUI.enabled = !joining && !loadingKingdoms && !string.IsNullOrWhiteSpace(playerName) && (!kingdomClosed || !string.IsNullOrEmpty(SavedSession()));
             if (GUILayout.Button(joining ? "Opening the gates…" : "Enter your kingdom", theme.Primary, GUILayout.Height(54))) StartCoroutine(Join());
             GUI.enabled = true;
             GUILayout.Label("This device resumes your city using its saved session.", theme.Small);

@@ -46,6 +46,14 @@ Schema 25 loads as saved. Schemas 1 through 24 still migrate through the existin
 
 `GET /health` reports protocol 16, the default kingdom id, and one row per kingdom: id, name, players, capacity, join, status, active marches, last tick milliseconds, last snapshot milliseconds, storage backend, and whether the save is healthy. It does not include file paths, tokens, or account secrets. `GET /k/{id}/readyz` reports that kingdom.
 
+## Player client
+
+Before creating a city, the game requests `GET /kingdoms` and shows each kingdom's name, population, capacity, and whether a new city can join. The list comes from the server. If the server has no kingdom list, entry stays on the local kingdom and uses the unprefixed routes.
+
+Choosing a kingdom stores the session as `ThronesOfMyth.session.{server}.{kingdomId}.{commander}`. An older key without a kingdom id is copied into the `local` key and is not written over by another kingdom. A pending order is stored the same way. Leaving a kingdom from Settings clears the live session and returns to the list. The saved token for each kingdom remains, so the next entry resumes that city. The world view and Settings show the current kingdom name. A snapshot that names a different kingdom is discarded.
+
+The single-kingdom server accepts `/k/{its id}` and rejects every other id. Unprefixed routes still reach that same kingdom.
+
 ## Limits
 
-The client kingdom list and per-kingdom session key are the next player-flow checkpoint. Until then, the current game client uses the unprefixed routes and the default kingdom. Kingdom age, migration, global auctions, and inter-realm war are not part of this host.
+Kingdom age, migration, a shared account across kingdoms, global auctions, and war between kingdoms are not part of this host. A failed kingdom stays paused until its storage or simulation is repaired. The process does not delete a lock held by a running process.

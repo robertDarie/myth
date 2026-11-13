@@ -15,6 +15,10 @@ namespace ThronesOfMyth
         private readonly string[] civilizationNames = { "Greek", "Egyptian", "Norse", "Chinese", "Japanese" };
         private readonly string[] specialties = { "+12% army damage · Minotaur", "+35% recovery · Sphinx Guardian", "+15% health · Frost Giant", "+25% gathering · Qilin Guardian", "+15% march speed · Tengu" };
         private string playerName, token, playerId, allianceName = "Dawnkeepers";
+        private string kingdomId = "local", kingdomName = "Local Kingdom";
+        private KingdomCard[] kingdoms = new KingdomCard[0];
+        private int kingdomIndex;
+        private bool explicitRoutes, loadingKingdoms;
         private string status = "Your kingdom will be saved on this PC.";
         private bool joining, processing, placeBeacon, focused,freshGuest;
         private int civilization, selectedBuilding;
@@ -31,7 +35,18 @@ namespace ThronesOfMyth
 
         private ArmyData ActiveArmy => world == null || world.armies == null ? me : OwnMarches().Find(a => a.id == activeMarchId) ?? me;
         private static bool HasJob(QueueJob job) => job != null && !string.IsNullOrEmpty(job.id);
-        private string SessionKey => "ThronesOfMyth.session." + serverUrl.TrimEnd('/') + "." + playerName.Trim();
+        private string ActiveKingdomId => string.IsNullOrEmpty(kingdomId) ? "local" : kingdomId;
+        private string SessionKey => "ThronesOfMyth.session." + serverUrl.TrimEnd('/') + "." + ActiveKingdomId + "." + playerName.Trim();
+        private string LegacySessionKey => "ThronesOfMyth.session." + serverUrl.TrimEnd('/') + "." + playerName.Trim();
+        private string SavedSession()
+        {
+            string scoped = PlayerPrefs.GetString(SessionKey, "");
+            if (!string.IsNullOrEmpty(scoped) || ActiveKingdomId != "local") return scoped;
+            string legacy = PlayerPrefs.GetString(LegacySessionKey, "");
+            if (string.IsNullOrEmpty(legacy)) return "";
+            PlayerPrefs.SetString(SessionKey, legacy); PlayerPrefs.Save();
+            return legacy;
+        }
         private void Awake()
         {
             Application.runInBackground = true;
@@ -39,6 +54,7 @@ namespace ThronesOfMyth
             StartCoroutine(PreloadPresentation());
             InitializeInterface();
             playerName = PlayerPrefs.GetString("ThronesOfMyth.name", "Commander");
+            StartCoroutine(LoadKingdoms());
             map = gameObject.AddComponent<WorldView>();
             map.occluded = point => InterfaceBlocksPoint(new Vector3(point.x, Screen.height - point.y, 0));
             var camera = Camera.main;
@@ -516,10 +532,48 @@ namespace ThronesOfMyth
             if ((rarity == "purple" || rarity == "epic")) return new Color(0.85f, 0.5f, 1);
             return new Color(1, 0.8f, 0.25f);
         }
+        private IEnumerator LoadKingdoms()
+        {
+            loadingKingdoms = true;
+            using (var request = new UnityWebRequest(serverUrl.TrimEnd('/') + "/kingdoms", "GET") { downloadHandler = new DownloadHandlerBuffer(), timeout = 5 })
+            {
+                yield return request.SendWebRequest();
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    var list = JsonUtility.FromJson<KingdomList>(request.downloadHandler.text);
+                    if (list != null && list.kingdoms != null && list.kingdoms.Length > 0)
+                    {
+                        string previous = ActiveKingdomId;
+                        kingdoms = list.kingdoms;
+                        explicitRoutes = true;
+                        kingdomIndex = 0;
+                        for (int i = 0; i < kingdoms.Length; i++) if (kingdoms[i].id == previous) kingdomIndex = i;
+                        ApplyKingdom(kingdomIndex);
+                    }
+                }
+            }
+            loadingKingdoms = false;
+        }
+        private void ApplyKingdom(int index)
+        {
+            if (kingdoms == null || kingdoms.Length == 0) { kingdomId = "local"; kingdomName = "Local Kingdom"; return; }
+            kingdomIndex = Mathf.Clamp(index, 0, kingdoms.Length - 1);
+            kingdomId = string.IsNullOrEmpty(kingdoms[kingdomIndex].id) ? "local" : kingdoms[kingdomIndex].id;
+            kingdomName = string.IsNullOrEmpty(kingdoms[kingdomIndex].name) ? kingdomId : kingdoms[kingdomIndex].name;
+        }
+        private void LeaveKingdom()
+        {
+            if (pollRoutine != null) { StopCoroutine(pollRoutine); pollRoutine = null; }
+            comparisonRequest++; comparison = null; comparisonBusy = false; comparisonError = "";
+            ResetCityExperience(); focused = false; token = null; world = null; me = null; worldReady = false; commands.Clear(); processing = false; map.Clear(); loadingError = "";
+            accountEntryOpen = false; pendingOrder = null; loadedOrderProfile = "";
+            status = "Choose a kingdom. Saved cities stay on this device.";
+            StartCoroutine(LoadKingdoms());
+        }
         private IEnumerator Join()
         {
             cityProgress.Reset();joining = true; worldReady = false; loadingError = ""; loadingStage = "Opening the kingdom gates";
-            var body = new JoinRequest { name = playerName, civilization = civilizationIds[civilization], resumeToken = PlayerPrefs.GetString(SessionKey, ""), joinCode = kingdomJoinCode };
+            var body = new JoinRequest { name = playerName, civilization = civilizationIds[civilization], resumeToken = SavedSession(), joinCode = kingdomJoinCode, kingdomId = ActiveKingdomId };
             using (var request = Request("/join", "POST", JsonUtility.ToJson(body)))
             {
                 yield return request.SendWebRequest();
@@ -548,6 +602,8 @@ namespace ThronesOfMyth
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
                         if (next.version != 16) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (!string.IsNullOrEmpty(next.kingdomId) && next.kingdomId != ActiveKingdomId) { token = null; loadingError = "The server returned a different kingdom. Choose the kingdom again."; status = loadingError; break; }
+                        if (!string.IsNullOrEmpty(next.kingdomName)) kingdomName = next.kingdomName;
                         lastSnapshotAt = Time.unscaledTime;
                         world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId); NoteScoutReports();
                         if (me != null)
@@ -592,7 +648,7 @@ namespace ThronesOfMyth
         }
         private UnityWebRequest Request(string path, string method, string body = null)
         {
-            var request = new UnityWebRequest(serverUrl.TrimEnd('/') + path, method) { downloadHandler = new DownloadHandlerBuffer(), timeout = 5 };
+            var request = new UnityWebRequest(serverUrl.TrimEnd('/') + (explicitRoutes && !path.StartsWith("/k/") ? "/k/" + ActiveKingdomId + path : path), method) { downloadHandler = new DownloadHandlerBuffer(), timeout = 5 };
             if (body != null) { request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body)); request.SetRequestHeader("Content-Type", "application/json"); }
             if (!string.IsNullOrEmpty(token)) request.SetRequestHeader("Authorization", "Bearer " + token);
             return request;
@@ -623,7 +679,7 @@ namespace ThronesOfMyth
                 PendingOrder retained=null;
                 if(world?.persistence?.backend=="sqlite")
                 {
-                    retained=new PendingOrder{key=Guid.NewGuid().ToString("N"),body=body,playerId=playerId,server=serverUrl};
+                    retained=new PendingOrder{key=Guid.NewGuid().ToString("N"),body=body,playerId=playerId,server=serverUrl,kingdom=ActiveKingdomId};
                     if(!SavePendingOrder(retained))break;
                     pendingOrder=retained;
                 }

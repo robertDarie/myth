@@ -34,11 +34,15 @@ Acceptance is `server/diplomacy.test.mjs` and `server/coalition.test.mjs`.
 
 Acceptance is `server/season.test.mjs`.
 
+- **TM-017 — multiple kingdoms.** One process hosts up to four configured kingdoms. Each has its own world, save, sessions, alliances, diplomacy, combat, chat, fog, rankings, events, and season. The game asks the server for the kingdom list before creating a city. Schema 25. Protocol 16. The host is described in `docs/tm-017-multiple-kingdoms.md`.
+
+Acceptance is `server/realms.test.mjs`.
+
 ## Next package
 
-### A. Multiple kingdoms
+### A. Large-world battle scale
 
-TM-017 server host is in place: one process can run up to four configured kingdoms, and the player-facing kingdom selection remains. Large-world battle scale (TM-025 / TM-084) remains later.
+TM-025 / TM-084 is the next infrastructure package: mass-battle performance on a large map. Cross-kingdom migration, shared accounts, and war between kingdoms stay out until they are designed.
 
 ## Later functional packages
 
@@ -48,7 +52,7 @@ Citadel ages, one shared training hall, the forge, and production cycles exist. 
 
 ### C. World map, exploration and combat
 
-Fog, camps, gathering, and one relic per march exist. Kingdom provinces, multiple kingdoms, kingdom age, and migration (TM-016 through TM-019) are not built. Large-world performance (TM-025) and mass-battle scale (TM-084) stay infrastructure work.
+Fog, camps, gathering, and one relic per march exist. Separate kingdoms on one host exist. Kingdom age and migration are not built. Large-world performance (TM-025) and mass-battle scale (TM-084) are the next infrastructure work.
 
 ### D. Alliances, diplomacy and warfare
 

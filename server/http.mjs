@@ -64,7 +64,11 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
       const body=measure('encode',()=>JSON.stringify(data));telemetry?.response(Buffer.byteLength(body));response.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); response.end(body);
     };
     try {
-      const path = new URL(request.url, 'http://localhost').pathname;
+      const requestPath = new URL(request.url, 'http://localhost').pathname;
+      const prefixed = requestPath.match(/^\/k\/([a-z0-9][a-z0-9-]{0,23})(\/.*)?$/);
+      if (prefixed && prefixed[1] !== kingdomId) throw new GameError('Unknown kingdom.', 404);
+      if (!prefixed && requestPath.startsWith('/k/')) throw new GameError('Unknown kingdom.', 404);
+      const path = prefixed ? (prefixed[2] || '/') : requestPath;
       const ready = !persistence.error && performance.now() - lastTick < 5000;
       if (request.method === 'GET' && path === '/kingdoms') return send(200, { kingdoms: [{ id: kingdomId, name: kingdomId === 'local' ? 'Local Kingdom' : kingdomId, description: '', players: world.players.size, capacity: 32, join: world.players.size >= 32 || persistence.error ? 'closed' : 'open', status: persistence.error || simulationFailed ? 'degraded' : 'ok' }] });
       if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 16, build:buildIdentity,kingdomId, accounts: identity.available, persistence: { ...persistence } });
@@ -91,6 +95,7 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
       if (request.method === 'POST' && path === '/join') {
         allow('join:' + address, 20);
         const body = await readJson(request);
+        if (typeof body?.kingdomId === 'string' && body.kingdomId !== kingdomId) throw new GameError('That request belongs to another kingdom.', 409);
         if (body?.resumeToken && world.sessions.has(body.resumeToken)) identity.authenticate(body.resumeToken);
         // A valid saved session may reconnect after the invitation code rotates.
         if (joinCode && !world.sessions.has(body?.resumeToken) && !equalSecret(body?.joinCode, joinCode)) throw new GameError('A kingdom invitation code is required.', 403);
@@ -98,16 +103,17 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
           const joined = world.join(body?.name, body?.civilization, body?.resumeToken);
           const player = world.authenticate(joined.token); player.lastSeen = performance.now(); player.offline = false; return joined;
         });
-        return send(201, session);
+        return send(201, { ...session, kingdomId });
       }
       if ((request.method === 'GET' && ['/world','/commander-comparison'].includes(path)) || (request.method === 'POST' && path === '/command')) {
         const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
-        if(path==='/commander-comparison'){const p=identity.authenticate(token);const query=new URL(request.url,'http://localhost').searchParams;return send(200,world.compareCommanders(p,query.get('marchId'),query.get('candidateId')));}
+        if(path==='/commander-comparison'){const p=identity.authenticate(token);const query=new URL(request.url,'http://localhost').searchParams;if(query.get('kingdomId')&&query.get('kingdomId')!==kingdomId)throw new GameError('That request belongs to another kingdom.',409);return send(200,world.compareCommanders(p,query.get('marchId'),query.get('candidateId')));}
         if (path === '/world') {
           const player = identity.authenticate(token); player.lastSeen = performance.now(); player.offline = false;
-          return send(200, { ...measure('snapshot',()=>world.snapshot(player.id)), persistence: { ...persistence } });
+          return send(200, { ...measure('snapshot',()=>world.snapshot(player.id)), kingdomId, kingdomName: kingdomId === 'local' ? 'Local Kingdom' : kingdomId, persistence: { ...persistence } });
         }
         const body = await readJson(request);
+        if (typeof body?.kingdomId === 'string' && body.kingdomId !== kingdomId) throw new GameError('That command belongs to another kingdom.', 409);
         // Authenticate after awaiting the body: another command may have rolled back.
         const player = identity.authenticate(token);
         const key = request.headers['idempotency-key']; let receipt = null;

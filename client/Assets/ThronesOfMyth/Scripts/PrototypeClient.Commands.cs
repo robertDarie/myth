@@ -6,31 +6,35 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        [Serializable] private sealed class PendingOrder { public string key,body,playerId,server; }
+        [Serializable] private sealed class PendingOrder { public string key,body,playerId,server,kingdom; }
         private PendingOrder pendingOrder;
         private string loadedOrderProfile="";
-        private static string OrderProfile(string server,string player) => "ThronesOfMyth.pending."+server.TrimEnd('/')+"."+player;
+        private static string OrderProfile(string server,string kingdom,string player) => "ThronesOfMyth.pending."+server.TrimEnd('/')+"."+(string.IsNullOrEmpty(kingdom)?"local":kingdom)+"."+player;
+        private static string LegacyOrderProfile(string server,string player) => "ThronesOfMyth.pending."+server.TrimEnd('/')+"."+player;
         private bool SavePendingOrder(PendingOrder order)
         {
-            try { PlayerPrefs.SetString(OrderProfile(order.server,order.playerId),JsonUtility.ToJson(order));PlayerPrefs.Save();return true; }
+            try { if(string.IsNullOrEmpty(order.kingdom))order.kingdom="local"; PlayerPrefs.SetString(OrderProfile(order.server,order.kingdom,order.playerId),JsonUtility.ToJson(order));PlayerPrefs.Save();return true; }
             catch { status="The order could not be retained on this device. It has not been sent.";return false; }
         }
         private void RestorePendingOrder()
         {
-            string profile=OrderProfile(serverUrl,playerId);if(loadedOrderProfile==profile)return;loadedOrderProfile=profile;
-            string saved=PlayerPrefs.GetString(profile,"");if(string.IsNullOrEmpty(saved))return;
+            string profile=OrderProfile(serverUrl,ActiveKingdomId,playerId);if(loadedOrderProfile==profile)return;loadedOrderProfile=profile;
+            string saved=PlayerPrefs.GetString(profile,"");
+            if(string.IsNullOrEmpty(saved)&&ActiveKingdomId=="local"){string legacy=PlayerPrefs.GetString(LegacyOrderProfile(serverUrl,playerId),"");if(!string.IsNullOrEmpty(legacy)){PlayerPrefs.SetString(profile,legacy);PlayerPrefs.DeleteKey(LegacyOrderProfile(serverUrl,playerId));PlayerPrefs.Save();saved=legacy;}}
+            if(string.IsNullOrEmpty(saved))return;
             try
             {
                 var order=JsonUtility.FromJson<PendingOrder>(saved);
-                if(order==null||order.playerId!=playerId||order.server.TrimEnd('/')!=serverUrl.TrimEnd('/')||string.IsNullOrEmpty(order.key)||string.IsNullOrEmpty(order.body))throw new InvalidOperationException();
+                if(order==null||order.playerId!=playerId||order.server.TrimEnd('/')!=serverUrl.TrimEnd('/')||(!string.IsNullOrEmpty(order.kingdom)&&order.kingdom!=ActiveKingdomId)||string.IsNullOrEmpty(order.key)||string.IsNullOrEmpty(order.body))throw new InvalidOperationException();
+                if(string.IsNullOrEmpty(order.kingdom))order.kingdom=ActiveKingdomId;
                 pendingOrder=order;status="A previous order needs confirmation. Retry it safely before issuing another.";
             }
-            catch { pendingOrder=new PendingOrder{key="",body="",playerId=playerId,server=serverUrl};status="The previous order record could not be read. Check your city, then clear the unreadable record in Settings."; }
+            catch { pendingOrder=new PendingOrder{key="",body="",playerId=playerId,server=serverUrl,kingdom=ActiveKingdomId};status="The previous order record could not be read. Check your city, then clear the unreadable record in Settings."; }
         }
         private void ClearPendingOrder(PendingOrder order)
         {
             if(order==null)return;
-            PlayerPrefs.DeleteKey(OrderProfile(order.server,order.playerId));PlayerPrefs.Save();
+            PlayerPrefs.DeleteKey(OrderProfile(order.server,order.kingdom,order.playerId));PlayerPrefs.Save();
             if(ReferenceEquals(pendingOrder,order))pendingOrder=null;
         }
         private IEnumerator RetryPendingOrder()

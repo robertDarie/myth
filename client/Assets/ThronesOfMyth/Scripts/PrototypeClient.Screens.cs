@@ -465,7 +465,9 @@ namespace ThronesOfMyth
             GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
             openingEnabled=GUILayout.Toggle(openingEnabled,"Show optional first-session guidance");PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",openingEnabled?1:0);
             GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
-            GUILayout.Space(18); GUILayout.Label("Build "+ReleaseIdentity.Label,theme.Small);GUILayout.Label("Connected to " + serverUrl, theme.Small);
+            GUILayout.Space(18); GUILayout.Label("Kingdom · " + kingdomName + " · " + ActiveKingdomId, theme.Heading);
+            if(theme.Action("Leave this kingdom",!processing&&!accountBusy&&pendingOrder==null&&commands.Count==0,"Finish pending orders before leaving this kingdom."))LeaveKingdom();
+            GUILayout.Label("Build "+ReleaseIdentity.Label,theme.Small);GUILayout.Label("Connected to " + serverUrl, theme.Small);
             GUILayout.Label(world.persistence != null && world.persistence.enabled ? world.persistence.backend=="sqlite"?"SQLite kingdom · progress saves on the server; downtime job recovery is enabled.":"Local JSON kingdom · progress saves on this PC. A restart catches up paid city timers and up to eight hours of passive production." : "This server is not saving world progress.", theme.Small);
             if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; openingEnabled=true;PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",1); PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
             GUILayout.EndScrollView(); GUILayout.EndArea();

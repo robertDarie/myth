@@ -2,8 +2,10 @@ using System;
 
 namespace ThronesOfMyth
 {
-    [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; public string joinCode; }
-    [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
+    [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; public string joinCode; public string kingdomId; }
+    [Serializable] public sealed class JoinResponse { public string token; public string playerId; public string kingdomId; }
+    [Serializable] public sealed class KingdomCard { public string id; public string name; public string description; public int players; public int capacity; public string join; public string status; }
+    [Serializable] public sealed class KingdomList { public KingdomCard[] kingdoms; }
     [Serializable] public sealed class ErrorResponse { public string error; }
     [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex, day; public bool enabled; public UnitCounts units; }
     [Serializable] public sealed class InventoryItem { public string id,name,kind,resource,scope,description,category; public int amount,seconds,count; }
@@ -219,6 +221,7 @@ namespace ThronesOfMyth
         public FormationRule formation;
         public float time;
         public SaveStatus persistence;
+        public string kingdomId, kingdomName;
         public RankingData rankings;
         public RelicData[] relics;
         public ArmamentData[] armaments;

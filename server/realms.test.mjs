@@ -234,7 +234,9 @@ test('idempotency, schema 25, older saves, SQLite accounts and legacy mode stay 
   assert.equal(card.payload.kingdoms[0].id, 'local');
   const joined = await call(legacyBase, '/join', { method: 'POST', body: { name: 'Legacy' } });
   assert.equal(joined.status, 201);
-  assert.equal((await call(legacyBase, '/k/local/world', { token: joined.payload.token })).status, 404);
+  assert.equal((await call(legacyBase, '/k/local/world', { token: joined.payload.token })).payload.players.length, 1);
+  assert.equal((await call(legacyBase, '/k/other/world', { token: joined.payload.token })).status, 404);
+  assert.equal((await call(legacyBase, '/command', { method: 'POST', token: joined.payload.token, body: { type: 'chat-send', name: 'Home only', kingdomId: 'other' } })).status, 409);
   assert.equal((await call(legacyBase, '/world', { token: joined.payload.token })).payload.players.length, 1);
   assert.equal(existsSync(join(root, 'north.sqlite')), true);
 });
