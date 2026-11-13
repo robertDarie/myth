@@ -23,4 +23,4 @@ Progress for each event is stored only for the current period. Camp-cycle tokens
 
 ## Persistence
 
-World schema 22 stores `events` on the player. Schemas 21 and older load with a fresh unclaimed period and keep resources, troops, technology, login streaks, daily claims, and alliances. A saved event record that skips an objective, claims an unfinished event, or names the wrong period is rejected. Health protocol stays 16. The event list is added to the viewer's activity snapshot and is omitted from other players.
+World schema 22 stores `events` on the player. Schemas 21 and older load with a fresh unclaimed period and keep resources, troops, technology, login streaks, daily claims, and alliances. A saved event record that skips an objective, claims an unfinished event, or names a period other than the one stored with its activity clock is rejected. Loading that save after the host clock has moved forward starts the new period instead of rejecting the city. Health protocol stays 16. The event list is added to the viewer's activity snapshot and is omitted from other players.

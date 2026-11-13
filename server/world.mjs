@@ -421,7 +421,7 @@ export class World {
     if (data.schema < 6) initializeCampaign(world); else restoreCampaign(world, w);
     if (data.schema >= 10) validateActivity(world); else for (const p of world.players.values()) initializeActivity(world, p);
     if (data.schema < 22) for (const p of world.players.values()) delete p.events;
-    if (data.schema >= 22) validateEvents(world);
+    if (data.schema >= 22) validateEvents(world, w.activityClockMs);
     for (const p of world.players.values()) ensureEvents(world, p);
     if (data.schema < 11) initializeKingdom(world, true); else { world.kingdom = w.kingdom; validateKingdom(world); }
     for(const a of world.armies()){

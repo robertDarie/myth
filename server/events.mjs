@@ -105,8 +105,8 @@ export function eventCommand(w, p, c, fail) {
   return true;
 }
 
-export function validateEvents(w) {
-  const day = Math.floor(w.activityClockMs / DAY);
+export function validateEvents(w, clock = w.activityClockMs) {
+  const day = Math.floor(clock / DAY);
   for (const p of w.players.values()) {
     if (!p.events || typeof p.events !== 'object' || Array.isArray(p.events)) throw new Error('Invalid saved event progress.');
     for (const event of EVENTS) {

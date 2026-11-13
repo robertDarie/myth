@@ -156,6 +156,10 @@ test('a missed period, a later period, and a rolled-back clock do not replay the
   assert.equal(card(w, p, 'oath-of-the-builders').claimed, true);
   assert.throws(() => w.command(p, { type: 'event-claim', targetId: 'oath-of-the-builders', period: card(w, p, 'oath-of-the-builders').period }), /already claimed/);
   assert.deepEqual(resources(p), paid);
+  const later = World.fromSave(w.toSave(), { now: () => monday + 11 * DAY });
+  const laterPlayer = later.authenticate(s.token);
+  assert.equal(progress(later, laterPlayer, 'oath-of-the-builders', 'development'), 0);
+  assert.equal(laterPlayer.food, paid.food);
   const loaded = World.fromSave(w.toSave(), { now: () => monday });
   const q = loaded.authenticate(s.token);
   assert.equal(card(loaded, q, 'oath-of-the-builders').claimed, true);
