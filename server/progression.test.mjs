@@ -166,6 +166,29 @@ test('six stars cap a commander at level 60, and a relic can be unequipped befor
   cmd(w,p,'equip-relic',{targetId:'aegis',marchId:a.id});assert.equal(a.equippedRelic,'aegis');assert.equal(p.equippedRelic,'');
 });
 
+test('a relic bonus clamps on unequip and cannot be copied onto two marches', () => {
+  const {w,p}=setup();p.cityLevel=2;p.reserveTroops=5;p.reserveUnits.infantry=5;const other=deploy(w,p,'scout');
+  p.ownedRelics.push('aegis','ember-spear');
+  const plain=w.stats(p).maxHealth, plainDamage=w.stats(p).damage;
+  p.health=plain;
+  cmd(w,p,'equip-relic',{targetId:'aegis'});
+  assert.ok(w.stats(p).maxHealth>plain);assert.equal(p.health,plain);
+  p.health=w.stats(p).maxHealth;
+  cmd(w,p,'unequip-relic');
+  assert.equal(w.stats(p).maxHealth,plain);assert.equal(p.health,plain);
+  cmd(w,p,'equip-relic',{targetId:'ember-spear'});
+  assert.ok(w.stats(p).damage>plainDamage);assert.equal(w.stats(p).maxHealth,plain);
+  cmd(w,p,'unequip-relic');
+  cmd(w,p,'equip-relic',{targetId:'aegis',marchId:other.id});
+  assert.throws(()=>cmd(w,p,'equip-relic',{targetId:'aegis'}));
+  const forged=w.toSave();
+  forged.world.players[0].equippedRelic='aegis';
+  assert.throws(()=>World.fromSave(forged),/relic assignment/);
+  const unknown=w.toSave();
+  unknown.world.players[0].marches[0].equippedRelic='missing-relic';
+  assert.throws(()=>World.fromSave(unknown),/relic assignment/);
+});
+
 test('all five ages are reachable through the real prerequisite graph with two legal crews', () => {
   const {w,p}=setup();
   const finish=id=>{cmd(w,p,'building-upgrade',{targetId:id});advance(w,85);};

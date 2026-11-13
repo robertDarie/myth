@@ -234,19 +234,23 @@ namespace ThronesOfMyth
             foreach (var relic in world.relics)
             {
                 bool owned = Array.IndexOf(me.ownedRelics, relic.id) >= 0;
+                var holder = OwnMarches().Find(march => march.equippedRelic == relic.id);
                 GUILayout.Label(relic.name, sectionStyle); GUILayout.Label(relic.description, noteStyle);
+                if (relic.health > 0 || relic.damage > 0) GUILayout.Label("Maximum health x" + relic.health.ToString("0.00") + " · Damage x" + relic.damage.ToString("0.00"), noteStyle);
                 if (!owned)
                 {
                     GUILayout.Label(Cost(relic.cost), noteStyle);
-                    GUI.enabled = built && (me.crafting == null || string.IsNullOrEmpty(me.crafting.id)) && Afford(relic.cost);
-                    if (GUILayout.Button("Craft · " + relic.duration + "s")) Send("craft", relic.id);
+                    string craftReason = !built ? "Build the Forge of Dawn first." : me.crafting != null && !string.IsNullOrEmpty(me.crafting.id) ? "The forge is busy." : !Afford(relic.cost) ? "More resources required: " + Cost(relic.cost) : "";
+                    if (theme.Action("Craft · " + relic.duration + "s", string.IsNullOrEmpty(craftReason), craftReason)) Send("craft", relic.id);
                 }
                 else
                 {
-                    GUI.enabled = CanEditArmy;
-                    if (GUILayout.Button(ActiveArmy.equippedRelic == relic.id ? "Unequip at home" : "Equip at home")) Send(ActiveArmy.equippedRelic == relic.id ? "unequip-relic" : "equip-relic", relic.id);
+                    string equipped = holder == null ? "In the city stores. One march may carry it." : holder.id == ActiveArmy.id ? "Equipped on this march." : "Equipped on " + HeroName(holder.commanderId) + ".";
+                    GUILayout.Label(equipped, noteStyle);
+                    bool mine = ActiveArmy.equippedRelic == relic.id;
+                    string reason = !CanEditArmy ? "Return this march home and stop before changing its relic." : holder != null && !mine ? "That relic is equipped by another march." : "";
+                    if (theme.Action(mine ? "Unequip at home" : "Equip at home", string.IsNullOrEmpty(reason), reason)) Send(mine ? "unequip-relic" : "equip-relic", relic.id);
                 }
-                GUI.enabled = true;
             }
         }
         private int tradeMember,tradeResource;

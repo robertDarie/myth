@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "relic ownership and unequip health",
+      "command": ["node", "--test", "--test-name-pattern", "relic bonus clamps", "server/progression.test.mjs"]
+    },
+    {
       "name": "military halls, veterans, hospital and troop conservation",
       "command": ["node", "--test", "server/veterans.test.mjs", "server/war.test.mjs", "server/troops.test.mjs"]
     },

@@ -157,3 +157,15 @@ TM-036 already uses one Hall of Spears for infantry, archers and cavalry. Separa
 Tier II needs Citadel 2, Hall of Spears 2 and Veteran Oaths. Promotion takes five ready Tier I reserves, spends only the cost difference, and does not create extra soldiers. The Sanctuary of Beasts gates mythic recruitment. The House of Renewal has 25 beds plus 15 per level; overflow patients wait. The Athenaeum research effects and the Forge of Dawn relic lane were already covered by the city tests. Cancellation refunds the order once. A repeated promotion HTTP key does not train twice. Schema stayed 18.
 
 `node --test server/city.test.mjs server/gameplay-parity.test.mjs server/veterans.test.mjs server/war.test.mjs server/troops.test.mjs`: 61 passed, 0 failed. Unity 6000.3.0f1 is installed, but this repository has no Windows player build, and the editor was not opened. The playtest rows stay pending. No costs or speeds were changed.
+
+## Relics and equipment
+
+The Forge of Dawn already crafts two march relics. Bronze Aegis multiplies maximum health by 1.10. Ember Spear multiplies damage by 1.10. A march carries one relic. Equipping does not raise current health. Unequipping clamps health to the new maximum. Another march cannot take a relic that is already equipped. A save that copies one relic onto two marches, or names an unknown relic, is rejected. The forge screen shows the server multipliers and says when the march is away or the relic is already carried.
+
+Commander equipment slots, armament sets, and set bonuses are not this system. A later design would keep relics as one march slot and add separate commander-owned pieces only after approval. That design needs its own schema migration. It was not built.
+
+Proposed slots, if approved later: Weapon, Armor, and Banner, owned by the commander and shared by every march that commander leads. Relics stay on the march and do not stack with a piece in the same role. Crafting would use the Forge of Dawn, with costs in stone, gold, and Mana, and no duplicate instance of the same piece. A two-piece set could add one named bonus. Three pieces would not add a second copy of that bonus. No randomized inscriptions.
+
+## Manual playtest
+
+`docs/playtest-functional-checklist.md` lists the isolated Windows steps. Playing that list is still pending.

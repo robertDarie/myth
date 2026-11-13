@@ -73,7 +73,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class HeroProgress { public string id, expertiseDescription, respecLockedReason; public int rank, shards, nextShards, nextGold, heroLevel, stars, talentPoints, talentPointsSpent, respecMana; public float xp; public bool expertise; public HeroSkill[] skills; public TalentTree[] talents; }
     [Serializable] public sealed class HeroSkill { public int index, level, unlockStar; public string name, kind, description; }
     [Serializable] public sealed class DrawResult { public string id, commanderId, rarity; public bool duplicate; public int shards, number; }
-    [Serializable] public sealed class RelicData { public string id, name, description; public ResourceAmounts cost; public float duration; }
+    [Serializable] public sealed class RelicData { public string id, name, description; public ResourceAmounts cost; public float duration, damage, health; }
     [Serializable] public sealed class TradeData { public string id, name; public ResourceAmounts cost, reward; }
     [Serializable] public sealed class SummonRules { public float common, rare, epic, legendary; public int epicPity, legendaryPity; }
     [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error, backend; }

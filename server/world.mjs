@@ -344,6 +344,13 @@ export class World {
         if (!a || typeof a.id !== 'string' || ids.has(a.id) || a.ownerId !== p.id || !p.ownedCommanders.includes(a.commanderId) || commanders.has(a.commanderId) || !finitePoint(a) || ['troops', 'mythic', 'health', 'recovery', 'cooldown', 'gatherClock', 'rage', 'shield', 'shieldTime'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.homeX !== p.homeX || a.homeZ !== p.homeZ) throw new Error('Invalid saved march.');
         ids.add(a.id); commanders.add(a.commanderId); a.target = null; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Paused';
       }
+      const assignedRelics = [];
+      for (const a of armyList(p)) {
+        a.equippedRelic ??= '';
+        if (typeof a.equippedRelic !== 'string' || (a.equippedRelic && (!p.ownedRelics.includes(a.equippedRelic) || !RELICS.some(r => r.id === a.equippedRelic)))) throw new Error('Invalid saved relic assignment.');
+        if (a.equippedRelic) assignedRelics.push(a.equippedRelic);
+      }
+      if (new Set(assignedRelics).size !== assignedRelics.length) throw new Error('Invalid saved relic assignment.');
       if (new Set(constructionJobs(p).map(job => job.targetId || 'citadel')).size !== constructionJobs(p).length) throw new Error('Duplicate saved building upgrade.');
       if (activeMarches(p).length > age(p).marches || (p.secondConstruction && crews(p) < 2)) throw new Error('Invalid saved age unlock.');
       world.players.set(p.id, { ...p, target: null, rage: 0, shield: 0, shieldTime: 0, lastSeen: 0, offline: true, state: 'Paused' });
