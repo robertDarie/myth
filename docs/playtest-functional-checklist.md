@@ -1,6 +1,30 @@
 # Functional playtest checklist
 
-Use a fresh isolated kingdom. Do not open or edit `%LOCALAPPDATA%\ThronesOfMyth\Saves`.
+Use an isolated kingdom. Do not open or edit `%LOCALAPPDATA%\ThronesOfMyth\Saves`. Do not use `packaging/windows/Launcher.ps1`; that launcher uses port 8080 and the real kingdom save.
+
+## Resume after a Windows restart
+
+From the repository:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-isolated-playtest.ps1
+```
+
+The script listens on port 8091 and stores the world at `work\playtest-save\world.json`. That directory is gitignored. If port 8091 is already listening, the script stops and does not start a second server on the same file. To seed an empty directory from a preserved copy without changing the copy:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-isolated-playtest.ps1 -SeedFrom C:\Users\rober\Documents\GitHub\myth-private-backup\playtest-save\world.json
+```
+
+The seed is copied only when `work\playtest-save\world.json` is absent. Then launch:
+
+```powershell
+dist\Windows\Game\ThronesOfMyth.exe --thrones-server http://127.0.0.1:8091
+```
+
+Health is `http://127.0.0.1:8091/health`. The response uses protocol version 16 and JSON persistence.
+
+## Fresh kingdom
 
 1. From the repository, in PowerShell, point the server at an empty file under `work\` and start it:
 

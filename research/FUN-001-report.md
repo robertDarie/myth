@@ -179,3 +179,9 @@ The hall uses `CaptainPresentation.cs`, `CommanderHallLayout.cs`, the 4,076,588-
 `python scripts/run_presentation_contracts.py` passed: Presentation contracts 16746 passed, including hall separation at 1024x768, 1280x800, and 1920x1080.
 
 Unity 6000.3.0f1 imported `FrontierCaptainPresentation.fbx` and exited batch mode with `Build Finished, Result: Success`. The rebuilt player launched against the isolated server on port 8091. The Hall of Commanders showed the rigged Frontier Captain, spear, and sun shield. Dragging the figure turned it to profile. The Victory preview raised the spear. The isolated city still showed Age of Oaths, Citadel 2, after the earlier session. The real kingdom save was not opened.
+
+## Isolated playtest after consolidation
+
+13 November 2026, after `f1ee2ba`. The preserved isolated save was copied to `work\playtest-save\world.json` and served on port 8091. Health reported protocol 16 and JSON persistence. A second start was refused while that port was listening. The real kingdom save stayed at SHA-256 `9A80937D2C65AAEFA88A3C36E597C4D52E1A29BD4BABEF0C279306E0FE0C0F3E`.
+
+Unity 6000.3.0f1 rebuilt the Windows player (`Build Finished, Result: Success`, no `error CS`). The player resumed Review225051, Greek, Age of Oaths, Citadel 2, and showed Connected. Closing it and launching again resumed the same city. The Hall of Commanders showed the full-body Frontier Captain with spear, shield, and armor. Dragging rotated the figure. Victory raised the spear. Talents showed 0 open points at level 1. Blessed Fields quoted 2 food every five seconds up to a stockpile of 850, which the city had already reached. The Forge of Dawn listed Bronze Aegis and Ember Spear and required Citadel 3 before crafting. No gameplay defect was confirmed. First Steps completion, a new training order, a camp attack, a scout, and a placed supply beacon were not played in this pass. `docs/tm-056-commander-armament.md` records the unbuilt slot design.
