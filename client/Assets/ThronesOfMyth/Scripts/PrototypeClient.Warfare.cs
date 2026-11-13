@@ -52,6 +52,7 @@ namespace ThronesOfMyth
                 return;
             }
             GUILayout.Label("Selected march · " + HeroName(ActiveArmy.commanderId), sectionStyle);
+            if (world.coalition != null && !string.IsNullOrEmpty(world.coalition.name)) GUILayout.Label("Coalition · " + world.coalition.name + " · protected from member alliances. " + world.coalition.limitations, noteStyle);
             GUILayout.Label(UnitSummary(ActiveArmy.units) + " · " + ActiveArmy.mythic + " mythic · " + ActiveArmy.state, noteStyle);
             GUILayout.Label("Contribute an existing march with the troops you prepared. It stays yours and occupies its march slot. Return/withdraw releases the assignment; it does not copy troops into another army.", noteStyle);
             if (!string.IsNullOrEmpty(ActiveArmy.assignmentKind))

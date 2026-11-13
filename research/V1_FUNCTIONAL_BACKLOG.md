@@ -26,11 +26,15 @@ Acceptance is `server/research-expansion.test.mjs`.
 
 Acceptance is `server/events.test.mjs`.
 
+- **TM-077 — alliance diplomacy and coalitions.** Leaders sign bilateral non-aggression pacts. A coalition holds at most three alliances, with its own invitation, chat, and the same combat protection. Territory, vision, treasuries, and rallies stay inside one alliance. Schema 24. Protocol 16. The rules are in `docs/tm-077-diplomacy.md`.
+
+Acceptance is `server/diplomacy.test.mjs` and `server/coalition.test.mjs`.
+
 ## Next package
 
-### A. Alliance diplomacy
+### A. Season lifecycle
 
-Beacons, rallies, and strongholds exist. Non-aggression pacts are in place. The next checkpoint is coalitions under TM-077. Seasons (TM-072), multiple kingdoms (TM-017), and large-world battle scale (TM-025 / TM-084) follow the coalition checkpoint.
+TM-072 is the next functional package. It should add a defined season start and end, phases and objectives, server-authoritative rankings, alliance and personal participation, eligibility and reward claims, season history, and a controlled reset that keeps permanent player progression. Multiple kingdoms (TM-017) and large-world battle scale (TM-025 / TM-084) remain later.
 
 ## Later functional packages
 
@@ -44,15 +48,15 @@ Fog, camps, gathering, and one relic per march exist. Kingdom provinces, multipl
 
 ### D. Alliances, diplomacy and warfare
 
-Beacons, supply radius, rallies, garrisons, and strongholds exist. Non-aggression pacts block hostile action between two alliances. Coalitions are the next checkpoint. Territory is a beacon supply radius, not an ownership polygon or a resource bonus.
+Beacons, supply radius, rallies, garrisons, and strongholds exist. Non-aggression pacts and coalitions block hostile action between the alliances they cover. Territory is a beacon supply radius, not an ownership polygon or a resource bonus. A coalition does not merge that territory.
 
 ### E. Daily progression, events and seasons
 
-Daily, weekly, seven-day, and the two recurring event claims exist and are server-tested. Seasons (TM-072) are not built.
+Daily, weekly, seven-day, and the two recurring event claims exist and are server-tested. Seasons (TM-072) are the next package and are not built.
 
 ### F. Multiplayer infrastructure and operations
 
-Protocol 16 and schema 23 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
+Protocol 16 and schema 24 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
 
 ### G. Functional UI and accessibility
 

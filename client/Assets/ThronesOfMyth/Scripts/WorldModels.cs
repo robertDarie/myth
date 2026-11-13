@@ -186,10 +186,14 @@ namespace ThronesOfMyth
     [Serializable] public sealed class DiplomacyOffer { public string id, allianceId, allianceName, expiresUtc; public int remainingSeconds; }
     [Serializable] public sealed class DiplomacyPact { public string id, allianceId, allianceName; }
     [Serializable] public sealed class DiplomacyState { public bool canLead; public string role, lockReason; public DiplomacyAlliance[] alliances; public DiplomacyOffer[] incoming, outgoing; public DiplomacyPact[] pacts; }
+    [Serializable] public sealed class CoalitionMember { public string allianceId, name, leaderName; public bool founder; }
+    [Serializable] public sealed class CoalitionInvite { public string id, coalitionId, allianceId, name; public int remainingSeconds; }
+    [Serializable] public sealed class CoalitionState { public string id, name, lockReason, limitations; public bool founder, canLead, canInvite, canDisband, canLeave; public CoalitionMember[] members; public CoalitionInvite[] incoming, outgoing; }
     [Serializable] public sealed class WorldSnapshot
     {
         public AllianceMemberCard[] allianceRoster;
         public DiplomacyState diplomacy;
+        public CoalitionState coalition;
         public int version, size;
         public KingdomChronicle kingdom;
         public ActivityState activity;

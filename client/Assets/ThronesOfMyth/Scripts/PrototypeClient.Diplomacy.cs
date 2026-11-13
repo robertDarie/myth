@@ -48,7 +48,8 @@ namespace ThronesOfMyth
             if (state.alliances != null) foreach (var alliance in state.alliances)
             {
                 GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Label(alliance.name + " · " + (alliance.relationship == "pact" ? "Non-aggression pact" : "Neutral") + " · Leader " + alliance.leaderName, sectionStyle);
+                string relation = alliance.relationship == "pact" ? "Non-aggression pact" : alliance.relationship == "coalition" ? "Coalition" : "Neutral";
+                GUILayout.Label(alliance.name + " · " + relation + " · Leader " + alliance.leaderName, sectionStyle);
                 bool pending = HasOffer(state, alliance.id);
                 GUI.enabled = state.canLead && alliance.relationship != "pact" && !pending && !processing;
                 if (GUILayout.Button(alliance.relationship == "pact" ? "Pact active" : pending ? "Proposal pending" : "Propose non-aggression pact", theme.Primary))

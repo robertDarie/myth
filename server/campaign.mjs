@@ -4,7 +4,7 @@ import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, 
 import { route, travel } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { allianceRole } from './social.mjs';
-import { protectedAlliance } from './diplomacy.mjs';
+import { protectionReason } from './diplomacy.mjs';
 import { combatFor, side, retreat, applyDamage, counterMultiplier } from './war.mjs';
 import { activeSkill, armyList } from './progression.mjs';
 import { validUnits } from './troops.mjs';
@@ -93,7 +93,7 @@ function targetReason(w,rally) {
   if(!p||p.allianceId!==rally.allianceId||!w.canEnter(p,t))return 'Leader unavailable or route locked';
   if(isStronghold(t))return t.respawn>0||rally.targetCycle!==t.cycle?'Stronghold is unavailable or has respawned':'';
   if(t.allianceId!==rally.defendingAllianceId||!t.allianceId||t.allianceId===rally.allianceId)return 'Target unavailable or ownership changed';
-  if(protectedAlliance(w,rally.allianceId,t.allianceId))return 'A non-aggression pact protects this alliance.';
+  const treaty=protectionReason(w,rally.allianceId,t.allianceId);if(treaty)return treaty;
   if(!territoryNear(w,rally.allianceId,t))return 'Alliance territory disconnected';
   return '';
 }

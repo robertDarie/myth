@@ -114,7 +114,7 @@ test('missing ranks load as zero and impossible research is rejected', () => {
   const old = structuredClone(w.toSave());
   for (const id of ['drills', 'mercy', 'stores', 'caravan']) delete old.world.players[0].technologies[id];
   const loaded = World.fromSave(old), q = loaded.authenticate(s.token);
-  assert.equal(loaded.toSave().schema, 23);
+  assert.equal(loaded.toSave().schema, 24);
   assert.equal(q.food, 321);
   assert.equal(q.technologies.drills, 0);
   assert.equal(q.technologies.drill, 1);

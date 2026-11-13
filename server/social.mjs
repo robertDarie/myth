@@ -1,15 +1,16 @@
 import { randomUUID } from 'node:crypto';
-import { releaseAllianceDiplomacy } from './diplomacy.mjs';
+import { releaseAllianceDiplomacy, coalitionOf } from './diplomacy.mjs';
 export const allianceRole = (w, p) => { const a = w.alliances.get(p.allianceId); return !a ? 'None' : a.leaderId === p.id ? 'Leader' : a.officers.includes(p.id) ? 'Officer' : 'Member'; };
 export function initializeSocial(p) { p.lastChatAt = -10; }
 const canManage = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
 export function socialCommand(w,p,c,fail) {
   if(c.type === 'chat-send') {
     const channel = c.targetId || 'kingdom';
-    if(!['kingdom','alliance'].includes(channel) || (channel==='alliance' && !p.allianceId)) fail('Choose an available chat channel.');
+    if(!['kingdom','alliance','coalition'].includes(channel) || (channel==='alliance' && !p.allianceId)) fail('Choose an available chat channel.');
+    if(channel==='coalition' && !coalitionOf(w,p.allianceId)) fail('Join a coalition before using coalition chat.');
     if(typeof c.name !== 'string' || !c.name.trim() || c.name.trim().length>240 || /[\x00-\x08\x0b\x0c\x0e-\x1f]/.test(c.name)) fail('Messages must contain 1–240 readable characters.');
     if(w.time-p.lastChatAt<1) fail('Wait a moment before sending another message.');
-    w.messages.unshift({id:randomUUID(),channel,allianceId:channel==='alliance'?p.allianceId:'',authorId:p.id,author:p.name,text:c.name.trim(),time:w.time});
+    w.messages.unshift({id:randomUUID(),channel,allianceId:channel==='alliance'?p.allianceId:'',coalitionId:channel==='coalition'?coalitionOf(w,p.allianceId).id:'',authorId:p.id,author:p.name,text:c.name.trim(),time:w.time});
     w.messages.length=Math.min(120,w.messages.length);p.lastChatAt=w.time;return true;
   }
   if(c.type==='marker-place') {
@@ -53,7 +54,7 @@ export function validateSocial(w) {
   if(!Array.isArray(w.messages)||w.messages.length>120||!Array.isArray(w.markers)||w.markers.length>384)throw new Error('Invalid saved communications.');
   for(const p of w.players.values())if(!Number.isFinite(p.lastChatAt)||p.lastChatAt < -10)throw new Error('Invalid saved chat timing.');
   if(new Set(w.messages.map(m=>m.id)).size!==w.messages.length||new Set(w.markers.map(m=>m.id)).size!==w.markers.length)throw new Error('Invalid saved communication IDs.');
-  for(const m of w.messages)if(!m||typeof m.id!=='string'||!['kingdom','alliance'].includes(m.channel)||typeof m.authorId!=='string'||typeof m.author!=='string'||typeof m.allianceId!=='string'||typeof m.text!=='string'||m.text.length>240||!Number.isFinite(m.time)||m.time<0)throw new Error('Invalid saved message.');
+  for(const m of w.messages){if(!m||typeof m.id!=='string'||!['kingdom','alliance','coalition'].includes(m.channel)||typeof m.authorId!=='string'||typeof m.author!=='string'||typeof m.allianceId!=='string'||typeof m.text!=='string'||m.text.length>240||!Number.isFinite(m.time)||m.time<0)throw new Error('Invalid saved message.');const coalitionId=typeof m.coalitionId==='string'?m.coalitionId:'';if((m.channel==='coalition'&&!w.coalitions?.some(c=>c.id===coalitionId))||(m.channel!=='coalition'&&coalitionId!==''))throw new Error('Invalid saved message.');}
   for(const m of w.markers)if(!m||typeof m.id!=='string'||typeof m.name!=='string'||m.name.length>40||!w.alliances.has(m.allianceId)||!w.players.has(m.authorId)||![m.x,m.z].every(v=>Number.isFinite(v)&&v>=1&&v<=79)||!Number.isFinite(m.expires))throw new Error('Invalid saved marker.');
   for(const a of w.alliances.values())if(!Array.isArray(a.officers)||new Set(a.officers).size!==a.officers.length||a.officers.some(id=>id===a.leaderId||w.players.get(id)?.allianceId!==a.id)||w.players.get(a.leaderId)?.allianceId!==a.id)throw new Error('Invalid saved alliance roles.');
 }

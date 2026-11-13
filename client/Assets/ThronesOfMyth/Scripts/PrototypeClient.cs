@@ -359,6 +359,8 @@ namespace ThronesOfMyth
             GUILayout.Label(AllianceName(me.allianceId) + " · " + me.allianceRole, sectionStyle);
             if (GUILayout.Button(showDiplomacy ? "Hide alliance diplomacy" : "Alliance diplomacy")) showDiplomacy = !showDiplomacy;
             if (showDiplomacy) DrawDiplomacy();
+            if (GUILayout.Button(showCoalition ? "Hide coalition" : "Coalition")) showCoalition = !showCoalition;
+            if (showCoalition) DrawCoalition();
             DrawAllianceMembers();
             var rules = world.territoryRules;
             if (rules == null) GUILayout.Label("Territory rules have not arrived from the kingdom yet.", noteStyle);

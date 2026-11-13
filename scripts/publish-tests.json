@@ -6,6 +6,10 @@
       "command": ["node", "--test", "server/diplomacy.test.mjs"]
     },
     {
+      "name": "alliance coalitions",
+      "command": ["node", "--test", "server/coalition.test.mjs"]
+    },
+    {
       "name": "expanded Athenaeum research",
       "command": ["node", "--test", "server/research-expansion.test.mjs"]
     },

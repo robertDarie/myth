@@ -162,6 +162,13 @@ namespace ThronesOfMyth
                 case "diplomacy-decline": return "The proposal was declined.";
                 case "diplomacy-withdraw": return "The proposal was withdrawn.";
                 case "diplomacy-terminate": return "The non-aggression pact has ended.";
+                case "coalition-create": return "Coalition founded.";
+                case "coalition-invite": return "Coalition invitation sent.";
+                case "coalition-accept": return "Your alliance joined the coalition.";
+                case "coalition-decline": return "The coalition invitation was declined.";
+                case "coalition-withdraw": return "The coalition invitation was withdrawn.";
+                case "coalition-leave": return "Your alliance left the coalition.";
+                case "coalition-disband": return "The coalition has been disbanded.";
                 case "flag": return "An Oath Beacon extends your alliance's reach.";
                 case "capture": return "Your march advances to hold the sacred site.";
                 case "trade": return "The exchange is complete.";
