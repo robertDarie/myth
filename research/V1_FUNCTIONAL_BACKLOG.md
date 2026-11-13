@@ -22,11 +22,15 @@ Acceptance for the seven-day streak is `server/login.test.mjs`.
 
 Acceptance is `server/research-expansion.test.mjs`.
 
+- **TM-071 — event hub.** Oath of the Builders runs Monday to Thursday UTC and pays 200 wood, 150 stone, and 100 gold after two completed building or research jobs. Frontier Vigil runs Thursday to Monday UTC and pays 200 food, 150 gold, and 10 Mana after two completed surveys and one Forsaken camp victory. Schema 22. Protocol 16. The schedule is in `docs/tm-071-event-hub.md`.
+
+Acceptance is `server/events.test.mjs`.
+
 ## Next package
 
-### A. Event hub
+### A. Alliance diplomacy
 
-Daily, weekly, and seven-day claims exist. The next package is a real event calendar with two recurring events, server progress, and one claim per period. Seasons stay later.
+Beacons, rallies, and strongholds exist. The next package is TM-077, alliance diplomacy and coalitions. Seasons (TM-072), multiple kingdoms (TM-017), and large-world battle scale (TM-025 / TM-084) follow that.
 
 ## Later functional packages
 
@@ -44,11 +48,11 @@ Beacons, supply radius, rallies, garrisons, and strongholds exist. Coalitions an
 
 ### E. Daily progression, events and seasons
 
-Daily, weekly, and seven-day claims exist and are server-tested. The event hub (TM-071) and seasons (TM-072) are not built.
+Daily, weekly, seven-day, and the two recurring event claims exist and are server-tested. Seasons (TM-072) are not built.
 
 ### F. Multiplayer infrastructure and operations
 
-Protocol 16 and schema 21 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
+Protocol 16 and schema 22 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
 
 ### G. Functional UI and accessibility
 

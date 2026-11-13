@@ -203,3 +203,7 @@ The Activity screen has a Seven-day rewards tab. The server pays one ordinary cl
 ## Expanded Athenaeum research
 
 Drills of the Dawn adds 4% training and promotion speed per rank, multiplied by Hall of Spears speed. Mercy of the Healers adds 6% hospital treatment speed per rank, multiplied by House of Renewal speed. Stores of the Ages adds 8% to the passive stockpile per rank. Caravan Pledges adds 6% gathering cargo per rank for mortal and mythic marches, multiplied by Pilgrim Logistics. Each has three ranks. A paid training or healing order keeps its duration. Schema stays 21. Protocol stays 16. No manual playthrough was run.
+
+## Event hub
+
+Oath of the Builders is open Monday 00:00 UTC through Thursday 00:00 UTC. Two completed building upgrades or research projects pay 200 wood, 150 stone, and 100 gold. Frontier Vigil is open Thursday 00:00 UTC through Monday 00:00 UTC. Two completed surveys and one Forsaken camp victory pay 200 food, 150 gold, and 10 Mana. A queued or cancelled job, a recalled scout, and a camp that is still standing do not count. Each period pays once. Schema 22 adds the event record. Older schemas load a fresh period without changing the city. Protocol stays 16. The Activity screen adds an Event hub tab and leaves the daily, weekly, and seven-day tabs in place. No manual playthrough was run.

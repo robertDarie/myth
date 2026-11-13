@@ -20,9 +20,14 @@ namespace ThronesOfMyth
             if (GUILayout.Toggle(activityTab == 0, "Daily activity", theme.Tab) && activityTab != 0) { activityTab = 0; contentScroll = Vector2.zero; }
             if (GUILayout.Toggle(activityTab == 1, "Alliance weekly goals", theme.Tab) && activityTab != 1) { activityTab = 1; contentScroll = Vector2.zero; }
             if (GUILayout.Toggle(activityTab == 2, "Seven-day rewards", theme.Tab) && activityTab != 2) { activityTab = 2; contentScroll = Vector2.zero; }
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Toggle(activityTab == 3, "Event hub", theme.Tab) && activityTab != 3) { activityTab = 3; contentScroll = Vector2.zero; }
+            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal(); GUILayout.Space(10);
             if (activityTab == 1) { DrawAllianceActivity(); return; }
             if (activityTab == 2) { DrawLoginRewards(); return; }
+            if (activityTab == 3) { DrawEventHub(); return; }
             var daily = world.activity.daily;
             GUILayout.Label("Day " + daily.period + " · Resets at 00:00 UTC in " + ActivityResetText(daily.resetSeconds), noteStyle);
             GUILayout.Label(daily.points + " activity points · Final chest at " + daily.maxChestPoints, sectionStyle);
@@ -104,6 +109,33 @@ namespace ThronesOfMyth
             if (GUILayout.Button(login.canClaim ? "CLAIM DAY " + login.eligibleDay : "Already claimed today", theme.Primary))
                 Send(new GameCommand { type = "login-claim", day = login.eligibleDay, targetId = "day-" + login.eligibleDay });
             GUI.enabled = true;
+        }
+        private void DrawEventHub()
+        {
+            var events = world.activity.events;
+            if (events == null || events.Length == 0)
+            {
+                GUILayout.Label("The event hub is not available from this server.", noteStyle);
+                return;
+            }
+            GUILayout.Label("EVENT HUB", theme.Eyebrow);
+            GUILayout.Label("These offerings follow the server UTC calendar. Daily activity, alliance goals, and seven-day rewards stay on their own screens.", noteStyle);
+            foreach (var entry in events)
+            {
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label(entry.name + " · " + (entry.status == "active" ? "Active" : "Upcoming"), sectionStyle);
+                GUILayout.Label(entry.description, noteStyle);
+                GUILayout.Label((entry.status == "active" ? "Ends " : "Opens ") + (entry.status == "active" ? entry.endsUtc : entry.startsUtc) + " · " + ActivityResetText(entry.remainingSeconds), theme.Small);
+                if (entry.objectives != null) foreach (var objective in entry.objectives)
+                    GUILayout.Label(objective.label + " " + objective.progress + "/" + objective.goal, theme.Small);
+                GUILayout.Label(JourneyRewardText(entry.reward), theme.Small);
+                if (!string.IsNullOrEmpty(entry.lockedReason)) GUILayout.Label(entry.lockedReason, noteStyle);
+                GUI.enabled = entry.canClaim && !processing;
+                if (GUILayout.Button(entry.claimed ? "Claimed" : entry.canClaim ? "CLAIM REWARD" : "Not ready", theme.Primary))
+                    Send(new GameCommand { type = "event-claim", targetId = entry.id, period = entry.period });
+                GUI.enabled = true;
+                GUILayout.EndVertical();
+            }
         }
     }
 }

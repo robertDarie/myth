@@ -1,5 +1,6 @@
 import { rememberStatics, recalled } from './discovery.mjs';
 import { recordActivity } from './activity.mjs';
+import { recordEvent } from './events.mjs';
 import { journeyMetric } from './chapters.mjs';
 import { randomUUID } from 'node:crypto';
 import { route, travel } from './navigation.mjs';
@@ -113,7 +114,7 @@ function completeSurvey(w, p, s, profile) {
   if (!s.rewardPending) return;
   s.rewardPending = false;
   if (!claimSurvey(p, cellIndex({ x: s.targetX, z: s.targetZ }))) return;
-  journeyMetric(p, 'surveys', 1); recordActivity(w, p, 'scouts', 1);
+  journeyMetric(p, 'surveys', 1); recordActivity(w, p, 'scouts', 1); recordEvent(w, p, 'scouts', 1);
 }
 function pathLength(w, s, destination, returning) {
   const path = route(w, s, destination, returning); if (!path) return Infinity;

@@ -167,7 +167,9 @@ namespace ThronesOfMyth
     [Serializable] public sealed class WeeklyAllianceActivity { public string id, name, period; public int resetSeconds; public AllianceGoalCard[] goals; public ActivityMember[] members; }
     [Serializable] public sealed class LoginRewardDay { public int day; public bool claimed, current, canClaim; public JourneyRewards reward; }
     [Serializable] public sealed class LoginRewardState { public int eligibleDay, streak, resetSeconds; public bool canClaim, missed; public string nextUtc; public LoginRewardDay[] days; }
-    [Serializable] public sealed class ActivityState { public DailyActivityState daily; public WeeklyAllianceActivity alliance; public LoginRewardState login; }
+    [Serializable] public sealed class EventObjective { public string id, label; public int goal, progress; }
+    [Serializable] public sealed class EventCard { public string id, name, description, status, period, startsUtc, endsUtc, lockedReason; public int remainingSeconds; public bool canClaim, claimed; public JourneyRewards reward; public EventObjective[] objectives; }
+    [Serializable] public sealed class ActivityState { public DailyActivityState daily; public WeeklyAllianceActivity alliance; public LoginRewardState login; public EventCard[] events; }
     [Serializable] public sealed class KingdomGoal { public string name; public int progress, goal; }
     [Serializable] public sealed class KingdomStage { public string id, name, description; public int afterSeconds, minScore, openInSeconds; public bool completed, legacy, previousComplete, eligible, claimed, canClaim; public KingdomGoal[] goals; public JourneyRewards reward; }
     [Serializable] public sealed class KingdomChronicle { public string preset; public int score; public KingdomStage[] stages; }

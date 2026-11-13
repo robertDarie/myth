@@ -345,6 +345,7 @@ namespace ThronesOfMyth
         private void DrawAlliance()
         {
             if (GUILayout.Button("Alliance weekly goals", theme.Primary)) OpenActivity(true);
+            if (GUILayout.Button("Event hub", theme.Primary)) { activityTab = 3; GuidePage(InterfacePage.Activity); }
             if (GUILayout.Button("Kingdom and alliance chat")) OpenInterface(InterfacePage.Chat);
             if (string.IsNullOrEmpty(me.allianceId))
             {

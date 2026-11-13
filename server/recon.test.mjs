@@ -167,7 +167,7 @@ test('schema 17 gains empty readings and rank-zero veil research without erasing
   for (const p of old.world.players) { delete p.reconReports; delete p.reconNotices; delete p.technologies.veilreading; for (const s of p.scouts ?? []) { delete s.recon; delete s.watchSeconds; } }
   const loaded = World.fromSave(old);
   const keeper = loaded.authenticate(sessions[0].token);
-  assert.equal(loaded.toSave().schema, 21);
+  assert.equal(loaded.toSave().schema, 22);
   assert.deepEqual(keeper.explored, explored);
   assert.deepEqual(keeper.reconReports, []);
   assert.deepEqual(keeper.reconNotices, []);

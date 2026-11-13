@@ -149,6 +149,7 @@ namespace ThronesOfMyth
                 case "daily-claim": return "Daily task reward claimed. Your activity points have increased.";
                 case "activity-chest": return "Activity chest opened. Its rewards are now in your city.";
                 case "alliance-goal-claim": return "Your weekly alliance reward has been claimed.";
+                case "event-claim": return "Event reward claimed.";
                 case "journey-claim": return "Objective reward claimed. Your campaign progress is saved.";
                 case "chapter-claim": return "Chapter reward claimed. Your chronicle has advanced.";
                 case "quest": return "Chapter rewards have been claimed.";

@@ -6,6 +6,10 @@
       "command": ["node", "--test", "server/research-expansion.test.mjs"]
     },
     {
+      "name": "event hub",
+      "command": ["node", "--test", "server/events.test.mjs"]
+    },
+    {
       "name": "seven-day login rewards",
       "command": ["node", "--test", "server/login.test.mjs"]
     },

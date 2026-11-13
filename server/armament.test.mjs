@@ -23,7 +23,7 @@ test('a schema 18 city gains empty armaments and no companion', () => {
   delete old.world.players[0].secondaryCommanderId;
   for (const march of old.world.players[0].marches) delete march.secondaryCommanderId;
   const loaded = World.fromSave(old), q = loaded.authenticate(s.token);
-  assert.equal(loaded.toSave().schema, 21);
+  assert.equal(loaded.toSave().schema, 22);
   assert.deepEqual(q.ownedArmaments, []);
   assert.equal(q.secondaryCommanderId, '');
   assert.deepEqual(q.commanderArmaments.captain, { weapon: '', armor: '', banner: '' });
@@ -105,7 +105,7 @@ test('a companion adds a small share and cannot serve twice or replace the prima
   const saved = World.fromSave(w.toSave());
   const restored = [...saved.players.values()][0];
   assert.equal(restored.marches[0].secondaryCommanderId, 'scout');
-  assert.equal(saved.toSave().schema, 21);
+  assert.equal(saved.toSave().schema, 22);
 });
 
 test('a camp victory keeps the primary experience and grants the companion half', () => {
