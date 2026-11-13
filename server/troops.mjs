@@ -31,6 +31,16 @@ const TIER_POWER = [0, 5, 8, 12, 17, 23];
 export const countOf=(units,id)=>units?.[id]??0;
 export function changeUnits(units,id,delta) { const value=countOf(units,id)+delta;if(value||baseTypes.some(t=>t.id===id))units[id]=value;else delete units[id]; }
 export const classCounts=units=>Object.fromEntries(baseTypes.map(base=>[base.id,TROOP_TYPES.filter(t=>t.baseId===base.id).reduce((sum,t)=>sum+countOf(units,t.id),0)]));
+// One formation. Each mortal class must be at least 15% of mortal troops. Mythic escorts are ignored.
+// The health multiplier applies once. It is not stored and cannot be requested by the client.
+export const FORMATION = { id: 'combined-arms', name: 'Combined Arms', minimumPercent: 15, health: 1.04 };
+export function formationOf(units) {
+  const counts = classCounts(units);
+  const mortal = counts.infantry + counts.archers + counts.cavalry;
+  const active = mortal > 0 && ['infantry', 'archers', 'cavalry'].every(id => counts[id] * 100 >= mortal * FORMATION.minimumPercent);
+  return { ...FORMATION, active, appliedHealth: active ? FORMATION.health : 1, counts, mortal,
+    shares: Object.fromEntries(['infantry', 'archers', 'cavalry'].map(id => [id, mortal ? counts[id] / mortal : 0])) };
+}
 export const emptyUnits = () => ({ infantry: 0, archers: 0, cavalry: 0 });
 export const normalizedUnits=units=>Object.fromEntries(TROOP_TYPES.filter(t=>t.tier===1||countOf(units,t.id)>0).map(t=>[t.id,countOf(units,t.id)]));
 export function tierLock(p,type) {

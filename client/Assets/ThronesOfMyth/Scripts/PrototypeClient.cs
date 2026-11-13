@@ -101,7 +101,14 @@ namespace ThronesOfMyth
             }
             if (GUILayout.Button("Alliance warfare · rallies and garrisons")) OpenInterface(InterfacePage.Warfare);
             GUILayout.Label("Selected march", sectionStyle);
-            GUILayout.Label($"{ActiveArmy.troops} mortal troops · {ActiveArmy.mythic} mythic units\nDamage {ActiveArmy.damage:F1} · March {ActiveArmy.speed:F1}\nRage {ActiveArmy.rage}/1000 · Shield {ActiveArmy.shield}\nLast skill: {ActiveArmy.lastSkill}", noteStyle);
+            GUILayout.Label($"{ActiveArmy.troops} mortal troops · {ActiveArmy.mythic} mythic units\nHealth {ActiveArmy.health} / {ActiveArmy.maxHealth} · Damage {ActiveArmy.damage:F1} · March {ActiveArmy.speed:F1}\nRage {ActiveArmy.rage}/1000 · Shield {ActiveArmy.shield}\nLast skill: {ActiveArmy.lastSkill}", noteStyle);
+            if (world.formation != null)
+            {
+                int bonus = Mathf.RoundToInt((world.formation.health - 1f) * 100f);
+                GUILayout.Label(ActiveArmy.formationActive
+                    ? ActiveArmy.formationName + " is active. This march's maximum health includes +" + bonus + "%."
+                    : world.formation.name + " is not active. Each of infantry, archers and cavalry must be at least " + world.formation.minimumPercent + "% of the mortal troops.", noteStyle);
+            }
             if (GUILayout.Button("Focus army [Space]")) FocusGameplay(ActiveArmy.x,ActiveArmy.z);
             if (GUILayout.Button("Return & recover [R]")) Send("return");
             if (GUILayout.Button("Stop current order")) Send("stop");

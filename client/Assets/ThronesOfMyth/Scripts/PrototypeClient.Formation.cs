@@ -91,7 +91,8 @@ namespace ThronesOfMyth
             bool patrolReady=captainFree&&ready.Get("infantry")>=15&&ready.Get("archers")>=5;
             if(theme.Button(new Rect(right.x+18,right.y+80,right.width-36,34),"Scout patrol · Captain · 15 infantry + 5 archers",false,patrolReady,"Needs the Captain, 15 ready infantry and 5 archers. Train archers in your city."))
             {formationHeroId="captain";formationUnits=new UnitCounts();formationUnits.Set("infantry",15);formationUnits.Set("archers",5);formationMythic=0;formationEntries.Clear();GUIUtility.keyboardControl=0;}
-            var viewport = new Rect(right.x + 10, right.y + 121, right.width - 20, right.height - 223);
+            theme.Text(new Rect(right.x + 18, right.y + 118, right.width - 36, 62), FormationPreview(formationUnits), theme.Small);
+            var viewport = new Rect(right.x + 10, right.y + 184, right.width - 20, right.height - 286);
             formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, (world.troopTypes.Length+1) * InterfaceLayout.TroopRowStep));
             for (int i = 0; i < world.troopTypes.Length; i++)
             {
@@ -132,6 +133,20 @@ namespace ThronesOfMyth
                 Send(new GameCommand { type = formationEditing ? "configure-march" : "deploy-march", targetId = formationHeroId, units = formationUnits.Copy(), troops = formationUnits.Total, mythic = formationMythic });
             }
             theme.Text(new Rect(footer.x + footer.width * 0.51f, footer.y + 36, footer.width * 0.49f, 46), string.IsNullOrEmpty(reason) ? "Deployed slots " + me.activeMarches + " / " + me.marchSlots + " · Choose a map destination after assembling." : reason, theme.Small);
+        }
+        private string FormationPreview(UnitCounts units)
+        {
+            var rule = world.formation;
+            if (rule == null) return "";
+            int mortal = units.Total, infantry = units.Infantry, archers = units.Archers, cavalry = units.Cavalry;
+            bool Meets(int count) => mortal > 0 && count * 100 >= mortal * rule.minimumPercent;
+            bool qualifies = Meets(infantry) && Meets(archers) && Meets(cavalry);
+            int bonus = Mathf.RoundToInt((rule.health - 1f) * 100f);
+            string Share(int count) => mortal == 0 ? "0.0%" : (count * 100f / mortal).ToString("0.0") + "%";
+            string missing = (Meets(infantry) ? "" : "Infantry is short. ") + (Meets(archers) ? "" : "Archers are short. ") + (Meets(cavalry) ? "" : "Cavalry is short. ");
+            return rule.name + " · each class at least " + rule.minimumPercent + "% of mortal troops · mythic escorts excluded · +" + bonus + "% maximum health\n"
+                + "Infantry " + Share(infantry) + " · Archers " + Share(archers) + " · Cavalry " + Share(cavalry) + "\n"
+                + (qualifies ? "This composition qualifies. The confirmed march shows the higher maximum health." : missing + "No maximum-health bonus until all three classes qualify.");
         }
     }
 }

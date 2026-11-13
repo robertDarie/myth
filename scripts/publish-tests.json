@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "Combined Arms formation bonus",
+      "command": ["node", "--test", "server/formation.test.mjs"]
+    },
+    {
       "name": "troop tiers III-V",
       "command": ["node", "--test", "server/tiers.test.mjs"]
     },

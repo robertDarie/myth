@@ -80,7 +80,8 @@ namespace ThronesOfMyth
         public BattleReport[] battleReports;
         public GroupBattleReport[] groupReports;
         public JourneyCampaign journeyCampaign;
-        public string equippedRelic;
+        public string equippedRelic, formationName;
+        public bool formationActive;
         public string[] ownedRelics, ownedArmaments;
         public ArmamentLoadout[] armamentLoadout;
         public QueueJob research, crafting;
@@ -93,6 +94,7 @@ namespace ThronesOfMyth
         public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
     }
+    [Serializable] public sealed class FormationRule { public string id, name; public int minimumPercent; public float health; }
     [Serializable] public sealed class ArmamentLoadout { public string commanderId, weapon, armor, banner; }
     [Serializable] public sealed class ArmamentData { public string id, name, slot, description; public float duration, damage, health, speed; public ResourceAmounts cost; }
     [Serializable] public sealed class QueueJob { public string id, type; public float remaining, duration; public int amount; public string targetId,sourceId; public ResourceAmounts cost; }
@@ -192,6 +194,7 @@ namespace ThronesOfMyth
         public ChatMessage[] chatMessages;
         public AllianceMarker[] markers;
         public TroopTypeData[] troopTypes;
+        public FormationRule formation;
         public float time;
         public SaveStatus persistence;
         public RankingData rankings;
