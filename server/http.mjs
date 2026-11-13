@@ -66,6 +66,7 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
     try {
       const path = new URL(request.url, 'http://localhost').pathname;
       const ready = !persistence.error && performance.now() - lastTick < 5000;
+      if (request.method === 'GET' && path === '/kingdoms') return send(200, { kingdoms: [{ id: kingdomId, name: kingdomId === 'local' ? 'Local Kingdom' : kingdomId, description: '', players: world.players.size, capacity: 32, join: world.players.size >= 32 || persistence.error ? 'closed' : 'open', status: persistence.error || simulationFailed ? 'degraded' : 'ok' }] });
       if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 16, build:buildIdentity,kingdomId, accounts: identity.available, persistence: { ...persistence } });
       const address = trustProxy ? String(request.headers['x-forwarded-for'] ?? request.socket.remoteAddress).split(',').at(-1).trim() : request.socket.remoteAddress;
       allow('requests:' + address, 6000);

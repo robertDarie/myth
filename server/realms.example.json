@@ -1,0 +1,23 @@
+{
+  "defaultId": "local",
+  "kingdoms": [
+    {
+      "id": "local",
+      "name": "Local Kingdom",
+      "description": "The kingdom already saved on this host.",
+      "savePath": "data/kingdoms/local/world.json"
+    },
+    {
+      "id": "ash-coast",
+      "name": "Ash Coast",
+      "description": "A separate kingdom with its own cities and season.",
+      "savePath": "data/kingdoms/ash-coast/world.json"
+    },
+    {
+      "id": "ledger",
+      "name": "Ledger of Horns",
+      "description": "A separate kingdom stored in SQLite.",
+      "databasePath": "data/kingdoms/ledger/kingdom.sqlite"
+    }
+  ]
+}

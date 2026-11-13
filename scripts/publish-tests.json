@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "multiple kingdoms",
+      "command": ["node", "--test", "server/realms.test.mjs"]
+    },
+    {
       "name": "season lifecycle",
       "command": ["node", "--test", "server/season.test.mjs"]
     },

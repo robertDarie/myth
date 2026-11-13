@@ -38,7 +38,7 @@ Acceptance is `server/season.test.mjs`.
 
 ### A. Multiple kingdoms
 
-TM-017 is the next functional package: separate realms so a city, alliance, and season in one kingdom cannot see or command another. Large-world battle scale (TM-025 / TM-084) remains later.
+TM-017 server host is in place: one process can run up to four configured kingdoms, and the player-facing kingdom selection remains. Large-world battle scale (TM-025 / TM-084) remains later.
 
 ## Later functional packages
 

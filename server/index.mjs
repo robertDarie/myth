@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs';
 import { createGameServer } from './http.mjs';
+import { createRealmHost } from './realms.mjs';
 import {ServerTelemetry} from './telemetry.mjs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 
 const localPlaytest = process.argv.includes('--local-playtest');
@@ -12,12 +14,29 @@ const savePath = process.env.THRONES_SAVE_PATH ?? join(process.env.LOCALAPPDATA 
 const databasePath = !localPlaytest ? process.env.THRONES_DB_PATH : null;
 const buildIdentity=process.env.THRONES_BUILD_VERSION&&process.env.THRONES_BUILD_COMMIT?{version:process.env.THRONES_BUILD_VERSION,commit:process.env.THRONES_BUILD_COMMIT,serverDigest:process.env.THRONES_SERVER_DIGEST}:null;
 const telemetry=process.env.THRONES_METRICS_PATH?new ServerTelemetry(process.env.THRONES_METRICS_PATH):null;
-const { server, saveNow } = createGameServer({telemetry,buildIdentity, savePath: databasePath ? null : savePath, databasePath,
+const shutdownToken = localPlaytest ? process.env.THRONES_LAUNCH_TOKEN : null;
+const trustProxy = !localPlaytest && process.env.THRONES_TRUST_PROXY === '1';
+const realmsFile = !localPlaytest && process.env.THRONES_REALMS ? resolve(process.env.THRONES_REALMS) : '';
+if (localPlaytest && process.env.THRONES_REALMS) console.log('Isolated playtest ignores THRONES_REALMS and keeps the default local kingdom.');
+const started = realmsFile ? startRealms(realmsFile) : createGameServer({telemetry,buildIdentity, savePath: databasePath ? null : savePath, databasePath,
   joinCode: localPlaytest ? '' : process.env.THRONES_JOIN_CODE ?? '',
-  trustProxy: !localPlaytest && process.env.THRONES_TRUST_PROXY === '1',
-  kingdomId: process.env.THRONES_KINGDOM_ID ?? 'local',
-  shutdownToken: localPlaytest ? process.env.THRONES_LAUNCH_TOKEN : null });
+  trustProxy, kingdomId: process.env.THRONES_KINGDOM_ID ?? 'local', shutdownToken });
+const { server, saveNow } = started;
+function startRealms(file) {
+  const config = JSON.parse(readFileSync(file, 'utf8'));
+  const kingdoms = Array.isArray(config.kingdoms) ? config.kingdoms : null;
+  if (!kingdoms) throw new Error('Realm configuration must contain a kingdoms array.');
+  return createRealmHost({
+    defaultId: config.defaultId ?? 'local', shutdownToken, trustProxy, buildIdentity,
+    realms: kingdoms.map(realm => ({
+      id: realm.id, name: realm.name, description: realm.description ?? '',
+      joinCode: realm.joinCode ?? process.env.THRONES_JOIN_CODE ?? '',
+      savePath: realm.savePath ? resolve(realm.savePath) : null,
+      databasePath: realm.databasePath ? resolve(realm.databasePath) : null
+    }))
+  });
+}
 server.on('error', error => { console.error(error.message); process.exitCode = 1; });
 server.listen(port, host, () => console.log(`Thrones of Myth prototype listening at http://${host}:${port}`));
-console.log('World storage: ' + (databasePath ?? savePath));
+console.log(realmsFile ? 'Realm configuration: ' + realmsFile : 'World storage: ' + (databasePath ?? savePath));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { saveNow(); server.close(); server.closeIdleConnections(); });
