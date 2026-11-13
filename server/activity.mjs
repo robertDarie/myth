@@ -1,4 +1,5 @@
 import { grantReward, rewardSnapshot } from './inventory.mjs';
+import { recordSeason } from './season.mjs';
 import { recordKingdomContribution } from './kingdom.mjs';
 const DAY=86400000,MAX_COUNTER=1000000000;
 export const ACTIVITY_KEYS=['gather','food','trained','scouts','camps','distance','offering','helps','development','strongholds'];
@@ -56,9 +57,10 @@ export function ensureActivity(w,p){
 }
 function allianceWeek(w,a){const {week}=activityClock(w);if(!a.weekly||a.weekly.week!==week)a.weekly={week,contributions:{},strongholdEvents:[]};return a.weekly;}
 const emptyContribution=()=>({gather:0,helps:0,strongholds:0});
-export function recordActivity(w,p,key,amount){
+export function recordActivity(w,p,key,amount,token=''){
  if(!ACTIVITY_KEYS.includes(key)||!Number.isFinite(amount)||amount<=0||(key!=='distance'&&!Number.isSafeInteger(amount)))return;ensureActivity(w,p);
  recordKingdomContribution(w,p,key,amount);
+ recordSeason(w,p,key,amount,token);
  p.daily.counters[key]=Math.min(MAX_COUNTER,p.daily.counters[key]+amount);
  if(['gather','helps'].includes(key)&&w.alliances.has(p.allianceId)){
   const data=allianceWeek(w,w.alliances.get(p.allianceId));data.contributions[p.id]??=emptyContribution();data.contributions[p.id][key]=Math.min(MAX_COUNTER,data.contributions[p.id][key]+amount);
@@ -67,7 +69,7 @@ export function recordActivity(w,p,key,amount){
 export function recordStrongholdActivity(w,report){
  if(report.activityCredited||!report.settled)return;report.activityCredited=true;
  const credited=new Set((report.rewards||[]).map(r=>r.playerId));
- for(const id of credited){const p=w.players.get(id);if(!p)continue;recordActivity(w,p,'strongholds',1);
+ for(const id of credited){const p=w.players.get(id);if(!p)continue;recordActivity(w,p,'strongholds',1,report.id);
   // Contribution is attributed to the alliance of the battle, only while still a member.
   if(p.allianceId!==report.attackingAllianceId||!w.alliances.has(p.allianceId))continue;
   const data=allianceWeek(w,w.alliances.get(p.allianceId));data.contributions[p.id]??=emptyContribution();data.contributions[p.id].strongholds=Math.min(MAX_COUNTER,data.contributions[p.id].strongholds+1);

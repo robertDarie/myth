@@ -1,7 +1,7 @@
 namespace ThronesOfMyth
 {
     // Order of existing pages retained; these values are not persisted to server saves.
-    public enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Kingdom, Settings, Account, Inventory, Rankings, Menu }
+    public enum InterfacePage { World, City, Training, Research, Temple, Heroes, Alliance, Chronicle, Forge, Market, Marches, Formation, Hospital, Reports, Chat, Warfare, Exploration, Campaign, Activity, Kingdom, Settings, Account, Inventory, Rankings, Menu, Season }
     public sealed class NavigationEntry
     {
         public readonly InterfacePage Page;
@@ -34,6 +34,7 @@ namespace ThronesOfMyth
             new NavigationEntry(InterfacePage.Alliance,"Alliance","alliance","Members, territory and assistance · L",2),
             new NavigationEntry(InterfacePage.Campaign,"Campaign","chronicle","Follow the next chapter objective",2),
             new NavigationEntry(InterfacePage.Activity,"Daily & weekly","chronicle","Earn activity and contribution rewards",2),
+            new NavigationEntry(InterfacePage.Season,"Season","chronicle","Season of the First Throne",2),
             new NavigationEntry(InterfacePage.Kingdom,"Kingdom milestones","temple","Gate openings and sanctuary progress",2),
             new NavigationEntry(InterfacePage.Chat,"Chat","chronicle","Kingdom and alliance conversation",2),
             new NavigationEntry(InterfacePage.Chronicle,"Chronicle","chronicle","Your kingdom journal",2),

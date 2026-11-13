@@ -189,11 +189,16 @@ namespace ThronesOfMyth
     [Serializable] public sealed class CoalitionMember { public string allianceId, name, leaderName; public bool founder; }
     [Serializable] public sealed class CoalitionInvite { public string id, coalitionId, allianceId, name; public int remainingSeconds; }
     [Serializable] public sealed class CoalitionState { public string id, name, lockReason, limitations; public bool founder, canLead, canInvite, canDisband, canLeave; public CoalitionMember[] members; public CoalitionInvite[] incoming, outgoing; }
+    [Serializable] public sealed class SeasonContribution { public string id, label; public int raw, points, cap; }
+    [Serializable] public sealed class SeasonObjective { public string id, phaseName, label, lockedReason; public int progress, goal; public bool complete; }
+    [Serializable] public sealed class SeasonRank { public int rank, points, contributors; public string playerId, allianceId, name; public bool self; }
+    [Serializable] public sealed class SeasonState { public string id, title, phaseId, phaseName, startsUtc, endsUtc, phaseEndsUtc, allianceId, allianceName; public int index, phaseIndex, dayNumber, length, remainingSeconds, phaseRemainingSeconds, score, rank, allianceScore, allianceRank; public bool settled; public SeasonContribution[] contributions; public SeasonObjective[] objectives; public SeasonRank[] personal, allianceBoard; }
     [Serializable] public sealed class WorldSnapshot
     {
         public AllianceMemberCard[] allianceRoster;
         public DiplomacyState diplomacy;
         public CoalitionState coalition;
+        public SeasonState season;
         public int version, size;
         public KingdomChronicle kingdom;
         public ActivityState activity;

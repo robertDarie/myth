@@ -113,7 +113,7 @@ export function validateEvents(w, clock = w.activityClockMs) {
       const row = p.events[event.id];
       const window = eventWindow(event.id, day);
       const progress = row?.progress;
-      if (!row || row.period !== window.period || typeof row.claimed !== 'boolean' || !progress || !Array.isArray(row.credited) || row.credited.length > 8 || new Set(row.credited).size !== row.credited.length || row.credited.some(token => typeof token !== 'string' || token.length > 80)) throw new Error('Invalid saved event progress.');
+      if (!row || !Number.isSafeInteger(row.period) || row.period < 0 || row.period > window.period || typeof row.claimed !== 'boolean' || !progress || !Array.isArray(row.credited) || row.credited.length > 8 || new Set(row.credited).size !== row.credited.length || row.credited.some(token => typeof token !== 'string' || token.length > 80)) throw new Error('Invalid saved event progress.');
       for (const objective of event.objectives) {
         const value = progress[objective.id];
         if (!Number.isInteger(value) || value < 0 || value > objective.goal) throw new Error('Invalid saved event progress.');

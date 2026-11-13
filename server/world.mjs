@@ -7,6 +7,7 @@ import { initializeKingdom, tickKingdom, siteIsOpen, recordKingdomVictory, kingd
 import { activityClock, initializeActivity, ensureActivity, recordActivity, activityCommand, activitySnapshot, validateActivity, emptyLogin } from './activity.mjs';
 import { ensureEvents, recordEvent, eventSnapshot, eventCommand, validateEvents } from './events.mjs';
 import { ensureDiplomacy, diplomacyCommand, diplomacySnapshot, validateDiplomacy, coalitionCommand, coalitionSnapshot, validateCoalitions, coalitionOf } from './diplomacy.mjs';
+import { ensureSeason, seasonSnapshot, validateSeason } from './season.mjs';
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
 import { route, travel } from './navigation.mjs';
@@ -186,7 +187,7 @@ export class World {
   }
   tick(dt) {
     if (!Number.isFinite(dt) || dt <= 0) return;
-    activityClock(this);ensureDiplomacy(this);const beforeMovement=new Map(this.armies().map(a=>[a.id,{x:a.x,z:a.z}]));
+    activityClock(this);ensureDiplomacy(this);ensureSeason(this);const beforeMovement=new Map(this.armies().map(a=>[a.id,{x:a.x,z:a.z}]));
     dt = Math.min(dt, 0.25); this.time += dt; this.markers = this.markers.filter(m => m.expires > this.time);
     for (const camp of this.camps) if (camp.health <= 0) {
       camp.respawn = Math.max(0, camp.respawn - dt);
@@ -249,7 +250,7 @@ export class World {
       const owners = [...new Set(participants.map(actor => this.owner(actor).id))].map(id => this.players.get(id));
       for (const member of owners) {
         member.gold += Math.floor(50 * camp.level / owners.length); member.food += Math.floor(30 * camp.level / owners.length);
-        member.stone += 20 * camp.level; member.mana += 5 * camp.level; member.sigils++; member.kills++; recordActivity(this,member,'camps',1); recordEvent(this,member,'camps',1,camp.id+':'+camp.cycle);
+        member.stone += 20 * camp.level; member.mana += 5 * camp.level; member.sigils++; member.kills++; recordActivity(this,member,'camps',1,camp.id+':'+camp.cycle); recordEvent(this,member,'camps',1,camp.id+':'+camp.cycle);
         const ownArmies = participants.filter(actor => this.owner(actor).id === member.id);
         coreReport(this,member,{id:randomUUID(),type:'pve',title:camp.name+' · Victory',outcome:'Victory',detail:'Level '+camp.level+' camp defeated. Earned 1 Oracle Sigil and '+(25*camp.level)+' commander XP shared among participating marches.\n'+ownArmies.map(actor=>{const u=classCounts(actor.units);return actor.commanderId+' · '+u.infantry+' infantry / '+u.archers+' archers / '+u.cavalry+' cavalry / '+actor.mythic+' mythic at outcome · '+Math.ceil(actor.health)+' HP remaining · '+camp.contributors[actor.id]+' damage dealt';}).join('\n'),resources:{food:Math.floor(30*camp.level/owners.length),gold:Math.floor(50*camp.level/owners.length),stone:20*camp.level,mana:5*camp.level,wood:0}});
         for (const actor of ownArmies) {
@@ -295,7 +296,7 @@ export class World {
       const job = p.trainingQueue[0];
       const spent = Math.min(remaining, job.remaining); job.remaining -= spent; remaining -= spent;
       if (job.remaining > 0.00001) break;
-      if (['train','promote'].includes(job.type)) { p.reserveTroops += job.amount; changeUnits(p.reserveUnits,job.targetId,job.amount);if(job.type==='train'){journeyMetric(p,'trained',job.amount);recordActivity(this,p,'trained',job.amount);} }
+      if (['train','promote'].includes(job.type)) { p.reserveTroops += job.amount; changeUnits(p.reserveUnits,job.targetId,job.amount);if(job.type==='train'){journeyMetric(p,'trained',job.amount);recordActivity(this,p,'trained',job.amount,job.id);} }
       else p.reserveMythic += job.amount;
       p.trainingQueue.shift();
       const trained = TROOP_TYPES.find(t => t.id === job.targetId);
@@ -310,14 +311,14 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
-    return { schema: 24, world: { kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 25, world: { kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -426,6 +427,7 @@ export class World {
     if (data.schema < 22) for (const p of world.players.values()) delete p.events;
     if (data.schema >= 22) validateEvents(world, w.activityClockMs);
     if (data.schema >= 23) { world.diplomacy = w.diplomacy; validateDiplomacy(world); } else world.diplomacy = { proposals: [], pacts: [] };
+    if (data.schema >= 25) { world.season = w.season; validateSeason(world); } else world.season = null;
     for (const p of world.players.values()) ensureEvents(world, p);
     if (data.schema < 11) initializeKingdom(world, true); else { world.kingdom = w.kingdom; validateKingdom(world); }
     for(const a of world.armies()){
@@ -465,7 +467,7 @@ export class World {
     const activity = viewerId && this.players.has(viewerId) ? { ...activitySnapshot(this, this.players.get(viewerId)), events: eventSnapshot(this, this.players.get(viewerId)) } : null;
     const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
     const viewerAlliance = viewer?.allianceId;
-    const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
+    const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),season:seasonSnapshot(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
       formation: { id: FORMATION.id, name: FORMATION.name, minimumPercent: FORMATION.minimumPercent, health: FORMATION.health },
       players: [...this.players.values()].map(p => {
         const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, loginStreak, events, ...visible } = p;

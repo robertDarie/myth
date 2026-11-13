@@ -106,7 +106,7 @@ test('proposals expire, disbanding clears treaties, and schema 22 loads an empty
   delete old.world.diplomacy;
   const migrated = World.fromSave(old, { now: () => Date.UTC(2026, 0, 6, 12) });
   const q = migrated.authenticate(token);
-  assert.equal(migrated.toSave().schema, 24);
+  assert.equal(migrated.toSave().schema, 25);
   assert.equal(migrated.diplomacy.pacts.length, 0);
   assert.equal(migrated.coalitions.length, 0);
   assert.equal(migrated.alliances.size, 3);

@@ -30,11 +30,15 @@ Acceptance is `server/events.test.mjs`.
 
 Acceptance is `server/diplomacy.test.mjs` and `server/coalition.test.mjs`.
 
-## Next package
+- **TM-072 checkpoint A — Season of the First Throne.** A 28-day UTC season with four phases. Finished gathering, training, building, research, surveys, camps, assistance, territory, and strongholds score on the server, with category caps. Alliance points stay with the alliance that earned them. Schema 25. Protocol 16. Settlement, claims, and the next season are the following checkpoint. The rules are in `docs/tm-072-seasons.md`.
 
-### A. Season lifecycle
+Acceptance for this checkpoint is `server/season.test.mjs`.
 
-TM-072 is the next functional package. It should add a defined season start and end, phases and objectives, server-authoritative rankings, alliance and personal participation, eligibility and reward claims, season history, and a controlled reset that keeps permanent player progression. Multiple kingdoms (TM-017) and large-world battle scale (TM-025 / TM-084) remain later.
+## Next checkpoint
+
+### A. Season settlement
+
+TM-072 checkpoint B freezes rankings, pays ordinary milestone and placement rewards once, archives the season, and opens the next season without resetting cities, armies, alliances, or territory. Multiple kingdoms (TM-017) follow the completed season package.
 
 ## Later functional packages
 
@@ -56,7 +60,7 @@ Daily, weekly, seven-day, and the two recurring event claims exist and are serve
 
 ### F. Multiplayer infrastructure and operations
 
-Protocol 16 and schema 24 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
+Protocol 16 and schema 25 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
 
 ### G. Functional UI and accessibility
 

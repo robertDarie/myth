@@ -478,6 +478,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Exploration) DrawExploration();
             if (interfacePage == InterfacePage.Campaign) DrawCampaign();
             if (interfacePage == InterfacePage.Activity) DrawActivity();
+            if (interfacePage == InterfacePage.Season) DrawSeason();
             if (interfacePage == InterfacePage.Kingdom) DrawKingdomStages();
             if (interfacePage == InterfacePage.Forge) DrawForge();
             if (interfacePage == InterfacePage.Market) DrawMarket();

@@ -215,3 +215,7 @@ Alliance leaders propose, accept, decline, withdraw, and terminate a bilateral p
 ## Coalitions
 
 A leader founds a coalition of at most three alliances. Invited leaders accept or decline. Invitations expire after 24 hours. A member may leave, and the founder disbands the coalition. Members cannot attack one another, and they share a coalition chat that other alliances cannot read. A pact with an alliance outside the coalition stays in force and does not add that alliance to the coalition. Leaving or disbanding ends coalition protection immediately and does not delete the pact. The coalition does not merge beacons, share fog, open a treasury, or allow a cross-alliance rally or garrison. Coalition markers are not included. Schema 24 stores coalitions. Schema 23 keeps its pacts and starts with no coalition. Protocol stays 16. No manual playthrough was run.
+
+## Season of the First Throne — calendar and score
+
+The season lasts 28 UTC days from the day the ledger activates. Foundations, The Frontier Awakens, Banners of War, and The First Throne each last seven days and accept only their own finished actions. Caps stop one repeatable action from filling the season. Alliance points stay on the alliance that earned them, and a coalition is not an alliance score. After day 28 the score freezes. Cities, troops, research, alliances, and territory stay. Schema 25. Schemas 22 through 24 start a fresh ledger. Protocol stays 16. Settlement and reward claims are the next checkpoint. No manual playthrough was run.

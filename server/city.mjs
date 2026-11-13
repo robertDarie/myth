@@ -231,7 +231,7 @@ export function tickCity(world, p, dt, { production = true } = {}) {
     if (job.type === 'building') p.buildings[job.targetId]++;
     if (job.type === 'research') p.technologies[job.targetId]++;
     if (job.type === 'craft') { if (ARMAMENTS.some(item => item.id === job.targetId)) p.ownedArmaments.push(job.targetId); else p.ownedRelics.push(job.targetId); }
-    if (['upgrade','building','research'].includes(job.type)) { recordActivity(world,p,'development',1); recordEvent(world,p,'development',1); }
+    if (['upgrade','building','research'].includes(job.type)) { recordActivity(world,p,'development',1,job.id); recordEvent(world,p,'development',1); }
     p[lane] = null;
     const name = job.type === 'upgrade' ? 'Citadel level ' + p.cityLevel : [...BUILDINGS, ...TECHNOLOGIES, ...RELICS, ...ARMAMENTS].find(item => item.id === job.targetId)?.name ?? job.type;
     world.event(`${p.name} completed ${name}.`);

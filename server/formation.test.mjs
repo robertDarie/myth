@@ -79,7 +79,7 @@ test('reconfiguration applies the server rule, refuses a forged flag, and does n
   wear(p, { infantry: 100, archers: 50, cavalry: 60 });
   p.health = w.stats(p).maxHealth;
   const saved = w.toSave();
-  assert.equal(saved.schema, 24);
+  assert.equal(saved.schema, 25);
   const loaded = World.fromSave(saved), q = loaded.authenticate(s.token);
   assert.equal(loaded.stats(q).maxHealth, w.stats(p).maxHealth);
   assert.equal(army(loaded, q).formationActive, true);

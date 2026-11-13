@@ -139,7 +139,7 @@ test('schemas 19 and 20 gain a fresh streak without changing progress, and bad s
     delete old.world.players[0].loginStreak;
     const loaded = World.fromSave(old, { now: () => Date.UTC(2026, 0, 1, 12) });
     const q = loaded.authenticate(s.token);
-    assert.equal(loaded.toSave().schema, 24);
+    assert.equal(loaded.toSave().schema, 25);
     assert.equal(q.food, food);
     assert.equal(q.wood, wood);
     assert.equal(q.gold, gold);

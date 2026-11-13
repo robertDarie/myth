@@ -122,7 +122,7 @@ export function marchCommand(world, p, c, fail) {
         if (world.alliances.get(p.allianceId).leaderId !== p.id || dist({ x: p.homeX, z: p.homeZ }, c) > TERRITORY_RULES.rootRadius) fail('The leader must place the first beacon near their city.');
       } else if (!flags.some(f => f.connected && f.buildRemaining <= 0 && dist(f, c) <= TERRITORY_RULES.linkRadius)) fail(`Beacons must connect within ${TERRITORY_RULES.linkRadius} units of alliance territory.`);
       if (world.flags.some(f => f.allianceId !== p.allianceId && dist(f, c) < TERRITORY_RULES.enemyGap)) fail('Enemy territory blocks this location.');
-      world.spend(p, { wood: 60, gold: 20 }); const beacon = { id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z }; initializeFortification(beacon, hasRoot ? 'flag' : 'fort'); beacon.buildRemaining = hasRoot ? 10 : 30; beacon.isRoot = !hasRoot; world.flags.push(beacon); return true;
+      world.spend(p, { wood: 60, gold: 20 }); const beacon = { id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z, builderId: p.id }; initializeFortification(beacon, hasRoot ? 'flag' : 'fort'); beacon.buildRemaining = hasRoot ? 10 : 30; beacon.isRoot = !hasRoot; world.flags.push(beacon); return true;
     }
     case 'capture': {
       const site = world.sites.find(s => s.id === c.targetId);

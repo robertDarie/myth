@@ -5,6 +5,7 @@ import { route, travel } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { allianceRole } from './social.mjs';
 import { protectionReason } from './diplomacy.mjs';
+import { recordSeason } from './season.mjs';
 import { combatFor, side, retreat, applyDamage, counterMultiplier } from './war.mjs';
 import { activeSkill, armyList } from './progression.mjs';
 import { validUnits } from './troops.mjs';
@@ -215,13 +216,13 @@ function siegeRound(w,r,t,s) {
   if(t.health<=0) {
     sealSiege(w,s,'Attackers captured objective');
     const defendersAssigned=w.garrisons.find(g=>g.targetId===t.id);if(defendersAssigned)for(const id of [...defendersAssigned.armyIds])removeMember(w,{kind:'garrison',group:defendersAssigned},id,'Withdrawn');
-    if(w.flags.includes(t)){w.flags=w.flags.filter(f=>f!==t);refreshBeacons(w);}else{t.allianceId=r.allianceId;t.health=Math.ceil(t.maxHealth/2);t.progress=0;t.challengerId='';}
+    if(w.flags.includes(t)){w.flags=w.flags.filter(f=>f!==t);refreshBeacons(w);}else{t.allianceId=r.allianceId;t.health=Math.ceil(t.maxHealth/2);t.progress=0;t.challengerId='';const leader=w.players.get(r.leaderId);if(leader&&leader.allianceId===r.allianceId)recordSeason(w,leader,'territory',1,'site:'+t.id+':'+(s.report?.id||r.id));}
     for(const a of actors(w,r.armyIds)){a.target=null;a.state='Victorious';}w.rallies=w.rallies.filter(x=>x!==r);
     w.event(`Alliance forces won at ${s.report.targetName}.`);
   }
 }
 export function tickCampaign(w,dt) {
-  for(const f of w.flags)f.buildRemaining=Math.max(0,f.buildRemaining-dt);refreshBeacons(w);
+  for(const f of w.flags){const pending=f.buildRemaining>0;f.buildRemaining=Math.max(0,f.buildRemaining-dt);if(pending&&f.buildRemaining===0&&f.builderId){const builder=w.players.get(f.builderId);if(builder&&builder.allianceId===f.allianceId)recordSeason(w,builder,'territory',1,'beacon:'+f.id);}}refreshBeacons(w);
   for(const t of [...w.sites,...w.flags])if(!siegeFor(w,t.id)&&t.health>0)t.health=Math.min(t.maxHealth,t.health+2*dt);
   for(const g of [...w.garrisons]) {
     const t=fortification(w,g.targetId);

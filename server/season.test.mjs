@@ -1,0 +1,142 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { World } from './world.mjs';
+import { testWorld } from './testing/kingdom-fixture.mjs';
+import { fixtureCommand } from './testing/roster-fixture.mjs';
+import { recordActivity } from './activity.mjs';
+
+const command = (w, p, type, extra = {}) => fixtureCommand(w, p, { type, ...extra });
+const view = (w, p) => w.snapshot(p.id).season;
+
+function realm(start = Date.UTC(2026, 0, 5)) {
+  let date = start;
+  const w = testWorld({ now: () => date });
+  const [a, b, c] = ['Ash', 'Birch', 'Cedar'].map(name => w.authenticate(w.join(name).token));
+  for (const p of [a, b, c]) { p.cityLevel = 2; p.gold = p.wood = p.food = p.stone = 8000; p.technologies.drill = 1; }
+  const advance = seconds => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
+  return { w, a, b, c, setDate: value => { date = value; }, advance };
+}
+
+test('a season opens on the activation day and scores only the open phase', () => {
+  const { w, a, b, c, setDate, advance } = realm();
+  const before = { gold: a.gold, troops: a.troops, drill: a.technologies.drill, units: a.units.infantry };
+  const season = view(w, a);
+  assert.equal(season.title, 'Season of the First Throne');
+  assert.equal(season.index, 1);
+  assert.equal(season.phaseId, 'foundations');
+  assert.equal(season.dayNumber, 1);
+  assert.equal(season.startsUtc, '2026-01-05T00:00:00.000Z');
+  assert.equal(season.endsUtc, '2026-02-02T00:00:00.000Z');
+  recordActivity(w, a, 'offering', 1);
+  recordActivity(w, a, 'distance', 40);
+  recordActivity(w, a, 'food', 500);
+  assert.equal(view(w, a).score, 0);
+  recordActivity(w, a, 'gather', 2000);
+  recordActivity(w, a, 'trained', 10, 'batch-1');
+  recordActivity(w, a, 'trained', 10, 'batch-1');
+  assert.equal(view(w, a).score, 22);
+  assert.equal(view(w, a).objectives.find(item => item.id === 'foundations').complete, true);
+  setDate(Date.UTC(2026, 0, 12));
+  advance(0.1);
+  assert.equal(view(w, a).phaseId, 'frontier');
+  recordActivity(w, a, 'gather', 5000);
+  assert.equal(view(w, a).score, 22);
+  assert.equal(view(w, a).objectives.find(item => item.id === 'foundations').progress, 20);
+  recordActivity(w, a, 'scouts', 1);
+  recordActivity(w, a, 'camps', 1, 'camp-1:1');
+  recordActivity(w, a, 'camps', 1, 'camp-1:1');
+  assert.equal(view(w, a).score, 38);
+  assert.equal(view(w, a).objectives.find(item => item.id === 'frontier').complete, true);
+  setDate(Date.UTC(2026, 0, 19));
+  advance(0.1);
+  assert.equal(view(w, a).phaseId, 'banners');
+  recordActivity(w, a, 'development', 1, 'job-1');
+  assert.equal(view(w, a).objectives.find(item => item.id === 'banners').complete, true);
+  assert.equal(view(w, a).objectives.find(item => item.id === 'frontier').progress, 16);
+  setDate(Date.UTC(2026, 0, 26));
+  advance(0.1);
+  assert.equal(view(w, a).phaseId, 'throne');
+  recordActivity(w, a, 'development', 1, 'throne-1');
+  recordActivity(w, a, 'development', 1, 'throne-2');
+  recordActivity(w, a, 'development', 1, 'throne-3');
+  recordActivity(w, a, 'development', 1, 'throne-4');
+  recordActivity(w, a, 'development', 1, 'throne-4');
+  assert.equal(view(w, a).objectives.find(item => item.id === 'throne').complete, true);
+  const closed = view(w, a).score;
+  setDate(Date.UTC(2026, 1, 2));
+  advance(0.1);
+  recordActivity(w, a, 'gather', 5000);
+  assert.equal(view(w, a).settled, true);
+  assert.equal(view(w, a).score, closed);
+  assert.equal(a.gold, before.gold);
+  assert.equal(a.troops, before.troops);
+  assert.equal(a.technologies.drill, before.drill);
+  command(w, b, 'alliance-create', { name: 'Birch' });
+  for (const player of [a, b, c]) w.snapshot(player.id);
+  const loaded = World.fromSave(w.toSave(), { now: () => Date.UTC(2026, 1, 2) });
+  const restored = loaded.authenticate([...w.sessions.entries()].find(([, id]) => id === a.id)[0]);
+  assert.equal(loaded.snapshot(restored.id).season.score, closed);
+  assert.equal(loaded.snapshot(restored.id).season.phaseId, 'throne');
+  assert.equal(restored.troops, a.troops);
+  assert.equal(loaded.alliances.size, 1);
+});
+
+test('alliance score stays where it was earned and a coalition is not one alliance', () => {
+  const { w, a, b, c } = realm();
+  command(w, a, 'alliance-create', { name: 'Ash' });
+  command(w, b, 'alliance-create', { name: 'Birch' });
+  command(w, c, 'alliance-create', { name: 'Cedar' });
+  command(w, a, 'coalition-create', { name: 'Northern Oath' });
+  command(w, a, 'coalition-invite', { targetId: c.allianceId });
+  command(w, c, 'coalition-accept', { targetId: w.snapshot(c.id).coalition.incoming[0].id });
+  recordActivity(w, a, 'gather', 2000);
+  const first = a.allianceId;
+  command(w, a, 'alliance-leave');
+  command(w, a, 'alliance-join', { targetId: b.allianceId });
+  recordActivity(w, a, 'gather', 2000);
+  assert.equal(view(w, a).allianceScore, 20);
+  assert.equal(w.season.current.alliances[first].points, 20);
+  assert.equal(w.season.current.alliances[c.allianceId], undefined);
+  recordActivity(w, b, 'gather', 2000);
+  const same = view(w, a).personal.filter(row => row.points === 40 || row.playerId === b.id);
+  assert.equal(view(w, a).score, 40);
+  assert.equal(view(w, b).score, 20);
+  assert.ok(same.length >= 1);
+  const tied = realm();
+  recordActivity(tied.w, tied.a, 'gather', 2000);
+  recordActivity(tied.w, tied.b, 'gather', 2000);
+  tied.w.season.current.players[tied.b.id].reachedAt = tied.w.season.current.players[tied.a.id].reachedAt;
+  const order = tied.w.snapshot(tied.a.id).season.personal;
+  const expected = [tied.a.id, tied.b.id].sort();
+  assert.deepEqual(order.map(row => row.playerId), expected);
+  assert.equal(order[0].points, order[1].points);
+});
+
+test('schema 22, 23 and 24 open a fresh season without touching the city', () => {
+  const { w, a, b } = realm();
+  command(w, a, 'alliance-create', { name: 'Ash' });
+  command(w, a, 'diplomacy-propose', { targetId: command(w, b, 'alliance-create', { name: 'Birch' }) || b.allianceId });
+  command(w, b, 'diplomacy-accept', { targetId: w.snapshot(b.id).diplomacy.incoming[0].id });
+  recordActivity(w, a, 'gather', 1000);
+  const gold = a.gold, infantry = a.units.infantry, flags = w.flags.length, pact = w.diplomacy.pacts.length;
+  for (const schema of [22, 23, 24]) {
+    const saved = structuredClone(w.toSave());
+    saved.schema = schema;
+    delete saved.world.season;
+    if (schema < 23) delete saved.world.diplomacy;
+    if (schema < 24) { delete saved.world.coalitions; delete saved.world.coalitionInvites; }
+    const loaded = World.fromSave(saved, { now: () => Date.UTC(2026, 0, 5) });
+    const p = loaded.authenticate([...loaded.sessions.entries()][0][0]);
+    assert.equal(loaded.toSave().schema, 25);
+    assert.equal(loaded.snapshot(p.id).season.score, 0);
+    assert.equal(loaded.snapshot(p.id).season.index, 1);
+    assert.equal(p.gold, gold);
+    assert.equal(p.units.infantry, infantry);
+    assert.equal(loaded.flags.length, flags);
+    assert.equal(loaded.diplomacy.pacts.length, schema >= 23 ? pact : 0);
+    assert.equal(loaded.alliances.size, 2);
+  }
+  const broken = w.toSave();
+  broken.world.season.current.players[a.id].points = 999;
+  assert.throws(() => World.fromSave(broken), /season/);
+});
