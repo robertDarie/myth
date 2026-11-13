@@ -149,3 +149,11 @@ Filled alliance provinces, roads, territory gather bonuses and seasonal safety r
 The snapshot now includes those radii at protocol 16. The map can show or hide a ring of that radius around each live connected beacon. A remembered beacon draws no ring. Allied and visible enemy rings use different colors. A site says whether it is inside the viewer's supply. Hidden enemy beacons stay out of the snapshot.
 
 `node --test server/campaign.test.mjs`: 18 passed, 0 failed. `node --test --test-name-pattern "flag|territory|shrine|beacon" server/world.test.mjs server/social.test.mjs`: 5 passed, 0 failed. Schema stayed 18. Unity was not opened, so the ring toggle is not player-verified.
+
+## Military halls
+
+TM-036 already uses one Hall of Spears for infantry, archers and cavalry. Separate class buildings were not added. Hall levels 1 through 5 keep batches of 5, 5, 10, 20 and 40, add five troop capacity per level after the first, and add 10 percent training speed per level after the first. The training screen quotes that server order. A hall upgrade and a training order use different lanes, and the paid training time stays the time quoted when the order was placed.
+
+Tier II needs Citadel 2, Hall of Spears 2 and Veteran Oaths. Promotion takes five ready Tier I reserves, spends only the cost difference, and does not create extra soldiers. The Sanctuary of Beasts gates mythic recruitment. The House of Renewal has 25 beds plus 15 per level; overflow patients wait. The Athenaeum research effects and the Forge of Dawn relic lane were already covered by the city tests. Cancellation refunds the order once. A repeated promotion HTTP key does not train twice. Schema stayed 18.
+
+`node --test server/city.test.mjs server/gameplay-parity.test.mjs server/veterans.test.mjs server/war.test.mjs server/troops.test.mjs`: 61 passed, 0 failed. Unity 6000.3.0f1 is installed, but this repository has no Windows player build, and the editor was not opened. The playtest rows stay pending. No costs or speeds were changed.
