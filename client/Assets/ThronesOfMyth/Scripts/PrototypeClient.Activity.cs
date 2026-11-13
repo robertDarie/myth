@@ -4,23 +4,25 @@ namespace ThronesOfMyth
 {
     public sealed partial class PrototypeClient
     {
-        private bool activityAllianceTab;
+        private int activityTab;
         private Vector2 activityNavScroll;
         private string ActivityResetText(int serverSeconds)
         {
             int remaining = Mathf.Max(0, Mathf.CeilToInt(serverSeconds - (Time.unscaledTime - lastSnapshotAt)));
             return (remaining >= 86400 ? remaining / 86400 + "d " : "") + remaining / 3600 % 24 + "h " + remaining / 60 % 60 + "m " + remaining % 60 + "s";
         }
-        private void OpenActivity(bool alliance = false) { activityAllianceTab = alliance; GuidePage(InterfacePage.Activity); }
+        private void OpenActivity(bool alliance = false) { activityTab = alliance ? 1 : 0; GuidePage(InterfacePage.Activity); }
         private void DrawActivity()
         {
             if (world.activity == null) return;
             GUILayout.Label("OFFERINGS OF THE MORTAL REALM", theme.Eyebrow);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Toggle(!activityAllianceTab, "Daily activity", theme.Tab) && activityAllianceTab) { activityAllianceTab = false; contentScroll = Vector2.zero; }
-            if (GUILayout.Toggle(activityAllianceTab, "Alliance weekly goals", theme.Tab) && !activityAllianceTab) { activityAllianceTab = true; contentScroll = Vector2.zero; }
+            if (GUILayout.Toggle(activityTab == 0, "Daily activity", theme.Tab) && activityTab != 0) { activityTab = 0; contentScroll = Vector2.zero; }
+            if (GUILayout.Toggle(activityTab == 1, "Alliance weekly goals", theme.Tab) && activityTab != 1) { activityTab = 1; contentScroll = Vector2.zero; }
+            if (GUILayout.Toggle(activityTab == 2, "Seven-day rewards", theme.Tab) && activityTab != 2) { activityTab = 2; contentScroll = Vector2.zero; }
             GUILayout.EndHorizontal(); GUILayout.Space(10);
-            if (activityAllianceTab) { DrawAllianceActivity(); return; }
+            if (activityTab == 1) { DrawAllianceActivity(); return; }
+            if (activityTab == 2) { DrawLoginRewards(); return; }
             var daily = world.activity.daily;
             GUILayout.Label("Day " + daily.period + " · Resets at 00:00 UTC in " + ActivityResetText(daily.resetSeconds), noteStyle);
             GUILayout.Label(daily.points + " activity points · Final chest at " + daily.maxChestPoints, sectionStyle);
@@ -79,6 +81,29 @@ namespace ThronesOfMyth
             GUILayout.Label("Gathering and assistance count where they happen. A shared stronghold victory counts once, with personal credit for each qualifying contributor. Contributions from former members stay with this alliance for the week.", noteStyle);
             foreach (var member in alliance.members)
                 GUILayout.Label(member.name + (member.current ? "" : " · former member") + "\n" + member.gather + " resources · " + member.helps + " assists · " + member.strongholds + " stronghold credits", new GUIStyle(noteStyle) { richText = false });
+        }
+        private void DrawLoginRewards()
+        {
+            var login = world.activity.login;
+            if (login == null || login.days == null)
+            {
+                GUILayout.Label("Seven-day rewards are not available from this server.", noteStyle);
+                return;
+            }
+            GUILayout.Label("SEVEN-DAY OFFERINGS", theme.Eyebrow);
+            GUILayout.Label("Streak " + login.streak + " · Eligible day " + login.eligibleDay + " · " + (login.canClaim ? "Available now" : "Next eligibility " + login.nextUtc + " UTC"), noteStyle);
+            GUILayout.Label(login.missed ? "A missed UTC day reset this streak to Day 1. Skipped days are not paid." : "Claim once each UTC day. Missing a day returns the streak to Day 1. After Day 7, the next day starts again at Day 1.", noteStyle);
+            foreach (var entry in login.days)
+            {
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label("Day " + entry.day + (entry.claimed ? " · Claimed" : entry.canClaim ? " · Ready" : entry.current ? " · Next" : ""), sectionStyle);
+                GUILayout.Label(JourneyRewardText(entry.reward), theme.Small);
+                GUILayout.EndVertical();
+            }
+            GUI.enabled = login.canClaim && !processing;
+            if (GUILayout.Button(login.canClaim ? "CLAIM DAY " + login.eligibleDay : "Already claimed today", theme.Primary))
+                Send(new GameCommand { type = "login-claim", day = login.eligibleDay, targetId = "day-" + login.eligibleDay });
+            GUI.enabled = true;
         }
     }
 }

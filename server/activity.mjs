@@ -27,13 +27,29 @@ export const ALLIANCE_GOALS=[
  {id:'aid',title:'Many hands, one city',description:'Successfully help allied building and research jobs.',key:'helps',goal:8,personal:1,guide:'alliance',targetId:'',reward:{gold:120,wood:120,stone:80,mana:10}},
  {id:'strongholds',title:'Bring down their banners',description:'Earn stronghold-victory contribution credit while in this alliance. Each encounter counts once for shared progress, even with several contributors.',key:'strongholds',goal:3,personal:1,guide:'warfare',targetId:'',reward:{gold:200,food:200,mana:20,sigils:2}}
 ];
+export const LOGIN_REWARDS=[
+ {day:1,reward:{food:100,wood:100}},
+ {day:2,reward:{stone:100,gold:100}},
+ {day:3,reward:{food:200,wood:150}},
+ {day:4,reward:{stone:150,gold:150}},
+ {day:5,reward:{food:250,wood:250,mana:10}},
+ {day:6,reward:{stone:200,gold:200,mana:15}},
+ {day:7,reward:{food:300,wood:300,gold:250,mana:25}}
+];
 const date=day=>new Date(day*DAY).toISOString().slice(0,10);
 const emptyDaily=day=>({day,counters:Object.fromEntries(ACTIVITY_KEYS.map(k=>[k,0])),claimed:[],chests:[]});
+export const emptyLogin=()=>({lastClaimDay:-1,claimedDay:0});
+export function loginEligibility(streak, today){
+ if(!streak||streak.lastClaimDay<0)return {day:1,canClaim:true,missed:false,streak:0};
+ if(streak.lastClaimDay===today)return {day:streak.claimedDay,canClaim:false,missed:false,streak:streak.claimedDay};
+ if(streak.lastClaimDay===today-1)return streak.claimedDay===7?{day:1,canClaim:true,missed:false,streak:0}:{day:streak.claimedDay+1,canClaim:true,missed:false,streak:streak.claimedDay};
+ return {day:1,canClaim:true,missed:true,streak:0};
+}
 export function activityClock(w){
  const now=w.now();if(!Number.isFinite(now)||now<0||now>8640000000000000-DAY)throw new Error('Invalid activity clock.');
  w.activityClockMs=Math.max(w.activityClockMs||0,Math.floor(now));const day=Math.floor(w.activityClockMs/DAY);return {day,week:Math.floor((day+3)/7),now:w.activityClockMs};
 }
-export function initializeActivity(w,p){const {day,week}=activityClock(w);p.daily=emptyDaily(day);p.weeklyClaims={week,claimed:[]};}
+export function initializeActivity(w,p){const {day,week}=activityClock(w);p.daily=emptyDaily(day);p.weeklyClaims={week,claimed:[]};p.loginStreak=emptyLogin();}
 export function ensureActivity(w,p){
  const time=activityClock(w);if(!p.daily||p.daily.day!==time.day)p.daily=emptyDaily(time.day);
  if(!p.weeklyClaims||p.weeklyClaims.week!==time.week)p.weeklyClaims={week:time.week,claimed:[]};return time;
@@ -67,8 +83,15 @@ const progress=(p,t)=>Math.min(t.goal,Math.floor(p.daily.counters[t.key]+0.00000
 const total=(data,g)=>g.key==='strongholds'?data.strongholdEvents.length:Object.values(data.contributions).reduce((n,c)=>n+c[g.key],0);
 const grant=grantReward;
 export function activityCommand(w,p,c,fail){
- if(!['daily-claim','activity-chest','alliance-goal-claim'].includes(c.type))return false;
+ if(!['daily-claim','activity-chest','alliance-goal-claim','login-claim'].includes(c.type))return false;
  const {day,week}=ensureActivity(w,p);
+ if(c.type==='login-claim'){
+  const state=loginEligibility(p.loginStreak,day);
+  if(!Number.isInteger(c.day)||c.day!==state.day||!state.canClaim)fail('This seven-day reward is not available today.');
+  grant(p,LOGIN_REWARDS[state.day-1].reward);
+  p.loginStreak={lastClaimDay:day,claimedDay:state.day};
+  return true;
+ }
  if(c.type==='alliance-goal-claim'){
   const a=w.alliances.get(p.allianceId);if(!a||c.allianceId!==a.id||c.period!==date(week*7-3))fail('This alliance objective request is stale or belongs to another alliance.');
   const g=ALLIANCE_GOALS.find(g=>g.id===c.targetId),data=allianceWeek(w,a);if(!g||p.weeklyClaims.claimed.includes(g.id)||total(data,g)<g.goal||(data.contributions[p.id]?.[g.key]||0)<g.personal)fail('Meet the shared goal and personal contribution requirement; each goal pays once per week across alliances.');
@@ -84,10 +107,14 @@ export function activityCommand(w,p,c,fail){
  }
  return true;
 }
+function loginSnapshot(w,p,day,now){
+ const state=loginEligibility(p.loginStreak,day),claimedThrough=state.streak;
+ return {eligibleDay:state.day,canClaim:state.canClaim,streak:state.streak,missed:state.missed,nextUtc:new Date((state.canClaim?day:day+1)*DAY).toISOString(),resetSeconds:state.canClaim?0:Math.ceil(((day+1)*DAY-now)/1000),days:LOGIN_REWARDS.map(entry=>({day:entry.day,reward:rewardSnapshot(entry.reward),claimed:entry.day<=claimedThrough&&claimedThrough>0,current:entry.day===state.day,canClaim:state.canClaim&&entry.day===state.day}))};
+}
 export function activitySnapshot(w,p){
  const {day,week,now}=ensureActivity(w,p),points=score(p),a=w.alliances.get(p.allianceId);let alliance=null;
  if(a){const data=allianceWeek(w,a);alliance={id:a.id,name:a.name,period:date(week*7-3),resetSeconds:Math.ceil(((week+1)*7-3)*DAY/1000-now/1000),goals:ALLIANCE_GOALS.map(g=>({...g,reward:rewardSnapshot(g.reward),progress:Math.min(g.goal,total(data,g)),personalProgress:data.contributions[p.id]?.[g.key]||0,claimed:p.weeklyClaims.claimed.includes(g.id),canClaim:!p.weeklyClaims.claimed.includes(g.id)&&total(data,g)>=g.goal&&(data.contributions[p.id]?.[g.key]||0)>=g.personal})),members:Object.entries(data.contributions).map(([id,c])=>({id,name:w.players.get(id)?.name||'Former member',current:w.players.get(id)?.allianceId===a.id,...c}))};}
- return {daily:{period:date(day),resetSeconds:Math.ceil(((day+1)*DAY-now)/1000),points,maxChestPoints:100,tasks:DAILY_TASKS.map(t=>({...t,reward:rewardSnapshot(t.reward),progress:progress(p,t),claimed:p.daily.claimed.includes(t.id),canClaim:!p.daily.claimed.includes(t.id)&&progress(p,t)>=t.goal})),chests:ACTIVITY_CHESTS.map(c=>({...c,reward:rewardSnapshot(c.reward),claimed:p.daily.chests.includes(c.id),canClaim:!p.daily.chests.includes(c.id)&&points>=c.points}))},alliance};
+ return {daily:{period:date(day),resetSeconds:Math.ceil(((day+1)*DAY-now)/1000),points,maxChestPoints:100,tasks:DAILY_TASKS.map(t=>({...t,reward:rewardSnapshot(t.reward),progress:progress(p,t),claimed:p.daily.claimed.includes(t.id),canClaim:!p.daily.claimed.includes(t.id)&&progress(p,t)>=t.goal})),chests:ACTIVITY_CHESTS.map(c=>({...c,reward:rewardSnapshot(c.reward),claimed:p.daily.chests.includes(c.id),canClaim:!p.daily.chests.includes(c.id)&&points>=c.points}))},alliance,login:loginSnapshot(w,p,day,now)};
 }
 export function validateActivity(w){
  if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0||w.activityClockMs>8640000000000000-DAY)throw new Error('Invalid saved activity clock.');
@@ -95,7 +122,8 @@ export function validateActivity(w){
  const validList=(a,ids)=>Array.isArray(a)&&new Set(a).size===a.length&&a.every(id=>ids.includes(id));
  for(const p of w.players.values()){
   const d=p.daily,c=p.weeklyClaims;
-  if(!d||!integer(d.day)||d.day>day||!d.counters||Object.keys(d.counters).length!==ACTIVITY_KEYS.length||ACTIVITY_KEYS.some(k=>!Number.isFinite(d.counters[k])||d.counters[k]<0||d.counters[k]>MAX_COUNTER||(k!=='distance'&&!Number.isSafeInteger(d.counters[k])))||!validList(d.claimed,DAILY_TASKS.map(t=>t.id))||!validList(d.chests,ACTIVITY_CHESTS.map(c=>c.id))||d.claimed.some(id=>{const t=DAILY_TASKS.find(t=>t.id===id);return progress(p,t)<t.goal;})||d.chests.some(id=>score(p)<ACTIVITY_CHESTS.find(c=>c.id===id).points)||!c||!integer(c.week)||c.week>week||!validList(c.claimed,ALLIANCE_GOALS.map(g=>g.id)))throw new Error('Invalid saved daily activity or reward claims.');
+  const streak=p.loginStreak;
+  if(!d||!integer(d.day)||d.day>day||!d.counters||Object.keys(d.counters).length!==ACTIVITY_KEYS.length||ACTIVITY_KEYS.some(k=>!Number.isFinite(d.counters[k])||d.counters[k]<0||d.counters[k]>MAX_COUNTER||(k!=='distance'&&!Number.isSafeInteger(d.counters[k])))||!validList(d.claimed,DAILY_TASKS.map(t=>t.id))||!validList(d.chests,ACTIVITY_CHESTS.map(c=>c.id))||d.claimed.some(id=>{const t=DAILY_TASKS.find(t=>t.id===id);return progress(p,t)<t.goal;})||d.chests.some(id=>score(p)<ACTIVITY_CHESTS.find(c=>c.id===id).points)||!c||!integer(c.week)||c.week>week||!validList(c.claimed,ALLIANCE_GOALS.map(g=>g.id))||!streak||!Number.isInteger(streak.lastClaimDay)||streak.lastClaimDay<-1||streak.lastClaimDay>day||!Number.isInteger(streak.claimedDay)||streak.claimedDay<0||streak.claimedDay>7||(streak.lastClaimDay<0)!==(streak.claimedDay===0))throw new Error('Invalid saved daily activity or reward claims.');
  }
  for(const a of w.alliances.values()){
   const data=a.weekly;if(data===undefined)continue;

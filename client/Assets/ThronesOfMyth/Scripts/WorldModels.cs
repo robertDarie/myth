@@ -5,7 +5,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class JoinRequest { public string name; public string civilization; public string resumeToken; public string joinCode; }
     [Serializable] public sealed class JoinResponse { public string token; public string playerId; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex; public bool enabled; public UnitCounts units; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex, day; public bool enabled; public UnitCounts units; }
     [Serializable] public sealed class InventoryItem { public string id,name,kind,resource,scope,description,category; public int amount,seconds,count; }
     [Serializable] public sealed class InventoryJob { public string id,lane,type,targetId; public float remaining; }
     [Serializable] public sealed class InventoryData { public bool suppliesAvailable; public InventoryItem[] items; public InventoryJob[] jobs; }
@@ -165,7 +165,9 @@ namespace ThronesOfMyth
     [Serializable] public sealed class AllianceGoalCard { public string id, title, description, guide, targetId; public int goal, progress, personal, personalProgress; public bool claimed, canClaim; public JourneyRewards reward; }
     [Serializable] public sealed class ActivityMember { public string id, name; public bool current; public int gather, helps, strongholds; }
     [Serializable] public sealed class WeeklyAllianceActivity { public string id, name, period; public int resetSeconds; public AllianceGoalCard[] goals; public ActivityMember[] members; }
-    [Serializable] public sealed class ActivityState { public DailyActivityState daily; public WeeklyAllianceActivity alliance; }
+    [Serializable] public sealed class LoginRewardDay { public int day; public bool claimed, current, canClaim; public JourneyRewards reward; }
+    [Serializable] public sealed class LoginRewardState { public int eligibleDay, streak, resetSeconds; public bool canClaim, missed; public string nextUtc; public LoginRewardDay[] days; }
+    [Serializable] public sealed class ActivityState { public DailyActivityState daily; public WeeklyAllianceActivity alliance; public LoginRewardState login; }
     [Serializable] public sealed class KingdomGoal { public string name; public int progress, goal; }
     [Serializable] public sealed class KingdomStage { public string id, name, description; public int afterSeconds, minScore, openInSeconds; public bool completed, legacy, previousComplete, eligible, claimed, canClaim; public KingdomGoal[] goals; public JourneyRewards reward; }
     [Serializable] public sealed class KingdomChronicle { public string preset; public int score; public KingdomStage[] stages; }

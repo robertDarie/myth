@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "seven-day login rewards",
+      "command": ["node", "--test", "server/login.test.mjs"]
+    },
+    {
       "name": "Combined Arms formation bonus",
       "command": ["node", "--test", "server/formation.test.mjs"]
     },

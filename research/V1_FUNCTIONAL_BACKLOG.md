@@ -14,11 +14,15 @@ This is the working order for functional completeness. It is not a line-by-line 
 
 Acceptance for the commander package is `server/armament.test.mjs`. Acceptance for the five tiers is `server/tiers.test.mjs`, with the existing veteran suite still passing. Acceptance for Combined Arms is `server/formation.test.mjs`.
 
+- **TM-070 — seven-day offerings.** One explicit claim per UTC day, for seven ordinary rewards, then Day 1 again. A missed day resets the streak. Daily tasks, chests, and weekly alliance goals are unchanged. Schema 21. Protocol 16. The schedule is in `docs/tm-070-seven-day-rewards.md`.
+
+Acceptance for the seven-day streak is `server/login.test.mjs`.
+
 ## Next package
 
-### A. Seven-day login rewards
+### A. Expanded research
 
-Daily tasks and weekly alliance goals already exist. The next progression package is a separate seven-day claim streak of ordinary resources and Mana. It must not pay Aether, and it must not change the existing daily or weekly claims.
+Daily, weekly, and seven-day claims now exist. The event hub (TM-071) and seasons (TM-072) are still unbuilt. The next functional package should add more military and civic research whose effects already have a stat to change, before opening a separate event calendar.
 
 ## Later functional packages
 
@@ -36,11 +40,11 @@ Beacons, supply radius, rallies, garrisons, and strongholds exist. Coalitions an
 
 ### E. Daily progression, events and seasons
 
-Daily and weekly goals exist and are server-tested. The event hub (TM-071) and seasons (TM-072) are not built. Seven-day rewards are the first slice to add here, using ordinary resources only.
+Daily, weekly, and seven-day claims exist and are server-tested. The event hub (TM-071) and seasons (TM-072) are not built.
 
 ### F. Multiplayer infrastructure and operations
 
-Protocol 16 and schema 20 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
+Protocol 16 and schema 21 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
 
 ### G. Functional UI and accessibility
 

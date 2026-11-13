@@ -154,7 +154,7 @@ test('schema 18 and 19 cities keep their soldiers and do not gain higher tiers',
     delete old.world.players[0].technologies.bulwarks;
     delete old.world.players[0].technologies.titanhost;
     const loaded = World.fromSave(old), q = loaded.authenticate(s.token);
-    assert.equal(loaded.toSave().schema, 20);
+    assert.equal(loaded.toSave().schema, 21);
     assert.equal(q.technologies.columns, 0);
     assert.equal(q.units.infantry, 12);
     assert.equal(q.units.veteranInfantry, 8);

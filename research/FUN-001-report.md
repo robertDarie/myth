@@ -194,4 +194,8 @@ The slot design was implemented after that playtest. The Forge of Dawn crafts Fr
 
 ## Combined Arms
 
-A march whose mortal troops are at least 15% infantry, 15% archers, and 15% cavalry has ×1.04 maximum health. The share uses every tier of a class and ignores mythic escorts. `stats()` applies it once, after relic, armament, and companion health. A damaged march cannot be reformed. A full march adopts the new maximum, and a lower maximum clamps current health. The formation screen reads the 15% and ×1.04 values from the world snapshot. Schema stays 20. Protocol stays 16. No manual playthrough was run.
+A march whose mortal troops are at least 15% infantry, 15% archers, and 15% cavalry has ×1.04 maximum health. The share uses every tier of a class and ignores mythic escorts. `stats()` applies it once, after relic, armament, and companion health. A damaged march cannot be reformed. A full march adopts the new maximum, and a lower maximum clamps current health. The formation screen reads the 15% and ×1.04 values from the world snapshot. Schema stayed 20 for that commit. Protocol stays 16. No manual playthrough was run.
+
+## Seven-day offerings
+
+The Activity screen has a Seven-day rewards tab. The server pays one ordinary claim per UTC day: food, wood, stone, gold, and Mana, with no Aether. The next UTC day advances the streak. A missed day returns it to Day 1. The day after Day 7 starts Day 1 again. Opening the screen does not pay the reward. Daily tasks and weekly goals keep their own claims. Schema 21 stores the streak. Schemas 19 and 20 load with a fresh unclaimed streak. Protocol stays 16. No manual playthrough was run.

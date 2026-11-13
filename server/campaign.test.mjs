@@ -114,7 +114,7 @@ test('assembly can be canceled and saved/migrated without creating contributions
  cmd(w,a,'rally-leave');assert.equal(w.rallies.length,0);assert.equal(census(a),20);assert.equal(census(b),20);
  const old=w.toSave();old.schema=5;delete old.world.rallies;delete old.world.garrisons;delete old.world.sieges;
  for(const p of old.world.players)delete p.groupReports;
- const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,20);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
+ const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,21);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
 });
 
 test('surviving attackers can garrison their captured gate without being healed or duplicating units',()=>{

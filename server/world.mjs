@@ -4,7 +4,7 @@ import { validateDiscovery } from './discovery.mjs';
 import { initializeInventory, validateInventory, inventoryCommand, inventorySnapshot } from './inventory.mjs';
 import { powerOf, rankings } from './power.mjs';
 import { initializeKingdom, tickKingdom, siteIsOpen, recordKingdomVictory, kingdomCommand, kingdomSnapshot, validateKingdom } from './kingdom.mjs';
-import { activityClock, initializeActivity, ensureActivity, recordActivity, activityCommand, activitySnapshot, validateActivity } from './activity.mjs';
+import { activityClock, initializeActivity, ensureActivity, recordActivity, activityCommand, activitySnapshot, validateActivity, emptyLogin } from './activity.mjs';
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
 import { route, travel } from './navigation.mjs';
@@ -308,14 +308,14 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
-    return { schema: 20, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 21, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -340,6 +340,7 @@ export class World {
       if(data.schema<12)initializeInventory(p);
       if(data.schema<13)p.technologies.veterans=0;
       if(data.schema<20)for(const id of ['columns','bulwarks','titanhost'])p.technologies[id]??=0;
+      if(data.schema<21)p.loginStreak=emptyLogin();
       if(data.schema<14){initializeLogistics(p,true);p.discovery=[];}else {validateLogistics(p);validateDiscovery(p);}
       for(const a of armyList(p))if(data.schema>=14&&a.target)resumedOrders.set(a.id,structuredClone(a.target));
       if(p.discovery.some(r=>r.observedAt>w.time)||p.coreReports.some(r=>r.time>w.time)||armyList(p).some(a=>a.cargoStarted>w.time))throw new Error('Invalid saved logistics observation time.');
@@ -453,7 +454,7 @@ export class World {
     const snapshot = { allianceRoster:allianceRoster(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
       formation: { id: FORMATION.id, name: FORMATION.name, minimumPercent: FORMATION.minimumPercent, health: FORMATION.health },
       players: [...this.players.values()].map(p => {
-        const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, ...visible } = p;
+        const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, loginStreak, ...visible } = p;
         if (viewerId && viewerId !== p.id) {
           const ally = p.allianceId && this.players.get(viewerId)?.allianceId === p.allianceId;
           const visibleJob = job => ally && job ? { id: job.id, type: job.type, remaining: job.remaining, duration: job.duration } : null;
