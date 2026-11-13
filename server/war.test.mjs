@@ -90,7 +90,7 @@ test('active combats are sealed on restore, treatment persists and malformed hos
 test('schema-4 migrates an empty hospital and troop counters are a bounded mixed-composition modifier', () => {
   const {w,a}=setup(),old=structuredClone(w.toSave());old.schema=4;delete old.world.battles;
   for(const p of old.world.players)for(const k of['wounded','woundedMythic','healing','battleReports'])delete p[k];
-  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,18);
+  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,19);
   const infantry={troops:10,units:{infantry:10,archers:0,cavalry:0}},cavalry={troops:10,units:{infantry:0,archers:0,cavalry:10}};
   assert.equal(counterMultiplier(infantry,cavalry),1.15);assert.equal(counterMultiplier(cavalry,infantry),0.85);
 });

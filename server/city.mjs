@@ -1,6 +1,6 @@
 import { trainingOptions, trainingBatch } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
-import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
+import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, ARMAMENTS, ARMAMENT_SET, ARMAMENT_SLOTS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { scoutCampCard } from './scout-camp.mjs';
 import { armyList, age, crews, constructionJobs, totalTroops, totalMythic, skillInfo } from './progression.mjs';
 import { COMMANDERS } from './content.mjs';
@@ -16,7 +16,31 @@ export function initializeCity(p, migrated = false) {
   p.commanderShards ??= {}; p.commanderRanks ??= {};
   p.summonHistory ??= []; p.summonCount ??= 0; p.epicPity ??= 0; p.legendaryPity ??= 0; p.lastOfferingDay ??= '';
   p.ownedRelics ??= []; p.equippedRelic ??= '';
+  ensureArmaments(p);
   if (migrated && (p.mythic || p.reserveMythic || p.trainingQueue?.some(j => j.type === 'recruit'))) p.buildings.menagerie = Math.max(1, p.buildings.menagerie);
+}
+export const emptyArmamentSlots = () => ({ weapon: '', armor: '', banner: '' });
+export function ensureArmaments(p) {
+  p.ownedArmaments ??= [];
+  p.commanderArmaments ??= {};
+  p.secondaryCommanderId ??= '';
+  for (const march of p.marches ?? []) march.secondaryCommanderId ??= '';
+  for (const id of p.ownedCommanders ?? []) p.commanderArmaments[id] ??= emptyArmamentSlots();
+}
+export function armamentFactor(p, commanderId) {
+  const slots = p.commanderArmaments?.[commanderId] ?? emptyArmamentSlots();
+  const pieces = ARMAMENT_SLOTS.map(slot => ARMAMENTS.find(item => item.id === slots[slot])).filter(Boolean);
+  return {
+    damage: pieces.reduce((n, item) => n * item.damage, 1),
+    health: pieces.reduce((n, item) => n * item.health, 1),
+    speed: pieces.reduce((n, item) => n * item.speed, 1),
+    pve: pieces.length >= ARMAMENT_SET.pieces ? ARMAMENT_SET.pve : 1,
+  };
+}
+const commanderMarches = (p, commanderId) => armyList(p).filter(a => a.commanderId === commanderId || a.secondaryCommanderId === commanderId);
+const armamentReady = (world, p, commanderId) => commanderMarches(p, commanderId).every(a => world.atHome(a) && !a.target && !a.deployed);
+function clampCommanderHealth(world, p, commanderId) {
+  for (const march of commanderMarches(p, commanderId)) march.health = Math.min(march.health, world.stats(march).maxHealth);
 }
 export const buildingLevel = (p, id) => id === 'citadel' ? p.cityLevel : p.buildings[id] ?? 0;
 // Citadel 1 stays 40. Later citadels grow faster than the old +20 per level.
@@ -73,6 +97,8 @@ export function citySnapshot(world, p) {
     trainingBatch: trainingBatch(p), trainingDuration: 8 * trainingBatch(p) / 5 / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
     troopCapacity: capacity(p), marchTroopCap: marchTroopCap(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
+    armamentLoadout: (p.ownedCommanders ?? []).map(id => ({ commanderId: id, ...(p.commanderArmaments?.[id] ?? emptyArmamentSlots()) })),
+    armamentSet: ARMAMENT_SET,
     offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),
     offeringAmount: p.buildings.oracle >= 5 ? 3 : p.buildings.oracle >= 3 ? 2 : 1,
     sealCost: { aether:10 } };
@@ -117,9 +143,30 @@ export function cityCommand(world, p, c, fail) {
     }
     case 'craft': {
       requireBuilding('forge'); if (p.crafting) fail('The forge is busy.');
-      const relic = RELICS.find(r => r.id === c.targetId); if (!relic) fail('Unknown relic.');
-      if (p.ownedRelics.includes(relic.id)) fail('This relic is already crafted.');
-      world.spend(p, relic.cost); p.crafting = { ...world.job('craft', relic.duration, relic.cost, 1), targetId: relic.id }; return true;
+      const relic = RELICS.find(r => r.id === c.targetId);
+      const piece = ARMAMENTS.find(item => item.id === c.targetId);
+      const order = relic ?? piece; if (!order) fail('Unknown forge order.');
+      if (relic && p.ownedRelics.includes(relic.id)) fail('This relic is already crafted.');
+      if (piece && p.ownedArmaments.includes(piece.id)) fail('This armament is already crafted.');
+      world.spend(p, order.cost); p.crafting = { ...world.job('craft', order.duration, order.cost, 1), targetId: order.id }; return true;
+    }
+    case 'equip-armament': {
+      const piece = ARMAMENTS.find(item => item.id === c.targetId); if (!piece) fail('Unknown armament.');
+      const heroId = c.name; if (!p.ownedCommanders.includes(heroId)) fail('Recruit this commander first.');
+      if (!p.ownedArmaments.includes(piece.id)) fail('Craft this armament first.');
+      if (!armamentReady(world, p, heroId)) fail('Return every march led by this commander home before changing armaments.');
+      ensureArmaments(p);
+      for (const slots of Object.values(p.commanderArmaments)) for (const slot of ARMAMENT_SLOTS) if (slots[slot] === piece.id) slots[slot] = '';
+      p.commanderArmaments[heroId][piece.slot] = piece.id;
+      clampCommanderHealth(world, p, heroId); return true;
+    }
+    case 'unequip-armament': {
+      const heroId = c.name; if (!p.ownedCommanders.includes(heroId)) fail('Recruit this commander first.');
+      if (!ARMAMENT_SLOTS.includes(c.targetId)) fail('Unknown armament slot.');
+      if (!armamentReady(world, p, heroId)) fail('Return every march led by this commander home before changing armaments.');
+      ensureArmaments(p);
+      p.commanderArmaments[heroId][c.targetId] = '';
+      clampCommanderHealth(world, p, heroId); return true;
     }
     case 'alliance-help': {
       requireBuilding('oathhall'); if (!p.allianceId) fail('Join an alliance first.');
@@ -152,7 +199,7 @@ function summon(world, p) {
   if (rarity === 'Legendary' || rarity === 'Epic') p.epicPity = 0;
   const duplicate = p.ownedCommanders.includes(hero.id), shards = duplicate ? SUMMON_RULES.duplicateShards[rarity] : 0;
   if (duplicate) p.commanderShards[hero.id] = (p.commanderShards[hero.id] ?? 0) + shards;
-  else p.ownedCommanders.push(hero.id);
+  else { p.ownedCommanders.push(hero.id); ensureArmaments(p); }
   p.summonHistory.unshift({ id: world.job('summon', 1, {}, 1).id, commanderId: hero.id, rarity, duplicate, shards, number: p.summonCount });
   p.summonHistory.length = Math.min(20, p.summonHistory.length);
 }
@@ -179,22 +226,37 @@ export function tickCity(world, p, dt, { production = true } = {}) {
     if (job.type === 'upgrade') { p.cityLevel++; world.event(`${p.name} entered the ${age(p).name}: ${age(p).marches} march slots unlocked.`); }
     if (job.type === 'building') p.buildings[job.targetId]++;
     if (job.type === 'research') p.technologies[job.targetId]++;
-    if (job.type === 'craft') p.ownedRelics.push(job.targetId);
+    if (job.type === 'craft') { if (ARMAMENTS.some(item => item.id === job.targetId)) p.ownedArmaments.push(job.targetId); else p.ownedRelics.push(job.targetId); }
     if (['upgrade','building','research'].includes(job.type)) recordActivity(world,p,'development',1);
     p[lane] = null;
-    const name = job.type === 'upgrade' ? 'Citadel level ' + p.cityLevel : [...BUILDINGS, ...TECHNOLOGIES, ...RELICS].find(item => item.id === job.targetId)?.name ?? job.type;
+    const name = job.type === 'upgrade' ? 'Citadel level ' + p.cityLevel : [...BUILDINGS, ...TECHNOLOGIES, ...RELICS, ...ARMAMENTS].find(item => item.id === job.targetId)?.name ?? job.type;
     world.event(`${p.name} completed ${name}.`);
   }
 }
 export function validateCity(p) {
   if (constructionJobs(p).some(job => job.type === 'building' && !BUILDINGS.some(b => b.id !== 'citadel' && b.id === job.targetId))) throw new Error('Invalid saved building job.');
   if (p.research && !TECHNOLOGIES.some(t => t.id === p.research.targetId)) throw new Error('Invalid saved research job.');
-  if (p.crafting && !RELICS.some(r => r.id === p.crafting.targetId)) throw new Error('Invalid saved crafting job.');
+  if (p.crafting && ![...RELICS, ...ARMAMENTS].some(item => item.id === p.crafting.targetId)) throw new Error('Invalid saved crafting job.');
   if (![p.stone, p.mana, p.sigils, p.economyClock, p.summonCount, p.epicPity, p.legendaryPity].every(v => Number.isFinite(v) && v >= 0)) throw new Error('Invalid saved city economy.');
   if (!p.productionCarry || RESOURCES.some(id => !Number.isFinite(p.productionCarry[id]) || p.productionCarry[id] < 0 || p.productionCarry[id] >= 1)) throw new Error('Invalid saved production carry.');
   for (const [levels, definitions, cap] of [[p.buildings, BUILDINGS.filter(b => b.id !== 'citadel'), 5], [p.technologies, TECHNOLOGIES, 3]])
     if (definitions.some(item => !Number.isInteger(levels[item.id]) || levels[item.id] < 0 || levels[item.id] > (item.maxLevel??cap))) throw new Error('Invalid saved city progression.');
   if (!Array.isArray(p.ownedRelics) || p.ownedRelics.some(id => !RELICS.some(r => r.id === id)) || (p.equippedRelic && !p.ownedRelics.includes(p.equippedRelic))) throw new Error('Invalid saved relic.');
+  ensureArmaments(p);
+  if (!Array.isArray(p.ownedArmaments) || new Set(p.ownedArmaments).size !== p.ownedArmaments.length || p.ownedArmaments.some(id => !ARMAMENTS.some(item => item.id === id))) throw new Error('Invalid saved armament.');
+  if (!p.commanderArmaments || typeof p.commanderArmaments !== 'object' || Array.isArray(p.commanderArmaments)) throw new Error('Invalid saved armament.');
+  const equippedPieces = [];
+  for (const [id, slots] of Object.entries(p.commanderArmaments)) {
+    if (!p.ownedCommanders.includes(id) || !slots) throw new Error('Invalid saved armament.');
+    for (const slot of ARMAMENT_SLOTS) {
+      if (typeof slots[slot] !== 'string') throw new Error('Invalid saved armament.');
+      if (!slots[slot]) continue;
+      const piece = ARMAMENTS.find(item => item.id === slots[slot]);
+      if (!piece || piece.slot !== slot || !p.ownedArmaments.includes(piece.id)) throw new Error('Invalid saved armament.');
+      equippedPieces.push(piece.id);
+    }
+  }
+  if (new Set(equippedPieces).size !== equippedPieces.length) throw new Error('Invalid saved armament.');
   if (!Number.isInteger(p.sigils) || !Number.isInteger(p.epicPity) || p.epicPity >= SUMMON_RULES.epicPity || !Number.isInteger(p.legendaryPity) || p.legendaryPity >= SUMMON_RULES.legendaryPity || !Array.isArray(p.summonHistory) || p.summonHistory.length > 20 || p.summonHistory.some(d => !d || !COMMANDERS.some(c => c.id === d.commanderId) || !Number.isInteger(d.shards) || d.shards < 0) || typeof p.lastOfferingDay !== 'string') throw new Error('Invalid saved summon history.');
   for (const map of [p.commanderShards, p.commanderRanks]) if (!map || typeof map !== 'object' || Object.entries(map).some(([id, value]) => !COMMANDERS.some(c => c.id === id) || !Number.isInteger(value) || value < 0)) throw new Error('Invalid saved hero progression.');
   if (Object.values(p.commanderRanks).some(rank => rank > 5)) throw new Error('Invalid saved hero rank.');

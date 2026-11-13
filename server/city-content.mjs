@@ -42,6 +42,14 @@ export const RELICS = [
   { id: 'aegis', name: 'Bronze Aegis', description: '+10% army maximum health.', cost: { stone: 80, gold: 60, mana: 10 }, duration: 15, damage: 1, health: 1.1 },
   { id: 'ember-spear', name: 'Ember Spear', description: '+10% army damage.', cost: { wood: 80, gold: 70, mana: 15 }, duration: 18, damage: 1.1, health: 1 },
 ];
+// Commander-owned pieces. They do not replace a march relic.
+export const ARMAMENTS = [
+  { id: 'frontier-spearhead', name: 'Frontier Spearhead', slot: 'weapon', description: '+3% damage while this commander serves on the march.', cost: { wood: 60, gold: 40, mana: 10 }, duration: 20, damage: 1.03, health: 1, speed: 1 },
+  { id: 'frontier-cuirass', name: 'Frontier Cuirass', slot: 'armor', description: '+3% maximum health while this commander serves on the march.', cost: { stone: 60, gold: 40, mana: 10 }, duration: 20, damage: 1, health: 1.03, speed: 1 },
+  { id: 'frontier-standard', name: 'Frontier Standard', slot: 'banner', description: '+3% march speed while this commander serves on the march.', cost: { wood: 40, stone: 40, mana: 15 }, duration: 20, damage: 1, health: 1, speed: 1.03 },
+];
+export const ARMAMENT_SET = { id: 'oath-of-the-frontier', name: 'Oath of the Frontier', pieces: 2, pve: 1.02 };
+export const ARMAMENT_SLOTS = ['weapon', 'armor', 'banner'];
 export const TRADES = []; // Self-exchanges were replaced by alliance transfers.
 export const SUMMON_RULES = { common: 0.4, rare: 0.35, epic: 0.2, legendary: 0.05, epicPity: 10, legendaryPity: 50, duplicateShards: { Common: 5, Rare: 8, Epic: 12, Legendary: 20 } };
 export const resourceNodes = [

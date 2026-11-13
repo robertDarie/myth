@@ -91,7 +91,7 @@ test('cave and ruin investigations use one scout, survive restart, and recall ca
   const caveReward = gift(p, cave.id), ruinReward = gift(p, ruin.id);
   const reloaded = World.fromSave(w.toSave());
   const q = reloaded.authenticate(sessions[0].token);
-  assert.equal(reloaded.toSave().schema, 18);
+  assert.equal(reloaded.toSave().schema, 19);
   assert.deepEqual(q.findings.completed, p.findings.completed);
   assert.deepEqual(q.findings.rewards[cave.id], caveReward);
   assert.deepEqual(q.findings.rewards[ruin.id], ruinReward);
@@ -133,7 +133,7 @@ test('schema 16 exploration migrates without erasing land or inventing claims', 
   const save = w.toSave(); save.schema = 16;
   for (const player of save.world.players) delete player.findings;
   const restored = World.fromSave(save), q = restored.authenticate(sessions[0].token);
-  assert.equal(restored.toSave().schema, 18);
+  assert.equal(restored.toSave().schema, 19);
   assert.deepEqual(q.explored, p.explored);
   assert.equal(q.findings.known.includes('olive-rest'), true);
   assert.deepEqual(q.findings.claimed, []);

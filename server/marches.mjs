@@ -20,22 +20,22 @@ export function marchCommand(world, p, c, fail) {
     withinMarchShare(p, troops, fail);
     if(armyList(p).length>=5)fail('Five prepared formations already exist. Edit or disband a home formation.');
     if (!readyFor(p, null, chosen)) fail('Not enough ready reserves of that troop type. Train units first.');
-    if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
+    if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId || a.secondaryCommanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
     const a = { id: randomUUID(), ownerId: p.id, name: p.name + ' · March ' + (p.nextMarchNumber++),
-      commanderId: c.targetId, equippedRelic: '', x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ,
+      commanderId: c.targetId, secondaryCommanderId: '', equippedRelic: '', x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ,
       troops, mythic, units, health: 1, xp: 0, level: 1, rage: 0, shield: 0, shieldTime: 0, lastSkill: '', skillCasts: 0,
       target: null, state: 'Idle', cooldown: 0, gatherClock: 0, recovery: 0 };
     transfer(p, null, chosen);
     ensureHero(p, c.targetId); p.marches.push(a);initializeLogistics(p);a.deployed=false; a.health = world.stats(a).maxHealth; return true;
   }
-  const types = ['move', 'attack', 'gather', 'return', 'stop', 'commander', 'reinforce', 'flag', 'capture', 'equip-relic', 'unequip-relic', 'disband-march', 'configure-march'];
+  const types = ['move', 'attack', 'gather', 'return', 'stop', 'commander', 'pair-commander', 'unpair-commander', 'reinforce', 'flag', 'capture', 'equip-relic', 'unequip-relic', 'disband-march', 'configure-march'];
   if (!types.includes(c.type)) return false;
   const a = armyList(p).find(a => a.id === (c.marchId || p.id));
   if (!a) fail('That march does not belong to your city.');
   if (c.type === 'return') { if(!a.deployed&&world.atHome(a)){a.target=null;a.state='Home';return true;}a.target = { type: 'return', x: p.homeX, z: p.homeZ }; a.state = 'Returning'; a.returnReason='Manual recall'; return true; }
   if (c.type === 'stop') { a.target = null; a.state = 'Idle'; return true; }
   if (a.health <= 0 || a.recovery > 0) fail('This army is recovering at home.');
-  if(['configure-march','commander','reinforce','disband-march','equip-relic','unequip-relic'].includes(c.type)&&cargoTotal(a))fail('Return home and deliver cargo before changing this formation.');
+  if(['configure-march','commander','pair-commander','unpair-commander','reinforce','disband-march','equip-relic','unequip-relic'].includes(c.type)&&cargoTotal(a))fail('Return home and deliver cargo before changing this formation.');
   switch (c.type) {
     case 'move':
       if (!point(c)) fail('Destination must be inside the map (1–79).');
@@ -55,9 +55,21 @@ export function marchCommand(world, p, c, fail) {
     case 'commander': {
       world.requireHome(a);
       const hero = COMMANDERS.find(h => h.id === c.targetId); if (!hero) fail('Unknown commander.');
-      if (armyList(p).some(other => other.id !== a.id && other.commanderId === c.targetId)) fail('That commander already leads another march.');
+      if (a.secondaryCommanderId === hero.id) fail('Unpair this companion before assigning them as primary.');
+      if (armyList(p).some(other => other.id !== a.id && (other.commanderId === hero.id || other.secondaryCommanderId === hero.id))) fail('That commander already serves on another march.');
       if (!p.ownedCommanders.includes(hero.id)) fail('Acquire this commander through summons, shards or progression first.');
       ensureHero(p, hero.id); a.commanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); a.rage = 0; return true;
+    }
+    case 'pair-commander': {
+      world.requireHome(a);
+      const hero = COMMANDERS.find(h => h.id === c.targetId); if (!hero) fail('Unknown commander.');
+      if (hero.id === a.commanderId) fail('The primary commander cannot also be the companion.');
+      if (!p.ownedCommanders.includes(hero.id)) fail('Acquire this commander through summons, shards or progression first.');
+      if (armyList(p).some(other => other.commanderId === hero.id || (other.id !== a.id && other.secondaryCommanderId === hero.id))) fail('That commander already serves on another march.');
+      ensureHero(p, hero.id); a.secondaryCommanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
+    }
+    case 'unpair-commander': {
+      world.requireHome(a); a.secondaryCommanderId = ''; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
     }
     case 'configure-march': {
       world.requireHome(a);
@@ -66,7 +78,8 @@ export function marchCommand(world, p, c, fail) {
       withinMarchShare(p, chosen.troops, fail);
       if (!readyFor(p, a, chosen)) fail('Not enough ready reserves of that troop type.');
       const commanderId = c.targetId || a.commanderId;
-      if (!p.ownedCommanders.includes(commanderId) || armyList(p).some(other => other.id !== a.id && other.commanderId === commanderId)) fail('Choose a recruited commander who is not leading another march.');
+      if (commanderId === a.secondaryCommanderId) fail('Unpair this companion before assigning them as primary.');
+      if (!p.ownedCommanders.includes(commanderId) || armyList(p).some(other => other.id !== a.id && (other.commanderId === commanderId || other.secondaryCommanderId === commanderId))) fail('Choose a recruited commander who is not leading another march.');
       transfer(p, a, chosen); ensureHero(p, commanderId); a.commanderId = commanderId;
       a.health = world.stats(a).maxHealth; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Idle'; return true;
     }

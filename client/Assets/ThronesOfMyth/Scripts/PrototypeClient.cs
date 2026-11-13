@@ -219,6 +219,7 @@ namespace ThronesOfMyth
             foreach (var b in me.cityBuildings) if (b.id == job.targetId) return b.name;
             foreach (var t in me.researchOptions) if (t.id == job.targetId) return t.name;
             foreach (var r in world.relics) if (r.id == job.targetId) return r.name;
+            if (world.armaments != null) foreach (var piece in world.armaments) if (piece.id == job.targetId) return piece.name;
             return job.type;
         }
         private string HeroName(string id)
@@ -253,6 +254,56 @@ namespace ThronesOfMyth
                     if (theme.Action(mine ? "Unequip at home" : "Equip at home", string.IsNullOrEmpty(reason), reason)) Send(mine ? "unequip-relic" : "equip-relic", relic.id);
                 }
             }
+            if (world.armaments == null) return;
+            GUILayout.Space(12);
+            GUILayout.Label("Commander armaments", sectionStyle);
+            GUILayout.Label("Weapon, Armor and Banner belong to one commander. Two Oath of the Frontier pieces add 2% camp and stronghold damage once. A march relic stays separate.", noteStyle);
+            string heroId = string.IsNullOrEmpty(inspectedHeroId) ? me.commanderId : inspectedHeroId;
+            var loadout = ArmamentSlots(heroId);
+            foreach (var piece in world.armaments)
+            {
+                bool owned = me.ownedArmaments != null && Array.IndexOf(me.ownedArmaments, piece.id) >= 0;
+                GUILayout.Label(piece.name + " · " + piece.slot, sectionStyle);
+                GUILayout.Label(piece.description, noteStyle);
+                if (!owned)
+                {
+                    GUILayout.Label(Cost(piece.cost), noteStyle);
+                    string craftReason = !built ? "Build the Forge of Dawn first." : me.crafting != null && !string.IsNullOrEmpty(me.crafting.id) ? "The forge is busy." : !Afford(piece.cost) ? "More resources required: " + Cost(piece.cost) : "";
+                    if (theme.Action("Craft · " + piece.duration + "s", string.IsNullOrEmpty(craftReason), craftReason)) Send("craft", piece.id);
+                }
+                else
+                {
+                    string worn = SlotPiece(loadout, piece.slot) == piece.id ? "Equipped on " + HeroName(heroId) + "." : "In the city stores.";
+                    GUILayout.Label(worn, noteStyle);
+                    bool mine = SlotPiece(loadout, piece.slot) == piece.id;
+                    string lockReason = ArmamentLock(heroId);
+                    if (theme.Action(mine ? "Unequip from " + HeroName(heroId) : "Equip on " + HeroName(heroId), string.IsNullOrEmpty(lockReason) && !processing, !string.IsNullOrEmpty(lockReason) ? lockReason : processing ? "Sending your order…" : ""))
+                        Send(new GameCommand { type = mine ? "unequip-armament" : "equip-armament", targetId = mine ? piece.slot : piece.id, name = heroId });
+                }
+            }
+        }
+        private ArmamentLoadout ArmamentSlots(string commanderId)
+        {
+            if (me.armamentLoadout == null) return new ArmamentLoadout();
+            foreach (var row in me.armamentLoadout) if (row.commanderId == commanderId) return row;
+            return new ArmamentLoadout();
+        }
+        private string ArmamentLock(string heroId)
+        {
+            foreach (var march in OwnMarches())
+            {
+                if (march.commanderId != heroId && march.secondaryCommanderId != heroId) continue;
+                bool home = !march.deployed && !march.hasOrder && Vector2.Distance(new Vector2(march.x, march.z), new Vector2(me.homeX, me.homeZ)) < 2;
+                if (!home) return "Return every march this commander serves before changing their armament.";
+            }
+            return processing ? "Sending your order…" : "";
+        }
+        private static string SlotPiece(ArmamentLoadout row, string slot)
+        {
+            if (row == null) return "";
+            if (slot == "weapon") return row.weapon ?? "";
+            if (slot == "armor") return row.armor ?? "";
+            return row.banner ?? "";
         }
         private int tradeMember,tradeResource;
         private string tradeAmount="100";
@@ -328,7 +379,7 @@ namespace ThronesOfMyth
                 GUILayout.Label(world.persistence.enabled ? "Autosave: " + (string.IsNullOrEmpty(world.persistence.error) ? world.persistence.lastSaved : world.persistence.error) : "This server has persistence disabled.", noteStyle);
             GUILayout.Space(10); GUILayout.Label("Your city and queues are saved by the server. Return with the same name and local profile. A restart finishes paid city timers and up to eight hours of passive production. Field orders do not keep fighting through the restart.", noteStyle);
         }
-        private bool AssignedElsewhere(string heroId) => OwnMarches().Exists(a => a.id != ActiveArmy.id && a.commanderId == heroId);
+        private bool AssignedElsewhere(string heroId) => OwnMarches().Exists(a => a.id != ActiveArmy.id && (a.commanderId == heroId || a.secondaryCommanderId == heroId));
         private void DrawConstructionJobs()
         {
             int count = (HasJob(me.construction) ? 1 : 0) + (HasJob(me.secondConstruction) ? 1 : 0);

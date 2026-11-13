@@ -271,9 +271,16 @@ namespace ThronesOfMyth
             }
             else
             {
-                string label=ActiveArmy.commanderId==selected.id?"Leading selected march":AssignedElsewhere(selected.id)?"Assigned to another march":CanEditArmy?"Assign to selected march":"Return selected march home to assign";
-                bool canAssign=CanEditArmy&&ActiveArmy.commanderId!=selected.id&&!AssignedElsewhere(selected.id)&&!processing;
-                if(theme.Button(action,label,true,canAssign,canAssign?"":label))Send("commander",selected.id);
+                bool isPrimary=ActiveArmy.commanderId==selected.id;
+                bool isCompanion=ActiveArmy.secondaryCommanderId==selected.id;
+                string label=isPrimary?"Leading selected march":isCompanion?"Companion on selected march":AssignedElsewhere(selected.id)?"Assigned to another march":CanEditArmy?"Assign as primary":"Return selected march home to assign";
+                bool canAssign=CanEditArmy&&!isPrimary&&!isCompanion&&!AssignedElsewhere(selected.id)&&!processing;
+                if(theme.Button(action,label,true,canAssign,canAssign?"":label))Send(new GameCommand{type="commander",targetId=selected.id,marchId=ActiveArmy.id});
+                var companion=new Rect(x,action.yMax+6,width,32);
+                bool canPair=CanEditArmy&&!isPrimary&&!isCompanion&&!AssignedElsewhere(selected.id)&&!processing;
+                string pairLabel=isCompanion?"Remove companion":"Assign as companion";
+                if(theme.Button(companion,pairLabel,true,isCompanion?CanEditArmy&&!processing:canPair,canPair||isCompanion?"":"This commander is already committed."))Send(new GameCommand{type=isCompanion?"unpair-commander":"pair-commander",targetId=selected.id,marchId=ActiveArmy.id});
+                action=new Rect(x,companion.yMax+6,width,0);
             }
             var body=new Rect(card.x+12,action.yMax+8,card.width-24,card.yMax-action.yMax-16);
             if(body.height<80)return;
@@ -295,7 +302,9 @@ namespace ThronesOfMyth
                 DrawHeroSkills(selected,progress);
                 if(heroDetailTab==2)
                 {
-                    GUILayout.Space(18);GUILayout.Label("ASCENSION · RANK "+progress.rank+" / 5",theme.Eyebrow);
+                    GUILayout.Space(18);GUILayout.Label("COMPANION",theme.Eyebrow);
+                    GUILayout.Label("A companion adds 1% damage and maximum health for each of their levels. They do not cast a skill. Camp victories still pay the primary the full grant and add half of that grant to the companion.",theme.Small);
+                    GUILayout.Space(12);GUILayout.Label("ASCENSION · RANK "+progress.rank+" / 5",theme.Eyebrow);
                     GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.",theme.Small);
                     string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";
                     if(theme.Action("Ascend · "+progress.nextShards+" shards / "+progress.nextGold+" gold",string.IsNullOrEmpty(reason),reason))Send("upgrade-commander",selected.id);

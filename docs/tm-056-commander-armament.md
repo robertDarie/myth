@@ -1,6 +1,6 @@
-# TM-056 commander armament — design awaiting approval
+# TM-056 commander armament
 
-This design is not implemented. Schema stays 18. March relics stay as they are. No new currency, drop table, or inscription roll is added by this document.
+Implemented on schema 19. Health protocol stays 16. March relics stay as they are. No new currency, drop table, or inscription roll was added.
 
 ## What already exists
 
@@ -17,7 +17,7 @@ The Forge of Dawn requires Citadel of Mortals 3 and Titan Stoneworks 2. It uses 
 
 Talent points are `floor(commander level / 5)`. A level-1 Frontier Captain has no point to spend.
 
-## Proposed ownership
+## Ownership
 
 Armaments are commander-owned pieces, separate from march relics.
 
@@ -28,7 +28,7 @@ Armaments are commander-owned pieces, separate from march relics.
 - Equip and unequip are allowed only while every march led by that commander is home, matching the existing home rule for relics.
 - Unequipping an armor piece clamps each of that commander's home marches to the new maximum health.
 
-## Proposed pieces
+## Pieces
 
 One named set, Oath of the Frontier. Costs use ordinary resources and Mana. Aether is not spent.
 
@@ -42,13 +42,13 @@ Two equipped pieces of this set add camp and stronghold damage × 1.02 once. The
 
 ## Combat
 
-Armament multipliers apply in `stats()` after the existing relic multiplier, only for the march's current commander. A march can have Ember Spear and a commander weapon at the same time. They are different owners and different multipliers, so Ember Spear stays × 1.10 and the weapon adds its own × 1.03. They do not share a slot and one does not replace the other.
+Armament multipliers apply in `stats()` after the existing relic multiplier. The primary commander's pieces apply first. A paired companion's pieces apply as a second multiplier. A march can have Ember Spear and a commander weapon at the same time. They are different owners and different multipliers, so Ember Spear stays × 1.10 and the weapon adds its own × 1.03. They do not share a slot and one does not replace the other. The city owns each piece id once, so only one commander can wear a given piece.
 
 ## Crafting and persistence
 
 Crafting uses the existing Forge of Dawn lane. A relic order and an armament order cannot run together. Cancellation refunds the order once, as training and relic orders already do.
 
-Persistence needs a new schema, proposed as 19, with a migration test. Schema 18 saves gain `ownedArmaments: []` and empty commander slots. A save that equips one piece on two commanders, names an unknown piece, or fills a slot with a piece of the wrong role is rejected. Schema 18 remains the live schema until that migration is approved and tested.
+Schema 19 stores `ownedArmaments`, `commanderArmaments`, and `secondaryCommanderId`. A schema 18 save gains an empty armament list, empty slots, and no companion. Existing relics are left in place. A save that equips one piece on two commanders, names an unknown piece, or fills a slot with a piece of the wrong role is rejected.
 
 ## Not in this proposal
 

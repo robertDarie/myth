@@ -28,7 +28,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration, orderSeconds, promotionSeconds; public int cityLevel,tier,sourceAvailable,orderAmount; public string baseId,lockedReason; public ResourceAmounts cost,orderCost,promotionCost; }
     [Serializable] public sealed class ArmyData
     {
-        public string id, ownerId, name, civilization, commanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
+        public string id, ownerId, name, civilization, commanderId, secondaryCommanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
         public bool deployed, mapVisible, lastKnown, protectedField; public float observedAt; public int activeMarches, carryCapacity; public ResourceAmounts cargo; public ArmyData[] homeFormations; public CoreReport[] reports;
         public EconomyData economy; public int aether;
         public InventoryData inventory; public PowerData powerBreakdown;
@@ -49,7 +49,8 @@ namespace ThronesOfMyth
         public GroupBattleReport[] groupReports;
         public JourneyCampaign journeyCampaign;
         public string equippedRelic;
-        public string[] ownedRelics;
+        public string[] ownedRelics, ownedArmaments;
+        public ArmamentLoadout[] armamentLoadout;
         public QueueJob research, crafting;
         public BuildingCard[] cityBuildings;
         public ResearchCard[] researchOptions;
@@ -60,6 +61,8 @@ namespace ThronesOfMyth
         public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
     }
+    [Serializable] public sealed class ArmamentLoadout { public string commanderId, weapon, armor, banner; }
+    [Serializable] public sealed class ArmamentData { public string id, name, slot, description; public float duration, damage, health, speed; public ResourceAmounts cost; }
     [Serializable] public sealed class QueueJob { public string id, type; public float remaining, duration; public int amount; public string targetId,sourceId; public ResourceAmounts cost; }
     [Serializable] public sealed class ResourceAmounts { public int food, wood, stone, gold, mana, aether; }
     [Serializable] public sealed class RequirementCard {public string kind,id,name;public int level,current;public bool met;}
@@ -161,6 +164,7 @@ namespace ThronesOfMyth
         public SaveStatus persistence;
         public RankingData rankings;
         public RelicData[] relics;
+        public ArmamentData[] armaments;
         public TradeData[] trades;
         public SummonRules summonRules;
         public ArmyData[] players, armies;

@@ -16,10 +16,10 @@ import { socialCommand, allianceRole, allianceRoster, initializeSocial, validate
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
 import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, trainingBatch, batchCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
-import { resourceNodes, RELICS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
+import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
 import { AGES, age, crews, armyList, constructionJobs, totalTroops, totalMythic, ensureHero, heroLevel, activeKind, initializeProgression, skillModifiers, activeSkill, progressionCommand, validateProgression } from './progression.mjs';
-import { initializeCity, capacity, mythicCapacity, cityCommand, citySnapshot, tickCity, validateCity } from './city.mjs';
+import { initializeCity, capacity, mythicCapacity, cityCommand, citySnapshot, tickCity, validateCity, ensureArmaments, armamentFactor } from './city.mjs';
 import { SIZE, CIVILIZATIONS, COMMANDERS, campDefinitions, siteDefinitions } from './content.mjs';
 export class GameError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
@@ -79,13 +79,17 @@ export class World {
     const rank = p.commanderRanks[a.commanderId] ?? 0;
     const relic = RELICS.find(r => r.id === a.equippedRelic) ?? { damage: 1, health: 1 };
     const skill = skillModifiers(p, a), level = heroLevel(r), base = troopBase(a);
+    const gear = armamentFactor(p, a.commanderId);
+    const companionId = a.secondaryCommanderId || '';
+    const companionGear = companionId ? armamentFactor(p, companionId) : { damage: 1, health: 1, speed: 1, pve: 1 };
+    const companion = companionId && p.ownedCommanders?.includes(companionId) ? 1 + 0.01 * heroLevel(ensureHero(p, companionId)) : 1;
     const owns = id => !!p.allianceId && this.sites.some(s => s.id === id && s.allianceId === p.allianceId);
-    return { level, maxHealth: Math.round((base.health + a.mythic * 35) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health),
-      damage: (base.damage + a.mythic * 12 * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage*(p.buffs?.attack>economyTime(this)?1+ECONOMY.buffPercent:1),
-      speed: 4 * base.speed * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march) * skill.speed,
+    return { level, maxHealth: Math.round((base.health + a.mythic * 35) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health * gear.health * companionGear.health * companion),
+      damage: (base.damage + a.mythic * 12 * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage * gear.damage * companionGear.damage * companion * (p.buffs?.attack>economyTime(this)?1+ECONOMY.buffPercent:1),
+      speed: 4 * base.speed * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march) * skill.speed * gear.speed * companionGear.speed,
       heal: 12 * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1) * skill.heal,
       gather: civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) * skill.gather,
-      pve: skill.pve, mitigation:1-(1-skill.mitigation)*(p.buffs?.defense>economyTime(this)?1-ECONOMY.buffPercent:1) };
+      pve: skill.pve * gear.pve * companionGear.pve, mitigation:1-(1-skill.mitigation)*(p.buffs?.defense>economyTime(this)?1-ECONOMY.buffPercent:1) };
   }
   atHome(p) { return distance(p, { x: p.homeX, z: p.homeZ }) < 2; }
   requireHome(p) { if (!this.atHome(p) || p.target) throw new GameError('Return your army home and stop before changing its composition or commander.'); }
@@ -246,7 +250,9 @@ export class World {
         coreReport(this,member,{id:randomUUID(),type:'pve',title:camp.name+' · Victory',outcome:'Victory',detail:'Level '+camp.level+' camp defeated. Earned 1 Oracle Sigil and '+(25*camp.level)+' commander XP shared among participating marches.\n'+ownArmies.map(actor=>{const u=classCounts(actor.units);return actor.commanderId+' · '+u.infantry+' infantry / '+u.archers+' archers / '+u.cavalry+' cavalry / '+actor.mythic+' mythic at outcome · '+Math.ceil(actor.health)+' HP remaining · '+camp.contributors[actor.id]+' damage dealt';}).join('\n'),resources:{food:Math.floor(30*camp.level/owners.length),gold:Math.floor(50*camp.level/owners.length),stone:20*camp.level,mana:5*camp.level,wood:0}});
         for (const actor of ownArmies) {
           const record = ensureHero(member, actor.commanderId);
-          record.xp += 25 * camp.level / ownArmies.length; actor.xp = record.xp; actor.level = heroLevel(record);
+          const gained = 25 * camp.level / ownArmies.length;
+          record.xp += gained; actor.xp = record.xp; actor.level = heroLevel(record);
+          if (actor.secondaryCommanderId) { const companion = ensureHero(member, actor.secondaryCommanderId); companion.xp += Math.floor(gained / 2); }
         }
       }
       this.event(`${p.name} defeated ${camp.name} (level ${camp.level}).`); a.target = null; a.state = 'Victorious';
@@ -299,14 +305,14 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
-    return { schema: 18, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 19, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -323,6 +329,7 @@ export class World {
       if (data.schema < 7) initializeExploration(p); else { if (data.schema < 16) migrateScouting(p); for (const s of p.scouts ?? []) { if (typeof s.investigationId !== 'string') s.investigationId = ''; if (s.recon === undefined) s.recon = null; if (!Number.isFinite(s.watchSeconds)) s.watchSeconds = 0; } validateExploration(p); }
       if (data.schema < 17) initializeFindings(p); else validateFindings(p);
       if (data.schema < 18) initializeRecon(p); else validateRecon(p);
+      if (data.schema < 19) ensureArmaments(p);
       p.technologies ??= {}; for (const tech of TECHNOLOGIES) if (!Number.isInteger(p.technologies[tech.id])) p.technologies[tech.id] = 0;
       if (data.schema < 8) initializeJourney(p, true); else validateJourney(p);
       if (data.schema < 9) p.strongholdVictories = 0;
@@ -340,9 +347,19 @@ export class World {
       }
       if (constructionJobs(p).some(job => !['upgrade', 'building'].includes(job.type)) || (p.research && p.research.type !== 'research') || (p.crafting && p.crafting.type !== 'craft') || p.trainingQueue.some(job => !['train', 'promote', 'recruit'].includes(job.type))) throw new Error('Invalid saved queue lane.');
       const ids = new Set([p.id]), commanders = new Set([p.commanderId]);
+      p.secondaryCommanderId ??= '';
+      if (p.secondaryCommanderId) {
+        if (p.secondaryCommanderId === p.commanderId || !p.ownedCommanders.includes(p.secondaryCommanderId)) throw new Error('Invalid saved companion.');
+        commanders.add(p.secondaryCommanderId);
+      }
       for (const a of p.marches) {
         if (!a || typeof a.id !== 'string' || ids.has(a.id) || a.ownerId !== p.id || !p.ownedCommanders.includes(a.commanderId) || commanders.has(a.commanderId) || !finitePoint(a) || ['troops', 'mythic', 'health', 'recovery', 'cooldown', 'gatherClock', 'rage', 'shield', 'shieldTime'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.homeX !== p.homeX || a.homeZ !== p.homeZ) throw new Error('Invalid saved march.');
-        ids.add(a.id); commanders.add(a.commanderId); a.target = null; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Paused';
+        ids.add(a.id); commanders.add(a.commanderId); a.secondaryCommanderId ??= '';
+        if (a.secondaryCommanderId) {
+          if (a.secondaryCommanderId === a.commanderId || !p.ownedCommanders.includes(a.secondaryCommanderId) || commanders.has(a.secondaryCommanderId)) throw new Error('Invalid saved companion.');
+          commanders.add(a.secondaryCommanderId);
+        }
+        a.target = null; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Paused';
       }
       const assignedRelics = [];
       for (const a of armyList(p)) {
@@ -412,7 +429,7 @@ export class World {
   compareCommanders(p,marchId,candidateId){
     const a=armyList(p).find(a=>a.id===marchId);if(!a||!p.ownedCommanders.includes(candidateId))throw new GameError('Choose an owned march and recruited commander.',403);
     const pick=stats=>Object.fromEntries(['maxHealth','damage','speed','gather','heal','mitigation','level'].map(k=>[k,stats[k]]));
-    return {marchId:a.id,candidateId,currentId:a.commanderId,current:pick(this.stats(a)),candidate:pick(this.stats({...a,commanderId:candidateId})),available:!armyList(p).some(other=>other.id!==a.id&&other.commanderId===candidateId)};
+    return {marchId:a.id,candidateId,currentId:a.commanderId,current:pick(this.stats(a)),candidate:pick(this.stats({...a,commanderId:candidateId,secondaryCommanderId:a.secondaryCommanderId===candidateId?'':a.secondaryCommanderId})),available:candidateId!==a.commanderId&&candidateId!==a.secondaryCommanderId&&!armyList(p).some(other=>other.id!==a.id&&(other.commanderId===candidateId||other.secondaryCommanderId===candidateId))};
   }
   armySnapshot(a) {
     const p = this.owner(a);
@@ -420,7 +437,7 @@ export class World {
     const assignment = campaignFor(this, a.id);
     const path = destination ? route(this, a, destination, a.target?.type === 'return') : [];
     return { protectedField:p.cityLevel<2||this.atHome(a)||a.recovery>0,deployed:a.deployed,cargo:{...a.cargo},carryCapacity:carryCapacity(this,a), route: path || [], assignmentKind: assignment?.kind || '', assignmentId: assignment ? (assignment.group.id || assignment.group.targetId) : '', id: a.id, ownerId: p.id, civilization: p.civilization, attackSequence: a.attackSequence ?? 0, attackX: a.attackX ?? a.x, attackZ: a.attackZ ?? a.z, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
-      units: { ...a.units }, skillKind: activeKind(a.commanderId), commanderId: a.commanderId, equippedRelic: a.equippedRelic, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
+      units: { ...a.units }, skillKind: activeKind(a.commanderId), commanderId: a.commanderId, secondaryCommanderId: a.secondaryCommanderId || '', equippedRelic: a.equippedRelic, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
       troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), recovery: a.recovery, rage: Math.floor(a.rage), shield: Math.ceil(a.shield), lastSkill: a.lastSkill, skillCasts: a.skillCasts,
       state: a.state, hasOrder: !!a.target, targetId: a.target?.id ?? '', targetX: destination?.x ?? a.x, targetZ: destination?.z ?? a.z, ...this.stats(a) };
   }
@@ -429,7 +446,7 @@ export class World {
     const viewer=this.players.get(viewerId),vision=viewer?visionContext(this,viewer):null;
     const activity = viewerId && this.players.has(viewerId) ? activitySnapshot(this, this.players.get(viewerId)) : null;
     const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
-    const snapshot = { allianceRoster:allianceRoster(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, trades: TRADES, size: SIZE, time: this.time,
+    const snapshot = { allianceRoster:allianceRoster(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.allianceId && m.allianceId === this.players.get(viewerId)?.allianceId)), markers: this.markers.filter(m => !viewerId || m.allianceId === this.players.get(viewerId)?.allianceId), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
       players: [...this.players.values()].map(p => {
         const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, ...visible } = p;
         if (viewerId && viewerId !== p.id) {
