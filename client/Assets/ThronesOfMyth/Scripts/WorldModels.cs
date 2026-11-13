@@ -15,17 +15,49 @@ namespace ThronesOfMyth
     [Serializable] public sealed class UnitCounts
     {
         public int infantry,archers,cavalry,veteranInfantry,veteranArchers,veteranCavalry;
-        public int Infantry => infantry+veteranInfantry;
-        public int Archers => archers+veteranArchers;
-        public int Cavalry => cavalry+veteranCavalry;
+        public int columnInfantry,columnArchers,columnCavalry,bulwarkInfantry,bulwarkArchers,bulwarkCavalry,titanInfantry,titanArchers,titanCavalry;
+        public int Infantry => infantry+veteranInfantry+columnInfantry+bulwarkInfantry+titanInfantry;
+        public int Archers => archers+veteranArchers+columnArchers+bulwarkArchers+titanArchers;
+        public int Cavalry => cavalry+veteranCavalry+columnCavalry+bulwarkCavalry+titanCavalry;
         public int Veterans => veteranInfantry+veteranArchers+veteranCavalry;
         public int Total => Infantry+Archers+Cavalry;
-        public int HealingWeight => Total+Veterans;
-        public int Get(string id) { switch(id){case "infantry":return infantry;case "archers":return archers;case "cavalry":return cavalry;case "veteranInfantry":return veteranInfantry;case "veteranArchers":return veteranArchers;case "veteranCavalry":return veteranCavalry;default:return 0;} }
-        public void Set(string id,int value) { switch(id){case "infantry":infantry=value;break;case "archers":archers=value;break;case "cavalry":cavalry=value;break;case "veteranInfantry":veteranInfantry=value;break;case "veteranArchers":veteranArchers=value;break;case "veteranCavalry":veteranCavalry=value;break;} }
-        public UnitCounts Copy() => new UnitCounts{infantry=infantry,archers=archers,cavalry=cavalry,veteranInfantry=veteranInfantry,veteranArchers=veteranArchers,veteranCavalry=veteranCavalry};
+        public int TierWeight => infantry+archers+cavalry+2*Veterans+3*(columnInfantry+columnArchers+columnCavalry)+4*(bulwarkInfantry+bulwarkArchers+bulwarkCavalry)+5*(titanInfantry+titanArchers+titanCavalry);
+        public int HealingWeight => TierWeight;
+        public int Advanced(string role) => role=="Archers"?Archers-archers:role=="Cavalry"?Cavalry-cavalry:Infantry-infantry;
+        public int Get(string id)
+        {
+            switch(id)
+            {
+                case "infantry":return infantry;case "archers":return archers;case "cavalry":return cavalry;
+                case "veteranInfantry":return veteranInfantry;case "veteranArchers":return veteranArchers;case "veteranCavalry":return veteranCavalry;
+                case "columnInfantry":return columnInfantry;case "columnArchers":return columnArchers;case "columnCavalry":return columnCavalry;
+                case "bulwarkInfantry":return bulwarkInfantry;case "bulwarkArchers":return bulwarkArchers;case "bulwarkCavalry":return bulwarkCavalry;
+                case "titanInfantry":return titanInfantry;case "titanArchers":return titanArchers;case "titanCavalry":return titanCavalry;
+                default:return 0;
+            }
+        }
+        public void Set(string id,int value)
+        {
+            switch(id)
+            {
+                case "infantry":infantry=value;break;case "archers":archers=value;break;case "cavalry":cavalry=value;break;
+                case "veteranInfantry":veteranInfantry=value;break;case "veteranArchers":veteranArchers=value;break;case "veteranCavalry":veteranCavalry=value;break;
+                case "columnInfantry":columnInfantry=value;break;case "columnArchers":columnArchers=value;break;case "columnCavalry":columnCavalry=value;break;
+                case "bulwarkInfantry":bulwarkInfantry=value;break;case "bulwarkArchers":bulwarkArchers=value;break;case "bulwarkCavalry":bulwarkCavalry=value;break;
+                case "titanInfantry":titanInfantry=value;break;case "titanArchers":titanArchers=value;break;case "titanCavalry":titanCavalry=value;break;
+            }
+        }
+        public UnitCounts Copy() => new UnitCounts{infantry=infantry,archers=archers,cavalry=cavalry,veteranInfantry=veteranInfantry,veteranArchers=veteranArchers,veteranCavalry=veteranCavalry,columnInfantry=columnInfantry,columnArchers=columnArchers,columnCavalry=columnCavalry,bulwarkInfantry=bulwarkInfantry,bulwarkArchers=bulwarkArchers,bulwarkCavalry=bulwarkCavalry,titanInfantry=titanInfantry,titanArchers=titanArchers,titanCavalry=titanCavalry};
+        public string Summary()
+        {
+            string[] ids={"infantry","veteranInfantry","columnInfantry","bulwarkInfantry","titanInfantry","archers","veteranArchers","columnArchers","bulwarkArchers","titanArchers","cavalry","veteranCavalry","columnCavalry","bulwarkCavalry","titanCavalry"};
+            string[] names={"Oathguard","Veteran Oathguard","Bronze Column","Oath Bulwark","Titan Guard","Dawn Archers","Veteran Dawn Archers","Ashen Bows","Far Marks","Echo Marks","Dawn Riders","Veteran Dawn Riders","Dawn Lancers","Storm Couriers","Horizon Lancers"};
+            var parts=new System.Collections.Generic.List<string>();
+            for(int i=0;i<ids.Length;i++)if(Get(ids[i])>0)parts.Add(Get(ids[i])+" "+names[i]);
+            return parts.Count==0?"No mortal troops":string.Join(" · ",parts);
+        }
     }
-    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration, orderSeconds, promotionSeconds; public int cityLevel,tier,sourceAvailable,orderAmount; public string baseId,lockedReason; public ResourceAmounts cost,orderCost,promotionCost; }
+    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration, orderSeconds, promotionSeconds; public int cityLevel,tier,sourceAvailable,orderAmount; public string baseId,sourceId,lockedReason; public ResourceAmounts cost,orderCost,promotionCost; }
     [Serializable] public sealed class ArmyData
     {
         public string id, ownerId, name, civilization, commanderId, secondaryCommanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;

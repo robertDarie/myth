@@ -188,4 +188,6 @@ Unity 6000.3.0f1 rebuilt the Windows player (`Build Finished, Result: Success`, 
 
 ## Commander armament and pairing
 
+Troop tiers III–V were added after the commander package. See `docs/tm-041-troop-tiers.md`. Schema 20 keeps older soldiers. The training screen lists all five tiers from the server. No manual playthrough was run for that package.
+
 The slot design was implemented after that playtest. The Forge of Dawn crafts Frontier Spearhead, Frontier Cuirass, and Frontier Standard with ordinary resources and Mana. The city owns each piece once. A commander wears one piece per Weapon, Armor, and Banner slot. Two pieces add camp and stronghold damage × 1.02 once. Bronze Aegis and Ember Spear remain march relics. A march may also assign one companion. The companion adds 1% damage and maximum health per companion level, does not cast a skill, and receives half of the primary camp-experience grant in addition to it. Schema 19 migrates older saves without clearing relics or the primary commander. Protocol stays 16. `server/armament.test.mjs` covers the commands, costs, locks, and migration. The Windows player was not played again for this package.

@@ -37,7 +37,7 @@ namespace ThronesOfMyth
             seen.Add(id);
             if (!pieces.TryGetValue(id, out var piece)) piece = Create(id, kind, x, z, color);
             piece.destination = new Vector3(x, 0, z); piece.label = label; piece.color = color; piece.health = health;piece.healthTrace.Observe(health,Time.unscaledTime);
-            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : (units.Infantry > 0 ? "I" : "") + (units.Archers > 0 ? "A" : "") + (units.Cavalry > 0 ? "C" : "") + Mathf.Min(3, units.Total)+":"+Mathf.Min(3,units.veteranInfantry)+":"+Mathf.Min(3,units.veteranArchers)+":"+Mathf.Min(3,units.veteranCavalry));
+            string visualKey = kind + ":" + variant + ":" + ColorUtility.ToHtmlStringRGB(color) + ":" + Mathf.Min(3, mythic) + ":" + commanderId + ":" + (units == null ? "" : (units.Infantry > 0 ? "I" : "") + (units.Archers > 0 ? "A" : "") + (units.Cavalry > 0 ? "C" : "") + Mathf.Min(3, units.Total)+":"+units.TierWeight);
             if (piece.visualKey != visualKey)
             {
                 if (piece.actor != null) { piece.actor.gameObject.SetActive(false); Destroy(piece.actor.gameObject); }

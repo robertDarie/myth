@@ -8,27 +8,17 @@ This is the working order for functional completeness. It is not a line-by-line 
 
 - **TM-056 / 09-009 / 16-031 — commander armament.** Forge of Dawn crafts Frontier Spearhead, Frontier Cuirass, and Frontier Standard. The city owns each piece once. One commander wears it in Weapon, Armor, or Banner. Two pieces of Oath of the Frontier add camp and stronghold damage × 1.02 once. Equip and unequip wait until every march that commander serves is home. Bronze Aegis and Ember Spear stay march relics. Schema 19. Protocol 16.
 - **TM-057 — secondary commander.** One companion per march. They add 1% damage and maximum health per companion level, do not cast a skill, and receive half of the primary's camp experience grant on top of it. A commander cannot serve twice. Old saves keep the primary and an empty companion.
+- **TM-041 / 02-022 — troop tiers III–V.** Bronze Column, Ashen Bows, and Dawn Lancers; Oath Bulwark, Far Marks, and Storm Couriers; Titan Guard, Echo Marks, and Horizon Lancers. Bronze Columns, Oath Bulwarks, and Titan Host unlock them inside the five-level Citadel. Training, adjacent promotion, healing, power, and combat use the same ids. Schema 20. Protocol 16. The balance is in `docs/tm-041-troop-tiers.md`.
 
-Acceptance for both: valid and invalid commands, ownership, forge cost and cancel refund, deployed lock, duplicate-piece rejection, relic separation, set bonus, companion experience, and schema 18 migration are covered by `server/armament.test.mjs`. The forge and hall send `equip-armament`, `unequip-armament`, `pair-commander`, and `unpair-commander`.
+Acceptance for the commander package is `server/armament.test.mjs`. Acceptance for the five tiers is `server/tiers.test.mjs`, with the existing veteran suite still passing.
 
 ## Next package
 
-### A. Troop tiers III–V (TM-041, 02-022)
+### A. Formation bonuses
 
-Do not add a tier selector until the tier exists on the server.
+Class counters already apply at every tier. A march does not yet gain a bonus from its mix of infantry, archers, and cavalry beyond the mounted-speed rule. The next military package should add one documented formation bonus from those class counts, used in combat and shown on the formation screen. It should not add another troop tier or a copied balance table.
 
-What exists: Tier I Oathguard, Dawn Archers, and Dawn Riders. Tier II veterans of those three classes. Veteran Oaths is one Athenaeum rank. Training, promotion of five Tier I soldiers, healing, and power already distinguish tier 2 in `server/troops.mjs`.
-
-What a real Tier III–V package has to add together:
-
-- New research beyond Veteran Oaths, with Athenaeum and Hall of Spears requirements.
-- Training costs, durations, and Hall of Spears batch rules for each new tier.
-- Promotion that spends the cost difference and does not create soldiers.
-- Power, healing, and `troopBase` combat values for the new ids.
-- Save validation so a locked tier cannot appear in reserves, marches, hospitals, or queues.
-- The training screen reading those server options, including the lock reason.
-
-Formation bonuses are not part of the current troop stats. They belong with this package only if the bonus is a documented rule on the existing infantry, archer, and cavalry counts.
+Seven-day login rewards are the following progression package after that, using ordinary resources only.
 
 ## Later functional packages
 
@@ -50,7 +40,7 @@ Daily and weekly goals exist and are server-tested. The event hub (TM-071) and s
 
 ### F. Multiplayer infrastructure and operations
 
-Protocol 16 and schema 19 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
+Protocol 16 and schema 20 persistence exist for one kingdom. Multiple kingdoms, migration, and the scale of many simultaneous battles are the remaining operations gap.
 
 ### G. Functional UI and accessibility
 

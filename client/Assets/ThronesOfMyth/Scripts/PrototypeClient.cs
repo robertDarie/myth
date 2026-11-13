@@ -140,28 +140,34 @@ namespace ThronesOfMyth
             DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
             GUILayout.Label("Infantry counters cavalry · Cavalry counters archers · Archers counter infantry. Tiers keep these roles.",noteStyle);
-            trainingTier=GUILayout.SelectionGrid(trainingTier,new[]{"Tier I · Levies","Tier II · Veterans"},2,GUILayout.Height(38));
-            if(trainingTier==1)
-            {
-                GUILayout.Label("Unlock: Citadel 2, Hall of Spears 2, Athenaeum 2 and Veteran Oaths research. Promote five ready Tier I reserves or train veterans directly.",noteStyle);
-                if(GUILayout.Button("Open Veteran Oaths research")){inspectedTechnology=Mathf.Max(0,Array.FindIndex(me.researchOptions,t=>t.id=="veterans"));OpenInterface(InterfacePage.Research);}
-                if(GUILayout.Button("Assemble march / leave troops in reserves"))PrepareCityMarch();
-            }
+            trainingTier=GUILayout.SelectionGrid(trainingTier,new[]{"I","II","III","IV","V"},5,GUILayout.Height(32));
+            string[] tierNotes={
+                "Tier I trains from the Hall of Spears. Cavalry needs Citadel 2.",
+                "Tier II needs Citadel 2, Hall of Spears 2, Athenaeum 2 and Veteran Oaths. Promote five Tier I soldiers or train them directly.",
+                "Tier III needs Citadel 3, Hall of Spears 3, Athenaeum 3 and Bronze Columns. Promote five Tier II soldiers or train them directly.",
+                "Tier IV needs Citadel 4, Hall of Spears 4, Athenaeum 4 and Oath Bulwarks. Promote five Tier III soldiers or train them directly.",
+                "Tier V needs Citadel 5, Hall of Spears 5, Athenaeum 5 and Titan Host. Promote five Tier IV soldiers or train them directly."
+            };
+            string[] tierResearch={"","veterans","columns","bulwarks","titanhost"};
+            string[] researchNames={"","Veteran Oaths","Bronze Columns","Oath Bulwarks","Titan Host"};
+            GUILayout.Label(tierNotes[Mathf.Clamp(trainingTier,0,4)],noteStyle);
+            if(trainingTier>0&&GUILayout.Button("Open "+researchNames[trainingTier]+" research")){inspectedTechnology=Mathf.Max(0,Array.FindIndex(me.researchOptions,t=>t.id==tierResearch[trainingTier]));OpenInterface(InterfacePage.Research);}
+            if(GUILayout.Button("Assemble march / leave troops in reserves"))PrepareCityMarch();
             foreach (var troop in me.trainingOptions)
             {
                 if(troop.tier!=trainingTier+1)continue;
                 GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Label(troop.name + " · " + troop.role + " · T" + troop.tier, sectionStyle);
-                GUILayout.Label(troop.description + "  Base health " + troop.health + " · Damage " + troop.damage.ToString("F2") + " per troop", noteStyle);
+                GUILayout.Label(troop.name + " · " + troop.role + " · Tier " + troop.tier, sectionStyle);
+                GUILayout.Label(troop.description + "  Health " + troop.health.ToString("0.##") + " · Damage " + troop.damage.ToString("0.##") + " per troop", noteStyle);
                 int batch=troop.orderAmount;
                 string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":batch<=0?"The server has not quoted this order.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.assignedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+batch>cap?"Increase troop capacity or finish current training.":!Afford(troop.orderCost)?"More resources required: "+Cost(troop.orderCost):"";
                 if(theme.Action("Train "+batch+" · "+Mathf.CeilToInt(troop.orderSeconds)+"s · "+Cost(troop.orderCost),string.IsNullOrEmpty(reason),reason))Send("train",troop.id);
-                if(troop.tier==2)
+                var source=troop.tier>=2?Array.Find(world.troopTypes,t=>t.id==troop.sourceId):null;
+                if(source!=null)
                 {
-                    var source=Array.Find(world.troopTypes,t=>t.id==troop.baseId);
-                    GUILayout.Label("Per unit: health "+source.health+" → "+troop.health+" · damage "+source.damage.ToString("F2")+" → "+troop.damage.ToString("F2"),noteStyle);
-                    GUILayout.Label("Ready Tier I reserves: "+troop.sourceAvailable+" · promotion keeps the same five soldiers",noteStyle);
-                    string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<5?"Needs five ready Tier I reserves.":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
+                    GUILayout.Label("Per unit: health "+source.health.ToString("0.##")+" → "+troop.health.ToString("0.##")+" · damage "+source.damage.ToString("0.##")+" → "+troop.damage.ToString("0.##"),noteStyle);
+                    GUILayout.Label("Ready "+source.name+": "+troop.sourceAvailable+" · promotion keeps the same five soldiers",noteStyle);
+                    string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<5?"Needs five ready "+source.name+".":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
                     if(theme.Action("Promote 5 · "+Mathf.CeilToInt(troop.promotionSeconds)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
                 }
                 GUILayout.EndVertical();

@@ -57,7 +57,7 @@ namespace ThronesOfMyth
                     float side = i % 2 == 0 ? -1 : 1;
                     var position = role == "Archer" ? new Vector3((i-0.5f)*1.05f,0,-1.65f) : role == "Cavalry" ? new Vector3(side*(1.65f+i/2*0.8f),0,-0.2f) : new Vector3((i-0.5f)*1.05f,0,0.05f);
                     if (!SkinnedUnit(root,culture,role,"",position,team,actor)) Soldier(root,position,team,culture,actor,role == "Archer" ? "archers" : role.ToLowerInvariant());
-                    int veterans=role=="Infantry"?units.veteranInfantry:role=="Archer"?units.veteranArchers:units.veteranCavalry;
+                    int veterans=units.Advanced(role=="Archer"?"Archers":role);
                     if(i<veterans&&actor.soldiers.Count>0)
                     {
                         var badge=Shape(actor.soldiers[actor.soldiers.Count-1].transform,PrimitiveType.Cube,new Vector3(0,2.1f,0),new Vector3(.15f,.15f,.06f),new Color(.95f,.75f,.28f));
