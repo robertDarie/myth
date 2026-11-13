@@ -53,7 +53,7 @@ test('a completed camp cycle does not pay a stale or overlapping order again', (
   assert.equal(p.target, null); assert.equal(p.state, 'Target unavailable');
   assert.equal(p.kills, 1); assert.equal(p.gold, gold); assert.equal(p.sigils, sigils); assert.ok(p.ap >= ap);
   const loaded = World.fromSave(w.toSave()), restored = loaded.authenticate(joined.token), camp = loaded.camps[0];
-  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 19);
+  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 20);
   camp.respawn = 0.05; loaded.tick(0.1);
   assert.equal(camp.cycle, 2); assert.equal(camp.health, camp.maxHealth); assert.deepEqual(camp.contributors, {});
   restored.x = camp.x; restored.z = camp.z;

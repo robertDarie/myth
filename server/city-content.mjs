@@ -28,6 +28,9 @@ export const CITADEL_REQUIREMENTS = {
 };
 export const TECHNOLOGIES = [
   { id:'veterans',name:'Veteran Oaths',branch:'Military',description:'Unlock Tier II infantry, archers and cavalry at Hall of Spears level 2. Promotes existing reserves without creating extra soldiers.',academy:2,prerequisite:'drill',maxLevel:1,base:{food:100,wood:80,gold:80,stone:50} },
+  { id:'columns',name:'Bronze Columns',branch:'Military',description:'Unlock Tier III infantry, archers and cavalry. Requires Veteran Oaths, Citadel 3, Hall of Spears 3 and Athenaeum 3.',academy:3,prerequisite:'veterans',citadel:3,hall:3,maxLevel:1,pace:2,base:{food:180,wood:140,gold:150,stone:100} },
+  { id:'bulwarks',name:'Oath Bulwarks',branch:'Military',description:'Unlock Tier IV infantry, archers and cavalry. Requires Bronze Columns, Citadel 4, Hall of Spears 4 and Athenaeum 4.',academy:4,prerequisite:'columns',citadel:4,hall:4,maxLevel:1,pace:3,base:{food:280,wood:220,gold:240,stone:180} },
+  { id:'titanhost',name:'Titan Host',branch:'Military',description:'Unlock Tier V infantry, archers and cavalry. Requires Oath Bulwarks, Citadel 5, Hall of Spears 5 and Athenaeum 5.',academy:5,prerequisite:'bulwarks',citadel:5,hall:5,maxLevel:1,pace:4,base:{food:420,wood:320,gold:360,stone:280} },
   { id: 'harvest', name: 'Blessings of Plenty', branch: 'Economy', description: '+15% passive production per rank.', academy: 1, base: { wood: 30, gold: 30, food: 20 } },
   { id: 'masonry', name: 'Titan Masonry', branch: 'Economy', description: '+5% construction speed per rank.', academy: 1, prerequisite: 'harvest', base: { stone: 30, gold: 40 } },
   { id: 'writing', name: 'Runic Scriptoria', branch: 'Economy', description: '+5% research speed per rank.', academy: 1, prerequisite: 'harvest', base: { wood: 40, gold: 40, mana: 5 } },

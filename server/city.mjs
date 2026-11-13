@@ -81,15 +81,17 @@ export function buildingCard(p, b) {
 }
 export function technologyCard(p, t) {
   const level = p.technologies[t.id], next = level + 1, cost = scaled(t.base, next * next);
-  const duration = 12 * next / (1 + 0.05 * p.technologies.writing);
+  const duration = 12 * (t.pace ?? 1) * next / (1 + 0.05 * p.technologies.writing);
   let lockedReason = '';
   if (level >= (t.maxLevel??3)) lockedReason = 'Maximum research rank.';
   else if (p.research) lockedReason = 'Research lane is busy.';
   else if (p.buildings.academy < Math.max(t.academy, next)) lockedReason = `Athenaeum level ${Math.max(t.academy, next)} required.`;
   else if (t.prerequisite && p.technologies[t.prerequisite] < 1) lockedReason = `${TECHNOLOGIES.find(k => k.id === t.prerequisite).name} rank 1 required.`;
+  else if (t.citadel && p.cityLevel < t.citadel) lockedReason = `Citadel level ${t.citadel} required.`;
+  else if (t.hall && (p.buildings.barracks ?? 0) < t.hall) lockedReason = `Hall of Spears level ${t.hall} required.`;
   else if (t.building && !p.buildings[t.building]) lockedReason = `${BUILDINGS.find(b => b.id === t.building).name} required.`;
   else if (!affordable(p, cost)) lockedReason = 'Not enough resources.';
-  const dependencies=[requirement(p,{id:'academy',level:Math.max(t.academy,next)})];if(t.prerequisite)dependencies.push(requirement(p,{id:t.prerequisite,level:1},'research'));if(t.building)dependencies.push(requirement(p,{id:t.building,level:1}));
+  const dependencies=[requirement(p,{id:'academy',level:Math.max(t.academy,next)})];if(t.prerequisite)dependencies.push(requirement(p,{id:t.prerequisite,level:1},'research'));if(t.citadel)dependencies.push(requirement(p,{id:'citadel',level:t.citadel}));if(t.hall)dependencies.push(requirement(p,{id:'barracks',level:t.hall}));if(t.building)dependencies.push(requirement(p,{id:t.building,level:1}));
   return { ...t, prerequisites:level>=(t.maxLevel??3)?[]:dependencies,level, maxLevel: t.maxLevel??3, cost, duration, canResearch: !lockedReason, lockedReason };
 }
 export function citySnapshot(world, p) {

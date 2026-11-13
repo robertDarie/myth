@@ -14,7 +14,7 @@ import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, trainingBatch, batchCost } from './troops.mjs';
+import { TROOP_TYPES, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, sourceType, trainingBatch, batchCost } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
@@ -137,13 +137,14 @@ export class World {
         const type = TROOP_TYPES.find(t => t.id === (c.targetId || 'infantry'));
         if (!type) throw new GameError('Choose a valid troop type.');
         const locked=tierLock(p,type);if(locked)throw new GameError(locked);
-        if(promoting&&(type.tier!==2||countOf(p.reserveUnits,type.baseId)<5))throw new GameError('Promotion requires five ready Tier I reserves of this class.');
+        const source=sourceType(type);
+        if(promoting&&(!source||countOf(p.reserveUnits,source.id)<5))throw new GameError('Promotion requires five ready reserves of the previous tier.');
         const cost=batchCost(promoting?promotionCost(type):type.cost, amount);
         this.spend(p,cost);
-        if(promoting){changeUnits(p.reserveUnits,type.baseId,-5);p.reserveTroops-=5;}
-        const baseDuration=promoting?type.duration-TROOP_TYPES.find(t=>t.id===type.baseId).duration:type.duration;
+        if(promoting){changeUnits(p.reserveUnits,source.id,-5);p.reserveTroops-=5;}
+        const baseDuration=promoting?type.duration-source.duration:type.duration;
         const job = this.job(promoting?'promote':'train', baseDuration * (promoting?1:amount/5) / (1 + 0.1 * Math.max(0, p.buildings.barracks - 1)), { ...cost }, amount);
-        job.targetId = type.id;if(promoting)job.sourceId=type.baseId; p.trainingQueue.push(job); return;
+        job.targetId = type.id;if(promoting)job.sourceId=source.id; p.trainingQueue.push(job); return;
       }
       case 'recruit': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
@@ -294,7 +295,8 @@ export class World {
       if (['train','promote'].includes(job.type)) { p.reserveTroops += job.amount; changeUnits(p.reserveUnits,job.targetId,job.amount);if(job.type==='train'){journeyMetric(p,'trained',job.amount);recordActivity(this,p,'trained',job.amount);} }
       else p.reserveMythic += job.amount;
       p.trainingQueue.shift();
-      this.event(`${p.name}: ${['train','promote'].includes(job.type) ? job.amount + (job.type==='promote'?' veterans':' troops') : 'a mythic recruit'} ready in city reserves.`);
+      const trained = TROOP_TYPES.find(t => t.id === job.targetId);
+      this.event(`${p.name}: ${['train','promote'].includes(job.type) ? job.amount + ' ' + (trained?.name ?? 'troops') : 'a mythic recruit'} ready in city reserves.`);
     }
   }
   expire(now) {
@@ -305,14 +307,14 @@ export class World {
   }
   toSave() {
     this.normalizeDeployment();
-    return { schema: 19, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: 20, world: { kingdom: this.kingdom, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World(options);
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -336,6 +338,7 @@ export class World {
       if (!Number.isSafeInteger(p.strongholdVictories) || p.strongholdVictories < 0) throw new Error('Invalid saved stronghold victories.');
       if(data.schema<12)initializeInventory(p);
       if(data.schema<13)p.technologies.veterans=0;
+      if(data.schema<20)for(const id of ['columns','bulwarks','titanhost'])p.technologies[id]??=0;
       if(data.schema<14){initializeLogistics(p,true);p.discovery=[];}else {validateLogistics(p);validateDiscovery(p);}
       for(const a of armyList(p))if(data.schema>=14&&a.target)resumedOrders.set(a.id,structuredClone(a.target));
       if(p.discovery.some(r=>r.observedAt>w.time)||p.coreReports.some(r=>r.time>w.time)||armyList(p).some(a=>a.cargoStarted>w.time))throw new Error('Invalid saved logistics observation time.');

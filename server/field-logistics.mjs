@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { armyList, age } from './progression.mjs';
-import { countOf } from './troops.mjs';
+import { classCounts } from './troops.mjs';
 import { RESOURCES } from './city-content.mjs';
 import { journeyMetric } from './chapters.mjs';
 import { recordActivity } from './activity.mjs';
@@ -17,7 +17,7 @@ export function initializeLogistics(p,legacy=false){
 }
 export function carryCapacity(w,a){
  const u=a.units,p=w.owner(a);
- const base=(countOf(u,'infantry')+countOf(u,'veteranInfantry'))*16+(countOf(u,'archers')+countOf(u,'veteranArchers'))*12+(countOf(u,'cavalry')+countOf(u,'veteranCavalry'))*24+a.mythic*80;
+ const classes=classCounts(u);const base=classes.infantry*16+classes.archers*12+classes.cavalry*24+a.mythic*80;
  return Math.floor(base*(1+.08*p.technologies.logistics));
 }
 export function coreReport(w,p,report){
