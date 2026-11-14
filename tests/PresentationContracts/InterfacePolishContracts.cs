@@ -24,7 +24,7 @@ static class InterfacePolishContracts
   Check(InterfaceLayout.Scale(1024,768,1)>.64f,"Small display text receives larger physical scale");
   Check(InterfaceLayout.Duration(61)=="1m 1s"&&InterfaceLayout.Duration(3601)=="1h 0m","Duration format");Check(InterfaceLayout.Duration(-1)=="0s","Duration clamp");
   Check(InterfaceLayout.Countdown(2,4)==0&&InterfaceLayout.Countdown(10,100)==7,"Countdown must not extrapolate beyond short snapshot window");
-  Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==16,"Release identity advances without a protocol change");
+  Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==17,"Release identity advances with the expanded-map protocol");
   foreach(var size in new[]{(1024f,768f),(1280f,800f),(1920f,1080f)})
   {
    InterfaceLayout.CommanderWindow(size.Item1,size.Item2,1f,out float innerW,out float innerH);

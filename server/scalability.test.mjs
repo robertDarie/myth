@@ -1,3 +1,4 @@
+import { FOG_WIDTH, WORLD_SIZE } from './world-map.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { checkpoint, restoreCheckpoint } from './checkpoint.mjs';
@@ -72,9 +73,9 @@ test('roster scopes observe deploy, disband, restore and live composition change
 });
 test('bounded sight cells match the exhaustive privacy predicate at boundaries and randomized positions',()=>{
   let seed=42;const rand=()=>((seed=(1664525*seed+1013904223)>>>0)/2**32);
-  const exhaustive=eyes=>Array.from({length:400},(_,i)=>i).filter(i=>eyes.some(s=>Math.hypot(s.x-(i%20*4+2),s.z-(Math.floor(i/20)*4+2))<=s.radius));
+  const exhaustive=eyes=>Array.from({length:FOG_WIDTH*FOG_WIDTH},(_,i)=>i).filter(i=>eyes.some(s=>Math.hypot(s.x-(i%FOG_WIDTH*4+2),s.z-(Math.floor(i/FOG_WIDTH)*4+2))<=s.radius));
   for(let i=0;i<500;i++) {
-    const eyes=Array.from({length:i%7},()=>({x:rand()*80,z:rand()*80,radius:rand()*20}));
+    const eyes=Array.from({length:i%7},()=>({x:rand()*WORLD_SIZE,z:rand()*WORLD_SIZE,radius:rand()*20}));
     assert.deepEqual(sightCells(eyes),exhaustive(eyes));
   }
   for(const x of [0,2,40,79,80])for(const z of [0,2,40,79,80])for(const radius of [0,4,8,9,10,Math.sqrt(8)]) {

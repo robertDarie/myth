@@ -1,3 +1,4 @@
+import { provinceAt } from './world-map.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -5,7 +6,7 @@ import { STARTING_REGIONS, SPAWN_RULES, suitableSpawn } from './spawning.mjs';
 import { route } from './navigation.mjs';
 import { openRealm } from './realms.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
-const seeded = seed => () => ((seed=(1664525*seed+1013904223)>>>0)/2**32);
+const seeded = seed => { for(let i=0;i<10;i++)seed=(1664525*seed+1013904223)>>>0;return () => ((seed=(1664525*seed+1013904223)>>>0)/2**32); };
 const make = seed => new World({random:seeded(seed),now:()=>Date.UTC(2026,10,14)});
 test('seeded spawns fill 32 cities with independent continuous positions, spacing and reachable starter content',()=>{
   for(let seed=1;seed<=24;seed++) {
@@ -21,12 +22,12 @@ test('seeded spawns fill 32 cities with independent continuous positions, spacin
   }
 });
 test('first cities cover all quadrants without a slot-based row, and seeded runs reproduce',()=>{
-  const counts=[0,0,0,0], positions=[];
+  const counts=new Map(STARTING_REGIONS.map(r=>[r.id,0])), positions=[];
   for(let seed=0;seed<240;seed++) {
     const w=make(seed),p=w.authenticate(w.join('First').token);
-    counts[(p.x>=20?1:0)+(p.z>=20?2:0)]++;positions.push(p.homeX+':'+p.homeZ);
+    counts.set(provinceAt(p).id,counts.get(provinceAt(p).id)+1);positions.push(p.homeX+':'+p.homeZ);
   }
-  assert.ok(counts.every(n=>n>=25&&n<=100),JSON.stringify(counts));assert.equal(new Set(positions).size,240);
+  assert.ok([...counts.values()].every(n=>n>=25&&n<=100),JSON.stringify([...counts]));assert.equal(new Set(positions).size,240);
   const a=make(42),b=make(42);
   for(let i=0;i<32;i++) {
     const p=a.authenticate(a.join('P'+i).token),q=b.authenticate(b.join('P'+i).token);
@@ -43,7 +44,7 @@ test('reconnect, save restart and legacy cities never reroll or move permanent s
 });
 test('full land fails gracefully, and save failure releases a generated position and identity',()=>{
   const w=make(4);
-  for(let z=3;z<=37;z+=3)for(let x=3;x<=37;x+=3)w.flags.push({id:x+':'+z,x,z});
+  for(const r of STARTING_REGIONS)for(let z=r.minZ;z<=r.maxZ;z+=3)for(let x=r.minX;x<=r.maxX;x+=3)w.flags.push({id:x+':'+z,x,z});
   assert.throws(()=>w.join('Blocked'),/No suitable starting land/);assert.equal(w.players.size,0);assert.equal(w.sessions.size,0);
   const fresh=new World({random:()=>.5});let fail=true;
   const realm=openRealm({id:'spawn',name:'Spawn',store:{load:()=>fresh,save:()=>{if(fail)throw new Error('disk full');}}});

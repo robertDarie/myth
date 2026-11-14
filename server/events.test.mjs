@@ -179,7 +179,7 @@ test('schema 21 and 18 gain a fresh event record without changing the city', () 
     delete old.world.players[0].events;
     const loaded = World.fromSave(old, { now: () => monday });
     const q = loaded.authenticate(s.token);
-    assert.equal(loaded.toSave().schema, 25);
+    assert.equal(loaded.toSave().schema, 26);
     assert.equal(q.food, food);
     assert.equal(q.wood, wood);
     assert.equal(q.troops, troops);

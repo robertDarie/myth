@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -101,11 +102,11 @@ test('coalition invites expire, reject a fourth member, and schema 23 keeps the 
   command(w, extra, 'alliance-create', { name: 'Elm' });
   assert.throws(() => command(w, a, 'coalition-invite', { targetId: extra.allianceId }), /three alliances/);
   const saved = structuredClone(w.toSave());
-  saved.schema = 23;
+  legacyMap(saved);saved.schema = 23;
   delete saved.world.coalitions;
   delete saved.world.coalitionInvites;
   const migrated = World.fromSave(saved, { now: () => Date.UTC(2026, 0, 6, 12) });
-  assert.equal(migrated.toSave().schema, 25);
+  assert.equal(migrated.toSave().schema, 26);
   assert.equal(migrated.coalitions.length, 0);
   assert.equal(migrated.diplomacy.pacts.length, 1);
   assert.equal(migrated.alliances.size, w.alliances.size);

@@ -1,3 +1,4 @@
+import { LIMITS } from './world-map.mjs';
 import { randomUUID } from 'node:crypto';
 import { activityClock } from './activity.mjs';
 
@@ -259,7 +260,7 @@ export function coalitionSnapshot(w, p) {
 }
 
 export function validateCoalitions(w) {
-  if (!Array.isArray(w.coalitions) || !Array.isArray(w.coalitionInvites) || w.coalitions.length > 32 || w.coalitionInvites.length > 64) throw new Error('Invalid saved coalition.');
+  if (!Array.isArray(w.coalitions) || !Array.isArray(w.coalitionInvites) || w.coalitions.length > LIMITS.maxCities || w.coalitionInvites.length > LIMITS.maxCities*2) throw new Error('Invalid saved coalition.');
   const membership = new Set();
   for (const coalition of w.coalitions) {
     if (!coalition || typeof coalition.id !== 'string' || typeof coalition.name !== 'string' || coalition.name.length < 1 || coalition.name.length > 24 || !Array.isArray(coalition.members) || coalition.members.length < 1 || coalition.members.length > 3 || !coalition.members.includes(coalition.founderId) || new Set(coalition.members).size !== coalition.members.length || !Number.isSafeInteger(coalition.since) || coalition.since < 0) throw new Error('Invalid saved coalition.');

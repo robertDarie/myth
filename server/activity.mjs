@@ -1,3 +1,4 @@
+import { LIMITS } from './world-map.mjs';
 import { grantReward, rewardSnapshot } from './inventory.mjs';
 import { recordSeason } from './season.mjs';
 import { recordKingdomContribution } from './kingdom.mjs';
@@ -129,6 +130,6 @@ export function validateActivity(w){
  }
  for(const a of w.alliances.values()){
   const data=a.weekly;if(data===undefined)continue;
-  if(!data||!integer(data.week)||data.week>week||!data.contributions||typeof data.contributions!=='object'||Array.isArray(data.contributions)||Object.keys(data.contributions).length>32||!validList(data.strongholdEvents,data.strongholdEvents)||data.strongholdEvents.length>3||data.strongholdEvents.some(id=>typeof id!=='string')||Object.entries(data.contributions).some(([id,c])=>!w.players.has(id)||!c||Object.keys(c).length!==3||!['gather','helps','strongholds'].every(k=>integer(c[k]))))throw new Error('Invalid saved alliance activity.');
+  if(!data||!integer(data.week)||data.week>week||!data.contributions||typeof data.contributions!=='object'||Array.isArray(data.contributions)||Object.keys(data.contributions).length>LIMITS.maxCities||!validList(data.strongholdEvents,data.strongholdEvents)||data.strongholdEvents.length>3||data.strongholdEvents.some(id=>typeof id!=='string')||Object.entries(data.contributions).some(([id,c])=>!w.players.has(id)||!c||Object.keys(c).length!==3||!['gather','helps','strongholds'].every(k=>integer(c[k]))))throw new Error('Invalid saved alliance activity.');
  }
 }

@@ -1,3 +1,4 @@
+import { WORLD_SIZE } from './world-map.mjs';
 import { initializeLogistics, cargoTotal } from './field-logistics.mjs';
 import { visible } from './exploration.mjs';
 import { siteIsOpen } from './kingdom.mjs';
@@ -13,7 +14,7 @@ const withinMarchShare = (p, troops, fail) => {
   if (troops > cap) fail(`A single march can hold ${cap} mortal troops. Leave the rest in the city or use another march slot.`);
 };
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
-const point = c => [c.x, c.z].every(n => Number.isFinite(n) && n >= 1 && n <= 79);
+const point = c => [c.x, c.z].every(n => Number.isFinite(n) && n >= 1 && n <= WORLD_SIZE-1);
 export function marchCommand(world, p, c, fail) {
   if (c.type === 'deploy-march') {
     const chosen = selection(c, fail), { troops, mythic, units } = chosen;

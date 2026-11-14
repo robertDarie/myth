@@ -53,7 +53,7 @@ test('a completed camp cycle does not pay a stale or overlapping order again', (
   assert.equal(p.target, null); assert.equal(p.state, 'Target unavailable');
   assert.equal(p.kills, 1); assert.equal(p.gold, gold); assert.equal(p.sigils, sigils); assert.ok(p.ap >= ap);
   const loaded = World.fromSave(w.toSave()), restored = loaded.authenticate(joined.token), camp = loaded.camps[0];
-  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 25);
+  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 26);
   camp.respawn = 0.05; loaded.tick(0.1);
   assert.equal(camp.cycle, 2); assert.equal(camp.health, camp.maxHealth); assert.deepEqual(camp.contributors, {});
   restored.x = camp.x; restored.z = camp.z;
@@ -202,7 +202,7 @@ test('inactive saved cities retain sessions, alliances and territory', () => {
   assert.throws(() => w.join('A'), /already exists/);
 });
 test('HTTP clients share state, cannot command each other, and invalid requests fail', async t => {
-  const { server } = createGameServer();
+  const { server, world: httpWorld } = createGameServer();httpWorld.spawnLocation=()=>({x:5+httpWorld.players.size*5,z:5});
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
   t.after(() => new Promise(resolve => server.close(resolve)));
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -210,11 +210,11 @@ test('HTTP clients share state, cannot command each other, and invalid requests 
   const a = await (await post('/join', { name: 'A', civilization: 'greek' })).json(), b = await (await post('/join', { name: 'B', civilization: 'egyptian' })).json();
   const get = async token => (await fetch(base + '/world', { headers: { Authorization: `Bearer ${token}` } })).json();
   const health = await (await fetch(base + '/health')).json();
-  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version,16);
+  assert.equal(health.game, 'thrones-of-myth'); assert.equal(health.version,17);
   assert.equal((await fetch(base + '/world')).status, 401); const before = await get(b.token), ownBefore = await get(a.token);
   assert.equal((await post('/command', { type: 'move', x: 18, z: 5, playerId: b.playerId }, a.token)).status, 200);
   await new Promise(resolve => setTimeout(resolve, 250)); const after = await get(a.token);
-  assert.equal(after.version,16); assert.equal(after.players.length, 2);
+  assert.equal(after.version,17); assert.equal(after.players.length, 2);
   assert.ok(Math.abs(after.armies.find(p => p.id === a.playerId).x - 18) < Math.abs(ownBefore.players.find(p=>p.id===a.playerId).homeX - 18));
   assert.equal((await get(b.token)).players.find(p => p.id === b.playerId).x, before.players.find(p => p.id === b.playerId).x);
   assert.equal((await post('/command', { type: 'move', x: 60, z: 60 }, a.token)).status, 400);

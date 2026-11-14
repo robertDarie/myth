@@ -3,7 +3,7 @@ import { ensureHero, heroLevel } from './progression.mjs';
 
 // Ancient places are shared geography. Each city keeps its own discovery, investigation and claim.
 // Reward extras are rolled once, from the player id and place id, and then stored. A restart cannot reroll them.
-const cellOf = t => Math.min(19, Math.max(0, Math.floor(t.z / 4))) * 20 + Math.min(19, Math.max(0, Math.floor(t.x / 4)));
+import { cellIndex as cellOf } from './world-map.mjs';
 const clone = value => structuredClone(value);
 
 const settlement = (id, name, culture, x, z, description) => ({

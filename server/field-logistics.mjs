@@ -1,3 +1,4 @@
+import { WORLD_SIZE } from './world-map.mjs';
 import { randomUUID } from 'node:crypto';
 import { armyList, age } from './progression.mjs';
 import { classCounts } from './troops.mjs';
@@ -63,7 +64,7 @@ export function validateLogistics(p){
  if(!Array.isArray(p.coreReports)||p.coreReports.length>100||new Set(p.coreReports.map(r=>r.id)).size!==p.coreReports.length)throw new Error('Invalid saved delivery reports.');
  const trips=armyList(p).map(a=>a.cargoTripId).filter(Boolean);if(new Set(trips).size!==trips.length)throw new Error('Duplicate saved cargo trip.');
  const amounts=c=>c&&Object.keys(c).length===RESOURCES.length&&RESOURCES.every(k=>Number.isSafeInteger(c[k])&&c[k]>=0)&&Number.isSafeInteger(Object.values(c).reduce((n,v)=>n+v,0));
- const sources=s=>Array.isArray(s)&&s.length<=32&&new Set(s.map(x=>x?.nodeId)).size===s.length&&s.every(x=>x&&typeof x.nodeId==='string'&&typeof x.name==='string'&&RESOURCES.includes(x.resource)&&Number.isSafeInteger(x.amount)&&x.amount>0&&Number.isFinite(x.x)&&x.x>=1&&x.x<=79&&Number.isFinite(x.z)&&x.z>=1&&x.z<=79);
+ const sources=s=>Array.isArray(s)&&s.length<=32&&new Set(s.map(x=>x?.nodeId)).size===s.length&&s.every(x=>x&&typeof x.nodeId==='string'&&typeof x.name==='string'&&RESOURCES.includes(x.resource)&&Number.isSafeInteger(x.amount)&&x.amount>0&&Number.isFinite(x.x)&&x.x>=1&&x.x<=WORLD_SIZE-1&&Number.isFinite(x.z)&&x.z>=1&&x.z<=WORLD_SIZE-1);
  for(const a of armyList(p)){
   if(typeof a.deployed!=='boolean'||!amounts(a.cargo)||!sources(a.cargoSources)||typeof a.cargoTripId!=='string'||!Number.isFinite(a.cargoStarted)||a.cargoStarted<0)throw new Error('Invalid saved march cargo.');
   const total=cargoTotal(a);

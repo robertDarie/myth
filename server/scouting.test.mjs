@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { testWorld } from './testing/kingdom-fixture.mjs';
@@ -42,7 +43,7 @@ test('explored land stays discovered after the scout leaves, alliance changes an
   w.command(ally, { type: 'alliance-leave' });
   for (const cell of settled) assert.ok(p.explored.includes(cell));
   const restored = World.fromSave(w.toSave()), q = restored.authenticate(sessions[0].token);
-  assert.equal(restored.toSave().schema, 25);
+  assert.equal(restored.toSave().schema, 26);
   assert.deepEqual(q.explored, p.explored);
   assert.equal(q.buildings.scoutcamp, 1);
   advance(restored, 10);
@@ -53,13 +54,13 @@ test('schema 15 scouts and missing camps migrate without erasing exploration', (
   const { w, sessions, players: [p] } = setup(['Legacy']);
   p.explored = [4, 8, 12];
   const save = w.toSave();
-  save.schema = 15;
+  legacyMap(save);save.schema = 15;
   const legacy = save.world.players[0];
   legacy.explored = [4, 8, 12];
   legacy.scout = { id: 'legacy-scout', ownerId: legacy.id, x: legacy.homeX, z: legacy.homeZ, homeX: legacy.homeX, homeZ: legacy.homeZ, targetX: 22, targetZ: 22, phase: 'Outbound' };
   delete legacy.scouts; delete legacy.autoExplore; delete legacy.buildings.scoutcamp;
   const restored = World.fromSave(save), q = restored.authenticate(sessions[0].token);
-  assert.equal(restored.toSave().schema, 25);
+  assert.equal(restored.toSave().schema, 26);
   assert.deepEqual(q.explored.filter(cell => [4, 8, 12].includes(cell)), [4, 8, 12]);
   assert.equal(q.buildings.scoutcamp, 1);
   assert.equal(q.scouts.length, 1);
@@ -113,7 +114,7 @@ test('auto explore, redirect and recall stay server-owned and do not repeat disc
   assert.equal(known.has(cellIndex({ x: p.scouts[0].targetX, z: p.scouts[0].targetZ })), false);
   const origin = cellIndex({ x: p.homeX, z: p.homeZ });
   const target = cellIndex({ x: p.scouts[0].targetX, z: p.scouts[0].targetZ });
-  assert.ok(Math.max(Math.abs(target % 20 - origin % 20), Math.abs(Math.floor(target / 20) - Math.floor(origin / 20))) <= scoutProfile(1).autoSectors);
+  assert.ok(Math.max(Math.abs(target % 64 - origin % 64), Math.abs(Math.floor(target / 64) - Math.floor(origin / 64))) <= scoutProfile(1).autoSectors);
   w.command(p, { type: 'scout-auto', enabled: false });
   w.command(p, { type: 'scout-recall', targetId: p.scouts[0].id });
   advance(w, 8);
@@ -136,7 +137,7 @@ test('auto explore, redirect and recall stay server-owned and do not repeat disc
   advance(w, 10);
   assert.equal(p.journey.metrics.surveys, surveys);
   assert.equal(p.scoutReports.length, 2);
-  for (const destination of [{ x: 0, z: 20 }, { x: 80, z: 20 }, { x: 20, z: 0 }, { x: Number.NaN, z: 20 }]) assert.throws(() => w.command(p, { type: 'scout-send', ...destination }), /inside the map/);
+  for (const destination of [{ x: 0, z: 20 }, { x: 256, z: 20 }, { x: 20, z: 0 }, { x: Number.NaN, z: 20 }]) assert.throws(() => w.command(p, { type: 'scout-send', ...destination }), /inside the map/);
 });
 
 test('players cannot read or command another city scout, and explored land does not reveal enemy troops', () => {

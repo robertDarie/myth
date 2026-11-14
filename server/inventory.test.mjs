@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -38,7 +39,7 @@ test('universal hourglass targets only active training head and settles once acr
  const again=World.fromSave(loaded.toSave());again.tick(.1);assert.equal(again.authenticate(s.token).reserveUnits.infantry,5);
 });
 test('inventory migrates schema 11 without historical grants and rejects damaged current inventory',()=>{
- const {w,p,s}=fixture();const old=structuredClone(w.toSave());old.schema=11;delete old.world.players[0].inventory;delete old.world.players[0].suppliesClaimed;
+ const {w,p,s}=fixture();const old=structuredClone(w.toSave());legacyMap(old);old.schema=11;delete old.world.players[0].inventory;delete old.world.players[0].suppliesClaimed;
  const migrated=World.fromSave(old).authenticate(s.token);assert.deepEqual(migrated.inventory,{});assert.equal(migrated.suppliesClaimed,false);
  for(const bad of [null,{'forged-item':1},{'food-pack-100':-1},{'food-pack-100':1.2}]){const save=structuredClone(w.toSave());save.world.players[0].inventory=bad;assert.throws(()=>World.fromSave(save),/inventory/);}
  cmd(w,p,'inventory-supplies');const restored=World.fromSave(w.toSave());assert.throws(()=>cmd(restored,restored.authenticate(s.token),'inventory-supplies'),/already/);

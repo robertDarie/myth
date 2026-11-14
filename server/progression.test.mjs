@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
@@ -133,13 +134,13 @@ test('five formations, both construction jobs and accepted movement survive sche
   cmd(w,p,'move',{marchId:p.marches[0].id,x:20,z:20});advance(w,2);
   const position=p.marches[0].x, restored=World.fromSave(w.toSave()),q=restored.authenticate(session.token);
   assert.equal(armyList(q).length,5);assert.equal(constructionJobs(q).length,2);assert.equal(crews(q),2);
-  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target.type,'move');assert.equal(restored.toSave().schema,25);
+  assert.equal(q.marches[0].x,position);assert.equal(q.marches[0].target.type,'move');assert.equal(restored.toSave().schema,26);
   advance(restored,11);assert.equal(q.buildings.oracle,1);assert.equal(q.buildings.quarry,1);
 });
 
 test('schema-2 migration preserves the founding army, paid job and legacy commander XP', () => {
   const {w,p,session}=setup();cmd(w,p,'upgrade');p.xp=1100;
-  const old=structuredClone(w.toSave());old.schema=2;
+  const old=structuredClone(w.toSave());legacyMap(old);old.schema=2;
   const a=old.world.players[0];for(const key of['heroRecords','marches','secondConstruction','rage','shield','shieldTime','lastSkill','skillCasts'])delete a[key];
   delete a.buildings.builders;
   const restored=World.fromSave(old),q=restored.authenticate(session.token);

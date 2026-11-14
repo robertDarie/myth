@@ -11,6 +11,13 @@ namespace ThronesOfMyth
         private string lastScoutReportId;
         private int seenFindingClaims = -1;
         private void CancelScoutAim() { chooseScoutDestination = false; redirectScoutId = ""; }
+        private void ScoutNearbyFrontier()
+        {
+            if(me==null)return;
+            bool legacy=me.homeX<=40&&me.homeZ<=40;
+            float bound=legacy?37:(world?.size??ReleaseVersion.WorldSize)-3;
+            ScoutAt(Mathf.Min(bound,me.homeX+8),Mathf.Min(bound,me.homeZ+8));
+        }
         private void ScoutAt(float x, float z)
         {
             if (!string.IsNullOrEmpty(redirectScoutId)) Send(new GameCommand { type = "scout-redirect", targetId = redirectScoutId, x = x, z = z });
@@ -119,7 +126,7 @@ namespace ThronesOfMyth
             }
             if (shown == 0) GUILayout.Label("Raise the Outlook of the Horizon to train a scout.", noteStyle);
             GUILayout.Space(8);
-            if (Opening?.Guide == "combat" && !Array.Exists(world.camps, c => c.level == 1 && c.health > 0) && theme.Action("Survey the nearby frontier", !processing && pendingOrder == null, "Confirm your pending order first.")) ScoutAt(20, 20);
+            if (Opening?.Guide == "combat" && !Array.Exists(world.camps, c => c.level == 1 && c.health > 0) && theme.Action("Survey the nearby frontier", !processing && pendingOrder == null, "Confirm your pending order first.")) ScoutNearbyFrontier();
             GUILayout.Label("Scouts use no army slot and no troops. Gate corridors are still required.", noteStyle);
             GUILayout.BeginHorizontal();
             GUILayout.Label("X", GUILayout.Width(24)); scoutX = GUILayout.TextField(scoutX, 4, GUILayout.Height(36));
@@ -132,7 +139,7 @@ namespace ThronesOfMyth
                 status = string.IsNullOrEmpty(redirectScoutId) ? "Left-click a map location to send a free scout. Esc cancels." : "Left-click a new destination. Esc cancels.";
             }
             bool validX = float.TryParse(scoutX, out float x); bool validZ = float.TryParse(scoutZ, out float z);
-            if (theme.Action(string.IsNullOrEmpty(redirectScoutId) ? "Send scout to coordinates" : "Redirect scout to coordinates", validX && validZ && !processing && pendingOrder == null, !validX || !validZ ? "Enter a map coordinate from 1 to 79." : pendingOrder != null ? "Confirm your previous order first." : "")) ScoutAt(x, z);
+            if (theme.Action(string.IsNullOrEmpty(redirectScoutId) ? "Send scout to coordinates" : "Redirect scout to coordinates", validX && validZ && !processing && pendingOrder == null, !validX || !validZ ? "Enter coordinates inside the current map." : pendingOrder != null ? "Confirm your previous order first." : "")) ScoutAt(x, z);
         }
         private void DrawSurveyArchive(ExplorationData fog)
         {

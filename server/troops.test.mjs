@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand, ownCommander } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
@@ -81,13 +82,13 @@ test('current schema preserves typed formations and pending orders, while schema
   const restored = World.fromSave(w.toSave()), q = restored.authenticate(session.token);
   assert.deepEqual(q.reserveUnits, p.reserveUnits); assert.deepEqual(q.marches[0].units, p.marches[0].units);
   advance(restored, 11); assert.equal(q.reserveUnits.archers, 9);
-  const old = structuredClone(w.toSave()); old.schema = 3;
+  const old = structuredClone(w.toSave()); legacyMap(old);old.schema = 3;
   delete old.world.players[0].reserveUnits; delete old.world.players[0].units; delete old.world.players[0].marches[0].units;
   delete old.world.players[0].trainingQueue[0].targetId;
   const migrated = World.fromSave(old), m = migrated.authenticate(session.token);
   assert.deepEqual(m.units, { infantry: 20, archers: 0, cavalry: 0 }); assert.equal(m.reserveUnits.infantry, 7);
   assert.equal(m.marches[0].units.infantry, 5); assert.equal(m.trainingQueue[0].targetId, 'infantry');
-  assert.equal(migrated.toSave().schema,25); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
+  assert.equal(migrated.toSave().schema,26); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
 });
 
 test('current schema rejects forged or mismatched composition data instead of silently repairing it', () => {
@@ -111,7 +112,7 @@ test('HTTP accepts the Unity-style exact-count payload and exposes typed reserve
   ownCommander(p,'warden');
   assert.equal((await command({ type: 'deploy-march', targetId: 'warden', troops: 0, mythic: 0, units: { infantry: 0, archers: 3, cavalry: 0 } })).status, 200);
   const snapshot = await (await fetch(base + '/world', { headers: { Authorization: 'Bearer ' + session.token } })).json();
-  assert.equal(snapshot.version,16); assert.equal(snapshot.troopTypes.length, 15);
+  assert.equal(snapshot.version,17); assert.equal(snapshot.troopTypes.length, 15);
   assert.equal(snapshot.players[0].reserveUnits.archers, 2); assert.equal(snapshot.players.find(a=>a.id===session.playerId).homeFormations[1].units.archers, 3);
   assert.equal(snapshot.players.find(a=>a.id===session.playerId).homeFormations[1].skillKind, 'shield'); assert.equal(snapshot.commanders.find(c => c.id === 'rune-seer').skillKind, 'heal');
 });

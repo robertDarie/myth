@@ -6,7 +6,7 @@ namespace ThronesOfMyth
         private Mesh realmMesh;
         private float TerrainHeight(Vector2 p)
         {
-            float edge=Mathf.Min(p.x,p.y,80-p.x,80-p.y);
+            float edge=Mathf.Min(p.x,p.y,ReleaseVersion.WorldSize-p.x,ReleaseVersion.WorldSize-p.y);
             if(edge<1.5f||SceneryClearing(p))return 0;
             // Restrained cosmetic relief; authoritative movement/picking stays y=0.
             // Broad shallow basins catch light; keep the highest surface at logical y=0.
@@ -19,7 +19,7 @@ namespace ThronesOfMyth
             var vertices=new Vector3[side*side];var uv=new Vector2[vertices.Length];var triangles=new int[steps*steps*6];
             for(int z=0;z<=steps;z++)for(int x=0;x<=steps;x++)
             {
-                var p=new Vector2(x*80f/steps,z*80f/steps);int i=z*side+x;
+                var p=new Vector2(x*(float)ReleaseVersion.WorldSize/steps,z*(float)ReleaseVersion.WorldSize/steps);int i=z*side+x;
                 vertices[i]=new Vector3(p.x,TerrainHeight(p),p.y);uv[i]=new Vector2(x/(float)steps,z/(float)steps);
                 if(x==steps||z==steps)continue;int t=(z*steps+x)*6;
                 triangles[t]=i;triangles[t+1]=i+side;triangles[t+2]=i+side+1;triangles[t+3]=i;triangles[t+4]=i+side+1;triangles[t+5]=i+1;
@@ -31,8 +31,8 @@ namespace ThronesOfMyth
         {
             // Visible stone edge belongs inside the kingdom, not a second playable map.
             var rim=new Color(.38f,.42f,.34f);
-            foreach(var at in new[]{new Vector3(40,.035f,.32f),new Vector3(40,.035f,79.68f)})art.Shape(scenery,PrimitiveType.Cube,at,new Vector3(79.5f,.07f,.22f),rim);
-            foreach(var at in new[]{new Vector3(.32f,.035f,40),new Vector3(79.68f,.035f,40)})art.Shape(scenery,PrimitiveType.Cube,at,new Vector3(.22f,.07f,79.5f),rim);
+            foreach(var at in new[]{new Vector3(ReleaseVersion.WorldSize/2f,.035f,.32f),new Vector3(ReleaseVersion.WorldSize/2f,.035f,ReleaseVersion.WorldSize-.32f)})art.Shape(scenery,PrimitiveType.Cube,at,new Vector3(ReleaseVersion.WorldSize-.5f,.07f,.22f),rim);
+            foreach(var at in new[]{new Vector3(.32f,.035f,ReleaseVersion.WorldSize/2f),new Vector3(ReleaseVersion.WorldSize-.32f,.035f,ReleaseVersion.WorldSize/2f)})art.Shape(scenery,PrimitiveType.Cube,at,new Vector3(.22f,.07f,ReleaseVersion.WorldSize-.5f),rim);
             foreach(var center in new[]{new Vector2(10,24),new Vector2(32,58),new Vector2(57,12),new Vector2(70,49)})
             {
                 float y=TerrainHeight(center);
@@ -48,7 +48,7 @@ namespace ThronesOfMyth
             var random=new System.Random(919);
             for(int i=0;i<140;i++)
             {
-                var p=new Vector2(2+(float)random.NextDouble()*76,2+(float)random.NextDouble()*76);
+                var p=new Vector2(2+(float)random.NextDouble()*(ReleaseVersion.WorldSize-4),2+(float)random.NextDouble()*(ReleaseVersion.WorldSize-4));
                 if(SceneryClearing(p))continue;
                 art.EnvironmentModel(scenery,"BorderRock",new Vector3(p.x,TerrainHeight(p),p.y),.18f+(float)random.NextDouble()*.35f,new Color(.50f,.53f,.40f),(float)random.NextDouble()*360);
             }

@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -68,7 +69,7 @@ test('veteran wounds, paid treatment and hospital cancellation retain the tier t
  command(restored,q,'hospital-heal',{units:{...legacyUnits(0),veteranInfantry:5}});advance(restored,15);assert.equal(q.reserveUnits.veteranInfantry,5);assert.equal(census(q),before);
 });
 test('schema 12 preserves old troop counts and pending training; invalid tier data and promotion sources are rejected',()=>{
- const {w,p,s}=fixture();command(w,p,'train');const old=structuredClone(w.toSave());old.schema=12;delete old.world.players[0].technologies.veterans;
+ const {w,p,s}=fixture();command(w,p,'train');const old=structuredClone(w.toSave());legacyMap(old);old.schema=12;delete old.world.players[0].technologies.veterans;
  const restored=World.fromSave(old),q=restored.authenticate(s.token);assert.equal(q.technologies.veterans,0);assert.equal(q.troops,20);assert.equal(q.trainingQueue.length,1);
  unlock(w,p);advance(w,20);command(w,p,'promote',{targetId:'veteranInfantry'});
  const malformed=structuredClone(w.toSave());malformed.world.players[0].trainingQueue[0].sourceId='archers';assert.throws(()=>World.fromSave(malformed),/training/);
@@ -109,9 +110,9 @@ test('JSON schema-12 migration archives the untouched source and preserves reser
  const {WorldStore}=await import('./storage.mjs'),{readFileSync,writeFileSync}=await import('node:fs');
  const dir=mkdtempSync(join(tmpdir(),'tom-veteran-migration-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const path=join(dir,'world.json');
  const {w,p,s}=fixture();command(w,p,'inventory-supplies');command(w,p,'train',{targetId:'archers'});
- const old=structuredClone(w.toSave());old.schema=12;delete old.world.players[0].technologies.veterans;const bytes=JSON.stringify(old);writeFileSync(path,bytes);
+ const old=structuredClone(w.toSave());legacyMap(old);old.schema=12;delete old.world.players[0].technologies.veterans;const bytes=JSON.stringify(old);writeFileSync(path,bytes);
  const store=new WorldStore(path),loaded=store.load(),q=loaded.authenticate(s.token);assert.equal(q.technologies.veterans,0);assert.deepEqual(q.units,p.units);assert.deepEqual(q.inventory,p.inventory);assert.equal(q.trainingQueue[0].id,p.trainingQueue[0].id);
- assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,25);assert.equal(q.gold,p.gold);
+ assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,26);assert.equal(q.gold,p.gold);
 });
 
 test('splitting a class between tiers cannot evade severe wounds through rounding',()=>{

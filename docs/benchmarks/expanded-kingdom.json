@@ -1,0 +1,284 @@
+{
+  "at": "2026-11-14T00:51:33.756Z",
+  "node": "v24.18.0",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-11400 @ 2.60GHz",
+  "description": "Registered cities differ from active HTTP clients; 10 concurrent loopback clients, naturally resolving PvP, gathering, scouts and moving armies. Not a sustained Internet soak.",
+  "cases": [
+    {
+      "registeredCities": 32,
+      "concurrentHttpClients": 10,
+      "peakConcurrentBattles": 4,
+      "allianceMembersBeforeCombat": 32,
+      "creation": {
+        "samples": 32,
+        "p50": 1.391,
+        "p95": 2.722,
+        "p99": 3.967
+      },
+      "allianceJoin": {
+        "samples": 31,
+        "p50": 2.517,
+        "p95": 3.847,
+        "p99": 5.055
+      },
+      "tick": {
+        "samples": 50,
+        "p50": 5.893,
+        "p95": 10.859,
+        "p99": 15.644
+      },
+      "snapshot": {
+        "samples": 20,
+        "p50": 3.282,
+        "p95": 20.433,
+        "p99": 20.433
+      },
+      "serialization": {
+        "samples": 20,
+        "p50": 0.894,
+        "p95": 2.137,
+        "p99": 2.137
+      },
+      "visibility": {
+        "samples": 20,
+        "p50": 0.118,
+        "p95": 0.382,
+        "p99": 0.382
+      },
+      "crossProvincePath": {
+        "samples": 30,
+        "p50": 0.276,
+        "p95": 0.682,
+        "p99": 1.092
+      },
+      "jsonSave": {
+        "samples": 3,
+        "p50": 55.11,
+        "p95": 70.2,
+        "p99": 70.2
+      },
+      "sqliteSave": {
+        "samples": 3,
+        "p50": 15.19,
+        "p95": 26.514,
+        "p99": 26.514
+      },
+      "meanSnapshotBytes": 159992,
+      "poll": {
+        "samples": 50,
+        "p50": 53.424,
+        "p95": 112.747,
+        "p99": 116.074
+      },
+      "command": {
+        "samples": 5,
+        "p50": 35.716,
+        "p95": 53.315,
+        "p99": 53.315
+      },
+      "requests": 55,
+      "failures": [],
+      "wallMs": 561.949,
+      "simulationLagMs": 83.977,
+      "memoryBefore": {
+        "rss": 95387648,
+        "heapTotal": 45850624,
+        "heapUsed": 9857648,
+        "external": 4049765,
+        "arrayBuffers": 212271
+      },
+      "memoryRetained": {
+        "rss": 142708736,
+        "heapTotal": 84385792,
+        "heapUsed": 33219616,
+        "external": 4432187,
+        "arrayBuffers": 266763
+      },
+      "persistenceHealthy": true
+    },
+    {
+      "registeredCities": 128,
+      "concurrentHttpClients": 10,
+      "peakConcurrentBattles": 4,
+      "allianceMembersBeforeCombat": 100,
+      "creation": {
+        "samples": 128,
+        "p50": 4.638,
+        "p95": 11.963,
+        "p99": 16.686
+      },
+      "allianceJoin": {
+        "samples": 99,
+        "p50": 18.604,
+        "p95": 40.36,
+        "p99": 48.925
+      },
+      "tick": {
+        "samples": 50,
+        "p50": 41.606,
+        "p95": 50.773,
+        "p99": 53.666
+      },
+      "snapshot": {
+        "samples": 20,
+        "p50": 7.603,
+        "p95": 11.53,
+        "p99": 11.53
+      },
+      "serialization": {
+        "samples": 20,
+        "p50": 1.331,
+        "p95": 2.191,
+        "p99": 2.191
+      },
+      "visibility": {
+        "samples": 20,
+        "p50": 0.319,
+        "p95": 2.692,
+        "p99": 2.692
+      },
+      "crossProvincePath": {
+        "samples": 30,
+        "p50": 0.285,
+        "p95": 0.865,
+        "p99": 0.889
+      },
+      "jsonSave": {
+        "samples": 3,
+        "p50": 422.328,
+        "p95": 459.874,
+        "p99": 459.874
+      },
+      "sqliteSave": {
+        "samples": 3,
+        "p50": 246.044,
+        "p95": 344.839,
+        "p99": 344.839
+      },
+      "meanSnapshotBytes": 254391,
+      "poll": {
+        "samples": 50,
+        "p50": 407.013,
+        "p95": 990,
+        "p99": 991.576
+      },
+      "command": {
+        "samples": 5,
+        "p50": 509.744,
+        "p95": 989.377,
+        "p99": 989.377
+      },
+      "requests": 55,
+      "failures": [],
+      "wallMs": 5298.969,
+      "simulationLagMs": 2393.755,
+      "memoryBefore": {
+        "rss": 232820736,
+        "heapTotal": 171941888,
+        "heapUsed": 17937168,
+        "external": 4432137,
+        "arrayBuffers": 266763
+      },
+      "memoryRetained": {
+        "rss": 283987968,
+        "heapTotal": 182734848,
+        "heapUsed": 71240336,
+        "external": 4432137,
+        "arrayBuffers": 266763
+      },
+      "persistenceHealthy": true
+    },
+    {
+      "registeredCities": 256,
+      "concurrentHttpClients": 10,
+      "peakConcurrentBattles": 4,
+      "allianceMembersBeforeCombat": 100,
+      "creation": {
+        "samples": 256,
+        "p50": 13.173,
+        "p95": 30.708,
+        "p99": 35.197
+      },
+      "allianceJoin": {
+        "samples": 99,
+        "p50": 46.333,
+        "p95": 69.683,
+        "p99": 109.253
+      },
+      "tick": {
+        "samples": 50,
+        "p50": 72.785,
+        "p95": 84.125,
+        "p99": 88.586
+      },
+      "snapshot": {
+        "samples": 20,
+        "p50": 10.29,
+        "p95": 17.32,
+        "p99": 17.32
+      },
+      "serialization": {
+        "samples": 20,
+        "p50": 1.739,
+        "p95": 2.438,
+        "p99": 2.438
+      },
+      "visibility": {
+        "samples": 20,
+        "p50": 0.458,
+        "p95": 0.67,
+        "p99": 0.67
+      },
+      "crossProvincePath": {
+        "samples": 30,
+        "p50": 0.266,
+        "p95": 0.46,
+        "p99": 0.853
+      },
+      "jsonSave": {
+        "samples": 3,
+        "p50": 415.43,
+        "p95": 451.029,
+        "p99": 451.029
+      },
+      "sqliteSave": {
+        "samples": 3,
+        "p50": 221.859,
+        "p95": 816.895,
+        "p99": 816.895
+      },
+      "meanSnapshotBytes": 305810,
+      "poll": {
+        "samples": 50,
+        "p50": 576.319,
+        "p95": 1622.034,
+        "p99": 1624.521
+      },
+      "command": {
+        "samples": 5,
+        "p50": 872.091,
+        "p95": 1025.749,
+        "p99": 1025.749
+      },
+      "requests": 55,
+      "failures": [],
+      "wallMs": 7985.635,
+      "simulationLagMs": 3883.68,
+      "memoryBefore": {
+        "rss": 315551744,
+        "heapTotal": 222842880,
+        "heapUsed": 24301560,
+        "external": 4426505,
+        "arrayBuffers": 266763
+      },
+      "memoryRetained": {
+        "rss": 337797120,
+        "heapTotal": 168316928,
+        "heapUsed": 79205144,
+        "external": 4426505,
+        "arrayBuffers": 266763
+      },
+      "persistenceHealthy": true
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -99,7 +100,7 @@ test('a claimed objective and an unfinished field victory survive restart withou
 });
 
 test('save migration preserves proven training without fabricating historical gathering and validates all claims',()=>{
- const {w,p,session}=setup();p.reserveUnits.infantry=10;p.reserveTroops=10;const old=w.toSave();old.schema=7;delete old.world.players[0].journey;
+ const {w,p,session}=setup();p.reserveUnits.infantry=10;p.reserveTroops=10;const old=w.toSave();legacyMap(old);old.schema=7;delete old.world.players[0].journey;
  const restored=World.fromSave(old),q=restored.authenticate(session.token);assert.equal(q.journey.metrics.trained,10);assert.equal(q.journey.metrics.wood,0);assert.equal(q.journey.metrics.food,0);
  for(const mutate of[j=>j.claimed=['unknown'],j=>j.claimed=['train-ten','train-ten'],j=>j.chapters=['dawn'],j=>j.progress['train-ten']=11,j=>j.metrics.wood=-1,j=>j.metrics.trained=1.5]){const bad=structuredClone(restored.toSave());mutate(bad.world.players[0].journey);assert.throws(()=>World.fromSave(bad),/journey|chapter/);}
  cmd(restored,q,'journey-claim',{targetId:'train-ten'});const saved=World.fromSave(restored.toSave());assert.throws(()=>cmd(saved,saved.authenticate(session.token),'journey-claim',{targetId:'train-ten'}),/already claimed/);
@@ -109,7 +110,7 @@ test('the opening wood and food goals have visible starter sites instead of requ
  const {w,p}=setup(),snapshot=w.snapshot(p.id);
  for(const resource of['wood','food'])assert.ok(snapshot.nodes.some(n=>n.resource===resource&&n.remaining>0));
  assert.equal(p.journey.progress['citadel-two'],1);assert.equal(p.journey.progress['farm-two'],1);
- const old=w.toSave();old.schema=7;old.world.nodes[0].x=8;old.world.nodes[0].z=18;old.world.nodes[2].x=24;old.world.nodes[2].z=18;old.world.nodes[0].remaining=123;
+ const old=w.toSave();legacyMap(old);old.schema=7;old.world.nodes[0].x=8;old.world.nodes[0].z=18;old.world.nodes[2].x=24;old.world.nodes[2].z=18;old.world.nodes[0].remaining=123;
  const loaded=World.fromSave(old);assert.equal(loaded.nodes[0].remaining,123);assert.equal(loaded.nodes[0].z,12);assert.equal(loaded.nodes[2].x,12);
 });
 
@@ -125,5 +126,5 @@ test('authenticated claims expose only the owner campaign and reject repeated or
  assert.equal((await post(0,{type:'train'})).status,200);assert.equal((await post(0,{type:'train'})).status,200);advance(w,17);
  const gold=p.gold;assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,200);assert.equal(p.gold,gold+40);
  assert.equal((await post(0,{type:'journey-claim',targetId:'train-ten'})).status,400);assert.equal(p.gold,gold+40);
- const own=await get(0),outside=await get(1);assert.equal(own.version,16);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
+ const own=await get(0),outside=await get(1);assert.equal(own.version,17);assert.ok(own.players.find(a=>a.id===p.id).journeyCampaign);assert.equal(outside.players.find(a=>a.id===p.id).journeyCampaign,undefined);assert.equal(outside.players.find(a=>a.id===p.id).journey,undefined);assert.deepEqual(q.journey.claimed,[]);
 });

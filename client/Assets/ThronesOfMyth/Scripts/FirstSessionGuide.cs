@@ -37,7 +37,7 @@ namespace ThronesOfMyth
         private static readonly OpeningCue Meet=new OpeningCue(2,"Meet your Frontier Captain","Inspect Rallying Cry, then return to the city to train.","heroes","captain");
         private static readonly OpeningCue Train=new OpeningCue(3,"Train five archers","One archer batch completes the starting patrol.","training");
         private static readonly OpeningCue Prepare=new OpeningCue(4,"Prepare a Scout patrol","Captain, 15 infantry, 5 archers; select the patrol preset.","prepare");
-        private static readonly OpeningCue Fight=new OpeningCue(5,"Challenge Forsaken Scouts","Scout toward (20, 20), then select the remembered level 1 camp.","combat","opening-level-one");
+        private static readonly OpeningCue Fight=new OpeningCue(5,"Challenge Forsaken Scouts","Survey the nearby frontier, then select a discovered level 1 camp.","combat","opening-level-one");
         private static readonly OpeningCue Outcome=new OpeningCue(6,"Review your victory","See the real battle reward and commander progress.","outcome");
         private static readonly OpeningCue Home=new OpeningCue(7,"Return to your civilization","Recall the patrol; its deployment slot clears on arrival.","return");
         private static readonly OpeningCue Build=new OpeningCue(8,"Raise the Citadel","Return to the city and advance your first age.","city","citadel");

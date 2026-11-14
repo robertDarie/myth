@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "expanded map migration, routes, registered capacity and alliance size",
+      "command": ["node", "--test", "server/world-map.test.mjs"]
+    },
+    {
       "name": "random city spawn distribution and persistence",
       "command": ["node", "--test", "server/spawning.test.mjs"]
     },

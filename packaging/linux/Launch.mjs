@@ -9,7 +9,7 @@ import {setTimeout as pause} from 'node:timers/promises';
 export function serverDigest(manifest){return createHash('sha256').update(manifest.files.filter(f=>f.path.startsWith('Server/')).sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0).map(f=>f.path+'\0'+f.sha256+'\n').join('')).digest('hex');}
 export async function verifyPackage(root){
  const m=JSON.parse(await readFile(join(root,'manifest.json'),'utf8'));
- if(m.platform!=='linux-x86_64'||m.protocol!==16||!/^\d+\.\d+\.\d+$/.test(m.version)||!/^[a-f0-9]{40,64}$/.test(m.commit)||!Array.isArray(m.files))throw Error('Invalid Linux package identity. Rebuild the entire package.');
+ if(m.platform!=='linux-x86_64'||m.protocol!==17||!/^\d+\.\d+\.\d+$/.test(m.version)||!/^[a-f0-9]{40,64}$/.test(m.commit)||!Array.isArray(m.files))throw Error('Invalid Linux package identity. Rebuild the entire package.');
  const seen=new Set();
  for(const entry of m.files){
   if(typeof entry.path!=='string'||entry.path.includes('\\')||entry.path.split('/').some(p=>!p||p==='.'||p==='..')||entry.path.startsWith('/')||seen.has(entry.path)||!/^[a-f0-9]{64}$/.test(entry.sha256))throw Error('Invalid package path or hash.');seen.add(entry.path);

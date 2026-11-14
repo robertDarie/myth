@@ -387,7 +387,7 @@ namespace ThronesOfMyth
             if(cameraControl!=null)Dot(mapArea,cameraControl.FocusPoint.x,cameraControl.FocusPoint.z,MythInterfaceTheme.Gold,3);
             if (Event.current.type == EventType.MouseDown && mapArea.Contains(Event.current.mousePosition))
             {
-                float x=(Event.current.mousePosition.x-mapArea.x)/mapArea.width*80,z=(1-(Event.current.mousePosition.y-mapArea.y)/mapArea.height)*80;cameraControl?.Focus(x,z);selectedId="";map.selectedId="";
+                float x=(Event.current.mousePosition.x-mapArea.x)/mapArea.width*world.size,z=(1-(Event.current.mousePosition.y-mapArea.y)/mapArea.height)*world.size;cameraControl?.Focus(x,z);selectedId="";map.selectedId="";
                 int sector=Mathf.Clamp(Mathf.FloorToInt(z/4),0,19)*20+Mathf.Clamp(Mathf.FloorToInt(x/4),0,19);
                 if(world.exploration!=null&&Array.IndexOf(world.exploration.explored,sector)<0){status="Unexplored frontier · Send a scout to reveal this region, or press H to return home.";toastUntil=Time.unscaledTime+5;}
                 Event.current.Use();

@@ -243,3 +243,8 @@ A concurrent user commit had added the two private workbooks to origin/main. Thi
 ## Random city spawning - checkpoint A
 
 Server-authoritative random points replace sequential city rows for new joins only. The bounded sampler checks four-unit city spacing, resource and permanent-structure footprints, gate-free access and reachable starter content. Saves/reconnect preserve original positions; rejected or rolled-back joins reserve nothing. Five deterministic/statistical tests cover 768 full-world placements and 240 first cities, plus persistence, full-land and kingdom isolation. Full Node suite: 369 passed, five platform skips, zero failures. All 22 publish-plan commands passed. Existing scenario fixtures explicitly retain authored legacy locations. Unity NOT TESTED for this server-only checkpoint. Details: `docs/random-city-spawns.md`.
+
+
+## Expanded kingdom - checkpoint B
+
+Real world expanded to 256x256 with the legacy area preserved, three populated frontier provinces, explicit gated routes, 293 deposits, 62 camps, 11 sites and eight strongholds. Schema 26 converts 20-column fog to 64 columns; protocol 17 requires matching clients. Registered identity ceiling 256; default operational cap stays 32; alliance membership ceiling 100 with role/chat/contribution persistence. Unity batch compilation passed; 376 Node tests and 23 publication checks passed (five platform skips); portable presentation contracts: 16,754. The ten-client benchmark succeeded at 32/128/256 registrations but loaded 256-city command p95 was 1025.749 ms, so no 256-active-client claim. See `docs/expanded-kingdom.md` and `docs/benchmarks/expanded-kingdom.json`. Private-alpha packaging/connection workflow is checkpoint C; native and real remote play remain unverified.

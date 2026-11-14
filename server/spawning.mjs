@@ -3,7 +3,8 @@ import { FINDINGS } from './findings.mjs';
 
 // City footprints fit inside these gate-free starting lands. Existing cities
 // are never moved, including legacy rows closer together than today's spacing.
-export const STARTING_REGIONS = Object.freeze([{ id: 'first-frontier', minX: 3, maxX: 37, minZ: 3, maxZ: 37 }]);
+import { STARTING_REGIONS } from './world-map.mjs';
+export { STARTING_REGIONS } from './world-map.mjs';
 export const SPAWN_RULES = Object.freeze({ cityDistance: 4, depositDistance: 2.3, structureDistance: 3.5, starterReach: 17, campReach: 23, attempts: 4096 });
 const distance = (a,b) => Math.hypot(a.x-b.x,a.z-b.z);
 export function suitableSpawn(w, point) {

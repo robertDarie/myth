@@ -84,6 +84,11 @@ class Program
         Check(DiscoveryJournal.Hidden(journalRows)==1&&DiscoveryJournal.NextUnclaimed(journalRows)=="hearth","Journal skips hidden places and uninvestigated caves");
         Check(DiscoveryJournal.RewardLine(journalRows[2].reward).Contains("80 food")&&DiscoveryJournal.RewardLine(journalRows[2].reward).Contains("commander experience"),"Claimed discovery copy names the granted gift");
         fog.Reset();Check(fog.Opacity(1,0)==1,"Reset must not leak the prior profile's fog");
+        Check(fog.Update(new ExplorationData{width=64,cellSize=4,explored=new[]{64,4095}}),"Expanded fog dimensions rebuild once");
+        Check(fog.Width==64&&fog.Opacity(0,1)==0&&fog.Opacity(63,63)==0&&fog.Opacity(20,0)==1,"64-column fog preserves locations and conceals unknown sectors");
+        Check(!fog.Update(new ExplorationData{width=64,cellSize=4,explored=new[]{64,4095}}),"Unchanged expanded fog stays cached");
+        fog.Update(new ExplorationData{width=20,cellSize=4,explored=new[]{19}});
+        Check(fog.Width==20&&fog.Opacity(19,0)==0&&fog.Opacity(0,1)==1,"Dimension changes never retain another kingdom's sectors");
         string longText=new string('x',180);var baseline=Measure(()=>LegacyFit(longText,22,width));var optimized=Measure(()=>TextElision.Fit(longText,22,width));
         var baselineJobs=Measure(()=>LegacyJob(jobs,"barracks"));var optimizedJobs=Measure(()=>CityPresentationData.Job(jobs,"barracks"));
         Console.WriteLine("Measured CLR microbenchmark: text legacy="+baseline+", optimized="+optimized+"; job legacy="+baselineJobs+", optimized="+optimizedJobs);

@@ -1,4 +1,5 @@
-import { rememberStatics, recalled } from './discovery.mjs';
+import { WORLD_SIZE, FOG_WIDTH, CELL_SIZE, cellIndex } from './world-map.mjs';
+import { rememberStatics, recalled, staticContext } from './discovery.mjs';
 import { recordActivity } from './activity.mjs';
 import { recordEvent } from './events.mjs';
 import { journeyMetric } from './chapters.mjs';
@@ -12,13 +13,13 @@ import { beginRecon, trackRecon, finishRecon, reconDepth, reconSeconds, initiali
 // Explored land does not publish enemy troop counts, cargo, orders, live garrison totals or live resource amounts.
 // Unlike Rise of Kingdoms, marches that leave allied sight are removed rather than kept as last-seen ghosts.
 // Historical scout reports remain the private record of what was observed on arrival.
-export const FOG = { cellSize: 4, width: 20, cityRadius: 10, armyRadius: 8, scoutRadius: 9, scoutSpeed: 7 };
+export const FOG = { cellSize: CELL_SIZE, width: FOG_WIDTH, cityRadius: 10, armyRadius: 8, scoutRadius: 9, scoutSpeed: 7 };
 const PHASES = ['Outbound', 'Exploring', 'Returning'];
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
-const point = p => p && [p.x, p.z].every(n => Number.isFinite(n) && n >= 1 && n <= 79);
+const point = p => p && [p.x, p.z].every(n => Number.isFinite(n) && n >= 1 && n <= WORLD_SIZE-1);
 const allied = (p, q) => p.id === q.id || !!p.allianceId && p.allianceId === q.allianceId;
-export const cellIndex = t => Math.min(19, Math.max(0, Math.floor(t.z / 4))) * 20 + Math.min(19, Math.max(0, Math.floor(t.x / 4)));
-const cellCenter = index => ({ x: (index % 20) * 4 + 2, z: Math.floor(index / 20) * 4 + 2 });
+export { cellIndex } from './world-map.mjs';
+const cellCenter = index => ({ x: (index % FOG_WIDTH) * CELL_SIZE + CELL_SIZE/2, z: Math.floor(index / FOG_WIDTH) * CELL_SIZE + CELL_SIZE/2 });
 const rewardedCells = new WeakMap();
 function claimSurvey(p, cell) {
   let claimed = rewardedCells.get(p);
@@ -77,27 +78,27 @@ export function sightCells(eyes) {
   const cells = new Set();
   for (const eye of eyes) {
     const minX = Math.max(0, Math.ceil((eye.x - eye.radius - 2) / 4));
-    const maxX = Math.min(19, Math.floor((eye.x + eye.radius - 2) / 4));
+    const maxX = Math.min(FOG_WIDTH-1, Math.floor((eye.x + eye.radius - 2) / 4));
     const minZ = Math.max(0, Math.ceil((eye.z - eye.radius - 2) / 4));
-    const maxZ = Math.min(19, Math.floor((eye.z + eye.radius - 2) / 4));
+    const maxZ = Math.min(FOG_WIDTH-1, Math.floor((eye.z + eye.radius - 2) / 4));
     for (let z = minZ; z <= maxZ; z++) for (let x = minX; x <= maxX; x++) {
-      if (dist(eye, { x: x * 4 + 2, z: z * 4 + 2 }) <= eye.radius) cells.add(z * 20 + x);
+      if (dist(eye, { x: x * 4 + 2, z: z * 4 + 2 }) <= eye.radius) cells.add(z * FOG_WIDTH + x);
     }
   }
   return [...cells].sort((a, b) => a - b);
 }
 export function nextAutoTarget(w, p, from, profile) {
-  const origin = cellIndex(from), ox = origin % 20, oz = Math.floor(origin / 20);
+  const origin = cellIndex(from), ox = origin % FOG_WIDTH, oz = Math.floor(origin / FOG_WIDTH);
   const known = visibleCells(w, p);
   const taken = new Set(p.scouts.filter(s => s.phase === 'Outbound' || s.phase === 'Exploring').map(s => cellIndex({ x: s.targetX, z: s.targetZ })));
   let best = null, bestRank = Infinity;
-  for (let z = 0; z < 20; z++) for (let x = 0; x < 20; x++) {
-    const index = z * 20 + x;
+  for (let z = 0; z < FOG_WIDTH; z++) for (let x = 0; x < FOG_WIDTH; x++) {
+    const index = z * FOG_WIDTH + x;
     if (known.has(index) || taken.has(index)) continue;
     const reach = Math.max(Math.abs(x - ox), Math.abs(z - oz));
     if (reach > profile.autoSectors) continue;
     const center = cellCenter(index);
-    if (!point(center) || !w.canEnter(p, center)) continue;
+    if (!point(center) || !w.canEnter(p, center) || !route(w,{ownerId:p.id,x:from.x,z:from.z},center)) continue;
     const rank = reach * 1000 + dist(from, center);
     if (rank < bestRank) { bestRank = rank; best = center; }
   }
@@ -191,10 +192,13 @@ export function explorationTick(w, dt) {
   const contexts = new Map();
   for (const p of w.players.values()) {
     const key = p.allianceId ? 'alliance:' + p.allianceId : 'player:' + p.id;
-    if (!contexts.has(key)) { const context = visionContext(w, p); context.cells = sightCells(context.eyes); contexts.set(key, context); }
+    if (!contexts.has(key)) {
+      const context = visionContext(w, p);
+      context.cells = sightCells(context.eyes);context.statics=staticContext(w,context.seen);contexts.set(key,context);
+    }
     const context = contexts.get(key), known = new Set(p.explored);
     for (const cell of context.cells) known.add(cell);
-    p.explored = [...known].sort((a, b) => a - b); revealFindings(p); rememberStatics(w, p, context.seen);
+    p.explored = [...known].sort((a, b) => a - b); revealFindings(p); rememberStatics(w, p, context.seen,context.statics);
   }
 }
 export function explorationCommand(w, p, c, fail) {
@@ -219,20 +223,22 @@ export function explorationCommand(w, p, c, fail) {
     p.scouts.push(s); return true;
   }
   if (c.type === 'scout-send') {
-    if (!point(c)) fail('Choose a scouting destination inside the map (1–79).');
+    if (!point(c)) fail('Choose a scouting destination inside the map bounds.');
     if (profile.scouts <= 0) fail('Raise the Outlook of the Horizon before sending scouts.');
     if (p.scouts.length >= profile.scouts) fail(profile.scouts === 1 ? 'Your scout is already deployed. Recall it or wait for its return.' : 'All scouts are already deployed. Recall one or raise the Outlook of the Horizon.');
     if (!w.canEnter(p, c)) fail('Scouts need alliance access through the corresponding Divine Gate.');
     if (regionBusy(p, c.x, c.z)) fail('A scout is already working on that region.');
+    if(!route(w,{ownerId:p.id,x:p.homeX,z:p.homeZ},c))fail('No open route from this city to the scouting destination.');
     p.scouts.push(createScout(p, c.x, c.z)); return true;
   }
   if (c.type === 'scout-redirect') {
     const s = p.scouts.find(s => s.id === c.targetId);
     if (!s) fail('That scout mission is no longer active.');
-    if (!point(c)) fail('Choose a scouting destination inside the map (1–79).');
+    if (!point(c)) fail('Choose a scouting destination inside the map bounds.');
     if (!w.canEnter(p, c)) fail('Scouts need alliance access through the corresponding Divine Gate.');
     if (regionBusy(p, c.x, c.z, s.id)) fail('A scout is already working on that region.');
     if ((s.phase === 'Outbound' || s.phase === 'Exploring') && cellIndex({ x: s.targetX, z: s.targetZ }) === cellIndex(c)) fail('That scout is already assigned to this region.');
+    if(!route(w,s,c))fail('No open route from this scout to that destination.');
     assignTarget(p, s, c.x, c.z); return true;
   }
   if (c.type === 'scout-recall') {
@@ -259,7 +265,7 @@ export function fogSnapshot(w, p, context = visionContext(w, p)) {
   const alliedScouts = [...w.players.values()].filter(q => q.id !== p.id && allied(p, q)).flatMap(q => q.scouts.map(s => presentScout(w, q, s, scoutProfile(q.buildings?.scoutcamp ?? 0), false)));
   const journal = journalFor(p, p.scouts.map(s => ({ ...s, eta: scoutEta(w, p, s, profile) })));
   const depth = reconDepth(p);
-  return { cellSize: 4, width: 20, explored, visible: cells, exploredPercent: Math.round(explored.length * 2.5) / 10, autoExplore: !!p.autoExplore, scoutCamp: scoutCampCard(p.buildings?.scoutcamp ?? 0), scouts: [...own, ...alliedScouts], reports: p.scoutReports, findings: journal.places, journal: { discovered: journal.discovered, investigated: journal.investigated, claimed: journal.claimed, unclaimed: journal.unclaimed, byType: journal.byType, remaining: journal.remaining, milestones: journal.milestones, nextUnclaimedId: journal.nextUnclaimedId }, recon: { depth, seconds: reconSeconds(depth), research: p.technologies?.veilreading ?? 0 }, reconReports: p.reconReports ?? [], reconNotices: p.reconNotices ?? [] };
+  return { cellSize: CELL_SIZE, width: FOG_WIDTH, explored, visible: cells, exploredPercent: Math.round(explored.length * 1000 / (FOG_WIDTH*FOG_WIDTH)) / 10, autoExplore: !!p.autoExplore, scoutCamp: scoutCampCard(p.buildings?.scoutcamp ?? 0), scouts: [...own, ...alliedScouts], reports: p.scoutReports, findings: journal.places, journal: { discovered: journal.discovered, investigated: journal.investigated, claimed: journal.claimed, unclaimed: journal.unclaimed, byType: journal.byType, remaining: journal.remaining, milestones: journal.milestones, nextUnclaimedId: journal.nextUnclaimedId }, recon: { depth, seconds: reconSeconds(depth), research: p.technologies?.veilreading ?? 0 }, reconReports: p.reconReports ?? [], reconNotices: p.reconNotices ?? [] };
 }
 export function filterFog(w, snapshot, p, context = visionContext(w, p)) {
   const seen = context.seen, friendly = a => a.ownerId === p.id || !!p.allianceId && a.allianceId === p.allianceId;
@@ -287,7 +293,7 @@ export function filterFog(w, snapshot, p, context = visionContext(w, p)) {
   snapshot.events = []; return snapshot;
 }
 export function validateExploration(p) {
-  if (!Array.isArray(p.explored) || p.explored.length > 400 || new Set(p.explored).size !== p.explored.length || p.explored.some(i => !Number.isInteger(i) || i < 0 || i >= 400) || !Array.isArray(p.scoutReports) || p.scoutReports.length > 20 || !Array.isArray(p.scouts) || typeof p.autoExplore !== 'boolean') throw new Error('Invalid saved exploration.');
+  if (!Array.isArray(p.explored) || p.explored.length > FOG_WIDTH*FOG_WIDTH || new Set(p.explored).size !== p.explored.length || p.explored.some(i => !Number.isInteger(i) || i < 0 || i >= FOG_WIDTH*FOG_WIDTH) || !Array.isArray(p.scoutReports) || p.scoutReports.length > 20 || !Array.isArray(p.scouts) || typeof p.autoExplore !== 'boolean') throw new Error('Invalid saved exploration.');
   const profile = scoutProfile(p.buildings?.scoutcamp ?? 0);
   if (p.scouts.length > Math.max(profile.scouts, 3) || p.scouts.length > 3 || new Set(p.scouts.map(s => s?.id)).size !== p.scouts.length) throw new Error('Invalid saved scout.');
   if (p.buildings && Number.isInteger(p.buildings.scoutcamp) && p.scouts.length > profile.scouts) throw new Error('Invalid saved scout.');

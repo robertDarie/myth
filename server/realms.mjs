@@ -1,3 +1,4 @@
+import { LIMITS, cityLimit, PROTOCOL } from './world-map.mjs';
 import { checkpoint, restoreCheckpoint } from './checkpoint.mjs';
 import { createServer } from 'node:http';
 import { openSync, closeSync, readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'node:fs';
@@ -10,7 +11,7 @@ import { KingdomDatabase } from './database.mjs';
 import { createIdentity } from './identity.mjs';
 
 const ID = /^[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?$/;
-const CAPACITY = 32;
+
 const hash = value => createHash('sha256').update(value).digest('hex');
 const equalSecret = (a, b) => timingSafeEqual(Buffer.from(hash(String(a ?? ''))), Buffer.from(hash(String(b ?? ''))));
 
@@ -50,6 +51,7 @@ export function openRealm(spec) {
   const name = spec?.name;
   if (typeof id !== 'string' || !ID.test(id)) throw new Error('A kingdom id must be 1–24 lowercase letters, numbers or hyphens.');
   if (typeof name !== 'string' || name.trim().length < 1 || name.trim().length > 32) throw new Error('A kingdom name must be 1–32 characters.');
+  if(spec.cityCapacity!==undefined)cityLimit(spec.cityCapacity);
   const description = spec.description ?? '';
   if (typeof description !== 'string' || description.length > 160) throw new Error('A kingdom description must be 160 characters or fewer.');
   if (spec.savePath && spec.databasePath) throw new Error('Choose JSON or SQLite storage for ' + id + '.');
@@ -60,6 +62,7 @@ export function openRealm(spec) {
     store ??= spec.databasePath ? new KingdomDatabase(spec.databasePath) : spec.savePath ? new WorldStore(spec.savePath) : null;
     world = store ? store.load() : new World();
   } catch (error) { try { store?.close?.(); } catch { /* preserve the failed store */ } release(); throw error; }
+  if (spec.cityCapacity !== undefined) world.cityCapacity=cityLimit(spec.cityCapacity);
   const persistence = { enabled: !!store, backend: spec.databasePath ? 'sqlite' : spec.savePath ? 'json' : spec.store ? 'custom' : 'memory', lastSaved: '', error: '' };
   const realm = { id, name: name.trim(), description, world, store, persistence, joinCode: spec.joinCode ?? '', simulationFailed: false, closed: false, lastTick: performance.now(), previous: performance.now(), lastTickMs: 0, lastSnapshotMs: 0, release };
   realm.saveNow = (options = {}) => {
@@ -96,7 +99,7 @@ export function openRealm(spec) {
     realm.previous = now;
   };
   realm.close = () => { if (realm.closed) return; realm.saveNow(); try { store?.close?.(); } catch (error) { console.error(id + ': storage close failed. ' + error.message); } release(); realm.closed = true; };
-  realm.publicCard = () => ({ id, name: realm.name, description, players: world.players.size, capacity: CAPACITY, join: world.players.size >= CAPACITY || persistence.error ? 'closed' : 'open', status: persistence.error ? 'degraded' : 'ok' });
+  realm.publicCard = () => ({ id, name: realm.name, description, players: world.players.size, capacity: world.cityCapacity, join: world.players.size >= world.cityCapacity || persistence.error ? 'closed' : 'open', status: persistence.error ? 'degraded' : 'ok' });
   realm.diagnostics = () => ({ ...realm.publicCard(), marches: world.armies().filter(army => army.deployed).length, tickMs: Math.round(realm.lastTickMs), snapshotMs: Math.round(realm.lastSnapshotMs), persistence: { backend: persistence.backend, healthy: !persistence.error } });
   return realm;
 }
@@ -129,7 +132,7 @@ export function createRealmHost({ realms, defaultId = 'local', shutdownToken = n
       const url = new URL(request.url, 'http://localhost');
       const path = url.pathname;
       if (request.method === 'GET' && path === '/kingdoms') return send(200, { kingdoms: [...byId.values()].map(realm => realm.publicCard()) });
-      if (request.method === 'GET' && path === '/health') return send(200, { status: [...byId.values()].some(realm => realm.persistence.error) ? 'degraded' : 'ok', game: 'thrones-of-myth', version: 16, build: buildIdentity, kingdomId: fallback.id, realms: [...byId.values()].map(realm => realm.diagnostics()) });
+      if (request.method === 'GET' && path === '/health') return send(200, { status: [...byId.values()].some(realm => realm.persistence.error) ? 'degraded' : 'ok', game: 'thrones-of-myth', version: PROTOCOL, build: buildIdentity, kingdomId: fallback.id, realms: [...byId.values()].map(realm => realm.diagnostics()) });
       if (request.method === 'POST' && path === '/launcher-shutdown') {
         if (!shutdownToken || !equalSecret(request.headers['x-thrones-launcher'], shutdownToken)) throw new GameError('Launcher authorization required.', 403);
         for (const realm of byId.values()) if (!realm.saveNow()) throw new GameError(realm.id + ' could not be saved.', 503);
@@ -163,7 +166,7 @@ async function routeRealm(realm, request, response, path, { send, allow, address
   const { world, identity, persistence } = realm;
   if (request.method === 'GET' && path === '/readyz') {
     const ready = !persistence.error && performance.now() - realm.lastTick < 5000;
-    return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 16, kingdomId: realm.id, accounts: identity.available, persistence: { backend: persistence.backend, healthy: !persistence.error } });
+    return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: PROTOCOL, kingdomId: realm.id, accounts: identity.available, persistence: { backend: persistence.backend, healthy: !persistence.error } });
   }
   if (path.startsWith('/auth/')) {
     allow('identity:' + address);

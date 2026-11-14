@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -44,7 +45,7 @@ test('rewards bind to contributors at completion, reject later arrivals and rema
 });
 
 test('migration preserves owned-gate access without retroactive rewards and malformed stage claims are rejected',()=>{
- const e=setup(),{w,p}=e;cmd(w,p,'alliance-create',{name:'Legacy'});w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;const old=structuredClone(w.toSave());old.schema=10;delete old.world.kingdom;for(const p of old.world.players)delete p.kingdomClaims;
+ const e=setup(),{w,p}=e;cmd(w,p,'alliance-create',{name:'Legacy'});w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;const old=structuredClone(w.toSave());legacyMap(old);old.schema=10;delete old.world.kingdom;for(const p of old.world.players)delete p.kingdomClaims;
  const migrated=World.fromSave(old,{now:w.now});assert.equal(siteIsOpen(migrated,'gate-east'),true);assert.equal(siteIsOpen(migrated,'first-sanctuary'),false);assert.equal(kingdomSnapshot(migrated,migrated.players.get(p.id)).stages[0].canClaim,false);assert.doesNotThrow(()=>World.fromSave(migrated.toSave(),{now:w.now}));
  for(const mutate of[k=>k.completed=[{id:'secured'}],k=>k.startedAtMs=-1,k=>k.metrics.gather=-1,k=>k.contributions.fake={}]){const bad=structuredClone(w.toSave());mutate(bad.world.kingdom);assert.throws(()=>World.fromSave(bad,{now:w.now}),/kingdom/);}
 });
@@ -56,7 +57,7 @@ test('authenticated milestone claims enforce ownership and snapshot eligibility 
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();
  assert.equal((await get(0)).sites.find(s=>s.id==='gate-east'),undefined);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates',count:999})).status,400);
  recordKingdomContribution(w,p,'gather',400);recordKingdomContribution(w,p,'trained',10);p.cityLevel=2;for(let i=0;i<4;i++)recordKingdomVictory(w,'camps');recordKingdomContribution(w,p,'camps',4);const future=w.kingdom.startedAtMs+600000;w.now=()=>future;
- let snapshot=await get(0);assert.equal(snapshot.version,16);assert.equal(snapshot.kingdom.stages[1].completed,true);assert.equal(snapshot.kingdom.stages[1].canClaim,true);
+ let snapshot=await get(0);assert.equal(snapshot.version,17);assert.equal(snapshot.kingdom.stages[1].completed,true);assert.equal(snapshot.kingdom.stages[1].canClaim,true);
  const gold=p.gold;assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates'})).status,200);assert.equal(p.gold,gold+100);assert.equal((await post(0,{type:'kingdom-claim',targetId:'gates'})).status,400);
  assert.equal((await post(1,{type:'kingdom-claim',targetId:'gates',playerId:p.id})).status,400);snapshot=await get(1);assert.equal(snapshot.players.find(p=>p.id===sessions[0].playerId).kingdomClaims,undefined);assert.equal(snapshot.kingdom.stages[1].eligible,false);assert.deepEqual(q.kingdomClaims,[]);
 });

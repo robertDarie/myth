@@ -15,7 +15,7 @@ function Get-LocalServer {
     catch { return $null }
 }
 function Is-Compatible($health) {
-    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 16 -and $health.build.version -eq $manifest.version -and $health.build.commit -eq $manifest.commit -and $health.build.serverDigest -eq $manifest.serverDigest
+    return $null -ne $health -and $health.game -eq 'thrones-of-myth' -and $health.version -eq 17 -and $health.build.version -eq $manifest.version -and $health.build.commit -eq $manifest.commit -and $health.build.serverDigest -eq $manifest.serverDigest
 }
 try {
     $manifest = Get-Content -LiteralPath (Join-Path $packageRoot 'manifest.json') -Raw | ConvertFrom-Json

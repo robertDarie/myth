@@ -27,14 +27,14 @@ namespace ThronesOfMyth
         {
             scenery = new GameObject("Painted realm scenery").transform;
             var ground = GameObject.Find("Ground"); if (ground == null) { ground = GameObject.CreatePrimitive(PrimitiveType.Cube); ground.name = "Ground"; }
-            ground.transform.position = new Vector3(40, -0.3f, 40); ground.transform.localScale = new Vector3(80, 0.6f, 80);
+            ground.transform.position = new Vector3(ReleaseVersion.WorldSize/2f, -0.3f, ReleaseVersion.WorldSize/2f); ground.transform.localScale = new Vector3(ReleaseVersion.WorldSize, 0.6f, ReleaseVersion.WorldSize);
             terrainMaterial = new Material(MaterialFor(Color.white)); var material = terrainMaterial; groundTexture = new Texture2D(512, 512, TextureFormat.RGB24, true) { name = "Painted province grass, earth and paths", wrapMode = TextureWrapMode.Clamp, anisoLevel = 4 };
             var pixels = new Color[512 * 512];
             for (int y = 0; y < 512; y++) for (int x = 0; x < 512; x++)
             {
-                var p = new Vector2(x / 511f * 80, y / 511f * 80); float patch = Mathf.PerlinNoise(p.x * 0.12f + 43, p.y * 0.12f + 17), grain = Mathf.PerlinNoise(p.x * 2.1f, p.y * 2.1f);
+                var p = new Vector2(x / 511f * ReleaseVersion.WorldSize, y / 511f * ReleaseVersion.WorldSize); float patch = Mathf.PerlinNoise(p.x * 0.12f + 43, p.y * 0.12f + 17), grain = Mathf.PerlinNoise(p.x * 2.1f, p.y * 2.1f);
                 var south = Color.Lerp(new Color(.35f,.48f,.26f),new Color(.69f,.57f,.32f), Mathf.SmoothStep(0,1,(p.x-34)/30));
-                var north = Color.Lerp(new Color(.25f,.39f,.35f),new Color(.47f,.55f,.37f), p.x/80);
+                var north = Color.Lerp(new Color(.25f,.39f,.35f),new Color(.47f,.55f,.37f), p.x/ReleaseVersion.WorldSize);
                 var meadow = Color.Lerp(south, north, Mathf.SmoothStep(0,1,(p.y-34)/22)); float brush=Mathf.PerlinNoise(p.x*.57f+patch*3,p.y*.63f)*.07f;
                 meadow *= 0.84f + patch * 0.26f + grain * 0.055f+brush;
                 meadow=Color.Lerp(meadow,new Color(.53f,.55f,.31f),Mathf.Clamp01((patch-.62f)*2)*.22f);
@@ -62,7 +62,7 @@ namespace ThronesOfMyth
             var random = new System.Random(431);
             for (int cluster = 0; cluster < 125; cluster++)
             {
-                var center = new Vector2(3 + (float)random.NextDouble()*74, 3 + (float)random.NextDouble()*74);
+                var center = new Vector2(3 + (float)random.NextDouble()*(ReleaseVersion.WorldSize-6), 3 + (float)random.NextDouble()*(ReleaseVersion.WorldSize-6));
                 int density=Mathf.RoundToInt(Mathf.Lerp(1,center.y>44?7:center.x>42?3:6,Woodland(center)));
                 for (int tree = 0; tree < density; tree++)
                 {
@@ -82,7 +82,7 @@ namespace ThronesOfMyth
             // Low vegetation punctuates meadows, without filling paths or site clearings.
             for(int i=0;i<480;i++)
             {
-                var p=new Vector2(2+(float)random.NextDouble()*76,2+(float)random.NextDouble()*76);
+                var p=new Vector2(2+(float)random.NextDouble()*(ReleaseVersion.WorldSize-4),2+(float)random.NextDouble()*(ReleaseVersion.WorldSize-4));
                 if(SceneryClearing(p)||p.x>44&&p.y<40)continue;
                 art.Meadow(scenery,new Vector3(p.x,TerrainHeight(p),p.y),i,.75f+(i%3)*.15f,Color.Lerp(new Color(.33f,.45f,.23f),new Color(.58f,.57f,.30f),(i%4)/4f));
             }

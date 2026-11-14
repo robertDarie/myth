@@ -1,4 +1,4 @@
-export const SIZE = 80;
+export { WORLD_SIZE as SIZE } from './world-map.mjs';
 export const CIVILIZATIONS = [
   { id: 'greek', name: 'Greek', specialty: 'Formation: +12% army damage', mythic: 'Minotaur', damage: 1.12, speed: 1, healing: 1, gathering: 1, health: 1 },
   { id: 'egyptian', name: 'Egyptian', specialty: 'Sacred rites: +35% recovery', mythic: 'Sphinx Guardian', damage: 1, speed: 1, healing: 1.35, gathering: 1, health: 1 },

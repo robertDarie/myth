@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -102,11 +103,11 @@ test('proposals expire, disbanding clears treaties, and schema 22 loads an empty
   command(w, b, 'diplomacy-accept', { targetId: view(w, b).incoming[0].id });
   const token = [...w.sessions.entries()].find(([, id]) => id === a.id)[0];
   const old = structuredClone(w.toSave());
-  old.schema = 22;
+  legacyMap(old);old.schema = 22;
   delete old.world.diplomacy;
   const migrated = World.fromSave(old, { now: () => Date.UTC(2026, 0, 6, 12) });
   const q = migrated.authenticate(token);
-  assert.equal(migrated.toSave().schema, 25);
+  assert.equal(migrated.toSave().schema, 26);
   assert.equal(migrated.diplomacy.pacts.length, 0);
   assert.equal(migrated.coalitions.length, 0);
   assert.equal(migrated.alliances.size, 3);

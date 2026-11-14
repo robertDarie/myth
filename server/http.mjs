@@ -1,3 +1,4 @@
+import { cityLimit, PROTOCOL } from './world-map.mjs';
 import { checkpoint, restoreCheckpoint } from './checkpoint.mjs';
 import { createServer } from 'node:http';
 import {resolve} from 'node:path';
@@ -24,13 +25,15 @@ const equalSecret = (a, b) => timingSafeEqual(Buffer.from(hash(String(a ?? '')))
 // restart recovery and therefore must not be used as an in-process rollback.
 
 
-export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null,telemetry=null,buildIdentity=null } = {}) {
+export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null,cityCapacity=null,telemetry=null,buildIdentity=null } = {}) {
   const measure=(name,fn)=>telemetry?telemetry.measure(name,fn):fn();
   if(telemetry?.path&&[savePath,savePath&&savePath+'.bak',savePath&&savePath+'.'+process.pid+'.tmp',databasePath,databasePath&&databasePath+'-wal',databasePath&&databasePath+'-shm'].filter(Boolean).some(p=>[telemetry.path,telemetry.path+'.tmp'].some(m=>resolve(p)===resolve(m))))throw new Error('Metrics must use a separate file from game storage.');
+  if(cityCapacity!==null)cityLimit(cityCapacity);
   if (savePath && databasePath) throw new Error('Choose JSON or SQLite storage, not both. Use legacyPath for explicit migration.');
   const store = suppliedStore ?? (databasePath ? new KingdomDatabase(databasePath) : savePath ? new WorldStore(savePath) : null);
   let world;
   try { world = store ? store.load() : new World(); } catch (error) { store?.close?.(); throw error; }
+  if(cityCapacity!==null)world.cityCapacity=cityLimit(cityCapacity);
   const persistence = { enabled: !!store, backend: databasePath ? 'sqlite' : savePath ? 'json' : suppliedStore ? 'custom' : 'memory', lastSaved: '', error: '' };
   let simulationFailed = false;
   let closed = false, lastTick = performance.now();
@@ -71,8 +74,8 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
       if (!prefixed && requestPath.startsWith('/k/')) throw new GameError('Unknown kingdom.', 404);
       const path = prefixed ? (prefixed[2] || '/') : requestPath;
       const ready = !persistence.error && performance.now() - lastTick < 5000;
-      if (request.method === 'GET' && path === '/kingdoms') return send(200, { kingdoms: [{ id: kingdomId, name: kingdomId === 'local' ? 'Local Kingdom' : kingdomId, description: '', players: world.players.size, capacity: 32, join: world.players.size >= 32 || persistence.error ? 'closed' : 'open', status: persistence.error || simulationFailed ? 'degraded' : 'ok' }] });
-      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: 16, build:buildIdentity,kingdomId, accounts: identity.available, persistence: { ...persistence } });
+      if (request.method === 'GET' && path === '/kingdoms') return send(200, { kingdoms: [{ id: kingdomId, name: kingdomId === 'local' ? 'Local Kingdom' : kingdomId, description: '', players: world.players.size, capacity: world.cityCapacity, join: world.players.size >= world.cityCapacity || persistence.error ? 'closed' : 'open', status: persistence.error || simulationFailed ? 'degraded' : 'ok' }] });
+      if (request.method === 'GET' && ['/health', '/readyz'].includes(path)) return send(ready ? 200 : 503, { status: ready ? 'ok' : 'degraded', game: 'thrones-of-myth', version: PROTOCOL, build:buildIdentity,kingdomId, accounts: identity.available, persistence: { ...persistence } });
       const address = trustProxy ? String(request.headers['x-forwarded-for'] ?? request.socket.remoteAddress).split(',').at(-1).trim() : request.socket.remoteAddress;
       allow('requests:' + address, 6000);
       if (path.startsWith('/auth/')) {

@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
@@ -90,8 +91,10 @@ test('three kingdoms isolate sessions, diplomacy, combat, vision, seasons and re
   assert.equal(host.realms.get('birch').world.players.get(birch.payload.playerId).health, birchHealth);
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'chat-send', targetId: 'alliance', name: 'Dawn cipher only' } })).status, 200);
   host.realms.get('dawn').world.flags.push({ id: 'dawn-beacon-secret', allianceId: dawnAlliance, x: 8, z: 8, builderId: dawn.payload.playerId, health: 100, maxHealth: 100, buildRemaining: 0, isRoot: true, connected: true });
-  assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'scout-send', x: 30, z: 30 } })).status, 200);
-  for (let step = 0; step < 80; step++) host.realms.get('dawn').world.tick(0.25);
+  const scoutOwner=host.realms.get('dawn').world.authenticate(dawn.payload.token);
+  const legacyHome=scoutOwner.homeX<=40&&scoutOwner.homeZ<=40;
+  assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'scout-send', x: Math.min(legacyHome?37:253,scoutOwner.homeX+4), z: Math.min(legacyHome?37:253,scoutOwner.homeZ+4) } })).status, 200);
+  for (let step = 0; step < 320; step++) host.realms.get('dawn').world.tick(0.25);
   const seen = await call(base, '/k/dawn/world', { token: dawn.payload.token });
   const hidden = await call(base, '/k/birch/world', { token: birch.payload.token });
   assert.equal(seen.payload.chatMessages.some(message => message.text === 'Dawn cipher only'), true);
@@ -122,7 +125,7 @@ test('three kingdoms isolate sessions, diplomacy, combat, vision, seasons and re
   assert.equal(host.realms.get('birch').world.players.get(birch.payload.playerId).gold, birchGold);
   assert.equal(claimer.events['oath-of-the-builders'].claimed, true);
   const health = await call(base, '/health');
-  assert.equal(health.payload.version, 16);
+  assert.equal(health.payload.version, 17);
   assert.equal(health.payload.realms.find(realm => realm.id === 'cinder').players, 1);
   assert.equal(typeof health.payload.realms[0].tickMs, 'number');
   assert.equal(health.payload.realms[0].persistence.healthy, true);
@@ -186,11 +189,11 @@ test('idempotency, schema 25, older saves, SQLite accounts and legacy mode stay 
   const world = new World(); const saved = world.join('Schema'); world.command(world.authenticate(saved.token), { type: 'chat-send', name: 'Schema note' });
   new WorldStore(jsonPath).save(world);
   const raw = JSON.parse(readFileSync(jsonPath, 'utf8'));
-  assert.equal(raw.schema, 25);
+  assert.equal(raw.schema, 26);
   const current = openRealm({ id: 'local', name: 'Local Kingdom', savePath: jsonPath });
   assert.equal(current.world.authenticate(saved.token).name, 'Schema');
   current.close();
-  raw.schema = 24; delete raw.world.season;
+  legacyMap(raw);raw.schema = 24; delete raw.world.season;
   writeFileSync(jsonPath, JSON.stringify(raw));
   const migrated = openRealm({ id: 'local', name: 'Local Kingdom', savePath: jsonPath });
   assert.equal(migrated.world.authenticate(saved.token).name, 'Schema');

@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -93,7 +94,7 @@ test('failed save writes leave the last valid world readable', t => {
 
 test('migration archives the original schema-1 save before autosaves rotate its ordinary backup', t => {
   const path = fixture(t), w = testWorld(), session = w.join('Legacy');
-  const legacy = structuredClone(w.toSave()); legacy.schema = 1;
+  const legacy = structuredClone(w.toSave()); legacyMap(legacy);legacy.schema = 1;
   const p = legacy.world.players[0];
   for (const field of ['buildings', 'technologies', 'stone', 'mana', 'sigils', 'research', 'crafting', 'economyClock', 'productionCarry', 'commanderShards', 'commanderRanks', 'summonHistory', 'summonCount', 'epicPity', 'legendaryPity', 'lastOfferingDay', 'ownedRelics', 'equippedRelic']) delete p[field];
   legacy.world.nodes = legacy.world.nodes.filter(n => n.id.startsWith('resource-'));
@@ -101,68 +102,68 @@ test('migration archives the original schema-1 save before autosaves rotate its 
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).stone, 150);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema,25);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema,26);
   assert.equal(readFileSync(path + '.schema1.bak', 'utf8'), original);
 });
 
 test('schema-3 migration archives the untouched generic army before saving the current typed troop format', t => {
   const path = fixture(t), w = testWorld(), session = w.join('Legacy Formation');
-  const legacy = structuredClone(w.toSave()); legacy.schema = 3;
+  const legacy = structuredClone(w.toSave()); legacyMap(legacy);legacy.schema = 3;
   delete legacy.world.players[0].units; delete legacy.world.players[0].reserveUnits;
   const original = JSON.stringify(legacy); writeFileSync(path, original);
   const store = new WorldStore(path), migrated = store.load();
   assert.equal(migrated.authenticate(session.token).units.infantry, 20);
   store.save(migrated); store.save(migrated);
-  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema,25);
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).schema,26);
   assert.equal(readFileSync(path + '.schema3.bak', 'utf8'), original);
 });
 
 test('schema-4 migration preserves the original typed roster archive before the war schema saves', t => {
   const path = fixture(t), w = testWorld(), session = w.join('Before War');
-  const old = structuredClone(w.toSave()); old.schema = 4;
+  const old = structuredClone(w.toSave()); legacyMap(old);old.schema = 4;
   delete old.world.battles; delete old.world.messages; delete old.world.markers;
   for (const p of old.world.players) for (const key of ['wounded','woundedMythic','healing','battleReports','lastChatAt']) delete p[key];
   const original = JSON.stringify(old); writeFileSync(path, original);
   const store = new WorldStore(path), restored = store.load();
   assert.equal(restored.authenticate(session.token).troops, 20); assert.equal(restored.authenticate(session.token).wounded.infantry, 0);
   store.save(restored); store.save(restored);
-  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,25);
+  assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,26);
   assert.equal(readFileSync(path + '.schema4.bak','utf8'), original);
 });
 
 test('schema-5 migration archives the original war save before campaign state is added', t => {
-  const path=fixture(t),w=testWorld();w.join('Legacy War City');const save=w.toSave();save.schema=5;
+  const path=fixture(t),w=testWorld();w.join('Legacy War City');const save=w.toSave();legacyMap(save);save.schema=5;
   delete save.world.rallies;delete save.world.garrisons;delete save.world.sieges;
   for(const p of save.world.players)delete p.groupReports;
   for(const s of save.world.sites){delete s.health;delete s.maxHealth;}
   const original=JSON.stringify(save);writeFileSync(path,original);
-  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,25);store.save(restored);
+  const store=new WorldStore(path),restored=store.load();assert.equal(restored.toSave().schema,26);store.save(restored);
   assert.equal(readFileSync(path+'.schema5.bak','utf8'),original);assert.equal(store.load().players.size,1);
 });
 
 test('schema-7 migration archives discovery and resource stocks before adding chapter progress',t=>{
  const path=fixture(t),w=testWorld(),session=w.join('Legacy Explorer'),p=w.authenticate(session.token);p.explored=[0,1,20];
- const save=w.toSave();save.schema=7;delete save.world.players[0].journey;save.world.nodes[0].z=18;save.world.nodes[0].remaining=123;
+ const save=w.toSave();legacyMap(save);save.schema=7;delete save.world.players[0].journey;save.world.nodes[0].z=18;save.world.nodes[0].remaining=123;
  const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
- assert.ok(loaded.authenticate(session.token).explored.includes(20));assert.equal(loaded.nodes[0].remaining,123);assert.equal(loaded.nodes[0].z,12);assert.equal(loaded.toSave().schema,25);
+ assert.ok(loaded.authenticate(session.token).explored.includes(64));assert.equal(loaded.nodes[0].remaining,123);assert.equal(loaded.nodes[0].z,12);assert.equal(loaded.toSave().schema,26);
  store.save(loaded);assert.equal(readFileSync(path+'.schema7.bak','utf8'),original);assert.equal(store.load().authenticate(session.token).journey.chapters.length,0);
 });
 
 test('schema-8 migration archives the original campaign before adding PvE strongholds',t=>{
- const path=fixture(t),w=testWorld(),session=w.join('Legacy Campaign');const save=w.toSave();save.schema=8;delete save.world.strongholds;delete save.world.players[0].strongholdVictories;
- const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.strongholds.length,5);assert.equal(loaded.authenticate(session.token).strongholdVictories,0);assert.equal(loaded.toSave().schema,25);store.save(loaded);assert.equal(readFileSync(path+'.schema8.bak','utf8'),original);assert.equal(store.load().strongholds.length,5);
+ const path=fixture(t),w=testWorld(),session=w.join('Legacy Campaign');const save=w.toSave();legacyMap(save);save.schema=8;delete save.world.strongholds;delete save.world.players[0].strongholdVictories;
+ const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.strongholds.length,8);assert.equal(loaded.authenticate(session.token).strongholdVictories,0);assert.equal(loaded.toSave().schema,26);store.save(loaded);assert.equal(readFileSync(path+'.schema8.bak','utf8'),original);assert.equal(store.load().strongholds.length,8);
 });
 
 test('schema-9 migration archives the original kingdom before adding fresh daily and weekly ledgers',t=>{
  const path=fixture(t),w=testWorld(),session=w.join('Legacy Daily City'),p=w.authenticate(session.token);w.command(p,{type:'alliance-create',name:'Legacy Guild'});
- const save=w.toSave();save.schema=9;delete save.world.activityClockMs;for(const p of save.world.players){delete p.daily;delete p.weeklyClaims;}
- const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.toSave().schema,25);assert.equal(loaded.authenticate(session.token).daily.claimed.length,0);assert.equal(loaded.authenticate(session.token).weeklyClaims.claimed.length,0);store.save(loaded);assert.equal(readFileSync(path+'.schema9.bak','utf8'),original);assert.equal(store.load().alliances.size,1);
+ const save=w.toSave();legacyMap(save);save.schema=9;delete save.world.activityClockMs;for(const p of save.world.players){delete p.daily;delete p.weeklyClaims;}
+ const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();assert.equal(loaded.toSave().schema,26);assert.equal(loaded.authenticate(session.token).daily.claimed.length,0);assert.equal(loaded.authenticate(session.token).weeklyClaims.claimed.length,0);store.save(loaded);assert.equal(readFileSync(path+'.schema9.bak','utf8'),original);assert.equal(store.load().alliances.size,1);
 });
 
 test('schema-10 migration archives the original world and preserves captured gate access',t=>{
  const path=fixture(t),w=testWorld(),session=w.join('Legacy Realm'),p=w.authenticate(session.token);w.command(p,{type:'alliance-create',name:'Legacy Keep'});w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;
- const save=w.toSave();save.schema=10;delete save.world.kingdom;for(const p of save.world.players)delete p.kingdomClaims;const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
- assert.equal(loaded.toSave().schema,25);assert.equal(loaded.kingdom.completed[1].id,'gates');assert.equal(loaded.kingdom.completed[1].legacy,true);store.save(loaded);assert.equal(readFileSync(path+'.schema10.bak','utf8'),original);assert.equal(store.load().kingdom.completed.length,2);
+ const save=w.toSave();legacyMap(save);save.schema=10;delete save.world.kingdom;for(const p of save.world.players)delete p.kingdomClaims;const original=JSON.stringify(save);writeFileSync(path,original);const store=new WorldStore(path),loaded=store.load();
+ assert.equal(loaded.toSave().schema,26);assert.equal(loaded.kingdom.completed[1].id,'gates');assert.equal(loaded.kingdom.completed[1].legacy,true);store.save(loaded);assert.equal(readFileSync(path+'.schema10.bak','utf8'),original);assert.equal(store.load().kingdom.completed.length,2);
 });
 
 test('a local JSON restart accrues capped field production once and leaves the army where it was', t => {
@@ -178,7 +179,7 @@ test('a local JSON restart accrues capped field production once and leaves the a
   assert.equal(q.wood, q.food);
   assert.equal(q.stone, 100000);
   assert.equal(q.x, x); assert.equal(q.z, z); assert.equal(q.kills, 0); assert.equal(q.cityLevel, 1);
-  assert.equal(loaded.toSave().schema, 25);
+  assert.equal(loaded.toSave().schema, 26);
   const again = new WorldStore(path).load().authenticate(session.token);
   assert.equal(again.food, q.food); assert.equal(again.wood, q.wood); assert.equal(again.stone, 100000);
 });
@@ -188,7 +189,7 @@ test('a JSON save without a downtime timestamp does not grant retroactive produc
   p.food = 10; p.wood = 10;
   writeFileSync(path, JSON.stringify(w.toSave()));
   const loaded = new WorldStore(path).load(), q = loaded.authenticate(session.token);
-  assert.equal(q.food, 10); assert.equal(q.wood, 10); assert.equal(loaded.toSave().schema, 25);
+  assert.equal(q.food, 10); assert.equal(q.wood, 10); assert.equal(loaded.toSave().schema, 26);
 });
 
 test('a JSON restart finishes one paid Citadel timer and a second restart does not pay it again', t => {
@@ -205,7 +206,7 @@ test('a JSON restart finishes one paid Citadel timer and a second restart does n
   const loaded = store.load(), q = loaded.authenticate(session.token);
   assert.equal(q.cityLevel, 2); assert.equal(q.construction, null);
   assert.equal(q.kills, kills); assert.equal(q.x, x); assert.equal(q.gold, spent);
-  assert.equal(loaded.toSave().schema, 25);
+  assert.equal(loaded.toSave().schema, 26);
   const twice = new WorldStore(path).load().authenticate(session.token);
   assert.equal(twice.cityLevel, 2); assert.equal(twice.construction, null); assert.equal(twice.gold, spent);
 });

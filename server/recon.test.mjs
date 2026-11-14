@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { testWorld } from './testing/kingdom-fixture.mjs';
@@ -163,11 +164,11 @@ test('schema 17 gains empty readings and rank-zero veil research without erasing
   const { w, sessions, players: [a] } = setup(['Keeper']);
   const explored = [...a.explored];
   const old = w.toSave();
-  old.schema = 17;
+  legacyMap(old);old.schema = 17;
   for (const p of old.world.players) { delete p.reconReports; delete p.reconNotices; delete p.technologies.veilreading; for (const s of p.scouts ?? []) { delete s.recon; delete s.watchSeconds; } }
   const loaded = World.fromSave(old);
   const keeper = loaded.authenticate(sessions[0].token);
-  assert.equal(loaded.toSave().schema, 25);
+  assert.equal(loaded.toSave().schema, 26);
   assert.deepEqual(keeper.explored, explored);
   assert.deepEqual(keeper.reconReports, []);
   assert.deepEqual(keeper.reconNotices, []);

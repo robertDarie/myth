@@ -501,9 +501,9 @@ namespace ThronesOfMyth
             GUILayout.Label((progress.expertise ? "EXPERTISE ACTIVE · " : "Expertise · ") + progress.expertiseDescription, noteStyle);
             GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Active skills fire automatically at 1,000 rage.", noteStyle);
         }
-        private static void Dot(Rect area, float x, float z, Color color, int size)
+        private void Dot(Rect area, float x, float z, Color color, int size)
         {
-            GUI.color = color; GUI.DrawTexture(new Rect(area.x + x / 80 * area.width - size / 2f, area.y + (1 - z / 80) * area.height - size / 2f, size, size), Texture2D.whiteTexture); GUI.color = Color.white;
+            GUI.color = color; GUI.DrawTexture(new Rect(area.x + x / (world?.size??ReleaseVersion.WorldSize) * area.width - size / 2f, area.y + (1 - z / (world?.size??ReleaseVersion.WorldSize)) * area.height - size / 2f, size, size), Texture2D.whiteTexture); GUI.color = Color.white;
         }
         private void Select(string id, string kind) { if(selectedId!=id)map.SelectionFeedback(id);selectedId=id;selectedKind=kind;map.selectedId=id; }
         private void ActOnSelection()
@@ -601,7 +601,7 @@ namespace ThronesOfMyth
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         var next = JsonUtility.FromJson<WorldSnapshot>(request.downloadHandler.text);
-                        if (next.version != 16) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
+                        if (next.version != ReleaseVersion.Protocol) { status = "Server version mismatch. Stop and restart node index.mjs from the updated repository."; token = null; loadingError = status; break; }
                         if (!string.IsNullOrEmpty(next.kingdomId) && next.kingdomId != ActiveKingdomId) { token = null; loadingError = "The server returned a different kingdom. Choose the kingdom again."; status = loadingError; break; }
                         if (!string.IsNullOrEmpty(next.kingdomName)) kingdomName = next.kingdomName;
                         lastSnapshotAt = Time.unscaledTime;
@@ -616,7 +616,7 @@ namespace ThronesOfMyth
                                 lastDrawId = me.summonHistory[0].id;
                             }
                             else if (lastDrawId == null) lastDrawId = "";
-                            if (!worldReady) { loadingStage = "Preparing your civilization";if(cityDiorama==null)cityDiorama=new CityDiorama();cityDiorama.Prepare(me);yield return null; }
+                            if (!worldReady) { cameraControl?.Focus(me.homeX,me.homeZ);loadingStage = "Preparing your civilization";if(cityDiorama==null)cityDiorama=new CityDiorama();cityDiorama.Prepare(me);yield return null; }
                             map.showSupply = PlayerPrefs.GetInt("ThronesOfMyth.supplyReach", 1) == 1;
                             map.Sync(world, playerId, me.allianceId);ObserveSessionFeel();
                             worldReady = true; loadingError = "";RestorePendingOrder();

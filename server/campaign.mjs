@@ -1,3 +1,4 @@
+import { WORLD_SIZE } from './world-map.mjs';
 import { ECONOMY, refreshEconomy } from './economy.mjs';
 import { siteIsOpen } from './kingdom.mjs';
 import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, rewardStronghold, resetStronghold, validateStrongholdReport } from './strongholds.mjs';
@@ -247,7 +248,7 @@ export function tickCampaign(w,dt) {
     if(r.phase==='Marching'&&isStronghold(t)&&r.armyIds.length<STRONGHOLD_RULES.minMarches){removeRally(w,r,'Stronghold rally fell below two marches');continue;}
     if(r.phase==='Marching') {
       const before={x:r.x,z:r.z},speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));r.ownerId=r.leaderId;const arrived=travel(w,r,t,speed,dt,1.2);
-      for(const a of actors(w,r.armyIds)){a.x=Math.max(1,Math.min(79,a.x+r.x-before.x));a.z=Math.max(1,Math.min(79,a.z+r.z-before.z));setOrder(a,'rally',r.id,t,'Rally marching');}
+      for(const a of actors(w,r.armyIds)){a.x=Math.max(1,Math.min(WORLD_SIZE-1,a.x+r.x-before.x));a.z=Math.max(1,Math.min(WORLD_SIZE-1,a.z+r.z-before.z));setOrder(a,'rally',r.id,t,'Rally marching');}
       if(!arrived)continue;
       if(isStronghold(t)){
        const members=[...new Set(actors(w,r.armyIds).map(a=>w.owner(a)))];for(const p of members)refreshEconomy(w,p);
@@ -294,7 +295,7 @@ export function restoreCampaign(w,saved) {
   }
   if(new Set(saved.garrisons.map(g=>g.targetId)).size!==saved.garrisons.length||new Set(saved.rallies.map(r=>r.id)).size!==saved.rallies.length)throw new Error('Invalid saved campaign IDs.');
   for(const group of [...saved.rallies,...saved.garrisons])if(totalLoad(w,group.armyIds)>(group.id?CAMPAIGN_LIMITS.rallyLoad:CAMPAIGN_LIMITS.garrisonLoad))throw new Error('Invalid saved campaign capacity.');
-  for(const r of saved.rallies)if(typeof r.id!=='string'||!r.armyIds.includes(r.leaderArmyId)||w.owner(w.army(r.leaderArmyId)).id!==r.leaderId||!['Assembling','Marching','Fighting'].includes(r.phase)||![r.x,r.z,r.meetX,r.meetZ].every(n=>Number.isFinite(n)&&n>=1&&n<=79)||!Number.isFinite(r.assemblyEnds))throw new Error('Invalid saved rally.');
+  for(const r of saved.rallies)if(typeof r.id!=='string'||!r.armyIds.includes(r.leaderArmyId)||w.owner(w.army(r.leaderArmyId)).id!==r.leaderId||!['Assembling','Marching','Fighting'].includes(r.phase)||![r.x,r.z,r.meetX,r.meetZ].every(n=>Number.isFinite(n)&&n>=1&&n<=WORLD_SIZE-1)||!Number.isFinite(r.assemblyEnds))throw new Error('Invalid saved rally.');
   for(const r of saved.rallies)if(isStronghold(fortification(w,r.targetId))&&r.targetCycle!==fortification(w,r.targetId).cycle)throw new Error('Invalid saved stronghold generation.');
   w.garrisons=saved.garrisons;
   for(const g of w.garrisons){const t=fortification(w,g.targetId);if(t.allianceId!==g.allianceId)throw new Error('Invalid saved garrison ownership.');for(const a of actors(w,g.armyIds))setOrder(a,'garrison',t.id,t,distance(a,t)<=2?'Garrisoned':'Garrison approaching');}

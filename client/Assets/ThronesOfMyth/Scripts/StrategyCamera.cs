@@ -12,7 +12,7 @@ namespace ThronesOfMyth
         private Vector3 previousMouse;
         private bool dragging;
         private float wantedZoom=14;
-        private Rect bounds=new Rect(0,0,80,80);
+        private Rect bounds=new Rect(0,0,ReleaseVersion.WorldSize,ReleaseVersion.WorldSize);
         private static readonly Vector3 Offset=new Vector3(0,42,-30);
         public Rect MapBounds => bounds;
         public Vector3 FocusPoint => focus;
@@ -22,7 +22,7 @@ namespace ThronesOfMyth
         public void Initialize()
         {
             if(view!=null)return;
-            view=GetComponent<Camera>();view.orthographic=true;view.orthographicSize=14;view.nearClipPlane=.1f;view.farClipPlane=250;
+            view=GetComponent<Camera>();view.orthographic=true;view.orthographicSize=14;view.nearClipPlane=.1f;view.farClipPlane=512;
             view.backgroundColor=new Color(.16f,.23f,.26f);view.clearFlags=CameraClearFlags.SolidColor;
             Pose();ConstrainNow(true);
         }

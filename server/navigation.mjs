@@ -1,17 +1,13 @@
 import { siteIsOpen } from './kingdom.mjs';
-// Province walls have four corridors; each axis is controlled by its Divine Gate.
-export const CORRIDORS = [
- {id:'east-low',gateId:'gate-east',a:{x:39,z:20},b:{x:41,z:20}},
- {id:'east-high',gateId:'gate-east',a:{x:39,z:60},b:{x:41,z:60}},
- {id:'north-west',gateId:'gate-north',a:{x:20,z:39},b:{x:20,z:41}},
- {id:'north-east',gateId:'gate-north',a:{x:60,z:39},b:{x:60,z:41}}
-];
-const region=p=>(p.x>40?1:0)+(p.z>40?2:0);
+import { MAP_CORRIDORS, provinceAt } from './world-map.mjs';
+export const CORRIDORS = MAP_CORRIDORS;
+const region=p=>provinceAt(p)?.id;
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
 export function route(w,actor,destination,returning=false){
- const p=w.owner(actor);if(!returning&&!w.canEnter(p,destination))return null;
+ const p=w.owner(actor);if(!returning&&(!w.canEnter(p,destination)||!w.canEnter(p,actor)))return null;
+ if(region(actor)&&region(actor)===region(destination))return [{x:destination.x,z:destination.z}];
  const points=[{x:actor.x,z:actor.z},{x:destination.x,z:destination.z}],links=[];
- for(const c of CORRIDORS){const i=points.length;points.push(c.a,c.b);if(returning||(p.allianceId&&w.sites.some(s=>s.id===c.gateId&&s.allianceId===p.allianceId&&siteIsOpen(w,c.gateId))))links.push([i,i+1]);}
+ for(const c of CORRIDORS){const i=points.length;points.push(c.a,c.b);if(returning||!c.gateId||(p.allianceId&&w.sites.some(s=>s.id===c.gateId&&s.allianceId===p.allianceId&&siteIsOpen(w,c.gateId))))links.push([i,i+1]);}
  const corridorEdge=(u,v)=>links.some(([a,b])=>{
   if((a===u&&b===v)||(a===v&&b===u))return true;
   const on=i=>Math.abs(dist(points[a],points[i])+dist(points[i],points[b])-dist(points[a],points[b]))<0.00001;
@@ -21,7 +17,7 @@ export function route(w,actor,destination,returning=false){
  for(let step=0;step<n;step++){
   let u=-1;for(let i=0;i<n;i++)if(!done.has(i)&&(u<0||cost[i]<cost[u]))u=i;
   if(u<0||!Number.isFinite(cost[u]))break;if(u===1)break;done.add(u);
-  for(let v=0;v<n;v++)if(v!==u&&(region(points[u])===region(points[v])||corridorEdge(u,v))){
+  for(let v=0;v<n;v++)if((returning||v===0||w.canEnter(p,points[v]))&&v!==u&&(region(points[u])===region(points[v])||corridorEdge(u,v))){
    const next=cost[u]+dist(points[u],points[v]);if(next<cost[v]){cost[v]=next;prev[v]=u;}
   }
  }

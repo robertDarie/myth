@@ -81,3 +81,8 @@ The forge, hall, training, and guide screens send server commands for the system
 ## Friends alpha milestone - checkpoint A
 
 Random continuous city spawning in the gate-free First Frontier is implemented. Four-unit city spacing, static-object clearance, reachable starter deposits/camps, bounded full-land rejection and durable join rollback preserve old positions and sessions. Five spawn tests, 369 server tests and the 22-command plan passed (five Linux packaging checks skipped on Windows). Schema 25 / protocol 16. See `docs/random-city-spawns.md`. Map expansion and the friends distribution workflow remain next.
+
+
+## Expanded kingdom - checkpoint B
+
+Real world expanded to 256x256 with the legacy area preserved, three populated frontier provinces, explicit gated routes, 293 deposits, 62 camps, 11 sites and eight strongholds. Schema 26 converts 20-column fog to 64 columns; protocol 17 requires matching clients. Registered identity ceiling 256; default operational cap stays 32; alliance membership ceiling 100 with role/chat/contribution persistence. Unity batch compilation passed; 376 Node tests and 23 publication checks passed (five platform skips); portable presentation contracts: 16,754. The ten-client benchmark succeeded at 32/128/256 registrations but loaded 256-city command p95 was 1025.749 ms, so no 256-active-client claim. See `docs/expanded-kingdom.md` and `docs/benchmarks/expanded-kingdom.json`. Private-alpha packaging/connection workflow is checkpoint C; native and real remote play remain unverified.

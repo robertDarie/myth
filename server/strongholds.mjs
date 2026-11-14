@@ -8,7 +8,7 @@ const TIERS={
  2:{guardHealth:650,guardDamage:25,maxHealth:300,units:{infantry:70,archers:60,cavalry:0},reward:{wood:240,food:300,gold:300,stone:160,mana:16,sigils:3},xp:200},
  3:{guardHealth:1050,guardDamage:44,maxHealth:500,units:{infantry:70,archers:70,cavalry:70},reward:{wood:400,food:500,gold:500,stone:240,mana:30,sigils:5},xp:350}
 };
-const DEFINITIONS=[['godbreaker-watch','Godbreaker Watch',1,27,20],['godbreaker-redoubt','Godbreaker Redoubt',1,14,32],['godbreaker-forge','Godbreaker War Forge',2,53,24],['godbreaker-spire','Godbreaker Runic Spire',2,24,53],['godbreaker-throne','Throne of the Godbreakers',3,62,61]];
+const DEFINITIONS=[['godbreaker-watch','Godbreaker Watch',1,27,20],['godbreaker-redoubt','Godbreaker Redoubt',1,14,32],['godbreaker-forge','Godbreaker War Forge',2,53,24],['godbreaker-spire','Godbreaker Runic Spire',2,24,53],['godbreaker-throne','Throne of the Godbreakers',3,62,61],['frontier-dawn-keep','Dawnreach Keep',1,224,48],['frontier-ashen-keep','Ashen Keep',1,48,224],['frontier-outer-throne','Throne of the Far Marches',3,224,224]];
 export const isStronghold=t=>t?.kind==='stronghold';
 export function createStrongholds(){return DEFINITIONS.map(([id,name,tier,x,z])=>{const t=TIERS[tier];return {id,name,tier,x,z,kind:'stronghold',allianceId:'',health:t.maxHealth,maxHealth:t.maxHealth,guardHealth:t.guardHealth,maxGuardHealth:t.guardHealth,guardDamage:t.guardDamage,units:{...t.units},respawn:0,cycle:1,reward:{...t.reward},xp:t.xp};});}
 export function resetStronghold(t){if(isStronghold(t)&&t.respawn<=0){t.health=t.maxHealth;t.guardHealth=t.maxGuardHealth;}}

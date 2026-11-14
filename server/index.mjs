@@ -18,7 +18,7 @@ const shutdownToken = localPlaytest ? process.env.THRONES_LAUNCH_TOKEN : null;
 const trustProxy = !localPlaytest && process.env.THRONES_TRUST_PROXY === '1';
 const realmsFile = !localPlaytest && process.env.THRONES_REALMS ? resolve(process.env.THRONES_REALMS) : '';
 if (localPlaytest && process.env.THRONES_REALMS) console.log('Isolated playtest ignores THRONES_REALMS and keeps the default local kingdom.');
-const started = realmsFile ? startRealms(realmsFile) : createGameServer({telemetry,buildIdentity, savePath: databasePath ? null : savePath, databasePath,
+const started = realmsFile ? startRealms(realmsFile) : createGameServer({telemetry,buildIdentity,cityCapacity:!localPlaytest&&process.env.THRONES_CITY_CAPACITY?Number(process.env.THRONES_CITY_CAPACITY):null, savePath: databasePath ? null : savePath, databasePath,
   joinCode: localPlaytest ? '' : process.env.THRONES_JOIN_CODE ?? '',
   trustProxy, kingdomId: process.env.THRONES_KINGDOM_ID ?? 'local', shutdownToken });
 const { server, saveNow } = started;
@@ -29,7 +29,7 @@ function startRealms(file) {
   return createRealmHost({
     defaultId: config.defaultId ?? 'local', shutdownToken, trustProxy, buildIdentity,
     realms: kingdoms.map(realm => ({
-      id: realm.id, name: realm.name, description: realm.description ?? '',
+      cityCapacity:realm.cityCapacity, id: realm.id, name: realm.name, description: realm.description ?? '',
       joinCode: realm.joinCode ?? process.env.THRONES_JOIN_CODE ?? '',
       savePath: realm.savePath ? resolve(realm.savePath) : null,
       databasePath: realm.databasePath ? resolve(realm.databasePath) : null

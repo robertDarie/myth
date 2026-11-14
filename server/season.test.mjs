@@ -131,7 +131,7 @@ test('schema 22, 23 and 24 open a fresh season without touching the city', () =>
     if (schema < 24) { delete saved.world.coalitions; delete saved.world.coalitionInvites; }
     const loaded = World.fromSave(saved, { now: () => Date.UTC(2026, 0, 5) });
     const p = loaded.authenticate([...loaded.sessions.entries()][0][0]);
-    assert.equal(loaded.toSave().schema, 25);
+    assert.equal(loaded.toSave().schema, 26);
     assert.equal(loaded.snapshot(p.id).season.score, 0);
     assert.equal(loaded.snapshot(p.id).season.index, 1);
     assert.equal(p.gold, gold);

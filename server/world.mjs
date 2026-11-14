@@ -1,3 +1,4 @@
+import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
 import { chooseCitySpawn } from './spawning.mjs';
 import { ECONOMY, initializeEconomy, refreshEconomy, economySnapshot, economyCommand, validateEconomy, migrateEconomy, campAdmission, economyTime } from './economy.mjs';
 import { initializeLogistics, validateLogistics, activeMarches, cargoTotal, carryCapacity, gatherCargo, returnCargo, loseCargo, dock, unifiedReports, coreReport } from './field-logistics.mjs';
@@ -41,7 +42,8 @@ function withRoster(world, action) {
 const distance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const finitePoint = p => [p.x, p.z].every(n => Number.isFinite(n) && n >= 1 && n <= SIZE - 1);
 export class World {
-  constructor({ random = secureRandom, now = () => Date.now() } = {}) {
+  constructor({ random = secureRandom, now = () => Date.now(), cityCapacity = LIMITS.defaultCities } = {}) {
+    this.cityCapacity = cityLimit(cityCapacity);
     this.random = random; this.now = now; this.activityClockMs = 0; activityClock(this);
     this.chooseIndex = length => this.random === secureRandom ? randomInt(length) : Math.floor(this.random() * length);
     this.strongholds = createStrongholds(); this.rallies = []; this.garrisons = []; this.sieges = []; this.messages = []; this.markers = []; this.battles = new Map(); this.players = new Map(); this.sessions = new Map(); this.alliances = new Map();
@@ -52,8 +54,9 @@ export class World {
       resource: ['wood', 'gold', 'food'][i % 3], x: 8 + (i % 4) * 8, z: 18 + Math.floor(i / 4) * 8, remaining: 600, capacity: 600, refill: 0 }));
     this.nodes[0].x = 8; this.nodes[0].z = 12;
     this.nodes[2].x = 12; this.nodes[2].z = 10;
-    this.nodes.push(...resourceNodes.map(n => ({ ...n })));
-    this.sites = siteDefinitions.map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
+    this.nodes.push(...resourceNodes.map(n => ({ ...n })), ...frontierNodes());
+    this.camps.push(...frontierCamps());
+    this.sites = [...siteDefinitions,...frontierSites()].map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
     this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind); initializeKingdom(this);
   }
   event(message) { this.events.unshift({ time: Math.round(this.time), message }); this.events.length = Math.min(this.events.length, 12); }
@@ -63,7 +66,7 @@ export class World {
     if (typeof name !== 'string' || !name.trim() || name.trim().length > 24) throw new GameError('Name must contain 1–24 characters.');
     if (!CIVILIZATIONS.some(c => c.id === civilization)) throw new GameError('Unknown civilization.');
     if ([...this.players.values()].some(p => p.name.toLowerCase() === name.trim().toLowerCase())) throw new GameError('That city already exists. Use its saved local profile or choose a new name.');
-    if (this.players.size >= 32) throw new GameError('Prototype is full.', 503);
+    if (this.players.size >= this.cityCapacity) throw new GameError('This kingdom has reached its configured city capacity.', 503);
     const id = randomUUID(), token = randomUUID();
     // Reuse vacant slots rather than relying on player count after disconnects.
     const occupied = new Set([...this.players.values()].map(p => p.slot));
@@ -116,8 +119,8 @@ export class World {
   }
   canEnter(p, destination) {
     p = this.owner(p);
-    const owns = id => !!p.allianceId && this.sites.find(s => s.id === id).allianceId === p.allianceId && siteIsOpen(this,id);
-    return (destination.x <= 40 || owns('gate-east')) && (destination.z <= 40 || owns('gate-north'));
+    const province=provinceAt(destination);
+    return !!province&&province.gates.every(id=>p.allianceId&&this.sites.some(s=>s.id===id&&s.allianceId===p.allianceId)&&siteIsOpen(this,id));
   }
   normalizeDeployment(){for(const a of this.armies())if(a.target||!this.atHome(a))a.deployed=true;}
   command(p, c) {
@@ -195,6 +198,7 @@ export class World {
       }
       case 'alliance-join':
         if (p.allianceId || !this.alliances.has(c.targetId)) throw new GameError('Choose an existing alliance while unaffiliated.');
+        if ([...this.players.values()].filter(member=>member.allianceId===c.targetId).length>=LIMITS.allianceMembers) throw new GameError('This alliance has reached its 100-member capacity.');
         p.allianceId = c.targetId; this.event(`${p.name} joined ${this.alliances.get(p.allianceId).name}.`); return;
       default: throw new GameError('Unknown command.');
     }
@@ -330,16 +334,18 @@ export class World {
   toSave() {
     this.normalizeDeployment();
     ensureSeason(this);
-    return { schema: 25, world: { kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: WORLD_SCHEMA, world: { cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
     if(data?.schema<15)data=migrateEconomy(data);
+    data = migrateMap(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
-    if (w.players.length > 32 || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
-    const world = new World(options);
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (w.players.length > LIMITS.maxCities || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
+    const world = new World({...options,cityCapacity:options.cityCapacity??w.cityCapacity??LIMITS.defaultCities});
+    if(data.schema<26&&Array.isArray(w.strongholds))for(const t of world.strongholds.filter(t=>t.id.startsWith('frontier-')))if(!w.strongholds.some(old=>old.id===t.id))w.strongholds.push(structuredClone(t));
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
     if (data.schema === 1) for (const node of resourceNodes) if (!w.nodes.some(n => n.id === node.id)) w.nodes.push({ ...node });
     const resumedOrders=new Map();
@@ -347,7 +353,7 @@ export class World {
       if (data.schema < 3 && p) { initializeCity(p, true); initializeProgression(p); }
       if (!p || typeof p.id !== 'string' || typeof p.name !== 'string' || world.players.has(p.id) || !CIVILIZATIONS.some(c => c.id === p.civilization) || !COMMANDERS.some(c => c.id === p.commanderId)) throw new Error('Invalid saved city.');
       if (!['gold', 'wood', 'food', 'troops', 'mythic', 'reserveTroops', 'reserveMythic', 'health', 'xp', 'recovery', 'cooldown', 'gatherClock'].every(k => Number.isFinite(p[k]) && p[k] >= 0) || !finitePoint(p) || !finitePoint({ x: p.homeX, z: p.homeZ }) || !Number.isInteger(p.cityLevel) || p.cityLevel < 1 || p.cityLevel > 5) throw new Error('Invalid saved city values.');
-      if (!Number.isInteger(p.slot) || p.slot < 0 || p.slot >= 32 || !Number.isInteger(p.level) || p.level < 1 || !Number.isInteger(p.kills) || p.kills < 0 || !Array.isArray(p.ownedCommanders) || !p.ownedCommanders.includes(p.commanderId) || p.ownedCommanders.some(id => !COMMANDERS.some(c => c.id === id)) || !Array.isArray(p.trainingQueue) || p.trainingQueue.length > 3) throw new Error('Invalid saved roster or queue.');
+      if (!Number.isInteger(p.slot) || p.slot < 0 || p.slot >= LIMITS.maxCities || !Number.isInteger(p.level) || p.level < 1 || !Number.isInteger(p.kills) || p.kills < 0 || !Array.isArray(p.ownedCommanders) || !p.ownedCommanders.includes(p.commanderId) || p.ownedCommanders.some(id => !COMMANDERS.some(c => c.id === id)) || !Array.isArray(p.trainingQueue) || p.trainingQueue.length > 3) throw new Error('Invalid saved roster or queue.');
       if (data.schema < 4) migrateUnits(p);
       if (data.schema < 5) { initializeWar(p); initializeSocial(p); }
       if (data.schema < 16) { p.buildings ??= {}; if (!Number.isInteger(p.buildings.scoutcamp)) p.buildings.scoutcamp = 1; }
@@ -418,7 +424,7 @@ export class World {
     }
     if (w.players.some(p => p.allianceId && !world.alliances.has(p.allianceId))) throw new Error('Invalid saved alliance membership.');
     for (const [key, metrics] of [['camps', ['x', 'z', 'health', 'maxHealth', 'respawn']], ['nodes', ['x', 'z', 'remaining', 'capacity', 'refill']], ['sites', ['x', 'z', 'progress']]]) {
-      if (w[key].length !== world[key].length || new Set(w[key].map(item => item.id)).size !== world[key].length || w[key].some(item => !world[key].some(base => base.id === item.id) || !metrics.every(k => Number.isFinite(item[k]) && item[k] >= 0))) throw new Error('Invalid saved map.');
+      if (w[key].length !== world[key].length || new Set(w[key].map(item => item.id)).size !== world[key].length || w[key].some(item => !world[key].some(base => base.id === item.id) || !finitePoint(item) || !metrics.every(k => Number.isFinite(item[k]) && item[k] >= 0))) throw new Error('Invalid saved map.');
       if (key === 'camps' && w.camps.some(c => !c.contributors || typeof c.contributors !== 'object' || Object.values(c.contributors).some(amount => !Number.isFinite(amount) || amount < 0))) throw new Error('Invalid saved battle state.');
       if(key==='camps'&&w.camps.some(c=>!Number.isSafeInteger(c.cycle)||c.cycle<1))throw new Error('Invalid saved camp generation.');
       world[key] = w[key];
@@ -429,7 +435,7 @@ export class World {
     if (data.schema < 8) for (const id of ['resource-0', 'resource-2']) { const node = world.nodes.find(n => n.id === id); node.x = id === 'resource-0' ? 8 : 12; node.z = id === 'resource-0' ? 12 : 10; }
     world.flags = w.flags; world.events = w.events.slice(0, 12); world.time = w.time;
     if (data.schema >= 5) {
-      if (!Array.isArray(w.battles) || w.battles.length > 80 || new Set(w.battles.map(b => b.id)).size !== w.battles.length) throw new Error('Invalid saved engagements.');
+      if (!Array.isArray(w.battles) || w.battles.length > LIMITS.maxCities*5 || new Set(w.battles.map(b => b.id)).size !== w.battles.length) throw new Error('Invalid saved engagements.');
       const engaged = new Set();
       for (const battle of w.battles) {
         validateReport(battle);
@@ -489,7 +495,7 @@ export class World {
     const activity = viewerId && this.players.has(viewerId) ? { ...activitySnapshot(this, this.players.get(viewerId)), events: eventSnapshot(this, this.players.get(viewerId)) } : null;
     const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
     const viewerAlliance = viewer?.allianceId;
-    const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),season:seasonSnapshot(this,viewer),version: 16, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
+    const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),season:seasonSnapshot(this,viewer),version: PROTOCOL, provinces:PROVINCES, corridors:MAP_CORRIDORS, cityCapacity:this.cityCapacity, allianceCapacity:LIMITS.allianceMembers, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
       formation: { id: FORMATION.id, name: FORMATION.name, minimumPercent: FORMATION.minimumPercent, health: FORMATION.health },
       players: [...this.players.values()].map(p => {
         const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, loginStreak, events, ...visible } = p;

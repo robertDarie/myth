@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -154,7 +155,7 @@ test('schema 18 and 19 cities keep their soldiers and do not gain higher tiers',
     delete old.world.players[0].technologies.bulwarks;
     delete old.world.players[0].technologies.titanhost;
     const loaded = World.fromSave(old), q = loaded.authenticate(s.token);
-    assert.equal(loaded.toSave().schema, 25);
+    assert.equal(loaded.toSave().schema, 26);
     assert.equal(q.technologies.columns, 0);
     assert.equal(q.units.infantry, 12);
     assert.equal(q.units.veteranInfantry, 8);
@@ -162,7 +163,7 @@ test('schema 18 and 19 cities keep their soldiers and do not gain higher tiers',
     assert.equal(countOf(q.units, 'titanInfantry'), 0);
   }
   const forged = structuredClone(w.toSave());
-  forged.schema = 19;
+  legacyMap(forged);forged.schema = 19;
   forged.world.players[0].units.columnInfantry = 4;
   forged.world.players[0].troops = 24;
   assert.throws(() => World.fromSave(forged), /unlock/);

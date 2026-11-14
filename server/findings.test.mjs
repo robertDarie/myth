@@ -1,3 +1,4 @@
+import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { testWorld } from './testing/kingdom-fixture.mjs';
@@ -91,7 +92,7 @@ test('cave and ruin investigations use one scout, survive restart, and recall ca
   const caveReward = gift(p, cave.id), ruinReward = gift(p, ruin.id);
   const reloaded = World.fromSave(w.toSave());
   const q = reloaded.authenticate(sessions[0].token);
-  assert.equal(reloaded.toSave().schema, 25);
+  assert.equal(reloaded.toSave().schema, 26);
   assert.deepEqual(q.findings.completed, p.findings.completed);
   assert.deepEqual(q.findings.rewards[cave.id], caveReward);
   assert.deepEqual(q.findings.rewards[ruin.id], ruinReward);
@@ -130,10 +131,10 @@ test('schema 16 exploration migrates without erasing land or inventing claims', 
   const { w, sessions, players: [p] } = setup(['Keeper']);
   reveal(w, p, findingById('olive-rest'));
   assert.equal(p.findings.known.includes('olive-rest'), true);
-  const save = w.toSave(); save.schema = 16;
+  const save = w.toSave(); legacyMap(save);save.schema = 16;
   for (const player of save.world.players) delete player.findings;
   const restored = World.fromSave(save), q = restored.authenticate(sessions[0].token);
-  assert.equal(restored.toSave().schema, 25);
+  assert.equal(restored.toSave().schema, 26);
   assert.deepEqual(q.explored, p.explored);
   assert.equal(q.findings.known.includes('olive-rest'), true);
   assert.deepEqual(q.findings.claimed, []);

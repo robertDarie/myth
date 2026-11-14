@@ -1,3 +1,5 @@
+import { legacySpawns } from './testing/kingdom-fixture.mjs';
+import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld, openKingdom } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
@@ -112,9 +114,9 @@ test('assembly can be canceled and saved/migrated without creating contributions
  const {w,a,b,c,gate}=setup();cmd(w,a,'rally-create',gate.id);cmd(w,b,'rally-join',w.rallies[0].id);
  const restored=World.fromSave(w.toSave());assert.equal(restored.rallies.length,0);assert.equal(restored.players.get(a.id).groupReports.length,0);
  cmd(w,a,'rally-leave');assert.equal(w.rallies.length,0);assert.equal(census(a),20);assert.equal(census(b),20);
- const old=w.toSave();old.schema=5;delete old.world.rallies;delete old.world.garrisons;delete old.world.sieges;
+ const old=w.toSave();legacyMap(old);old.schema=5;delete old.world.rallies;delete old.world.garrisons;delete old.world.sieges;
  for(const p of old.world.players)delete p.groupReports;
- const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,25);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
+ const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,26);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
 });
 
 test('surviving attackers can garrison their captured gate without being healed or duplicating units',()=>{
@@ -170,7 +172,7 @@ test('rally and garrison load limits reject overflow atomically, counting mythic
 });
 
 test('authenticated rally and reinforcement HTTP commands preserve permissions, stale-order safety and report privacy',async t=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();openKingdom(w);
+ const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);openKingdom(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
  t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
@@ -191,7 +193,7 @@ test('authenticated rally and reinforcement HTTP commands preserve permissions, 
  assert.equal((await get(1)).rallies.length,1);assert.equal((await get(3)).rallies.length,0);
  until(w,()=>w.sieges.length>0);assert.equal((await get(0)).players.find(p=>p.id===a.id).groupReports.length,1);
  until(w,()=>gate.allianceId===a.allianceId);
- const own=await get(0),outside=await get(3);assert.equal(own.version,16);
+ const own=await get(0),outside=await get(3);assert.equal(own.version,17);
  assert.equal(own.players.find(p=>p.id===a.id).groupReports.length,1);
  assert.equal(outside.players.find(p=>p.id===a.id).groupReports,undefined);
  assert.equal(outside.players.find(p=>p.id===observer.id).groupReports.length,0);
@@ -212,7 +214,7 @@ test('territory rules stay beacon supply, and a hidden enemy beacon is omitted',
  const hidden={id:'far-dusk',allianceId:c.allianceId,x:78,z:78,health:250,maxHealth:250,buildRemaining:0,isRoot:false,connected:false};
  w.flags.push(hidden);refreshBeacons(w);assert.equal(hidden.connected,false);
  const view=w.snapshot(a.id);
- assert.equal(view.version,16);assert.deepEqual(view.territoryRules,TERRITORY_RULES);
+ assert.equal(view.version,17);assert.deepEqual(view.territoryRules,TERRITORY_RULES);
  const own=view.flags.find(f=>f.id===supply.id),seenRival=view.flags.find(f=>f.id===rival.id);
  assert.equal(own.connected,true);assert.equal(own.lastKnown,false);assert.equal(own.health>0,true);
  assert.equal(seenRival.connected,true);assert.equal(seenRival.lastKnown,false);assert.notEqual(seenRival.allianceId,own.allianceId);

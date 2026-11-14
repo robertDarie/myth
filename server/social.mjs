@@ -1,3 +1,5 @@
+import { LIMITS } from './world-map.mjs';
+import { WORLD_SIZE } from './world-map.mjs';
 import { randomUUID } from 'node:crypto';
 import { releaseAllianceDiplomacy, coalitionOf } from './diplomacy.mjs';
 export const allianceRole = (w, p) => { const a = w.alliances.get(p.allianceId); return !a ? 'None' : a.leaderId === p.id ? 'Leader' : a.officers.includes(p.id) ? 'Officer' : 'Member'; };
@@ -15,7 +17,7 @@ export function socialCommand(w,p,c,fail) {
   }
   if(c.type==='marker-place') {
     if(!canManage(w,p)) fail('Only alliance leaders and officers can place shared markers.');
-    if(![c.x,c.z].every(v=>Number.isFinite(v)&&v>=1&&v<=79)||!w.canEnter(p,c)) fail('Choose an accessible map position.');
+    if(![c.x,c.z].every(v=>Number.isFinite(v)&&v>=1&&v<=WORLD_SIZE-1)||!w.canEnter(p,c)) fail('Choose an accessible map position.');
     if(typeof c.name!=='string'||!c.name.trim()||c.name.trim().length>40) fail('Marker names contain 1–40 characters.');
     if(w.markers.filter(m=>m.allianceId===p.allianceId).length>=12) fail('Alliance marker limit reached.');
     w.markers.push({id:randomUUID(),allianceId:p.allianceId,authorId:p.id,name:c.name.trim(),x:c.x,z:c.z,expires:w.time+600});return true;
@@ -51,11 +53,11 @@ export function socialCommand(w,p,c,fail) {
   return true;
 }
 export function validateSocial(w) {
-  if(!Array.isArray(w.messages)||w.messages.length>120||!Array.isArray(w.markers)||w.markers.length>384)throw new Error('Invalid saved communications.');
+  if(!Array.isArray(w.messages)||w.messages.length>120||!Array.isArray(w.markers)||w.markers.length>LIMITS.maxCities*12)throw new Error('Invalid saved communications.');
   for(const p of w.players.values())if(!Number.isFinite(p.lastChatAt)||p.lastChatAt < -10)throw new Error('Invalid saved chat timing.');
   if(new Set(w.messages.map(m=>m.id)).size!==w.messages.length||new Set(w.markers.map(m=>m.id)).size!==w.markers.length)throw new Error('Invalid saved communication IDs.');
   for(const m of w.messages){if(!m||typeof m.id!=='string'||!['kingdom','alliance','coalition'].includes(m.channel)||typeof m.authorId!=='string'||typeof m.author!=='string'||typeof m.allianceId!=='string'||typeof m.text!=='string'||m.text.length>240||!Number.isFinite(m.time)||m.time<0)throw new Error('Invalid saved message.');const coalitionId=typeof m.coalitionId==='string'?m.coalitionId:'';if((m.channel==='coalition'&&!w.coalitions?.some(c=>c.id===coalitionId))||(m.channel!=='coalition'&&coalitionId!==''))throw new Error('Invalid saved message.');}
-  for(const m of w.markers)if(!m||typeof m.id!=='string'||typeof m.name!=='string'||m.name.length>40||!w.alliances.has(m.allianceId)||!w.players.has(m.authorId)||![m.x,m.z].every(v=>Number.isFinite(v)&&v>=1&&v<=79)||!Number.isFinite(m.expires))throw new Error('Invalid saved marker.');
+  for(const m of w.markers)if(!m||typeof m.id!=='string'||typeof m.name!=='string'||m.name.length>40||!w.alliances.has(m.allianceId)||!w.players.has(m.authorId)||![m.x,m.z].every(v=>Number.isFinite(v)&&v>=1&&v<=WORLD_SIZE-1)||!Number.isFinite(m.expires))throw new Error('Invalid saved marker.');
   for(const a of w.alliances.values())if(!Array.isArray(a.officers)||new Set(a.officers).size!==a.officers.length||a.officers.some(id=>id===a.leaderId||w.players.get(id)?.allianceId!==a.id)||w.players.get(a.leaderId)?.allianceId!==a.id)throw new Error('Invalid saved alliance roles.');
 }
 

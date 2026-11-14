@@ -1,3 +1,5 @@
+import { legacySpawns } from './testing/kingdom-fixture.mjs';
+import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
@@ -87,7 +89,7 @@ test('malformed stronghold state, generations and reward ledgers are rejected ra
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad),/stronghold/);
  }
  until(w,()=>t.respawn>0);for(const mutate of[r=>r.rewards[0].resources.gold++,r=>r.rewards[0].xp++,r=>r.guardHealthAfter=1]){const bad=structuredClone(w.toSave());mutate(bad.world.players[0].groupReports[0]);assert.throws(()=>World.fromSave(bad),/stronghold/);}
- const old=structuredClone(w.toSave());old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,5);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,25);
+ const old=structuredClone(w.toSave());legacyMap(old);old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,8);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,26);
 });
 
 test('ordinary members can lead PvE rallies, while higher tiers enforce gate access and stronger armies',()=>{
@@ -106,7 +108,7 @@ test('the combat-round limit resets stalemates with no rewards or duplicated cas
 });
 
 test('HTTP stronghold rallies reward only authenticated contributors and keep private reports out of bystander snapshots',async testContext=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();
+ const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Leader','HTTP Member','HTTP Bystander'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));
@@ -115,7 +117,7 @@ test('HTTP stronghold rallies reward only authenticated contributors and keep pr
  assert.equal((await get(2)).strongholds.length,0);assert.equal((await post(0,{type:'scout-send',x:t.x,z:t.z})).status,200);advance(w,6);const scouted=await get(0);assert.ok(scouted.strongholds.some(s=>s.id===t.id));assert.ok(scouted.exploration.reports[0].strongholds.some(s=>s.id===t.id));
  assert.equal((await post(1,{type:'rally-create',targetId:t.id,count:10})).status,200);const id=w.rallies[0].id;
  assert.equal((await post(0,{type:'rally-join',targetId:id})).status,200);assert.equal((await post(2,{type:'rally-join',targetId:id})).status,400);
- until(w,()=>t.respawn>0);let own=await get(0),outside=await get(2);assert.equal(own.version,16);assert.equal(own.players.find(p=>p.id===a.id).groupReports[0].rewards.length,2);assert.equal(outside.players.find(p=>p.id===a.id).groupReports,undefined);assert.equal(outside.players.find(p=>p.id===a.id).strongholdVictories,undefined);assert.equal(c.strongholdVictories,0);
+ until(w,()=>t.respawn>0);let own=await get(0),outside=await get(2);assert.equal(own.version,17);assert.equal(own.players.find(p=>p.id===a.id).groupReports[0].rewards.length,2);assert.equal(outside.players.find(p=>p.id===a.id).groupReports,undefined);assert.equal(outside.players.find(p=>p.id===a.id).strongholdVictories,undefined);assert.equal(c.strongholdVictories,0);
  assert.equal((await post(0,{type:'rally-join',targetId:id})).status,400);assert.equal(a.strongholdVictories,1);assert.equal(b.strongholdVictories,1);
 });
 
