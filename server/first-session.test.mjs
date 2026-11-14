@@ -1,7 +1,7 @@
 import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 
 // No rich-player fixtures, teleports, fabricated troops, forced wins or changed tuning.
 test('fresh-city first session legally builds, trains, assembles, gathers, defeats a real camp and returns', () => {

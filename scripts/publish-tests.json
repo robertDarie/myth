@@ -2,104 +2,230 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "production numerical reference, AP, migration and real troop accounting",
+      "command": [
+        "node",
+        "--test",
+        "server/numerics.test.mjs"
+      ]
+    },
+    {
       "name": "friends alpha shared-world reconnect and client-only packaging",
-      "command": ["node", "--test", "server/friends-alpha.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/friends-alpha.test.mjs"
+      ]
     },
     {
       "name": "client-only archive privacy and integrity",
-      "command": ["python", "-X", "utf8", "scripts/test_client_package.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/test_client_package.py"
+      ]
     },
     {
       "name": "expanded map migration, routes, registered capacity and alliance size",
-      "command": ["node", "--test", "server/world-map.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/world-map.test.mjs"
+      ]
     },
     {
       "name": "random city spawn distribution and persistence",
-      "command": ["node", "--test", "server/spawning.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/spawning.test.mjs"
+      ]
     },
     {
       "name": "scalability rollback, fog equivalence and durable concurrency",
-      "command": ["node", "--test", "server/scalability.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/scalability.test.mjs"
+      ]
     },
     {
       "name": "multiple kingdoms",
-      "command": ["node", "--test", "server/realms.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/realms.test.mjs"
+      ]
     },
     {
       "name": "season lifecycle",
-      "command": ["node", "--test", "server/season.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/season.test.mjs"
+      ]
     },
     {
       "name": "alliance diplomacy",
-      "command": ["node", "--test", "server/diplomacy.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/diplomacy.test.mjs"
+      ]
     },
     {
       "name": "alliance coalitions",
-      "command": ["node", "--test", "server/coalition.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/coalition.test.mjs"
+      ]
     },
     {
       "name": "expanded Athenaeum research",
-      "command": ["node", "--test", "server/research-expansion.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/research-expansion.test.mjs"
+      ]
     },
     {
       "name": "event hub",
-      "command": ["node", "--test", "server/events.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/events.test.mjs"
+      ]
     },
     {
       "name": "seven-day login rewards",
-      "command": ["node", "--test", "server/login.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/login.test.mjs"
+      ]
     },
     {
       "name": "Combined Arms formation bonus",
-      "command": ["node", "--test", "server/formation.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/formation.test.mjs"
+      ]
     },
     {
       "name": "troop tiers III-V",
-      "command": ["node", "--test", "server/tiers.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/tiers.test.mjs"
+      ]
     },
     {
       "name": "commander armaments and pairing",
-      "command": ["node", "--test", "server/armament.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/armament.test.mjs"
+      ]
     },
     {
       "name": "relic ownership and unequip health",
-      "command": ["node", "--test", "--test-name-pattern", "relic bonus clamps", "server/progression.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "relic bonus clamps",
+        "server/progression.test.mjs"
+      ]
     },
     {
       "name": "military halls, veterans, hospital and troop conservation",
-      "command": ["node", "--test", "server/veterans.test.mjs", "server/war.test.mjs", "server/troops.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/veterans.test.mjs",
+        "server/war.test.mjs",
+        "server/troops.test.mjs"
+      ]
     },
     {
       "name": "alliance territory supply and hidden beacons",
-      "command": ["node", "--test", "--test-name-pattern", "territory rules stay beacon supply", "server/campaign.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "territory rules stay beacon supply",
+        "server/campaign.test.mjs"
+      ]
     },
     {
       "name": "fog discovery and scout privacy",
-      "command": ["node", "--test", "server/exploration.test.mjs", "server/scouting.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/exploration.test.mjs",
+        "server/scouting.test.mjs"
+      ]
     },
     {
       "name": "completed camp cycle does not pay twice",
-      "command": ["node", "--test", "--test-name-pattern", "completed camp cycle", "server/world.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "completed camp cycle",
+        "server/world.test.mjs"
+      ]
     },
     {
       "name": "city production, training quotes, and citadel rules",
-      "command": ["node", "--test", "server/city.test.mjs", "server/gameplay-parity.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/city.test.mjs",
+        "server/gameplay-parity.test.mjs"
+      ]
     },
     {
       "name": "campaign persistence and local JSON downtime",
-      "command": ["node", "--test", "server/chapters.test.mjs", "server/storage.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/chapters.test.mjs",
+        "server/storage.test.mjs"
+      ]
     },
     {
       "name": "hosted downtime regressions",
-      "command": ["node", "--test", "--test-name-pattern", "downtime|offline", "server/persistence.test.mjs", "server/economy.test.mjs", "server/veterans.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "downtime|offline",
+        "server/persistence.test.mjs",
+        "server/economy.test.mjs",
+        "server/veterans.test.mjs"
+      ]
     },
     {
       "name": "publish script offline checks",
-      "command": ["python", "-X", "utf8", "scripts/test_publish_offline.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/test_publish_offline.py"
+      ]
     },
     {
       "name": "commander hall layout",
-      "command": ["python", "-X", "utf8", "scripts/run_presentation_contracts.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/run_presentation_contracts.py"
+      ]
     }
   ]
 }

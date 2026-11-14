@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { testWorld } from './testing/kingdom-fixture.mjs';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { scoutProfile, SCOUT_CAMP_LEVELS } from './scout-camp.mjs';
 import { cellIndex } from './exploration.mjs';
 const setup = (names = ['Pathfinder', 'Neighbor']) => {
@@ -43,7 +43,7 @@ test('explored land stays discovered after the scout leaves, alliance changes an
   w.command(ally, { type: 'alliance-leave' });
   for (const cell of settled) assert.ok(p.explored.includes(cell));
   const restored = World.fromSave(w.toSave()), q = restored.authenticate(sessions[0].token);
-  assert.equal(restored.toSave().schema, 26);
+  assert.equal(restored.toSave().schema, 27);
   assert.deepEqual(q.explored, p.explored);
   assert.equal(q.buildings.scoutcamp, 1);
   advance(restored, 10);
@@ -60,7 +60,7 @@ test('schema 15 scouts and missing camps migrate without erasing exploration', (
   legacy.scout = { id: 'legacy-scout', ownerId: legacy.id, x: legacy.homeX, z: legacy.homeZ, homeX: legacy.homeX, homeZ: legacy.homeZ, targetX: 22, targetZ: 22, phase: 'Outbound' };
   delete legacy.scouts; delete legacy.autoExplore; delete legacy.buildings.scoutcamp;
   const restored = World.fromSave(save), q = restored.authenticate(sessions[0].token);
-  assert.equal(restored.toSave().schema, 26);
+  assert.equal(restored.toSave().schema, 27);
   assert.deepEqual(q.explored.filter(cell => [4, 8, 12].includes(cell)), [4, 8, 12]);
   assert.equal(q.buildings.scoutcamp, 1);
   assert.equal(q.scouts.length, 1);

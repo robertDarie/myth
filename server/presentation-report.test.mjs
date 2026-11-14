@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {World} from './world.mjs';
+import {World} from './testing/legacy-world.mjs';
 import {testWorld} from './testing/kingdom-fixture.mjs';
 test('PvE archive records actual own composition, remaining health and contribution without granting on read',()=>{
  const w=testWorld(),session=w.join('Archive'),p=w.authenticate(session.token),camp=w.camps.find(c=>c.name==='Forsaken Scouts');

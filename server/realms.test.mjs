@@ -4,10 +4,10 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createGameServer } from './http.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
 import { createRealmHost, openRealm } from './realms.mjs';
-import { World } from './world.mjs';
-import { WorldStore } from './storage.mjs';
+import { World } from './testing/legacy-world.mjs';
+import { WorldStore } from './testing/legacy-services.mjs';
 
 const DAY = 86400000;
 const dir = () => mkdtempSync(join(tmpdir(), 'myth-realms-'));
@@ -189,7 +189,7 @@ test('idempotency, schema 25, older saves, SQLite accounts and legacy mode stay 
   const world = new World(); const saved = world.join('Schema'); world.command(world.authenticate(saved.token), { type: 'chat-send', name: 'Schema note' });
   new WorldStore(jsonPath).save(world);
   const raw = JSON.parse(readFileSync(jsonPath, 'utf8'));
-  assert.equal(raw.schema, 26);
+  assert.equal(raw.schema, 27);
   const current = openRealm({ id: 'local', name: 'Local Kingdom', savePath: jsonPath });
   assert.equal(current.world.authenticate(saved.token).name, 'Schema');
   current.close();

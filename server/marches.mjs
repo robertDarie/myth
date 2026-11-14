@@ -9,8 +9,8 @@ import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
 import { armyList, ensureHero } from './progression.mjs';
 import { marchTroopCap } from './city.mjs';
-const withinMarchShare = (p, troops, fail) => {
-  const cap = marchTroopCap(p);
+const withinMarchShare = (p, troops, fail,commanderId=p.commanderId) => {
+  const cap = marchTroopCap(p,commanderId);
   if (troops > cap) fail(`A single march can hold ${cap} mortal troops. Leave the rest in the city or use another march slot.`);
 };
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
@@ -18,7 +18,7 @@ const point = c => [c.x, c.z].every(n => Number.isFinite(n) && n >= 1 && n <= WO
 export function marchCommand(world, p, c, fail) {
   if (c.type === 'deploy-march') {
     const chosen = selection(c, fail), { troops, mythic, units } = chosen;
-    withinMarchShare(p, troops, fail);
+    withinMarchShare(p, troops, fail,c.targetId);
     if(armyList(p).length>=5)fail('Five prepared formations already exist. Edit or disband a home formation.');
     if (!readyFor(p, null, chosen)) fail('Not enough ready reserves of that troop type. Train units first.');
     if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId || a.secondaryCommanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
@@ -76,7 +76,7 @@ export function marchCommand(world, p, c, fail) {
       world.requireHome(a);
       if (a.health + 0.001 < world.stats(a).maxHealth) fail('Recover fully at home before assembling a different formation.');
       const chosen = selection(c, fail);
-      withinMarchShare(p, chosen.troops, fail);
+      withinMarchShare(p, chosen.troops, fail,a.commanderId);
       if (!readyFor(p, a, chosen)) fail('Not enough ready reserves of that troop type.');
       const commanderId = c.targetId || a.commanderId;
       if (commanderId === a.secondaryCommanderId) fail('Unpair this companion before assigning them as primary.');
@@ -86,7 +86,7 @@ export function marchCommand(world, p, c, fail) {
     }
     case 'reinforce': {
       world.requireHome(a); if (!p.reserveTroops && !p.reserveMythic) fail('No reserves are ready.');
-      const cap = marchTroopCap(p), room = Math.max(0, cap - a.troops);
+      const cap = marchTroopCap(p,a.commanderId), room = Math.max(0, cap - a.troops);
       if (room === 0 && p.reserveTroops > 0 && !p.reserveMythic) fail(`This march already holds ${cap} mortal troops.`);
       const oldMax = world.stats(a).maxHealth;
       let left = room;
@@ -123,7 +123,7 @@ export function marchCommand(world, p, c, fail) {
         if (world.alliances.get(p.allianceId).leaderId !== p.id || dist({ x: p.homeX, z: p.homeZ }, c) > TERRITORY_RULES.rootRadius) fail('The leader must place the first beacon near their city.');
       } else if (!flags.some(f => f.connected && f.buildRemaining <= 0 && dist(f, c) <= TERRITORY_RULES.linkRadius)) fail(`Beacons must connect within ${TERRITORY_RULES.linkRadius} units of alliance territory.`);
       if (world.flags.some(f => f.allianceId !== p.allianceId && dist(f, c) < TERRITORY_RULES.enemyGap)) fail('Enemy territory blocks this location.');
-      world.spend(p, { wood: 60, gold: 20 }); const beacon = { id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z, builderId: p.id }; initializeFortification(beacon, hasRoot ? 'flag' : 'fort'); beacon.buildRemaining = hasRoot ? 10 : 30; beacon.isRoot = !hasRoot; world.flags.push(beacon); return true;
+      world.spend(p, { wood: 60, gold: 20 }); const beacon = { id: randomUUID(), allianceId: p.allianceId, x: c.x, z: c.z, builderId: p.id }; initializeFortification(beacon, hasRoot ? 'flag' : 'fort',world); beacon.buildRemaining = hasRoot ? 10 : 30; beacon.isRoot = !hasRoot; world.flags.push(beacon); return true;
     }
     case 'capture': {
       const site = world.sites.find(s => s.id === c.targetId);

@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { CHAPTERS, TASKS, refreshJourney, journeySnapshot } from './chapters.mjs';
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
 const setup=()=>{const w=testWorld({random:()=>0}),session=w.join('Founder');return {w,p:w.authenticate(session.token),session};};
@@ -115,7 +115,7 @@ test('the opening wood and food goals have visible starter sites instead of requ
 });
 
 test('authenticated claims expose only the owner campaign and reject repeated or foreign task payloads',async t=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Campaign','HTTP Observer'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));

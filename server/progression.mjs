@@ -1,3 +1,4 @@
+import { reference, referenceScale } from './numerics.mjs';
 import { COMMANDERS } from './content.mjs';
 export const AGES = [
   { level: 1, name: 'Age of Embers', marches: 1 },
@@ -43,6 +44,7 @@ export const talentNode = id => TALENT_NODES.find(node => node.id === id);
 export function ensureHero(p, id) {
   p.heroRecords[id] ??= { xp: 0, stars: 1, skills: [1, 0, 0, 0], talents: {} };
   if (!p.heroRecords[id].talents || typeof p.heroRecords[id].talents !== 'object' || Array.isArray(p.heroRecords[id].talents)) p.heroRecords[id].talents = {};
+  if(referenceScale(p)){p.heroRecords[id].numericVersion=1;p.heroRecords[id].rarity=COMMANDERS.find(c=>c.id===id).rarity;}
   return p.heroRecords[id];
 }
 export const talentPoints = record => Math.floor(heroLevel(record) / 5);
@@ -51,7 +53,16 @@ export function talentMods(record) {
   const rank = id => record.talents?.[id] ?? 0;
   return { damage: 1 + 0.02 * (rank('line-oath') + rank('warden-eye')), pve: 1 + 0.02 * rank('forsaken-bane'), health: 1 + 0.02 * (rank('iron-lung') + rank('satchel')), gather: 1 + 0.03 * rank('pilgrim'), speed: 1 + 0.02 * rank('trail'), heal: 1 + 0.03 * rank('hearth'), mitigation: 0.01 * rank('bulwark') };
 }
-export function heroLevel(record) { return Math.min(record.stars * 10, 1 + Math.floor(record.xp / 100)); }
+export function xpAtLevel(record,level) {
+  if(record.numericVersion!==1)return (level-1)*100;
+  const ratio={Common:.6,Rare:.8,Epic:1,Legendary:1.2}[record.rarity]??1;
+  let total=0;for(let i=2;i<=level;i++)total+=record.rarity==='Common'&&i===49?1245000:record.rarity==='Common'&&i===50?1380000:Math.round(reference.epicXPToLevel[i]*ratio);
+  return total;
+}
+export function heroLevel(record) {
+  if(record.numericVersion!==1)return Math.min(record.stars*10,1+Math.floor(record.xp/100));
+  let level=1;while(level<record.stars*10&&record.xp>=xpAtLevel(record,level+1))level++;return level;
+}
 export function initializeProgression(p) {
   p.marches ??= []; p.nextMarchNumber ??= 2; p.secondConstruction ??= null;
   p.heroRecords ??= {};
@@ -116,7 +127,7 @@ export function progressionCommand(world, p, c, fail) {
   if (!p.ownedCommanders.includes(c.targetId)) fail('Recruit that commander first.');
   const r = ensureHero(p, c.targetId);
   if (c.type === 'mentor-commander') {
-    const capXP = (r.stars * 10 - 1) * 100;
+    const capXP = xpAtLevel(r,r.stars*10);
     if (r.xp >= capXP) fail('Promote this commander to raise its level cap.');
     world.spend(p, { gold: 40, food: 20 }); r.xp = Math.min(capXP, r.xp + 100);
   }
@@ -153,6 +164,7 @@ export function validateProgression(p) {
   for (const a of armyList(p)) if (['rage', 'shield', 'shieldTime', 'skillCasts'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.rage > 1000 || typeof a.lastSkill !== 'string') throw new Error('Invalid saved army skill state.');
   for (const [id, hero] of Object.entries(p.heroRecords)) {
     if (!hero.talents || typeof hero.talents !== 'object' || Array.isArray(hero.talents)) hero.talents = {};
+    if(referenceScale(p)&&(hero.numericVersion!==1||hero.rarity!==COMMANDERS.find(c=>c.id===id)?.rarity))throw new Error('Invalid commander numeric profile.');
     if (!COMMANDERS.some(c => c.id === id) || !Number.isFinite(hero.xp) || hero.xp < 0 || !Number.isInteger(hero.stars) || hero.stars < 1 || hero.stars > 6 || !Array.isArray(hero.skills) || hero.skills.length !== 4 || hero.skills.some((value, i) => !Number.isInteger(value) || value < (i < hero.stars ? 1 : 0) || value > (i < hero.stars ? 5 : 0))) throw new Error('Invalid saved commander skills.');
     const ranks = Object.entries(hero.talents);
     if (ranks.some(([nodeId, rank]) => !talentNode(nodeId) || !Number.isInteger(rank) || rank < 1 || rank > talentNode(nodeId).max) || ranks.reduce((sum, [, rank]) => sum + rank, 0) > talentPoints(hero)) throw new Error('Invalid saved commander talents.');

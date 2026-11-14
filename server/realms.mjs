@@ -59,8 +59,8 @@ export function openRealm(spec) {
   let store = spec.store ?? null;
   let world;
   try {
-    store ??= spec.databasePath ? new KingdomDatabase(spec.databasePath) : spec.savePath ? new WorldStore(spec.savePath) : null;
-    world = store ? store.load() : new World();
+    store ??= spec.databasePath ? new KingdomDatabase(spec.databasePath,{numericVersion:spec.numericVersion??1}) : spec.savePath ? new WorldStore(spec.savePath,console.warn,spec.numericVersion??1) : null;
+    world = store ? store.load() : new World({numericVersion:spec.numericVersion??1});
   } catch (error) { try { store?.close?.(); } catch { /* preserve the failed store */ } release(); throw error; }
   if (spec.cityCapacity !== undefined) world.cityCapacity=cityLimit(spec.cityCapacity);
   const persistence = { enabled: !!store, backend: spec.databasePath ? 'sqlite' : spec.savePath ? 'json' : spec.store ? 'custom' : 'memory', lastSaved: '', error: '' };

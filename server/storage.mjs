@@ -4,7 +4,7 @@ import { World } from './world.mjs';
 import { advanceDowntime } from './downtime.mjs';
 
 export class WorldStore {
-  constructor(path, warn = console.warn) { this.path = path; this.warn = warn; }
+  constructor(path, warn = console.warn,numericVersion=1) { this.numericVersion=numericVersion;this.path = path; this.warn = warn; }
   parse(path) { return JSON.parse(readFileSync(path, 'utf8')); }
   read(path) { return World.fromSave(this.parse(path)); }
   // Local JSON previously resumed the saved instant. Hosted SQLite already catches up paid city timers.
@@ -19,10 +19,10 @@ export class WorldStore {
   archiveLegacy(path) {
     const schema = JSON.parse(readFileSync(path, 'utf8')).schema;
     const archive = this.path + '.schema' + schema + '.bak';
-    if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25].includes(schema) && !existsSync(archive)) copyFileSync(path, archive);
+    if ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26].includes(schema) && !existsSync(archive)) copyFileSync(path, archive);
   }
   load() {
-    if (!existsSync(this.path) && !existsSync(this.path + '.bak')) return new World();
+    if (!existsSync(this.path) && !existsSync(this.path + '.bak')) return new World({numericVersion:this.numericVersion});
     try { const data = this.parse(this.path); const world = World.fromSave(data); this.archiveLegacy(this.path); this.catchUp(world, data.savedAt); return world; }
     catch (error) {
       try {

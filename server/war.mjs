@@ -1,9 +1,10 @@
+import { referenceScale, defenseFactor } from './numerics.mjs';
 import { loseCargo } from './field-logistics.mjs';
 import { protectionReason } from './diplomacy.mjs';
 import { randomUUID } from 'node:crypto';
 import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
 import { activeSkill, armyList } from './progression.mjs';
-export const hospitalCapacity = p => 25 + 15 * p.buildings.infirmary;
+export const hospitalCapacity = p => (25 + 15 * p.buildings.infirmary) * (referenceScale(p)?50:1);
 export const treatmentSpeed = p => (1 + 0.15 * Math.max(0, (p.buildings.infirmary ?? 0) - 1)) * (1 + 0.06 * Math.max(0, Math.min(3, p.technologies?.mercy ?? 0)));
 export const wardTroops = p => unitTotal(p.wounded) + (p.healing ? unitTotal(p.healing.units) : 0);
 export const wardMythic = p => p.woundedMythic + (p.healing?.mythic ?? 0);
@@ -88,7 +89,7 @@ export function tickBattle(w, a, b) {
     const hp = x.health, shield = x.shield;
     const extra = x.rage >= 1000 ? activeSkill(w.owner(x), x, { ...stats[i], damage: effective }) : 0;
     record.healed += Math.max(0, x.health - hp); record.shieldCreated += Math.max(0, x.shield - shield);
-    return Math.max(1, Math.round((effective + extra) * (1 - stats[1 - i].mitigation)));
+    return Math.max(1, Math.round((effective + extra) * (referenceScale(w.owner(enemy))?defenseFactor(stats[1-i].defense):1) * (1 - stats[1 - i].mitigation)));
   });
   // Both attacks use the same pre-round stats; neither gains an iteration-order advantage.
   battle.sides[0].damageDealt += applyDamage(actors[1], hits[0], battle.sides[1]);

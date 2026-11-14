@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
-import { createGameServer } from './http.mjs';
-import { KingdomDatabase } from './database.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
+import { KingdomDatabase } from './testing/legacy-services.mjs';
 import { closeHttpServer, tempDirectory } from './testing/cleanup.mjs';
 const PASSWORD='long original password 123';
 const nextPassword='a different long password 456';
@@ -103,7 +103,7 @@ test('replacing a lost recovery code requires the password and invalidates the o
  assert.equal((await app.call('/auth/recover',{username:'protected_user',password:nextPassword,recoveryCode:rotated.body.recoveryCode})).status,200);
 });
 test('schema-one upgrade and complete online backup retain account ownership and recovery',async t=>{
- const {backupKingdom}=await import('./database.mjs'),path=fixture(t);
+ const {backupKingdom}=await import('./testing/legacy-services.mjs'),path=fixture(t);
  let db=new KingdomDatabase(path);const w=db.load(),s=w.join('Old Schema');db.save(w);db.close();
  const legacy=new DatabaseSync(path);legacy.exec('DROP TABLE account_sessions; DROP TABLE accounts; PRAGMA user_version=1');legacy.close();
  db=new KingdomDatabase(path);assert.equal(db.load().authenticate(s.token).name,'Old Schema');assert.equal(db.db.prepare('PRAGMA user_version').get().user_version,2);db.close();

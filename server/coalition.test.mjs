@@ -1,12 +1,12 @@
 import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { tempDirectory } from './testing/cleanup.mjs';
-import { createGameServer } from './http.mjs';
-import { KingdomDatabase } from './database.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
+import { KingdomDatabase } from './testing/legacy-services.mjs';
 import { initializeFortification, refreshBeacons } from './campaign.mjs';
 
 const command = (w, p, type, extra = {}) => fixtureCommand(w, p, { type, ...extra });
@@ -106,7 +106,7 @@ test('coalition invites expire, reject a fourth member, and schema 23 keeps the 
   delete saved.world.coalitions;
   delete saved.world.coalitionInvites;
   const migrated = World.fromSave(saved, { now: () => Date.UTC(2026, 0, 6, 12) });
-  assert.equal(migrated.toSave().schema, 26);
+  assert.equal(migrated.toSave().schema, 27);
   assert.equal(migrated.coalitions.length, 0);
   assert.equal(migrated.diplomacy.pacts.length, 1);
   assert.equal(migrated.alliances.size, w.alliances.size);

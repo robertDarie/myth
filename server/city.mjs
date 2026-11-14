@@ -4,6 +4,8 @@ import { recordEvent } from './events.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, ARMAMENTS, ARMAMENT_SET, ARMAMENT_SLOTS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { scoutCampCard } from './scout-camp.mjs';
 import { armyList, age, crews, constructionJobs, totalTroops, totalMythic, skillInfo } from './progression.mjs';
+import { referenceScale, commanderCapacity } from './numerics.mjs';
+import { heroLevel } from './progression.mjs';
 import { COMMANDERS } from './content.mjs';
 
 export function initializeCity(p, migrated = false) {
@@ -47,13 +49,13 @@ export const buildingLevel = (p, id) => id === 'citadel' ? p.cityLevel : p.build
 // Citadel 1 stays 40. Later citadels grow faster than the old +20 per level.
 // Hall of Spears still adds 5 per level beyond the first. This is original tuning, not a RoK table.
 export const CITADEL_TROOP_CAPACITY = [0, 40, 80, 140, 220, 340];
-export const capacity = p => (CITADEL_TROOP_CAPACITY[p.cityLevel] ?? 40) + Math.max(0, (p.buildings.barracks ?? 1) - 1) * 5;
+export const capacity = p => referenceScale(p)?10000000:(CITADEL_TROOP_CAPACITY[p.cityLevel] ?? 40) + Math.max(0, (p.buildings.barracks ?? 1) - 1) * 5;
 // Original share. The first march slot may carry the whole city store.
 // Each further slot divides that store. This is not a copied reference-game capacity.
 // Mythic escorts stay on mythicCapacity and do not consume this share.
-export const marchTroopCap = p => Math.ceil(capacity(p) / Math.max(1, age(p).marches));
+export const marchTroopCap = (p,commanderId=p.commanderId) => referenceScale(p)?[0,2000,9000,28000,57000,150000][p.cityLevel]+commanderCapacity(heroLevel(p.heroRecords[commanderId]??{stars:1,xp:0})):Math.ceil(capacity(p) / Math.max(1, age(p).marches));
 export const mythicCapacity = p => p.cityLevel + Math.max(0, p.buildings.menagerie - 1);
-export const passiveCap = p => Math.floor((500 + p.buildings.vault * 250 + p.cityLevel * 50) * (1 + 0.08 * Math.max(0, Math.min(3, p.technologies?.stores ?? 0))));
+export const passiveCap = p => (referenceScale(p)?1000:1)*Math.floor((500 + p.buildings.vault * 250 + p.cityLevel * 50) * (1 + 0.08 * Math.max(0, Math.min(3, p.technologies?.stores ?? 0))));
 const scaled = (cost, factor) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * factor)]));
 const requirement=(p,r,kind='building')=>({kind,id:r.id,name:(kind==='building'?BUILDINGS:TECHNOLOGIES).find(v=>v.id===r.id).name,level:r.level,current:kind==='building'?buildingLevel(p,r.id):p.technologies[r.id],met:(kind==='building'?buildingLevel(p,r.id):p.technologies[r.id])>=r.level});
 const affordable = (p, cost) => Object.entries(cost).every(([id, value]) => p[id] >= value);
@@ -98,9 +100,9 @@ export function technologyCard(p, t) {
 }
 export function citySnapshot(world, p) {
   return { trainingOptions: trainingOptions(p), ageName: age(p).name, marchSlots: age(p).marches, constructionSlots: crews(p), assignedTroops:totalTroops(p),assignedMythic:totalMythic(p),deployedTroops:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.troops,0),deployedMythic:armyList(p).filter(a=>a.deployed).reduce((n,a)=>n+a.mythic,0), cityBuildings: BUILDINGS.map(b => buildingCard(p, b)), researchOptions: TECHNOLOGIES.map(t => technologyCard(p, t)),
-    trainingBatch: trainingBatch(p), trainingDuration: 8 * trainingBatch(p) / 5 / trainingSpeed(p), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
+    trainingBatch: trainingBatch(p), trainingDuration: (referenceScale(p)?15:8) * trainingBatch(p) / (referenceScale(p)?1:5) / trainingSpeed(p), recruitDuration: 20 / (1 + 0.1 * Math.max(0, p.buildings.menagerie - 1)),
     troopCapacity: capacity(p), marchTroopCap: marchTroopCap(p), mythicCapacity: mythicCapacity(p), passiveLimit: passiveCap(p),
-    heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
+    heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), marchTroopCap:marchTroopCap(p,c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
     armamentLoadout: (p.ownedCommanders ?? []).map(id => ({ commanderId: id, ...(p.commanderArmaments?.[id] ?? emptyArmamentSlots()) })),
     armamentSet: ARMAMENT_SET,
     offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),

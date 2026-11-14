@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { activitySnapshot } from './activity.mjs';
 import { eventSnapshot, eventWindow } from './events.mjs';
 import { cellIndex } from './exploration.mjs';
 import { tempDirectory } from './testing/cleanup.mjs';
-import { createGameServer } from './http.mjs';
-import { KingdomDatabase } from './database.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
+import { KingdomDatabase } from './testing/legacy-services.mjs';
 
 const DAY = 86400000;
 const monday = Date.UTC(2026, 0, 5);
@@ -179,7 +179,7 @@ test('schema 21 and 18 gain a fresh event record without changing the city', () 
     delete old.world.players[0].events;
     const loaded = World.fromSave(old, { now: () => monday });
     const q = loaded.authenticate(s.token);
-    assert.equal(loaded.toSave().schema, 26);
+    assert.equal(loaded.toSave().schema, 27);
     assert.equal(q.food, food);
     assert.equal(q.wood, wood);
     assert.equal(q.troops, troops);

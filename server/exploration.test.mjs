@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import { legacySpawns, testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { route, travel, CORRIDORS } from './navigation.mjs';
 import { visible, explorationTick, cellIndex } from './exploration.mjs';
 const setup=()=>{const w=testWorld(),sessions=['Explorer','Ally','Enemy'].map(n=>w.join(n));return {w,sessions,players:sessions.map(s=>w.authenticate(s.token))};};
@@ -71,7 +71,7 @@ test('recall, gate loss and restart retain scouts safely without replaying rewar
  for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scouts[0].phase,'Returning');advance(restored,10);assert.equal(q.scouts.length,0);assert.equal(q.scoutReports.length,0);
  cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scouts[0].id});advance(restored,0.1);assert.equal(q.scouts.length,0);
  for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scouts=[{id:'bad'}],p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
- const old=w.toSave();legacyMap(old);old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scouts;delete p.scoutReports;delete p.autoExplore;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,26);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);assert.equal(restored.authenticate(sessions[0].token).buildings.scoutcamp,1);
+ const old=w.toSave();legacyMap(old);old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scouts;delete p.scoutReports;delete p.autoExplore;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,27);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);assert.equal(restored.authenticate(sessions[0].token).buildings.scoutcamp,1);
 });
 
 test('garrisons and rally centers obey the same gate corridors as ordinary marches',()=>{
@@ -89,7 +89,7 @@ test('garrisons and rally centers obey the same gate corridors as ordinary march
 });
 
 test('authenticated HTTP does not expose hidden troops or another city scouting history',async t=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Scout','HTTP Hidden'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));
@@ -122,7 +122,7 @@ test('remembered camps and distant cities stay stale, and an enemy march leaves 
  let memory=w.snapshot(p.id).camps.find(c=>c.id===camp.id);
  assert.equal(memory.lastKnown,true);assert.equal(memory.health,health);assert.ok(p.explored.includes(cellIndex(camp)));
  const loaded=World.fromSave(w.toSave()),q=loaded.authenticate(sessions[0].token);
- assert.equal(loaded.toSave().schema,26);
+ assert.equal(loaded.toSave().schema,27);
  assert.equal(loaded.snapshot(q.id).camps.find(c=>c.id===camp.id).health,health);
  assert.equal(loaded.snapshot(q.id).camps.find(c=>c.id===camp.id).lastKnown,true);
  let far;

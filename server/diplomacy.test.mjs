@@ -1,13 +1,13 @@
 import { legacyMap } from './testing/legacy-save.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { initializeFortification, refreshBeacons } from './campaign.mjs';
 import { tempDirectory } from './testing/cleanup.mjs';
-import { createGameServer } from './http.mjs';
-import { KingdomDatabase } from './database.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
+import { KingdomDatabase } from './testing/legacy-services.mjs';
 
 const DAY = 86400000;
 const advance = (w, seconds) => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
@@ -107,7 +107,7 @@ test('proposals expire, disbanding clears treaties, and schema 22 loads an empty
   delete old.world.diplomacy;
   const migrated = World.fromSave(old, { now: () => Date.UTC(2026, 0, 6, 12) });
   const q = migrated.authenticate(token);
-  assert.equal(migrated.toSave().schema, 26);
+  assert.equal(migrated.toSave().schema, 27);
   assert.equal(migrated.diplomacy.pacts.length, 0);
   assert.equal(migrated.coalitions.length, 0);
   assert.equal(migrated.alliances.size, 3);

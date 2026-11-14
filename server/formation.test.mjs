@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { ownCommander } from './testing/roster-fixture.mjs';
 import { formationOf, FORMATION, unitTotal } from './troops.mjs';
@@ -79,7 +79,7 @@ test('reconfiguration applies the server rule, refuses a forged flag, and does n
   wear(p, { infantry: 100, archers: 50, cavalry: 60 });
   p.health = w.stats(p).maxHealth;
   const saved = w.toSave();
-  assert.equal(saved.schema, 26);
+  assert.equal(saved.schema, 27);
   const loaded = World.fromSave(saved), q = loaded.authenticate(s.token);
   assert.equal(loaded.stats(q).maxHealth, w.stats(p).maxHealth);
   assert.equal(army(loaded, q).formationActive, true);

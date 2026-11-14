@@ -4,7 +4,7 @@ import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { campaignFor } from './campaign.mjs';
 import { wardTroops } from './war.mjs';
 import { STRONGHOLD_RULES } from './strongholds.mjs';
@@ -89,7 +89,7 @@ test('malformed stronghold state, generations and reward ledgers are rejected ra
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad),/stronghold/);
  }
  until(w,()=>t.respawn>0);for(const mutate of[r=>r.rewards[0].resources.gold++,r=>r.rewards[0].xp++,r=>r.guardHealthAfter=1]){const bad=structuredClone(w.toSave());mutate(bad.world.players[0].groupReports[0]);assert.throws(()=>World.fromSave(bad),/stronghold/);}
- const old=structuredClone(w.toSave());legacyMap(old);old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,8);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,26);
+ const old=structuredClone(w.toSave());legacyMap(old);old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,8);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,27);
 });
 
 test('ordinary members can lead PvE rallies, while higher tiers enforce gate access and stronger armies',()=>{
@@ -108,7 +108,7 @@ test('the combat-round limit resets stalemates with no rewards or duplicated cas
 });
 
 test('HTTP stronghold rallies reward only authenticated contributors and keep private reports out of bystander snapshots',async testContext=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Leader','HTTP Member','HTTP Bystander'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));

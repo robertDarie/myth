@@ -59,7 +59,7 @@ namespace ThronesOfMyth
             return parts.Count==0?"No mortal troops":string.Join(" · ",parts);
         }
     }
-    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration, orderSeconds, promotionSeconds; public int cityLevel,tier,sourceAvailable,orderAmount; public string baseId,sourceId,lockedReason; public ResourceAmounts cost,orderCost,promotionCost; }
+    [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration, orderSeconds, promotionSeconds; public int cityLevel,tier,sourceAvailable,orderAmount,promotionAmount; public string baseId,sourceId,lockedReason; public ResourceAmounts cost,orderCost,promotionCost; }
     [Serializable] public sealed class ArmyData
     {
         public string id, ownerId, name, civilization, commanderId, secondaryCommanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
@@ -109,7 +109,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ResearchCard { public RequirementCard[] prerequisites; public string id, name, branch, description, lockedReason, prerequisite, effect; public int level, maxLevel, percent, currentBonus, nextBonus; public bool canResearch; public ResourceAmounts cost; public float duration; }
     [Serializable] public sealed class TalentNode { public string id, name, requires, effect, lockedReason; public int max, rank; public bool available; }
     [Serializable] public sealed class TalentTree { public string id, name; public TalentNode[] nodes; }
-    [Serializable] public sealed class HeroProgress { public string id, expertiseDescription, respecLockedReason; public int rank, shards, nextShards, nextGold, heroLevel, stars, talentPoints, talentPointsSpent, respecMana; public float xp; public bool expertise; public HeroSkill[] skills; public TalentTree[] talents; }
+    [Serializable] public sealed class HeroProgress { public string id, expertiseDescription, respecLockedReason; public int rank, shards, nextShards, nextGold, marchTroopCap, heroLevel, stars, talentPoints, talentPointsSpent, respecMana; public float xp; public bool expertise; public HeroSkill[] skills; public TalentTree[] talents; }
     [Serializable] public sealed class HeroSkill { public int index, level, unlockStar; public string name, kind, description; }
     [Serializable] public sealed class DrawResult { public string id, commanderId, rarity; public bool duplicate; public int shards, number; }
     [Serializable] public sealed class RelicData { public string id, name, description; public ResourceAmounts cost; public float duration, damage, health; }

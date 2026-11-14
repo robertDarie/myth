@@ -32,6 +32,7 @@ namespace ThronesOfMyth.Editor
             if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException("Linux player build failed; inspect the first Unity Console error.");
             Directory.CreateDirectory(Path.Combine(package,"Server"));
             foreach(string file in Directory.GetFiles(Path.Combine(root,"server"),"*.mjs",SearchOption.TopDirectoryOnly))if(!file.EndsWith(".test.mjs",StringComparison.Ordinal))File.Copy(file,Path.Combine(package,"Server",Path.GetFileName(file)),true);
+            File.Copy(Path.Combine(root,"server/balance-reference.json"),Path.Combine(package,"Server/balance-reference.json"),true);
             foreach(string file in Directory.GetFiles(Path.Combine(root,"packaging/linux")))File.Copy(file,Path.Combine(package,Path.GetFileName(file)),true);
             identity.WriteManifest(package);ZipFile.CreateFromDirectory(package,zip,System.IO.Compression.CompressionLevel.Optimal,false);
             Debug.Log("Linux package built: "+zip+" · "+identity.Data.commit+(identity.Data.dirty?" · DIRTY SOURCE CHECKOUT":"")+". Requires host Node.js 24+. Native playtest remains required.");return zip;

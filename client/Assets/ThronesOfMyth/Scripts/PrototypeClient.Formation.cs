@@ -85,7 +85,8 @@ namespace ThronesOfMyth
             }
             GUI.EndScrollView();
             theme.Text(new Rect(right.x + 18, right.y + 12, right.width - 36, 26), formationEditing ? "REFORM AT YOUR CITY" : "TROOPS LEAVING YOUR CITY", theme.Eyebrow);
-            int marchShare = me.marchTroopCap;
+            var selectedHero=Array.Find(me.heroProgress,h=>h.id==formationHeroId);
+            int marchShare = selectedHero!=null&&selectedHero.marchTroopCap>0?selectedHero.marchTroopCap:me.marchTroopCap;
             theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), marchShare > 0 ? "This march can take " + marchShare + " mortal troops. The city store is " + me.troopCapacity + ". Unselected units stay home." : "Choose a patrol or set exact counts. Unselected units stay home.", theme.Small);
             bool captainFree=Array.IndexOf(me.ownedCommanders,"captain")>=0&&!OwnMarches().Exists(a=>a.id!=formationMarchId&&a.commanderId=="captain");
             bool patrolReady=captainFree&&ready.Get("infantry")>=15&&ready.Get("archers")>=5;

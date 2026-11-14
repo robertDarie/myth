@@ -1,7 +1,7 @@
 import { provinceAt } from './world-map.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { STARTING_REGIONS, SPAWN_RULES, suitableSpawn } from './spawning.mjs';
 import { route } from './navigation.mjs';
 import { openRealm } from './realms.mjs';

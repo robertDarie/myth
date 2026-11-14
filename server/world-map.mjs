@@ -1,5 +1,5 @@
 export const WORLD_SIZE=256, CELL_SIZE=4, FOG_WIDTH=WORLD_SIZE/CELL_SIZE;
-export const WORLD_SCHEMA=26, PROTOCOL=17;
+export const WORLD_SCHEMA=27, PROTOCOL=17;
 export const LIMITS=Object.freeze({defaultCities:32,maxCities:256,allianceMembers:100});
 export function cityLimit(value=LIMITS.defaultCities){if(!Number.isInteger(value)||value<1||value>LIMITS.maxCities)throw new Error('City capacity must be an integer from 1 to 256.');return value;}
 // The legacy four provinces keep their exact boundaries and Divine Gates.
@@ -37,7 +37,7 @@ export const frontierSites=()=>PROVINCES.filter(r=>r.minX>=80||r.minZ>=80).flatM
 ]);
 export const cellIndex=p=>Math.min(FOG_WIDTH-1,Math.max(0,Math.floor(p.z/CELL_SIZE)))*FOG_WIDTH+Math.min(FOG_WIDTH-1,Math.max(0,Math.floor(p.x/CELL_SIZE)));
 export function migrateMap(data){
- if(!data||data.schema>=WORLD_SCHEMA)return data;
+ if(!data||data.schema>=26)return data;
  const next=structuredClone(data),w=next.world;
  if(!w||!Array.isArray(w.players))return next;
  for(const p of w.players)if(Array.isArray(p.explored))p.explored=p.explored.map(i=>Number.isInteger(i)&&i>=0&&i<400?Math.floor(i/20)*FOG_WIDTH+i%20:i+FOG_WIDTH*FOG_WIDTH);

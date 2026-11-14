@@ -9,8 +9,8 @@ import { advanceDowntime } from './downtime.mjs';
 // One authoritative simulation per database. A renewable, fenced lease prevents
 // two processes (including an expired former owner) writing competing kingdoms.
 export class KingdomDatabase {
-  constructor(path, { now = () => Date.now(), legacyPath = null } = {}) {
-    this.path = resolve(path); this.now = now; this.owner = randomUUID(); this.closed = false;
+  constructor(path, { now = () => Date.now(), legacyPath = null,numericVersion=1 } = {}) {
+    this.numericVersion=numericVersion;this.path = resolve(path); this.now = now; this.owner = randomUUID(); this.closed = false;
     mkdirSync(dirname(this.path), { recursive: true, mode: 0o700 });
     this.db = new DatabaseSync(this.path);
     try {
@@ -48,7 +48,7 @@ export class KingdomDatabase {
     if (!row) {
       // An explicit first-run migration preserves the source JSON and backup.
       const migrated = !!this.legacyPath && (existsSync(this.legacyPath) || existsSync(this.legacyPath + '.bak'));
-      const world = migrated ? new WorldStore(this.legacyPath).load() : new World({ now: this.now });
+      const world = migrated ? new WorldStore(this.legacyPath).load() : new World({ now: this.now,numericVersion:this.numericVersion });
       this.recovery = { elapsedSeconds: 0, productionSeconds: 0, migrated };
       this.save(world); return world;
     }

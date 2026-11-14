@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { powerOf,rankings } from './power.mjs';
 const fixture=()=>{const w=testWorld({now:()=>Date.UTC(2026,10,8)}),s=w.join('Supplied'),p=w.authenticate(s.token);return {w,s,p};};

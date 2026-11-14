@@ -1,5 +1,6 @@
+import { referenceScale, defenseFactor } from './numerics.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
-import { ECONOMY, refreshEconomy } from './economy.mjs';
+import { economyRules, ECONOMY, refreshEconomy } from './economy.mjs';
 import { siteIsOpen } from './kingdom.mjs';
 import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, rewardStronghold, resetStronghold, validateStrongholdReport } from './strongholds.mjs';
 import { route, travel } from './navigation.mjs';
@@ -11,15 +12,16 @@ import { combatFor, side, retreat, applyDamage, counterMultiplier } from './war.
 import { activeSkill, armyList } from './progression.mjs';
 import { validUnits } from './troops.mjs';
 
+export const campaignLimits=w=>w.numericVersion===1?{...CAMPAIGN_LIMITS,rallyLoad:1500000,garrisonLoad:1000000}:CAMPAIGN_LIMITS;
 export const CAMPAIGN_LIMITS = { rallyMarches: 5, rallyLoad: 200, garrisonMarches: 5, garrisonLoad: 150, reportEntries: 64 };
 export const TERRITORY_RULES = Object.freeze({ supplyRadius: 12, linkRadius: 12, placeRadius: 4, rootRadius: 6, enemyGap: 10, beaconSpacing: 4, beaconLimit: 20 });
 const distance = (a,b) => Math.hypot(a.x-b.x,a.z-b.z);
 const load = a => a.troops+a.mythic*5;
 const managed = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
 export const fortification = (w,id) => w.sites.find(s=>s.id===id) || w.flags.find(f=>f.id===id) || w.strongholds.find(t=>t.id===id);
-export function initializeFortification(t,kind='flag') {
+export function initializeFortification(t,kind='flag',profile) {
   t.maxHealth = kind==='fort'?600:kind==='gate'?450:kind==='sanctuary'?650:kind==='shrine'?300:250;
-  t.health=t.maxHealth;
+  t.maxHealth*=profile?.numericVersion===1?1000:1;t.health=t.maxHealth;
   if(kind==='flag'||kind==='fort'){t.buildRemaining=0;t.isRoot=false;t.connected=false;}
 }
 export function refreshBeacons(w) {
@@ -128,14 +130,14 @@ export function campaignCommand(w,p,c,fail) {
     const r={id:randomUUID(),allianceId:p.allianceId,defendingAllianceId:t?.allianceId||'',leaderId:p.id,leaderArmyId:a.id,targetId:c.targetId,armyIds:[a.id],targetCycle:isStronghold(t)?t.cycle:0,phase:'Assembling',assemblyEnds:w.time+seconds,meetX:p.homeX,meetZ:p.homeZ,x:p.homeX,z:p.homeZ};
     const reason=targetReason(w,r);if(reason)fail(reason);
     if(w.rallies.some(r=>r.targetId===t.id))fail('That structure already has a rally approaching or fighting.');
-    if(load(a)>CAMPAIGN_LIMITS.rallyLoad)fail('This march exceeds rally troop capacity.');
+    if(load(a)>campaignLimits(w).rallyLoad)fail('This march exceeds rally troop capacity.');
     w.rallies.push(r);setOrder(a,'rally',r.id,{x:r.meetX,z:r.meetZ},'Rally assembling');return true;
   }
   if(c.type==='rally-join') {
     const r=w.rallies.find(r=>r.id===c.targetId&&r.allianceId===p.allianceId);
     if(!r||r.phase!=='Assembling'||w.time>=r.assemblyEnds)fail('This rally is not accepting contributors.');
     const a=ownMarch(w,p,c,fail);readyMarch(w,p,a,fail);w.requireHome(a);
-    if(r.armyIds.length>=CAMPAIGN_LIMITS.rallyMarches||totalLoad(w,r.armyIds)+load(a)>CAMPAIGN_LIMITS.rallyLoad)fail('Rally march or troop capacity reached.');
+    if(r.armyIds.length>=CAMPAIGN_LIMITS.rallyMarches||totalLoad(w,r.armyIds)+load(a)>campaignLimits(w).rallyLoad)fail('Rally march or troop capacity reached.');
     if(!w.canEnter(p,{x:r.meetX,z:r.meetZ}))fail('The assembly point is behind a locked gate.');
     r.armyIds.push(a.id);setOrder(a,'rally',r.id,{x:r.meetX,z:r.meetZ},'Rally assembling');return true;
   }
@@ -147,7 +149,7 @@ export function campaignCommand(w,p,c,fail) {
     if(!route(w,a,t))fail('No open gate route from this march to the garrison. Return home first.');
     let g=w.garrisons.find(g=>g.targetId===t.id);
     const ids=g?.armyIds||[], siege=siegeFor(w,t.id);
-    if(ids.length>=CAMPAIGN_LIMITS.garrisonMarches||totalLoad(w,ids)+load(a)>CAMPAIGN_LIMITS.garrisonLoad)fail('Garrison march or troop capacity reached.');
+    if(ids.length>=CAMPAIGN_LIMITS.garrisonMarches||totalLoad(w,ids)+load(a)>campaignLimits(w).garrisonLoad)fail('Garrison march or troop capacity reached.');
     if(siege&&(siege.report.participants.some(e=>e.armyId===a.id)||siege.report.participants.length+ids.filter(id=>!siege.report.participants.some(e=>e.armyId===id)).length>=CAMPAIGN_LIMITS.reportEntries))fail('This siege cannot accept that contribution. A march may participate once per siege.');
     if(!g){g={targetId:t.id,allianceId:p.allianceId,armyIds:[]};w.garrisons.push(g);}g.armyIds.push(a.id);
     setOrder(a,'garrison',t.id,t,'Garrison approaching');return true;
@@ -203,7 +205,7 @@ function siegeRound(w,r,t,s) {
     entry.healed+=Math.max(0,a.health-before);entry.shieldCreated+=Math.max(0,a.shield-shield);
     a.cooldown=1;a.attackSequence=(a.attackSequence||0)+1;a.attackX=target.x;a.attackZ=target.z;
     setOrder(a,'siege',t.id,target,'Siege fighting');
-    const hit={entry,amount:Math.max(1,Math.round((effective+extra)*(1-(enemy?w.stats(enemy).mitigation:0))))};
+    const hit={entry,amount:Math.max(1,Math.round((effective+extra)*(enemy&&referenceScale(w.owner(enemy))?defenseFactor(w.stats(enemy).defense):1)*(1-(enemy?w.stats(enemy).mitigation:0))))};
     if(enemy){if(!incoming.has(enemy.id))incoming.set(enemy.id,[]);incoming.get(enemy.id).push(hit);}else structureHits.push(hit);
   });
   for(const [id,hits]of incoming){const a=w.army(id),actual=applyDamage(a,hits.reduce((n,h)=>n+h.amount,0),entryFor(a));distribute(actual,hits,'damageDealt');}
@@ -224,7 +226,7 @@ function siegeRound(w,r,t,s) {
 }
 export function tickCampaign(w,dt) {
   for(const f of w.flags){const pending=f.buildRemaining>0;f.buildRemaining=Math.max(0,f.buildRemaining-dt);if(pending&&f.buildRemaining===0&&f.builderId){const builder=w.players.get(f.builderId);if(builder&&builder.allianceId===f.allianceId)recordSeason(w,builder,'territory',1,'beacon:'+f.id);}}refreshBeacons(w);
-  for(const t of [...w.sites,...w.flags])if(!siegeFor(w,t.id)&&t.health>0)t.health=Math.min(t.maxHealth,t.health+2*dt);
+  for(const t of [...w.sites,...w.flags])if(!siegeFor(w,t.id)&&t.health>0)t.health=Math.min(t.maxHealth,t.health+2*dt*(w.numericVersion===1?1000:1));
   for(const g of [...w.garrisons]) {
     const t=fortification(w,g.targetId);
     for(const id of [...g.armyIds]) {
@@ -252,11 +254,11 @@ export function tickCampaign(w,dt) {
       if(!arrived)continue;
       if(isStronghold(t)){
        const members=[...new Set(actors(w,r.armyIds).map(a=>w.owner(a)))];for(const p of members)refreshEconomy(w,p);
-       const eligible=actors(w,r.armyIds).filter(a=>w.owner(a).ap>=ECONOMY.strongholdAP);
+       const eligible=actors(w,r.armyIds).filter(a=>w.owner(a).ap>=economyRules(w.owner(a)).strongholdAP);
        if(eligible.length<STRONGHOLD_RULES.minMarches){removeRally(w,r,'Not enough AP for two stronghold marches');continue;}
        for(const id of [...r.armyIds])if(!eligible.some(a=>a.id===id))removeMember(w,{kind:'rally',group:r},id,'Withdrawn');
        if(!r.armyIds.includes(r.leaderArmyId)){r.leaderArmyId=r.armyIds[0];r.leaderId=w.owner(w.army(r.leaderArmyId)).id;}
-       for(const p of new Set(eligible.map(a=>w.owner(a))))p.ap-=ECONOMY.strongholdAP;w.logisticsRevision++;
+       for(const p of new Set(eligible.map(a=>w.owner(a))))p.ap-=economyRules(p).strongholdAP;w.logisticsRevision++;
       }
       r.phase='Fighting';newSiege(w,r,t);
     }
@@ -265,15 +267,15 @@ export function tickCampaign(w,dt) {
 }
 export function campaignSnapshot(w,viewerId) {
   const allianceId=w.players.get(viewerId)?.allianceId;
-  return {territoryRules:TERRITORY_RULES,campaignLimits:CAMPAIGN_LIMITS,rallies:w.rallies.filter(r=>!viewerId||r.allianceId===allianceId).map(r=>({...r,troopLoad:totalLoad(w,r.armyIds)})),
+  return {territoryRules:TERRITORY_RULES,campaignLimits:campaignLimits(w),rallies:w.rallies.filter(r=>!viewerId||r.allianceId===allianceId).map(r=>({...r,troopLoad:totalLoad(w,r.armyIds)})),
     garrisons:w.garrisons.map(g=>({...g,troopLoad:totalLoad(w,g.armyIds)})),sieges:w.sieges.map(s=>({id:s.id,targetId:s.targetId,rounds:s.report.rounds,started:s.report.started}))};
 }
 export function groupReports(w,p) {return [...w.sieges.filter(s=>s.report.participants.some(e=>e.playerId===p.id)).map(s=>structuredClone(s.report)),...p.groupReports];}
 export function initializeCampaign(w) {
   for(const p of w.players.values())p.groupReports=[];
-  for(const s of w.sites)initializeFortification(s,s.kind);
+  for(const s of w.sites)initializeFortification(s,s.kind,w);
   for(const alliance of w.alliances.values()) {
-    const flags=w.flags.filter(f=>f.allianceId===alliance.id);flags.forEach((f,i)=>{initializeFortification(f,i===0?'fort':'flag');f.isRoot=i===0;});
+    const flags=w.flags.filter(f=>f.allianceId===alliance.id);flags.forEach((f,i)=>{initializeFortification(f,i===0?'fort':'flag',w);f.isRoot=i===0;});
   }
   refreshBeacons(w);
 }
@@ -294,7 +296,7 @@ export function restoreCampaign(w,saved) {
     for(const id of group.armyIds){const a=w.army(id);if(!a||bound.has(id)||w.owner(a).allianceId!==group.allianceId)throw new Error('Invalid saved campaign ownership.');bound.add(id);}
   }
   if(new Set(saved.garrisons.map(g=>g.targetId)).size!==saved.garrisons.length||new Set(saved.rallies.map(r=>r.id)).size!==saved.rallies.length)throw new Error('Invalid saved campaign IDs.');
-  for(const group of [...saved.rallies,...saved.garrisons])if(totalLoad(w,group.armyIds)>(group.id?CAMPAIGN_LIMITS.rallyLoad:CAMPAIGN_LIMITS.garrisonLoad))throw new Error('Invalid saved campaign capacity.');
+  for(const group of [...saved.rallies,...saved.garrisons])if(totalLoad(w,group.armyIds)>(group.id?campaignLimits(w).rallyLoad:campaignLimits(w).garrisonLoad))throw new Error('Invalid saved campaign capacity.');
   for(const r of saved.rallies)if(typeof r.id!=='string'||!r.armyIds.includes(r.leaderArmyId)||w.owner(w.army(r.leaderArmyId)).id!==r.leaderId||!['Assembling','Marching','Fighting'].includes(r.phase)||![r.x,r.z,r.meetX,r.meetZ].every(n=>Number.isFinite(n)&&n>=1&&n<=WORLD_SIZE-1)||!Number.isFinite(r.assemblyEnds))throw new Error('Invalid saved rally.');
   for(const r of saved.rallies)if(isStronghold(fortification(w,r.targetId))&&r.targetCycle!==fortification(w,r.targetId).cycle)throw new Error('Invalid saved stronghold generation.');
   w.garrisons=saved.garrisons;

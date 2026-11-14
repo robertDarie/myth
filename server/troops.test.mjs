@@ -3,7 +3,7 @@ import { fixtureCommand, ownCommander } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { emptyUnits, unitTotal } from './troops.mjs';
 import { closeHttpServer } from './testing/cleanup.mjs';
 const setup = () => {
@@ -88,7 +88,7 @@ test('current schema preserves typed formations and pending orders, while schema
   const migrated = World.fromSave(old), m = migrated.authenticate(session.token);
   assert.deepEqual(m.units, { infantry: 20, archers: 0, cavalry: 0 }); assert.equal(m.reserveUnits.infantry, 7);
   assert.equal(m.marches[0].units.infantry, 5); assert.equal(m.trainingQueue[0].targetId, 'infantry');
-  assert.equal(migrated.toSave().schema,26); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
+  assert.equal(migrated.toSave().schema,27); assert.deepEqual(World.fromSave(migrated.toSave()).authenticate(session.token).reserveUnits, m.reserveUnits);
 });
 
 test('current schema rejects forged or mismatched composition data instead of silently repairing it', () => {
@@ -99,7 +99,7 @@ test('current schema rejects forged or mismatched composition data instead of si
 });
 
 test('HTTP accepts the Unity-style exact-count payload and exposes typed reserves and skill metadata', async t => {
-  const { createGameServer } = await import('./http.mjs');
+  const { createGameServer } = await import('./testing/legacy-services.mjs');
   const { server, world } = createGameServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => closeHttpServer(server));

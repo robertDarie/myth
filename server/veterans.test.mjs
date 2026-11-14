@@ -5,9 +5,9 @@ import assert from 'node:assert/strict';
 import { mkdtempSync,rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { World } from './world.mjs';
-import { KingdomDatabase } from './database.mjs';
-import { createGameServer } from './http.mjs';
+import { World } from './testing/legacy-world.mjs';
+import { KingdomDatabase } from './testing/legacy-services.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
 import { tempDirectory } from './testing/cleanup.mjs';
 import { TROOP_TYPES,unitTotal,countOf,legacyUnits,changeUnits,troopBase,tierLock } from './troops.mjs';
 import { counterMultiplier,retreat } from './war.mjs';
@@ -107,12 +107,12 @@ test('veteran rally contributors retain their tier in group reports, rewards and
  assert.doesNotThrow(()=>World.fromSave(w.toSave()));
 });
 test('JSON schema-12 migration archives the untouched source and preserves reserves, inventory and paid training',async t=>{
- const {WorldStore}=await import('./storage.mjs'),{readFileSync,writeFileSync}=await import('node:fs');
+ const {WorldStore}=await import('./testing/legacy-services.mjs'),{readFileSync,writeFileSync}=await import('node:fs');
  const dir=mkdtempSync(join(tmpdir(),'tom-veteran-migration-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const path=join(dir,'world.json');
  const {w,p,s}=fixture();command(w,p,'inventory-supplies');command(w,p,'train',{targetId:'archers'});
  const old=structuredClone(w.toSave());legacyMap(old);old.schema=12;delete old.world.players[0].technologies.veterans;const bytes=JSON.stringify(old);writeFileSync(path,bytes);
  const store=new WorldStore(path),loaded=store.load(),q=loaded.authenticate(s.token);assert.equal(q.technologies.veterans,0);assert.deepEqual(q.units,p.units);assert.deepEqual(q.inventory,p.inventory);assert.equal(q.trainingQueue[0].id,p.trainingQueue[0].id);
- assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,26);assert.equal(q.gold,p.gold);
+ assert.equal(readFileSync(path+'.schema12.bak','utf8'),bytes);store.save(loaded);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,27);assert.equal(q.gold,p.gold);
 });
 
 test('splitting a class between tiers cannot evade severe wounds through rounding',()=>{

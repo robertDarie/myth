@@ -4,7 +4,7 @@ import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld, openKingdom } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { initializeFortification, refreshBeacons, campaignFor, CAMPAIGN_LIMITS, TERRITORY_RULES, territoryNear } from './campaign.mjs';
 import { wardTroops, wardMythic } from './war.mjs';
 const advance=(w,s)=>{for(let i=0;i<Math.ceil(s*10);i++)w.tick(0.1);};
@@ -116,7 +116,7 @@ test('assembly can be canceled and saved/migrated without creating contributions
  cmd(w,a,'rally-leave');assert.equal(w.rallies.length,0);assert.equal(census(a),20);assert.equal(census(b),20);
  const old=w.toSave();legacyMap(old);old.schema=5;delete old.world.rallies;delete old.world.garrisons;delete old.world.sieges;
  for(const p of old.world.players)delete p.groupReports;
- const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,26);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
+ const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,27);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
 });
 
 test('surviving attackers can garrison their captured gate without being healed or duplicating units',()=>{
@@ -172,7 +172,7 @@ test('rally and garrison load limits reject overflow atomically, counting mythic
 });
 
 test('authenticated rally and reinforcement HTTP commands preserve permissions, stale-order safety and report privacy',async t=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);openKingdom(w);
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();legacySpawns(w);openKingdom(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
  t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;

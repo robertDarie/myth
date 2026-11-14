@@ -3,7 +3,7 @@ import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { emptyUnits, unitTotal } from './troops.mjs';
 import { wardTroops, wardMythic, counterMultiplier } from './war.mjs';
 const advance = (w, seconds) => { for (let i = 0; i < Math.ceil(seconds * 10); i++) w.tick(0.1); };
@@ -91,13 +91,13 @@ test('active combats are sealed on restore, treatment persists and malformed hos
 test('schema-4 migrates an empty hospital and troop counters are a bounded mixed-composition modifier', () => {
   const {w,a}=setup(),old=structuredClone(w.toSave());legacyMap(old);old.schema=4;delete old.world.battles;
   for(const p of old.world.players)for(const k of['wounded','woundedMythic','healing','battleReports'])delete p[k];
-  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,26);
+  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,27);
   const infantry={troops:10,units:{infantry:10,archers:0,cavalry:0}},cavalry={troops:10,units:{infantry:0,archers:0,cavalry:10}};
   assert.equal(counterMultiplier(infantry,cavalry),1.15);assert.equal(counterMultiplier(cavalry,infantry),0.85);
 });
 
 test('PvP and hospital commands work over authenticated HTTP without exposing reports to bystanders', async t => {
-  const {createGameServer}=await import('./http.mjs');const {server,world}=createGameServer();
+  const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world}=createGameServer();
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
   const base='http://127.0.0.1:'+server.address().port;
   const join=async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json();

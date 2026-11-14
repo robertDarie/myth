@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { testWorld } from './testing/kingdom-fixture.mjs';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { capacity, CITADEL_TROOP_CAPACITY, marchTroopCap } from './city.mjs';
 import { trainingBatch, batchCost, trainingOptions } from './troops.mjs';
 import { skillInfo } from './progression.mjs';
@@ -100,7 +100,7 @@ test('a schema 18 save without talents loads the same commander and starts with 
   const loaded = restored.authenticate(s.token);
   assert.equal(loaded.heroRecords.captain.xp, 250);
   assert.deepEqual(loaded.heroRecords.captain.talents, {});
-  assert.equal(restored.toSave().schema, 26);
+  assert.equal(restored.toSave().schema, 27);
 });
 
 test('one march can hold only its share of the city store, and an older oversized march still loads', () => {
@@ -133,7 +133,7 @@ test('one march can hold only its share of the city store, and an older oversize
   const restored = World.fromSave(saved);
   const q = [...restored.players.values()].find(player => player.id === p.id);
   assert.equal(q.marches[0].troops, 50);
-  assert.equal(restored.toSave().schema, 26);
+  assert.equal(restored.toSave().schema, 27);
   assert.throws(() => restored.command(q, { type: 'configure-march', marchId: q.marches[0].id, targetId: 'warden', units: { infantry: 50, archers: 0, cavalry: 0 }, mythic: 0 }), /march can hold 40/);
   assert.equal(q.marches[0].troops, 50);
   restored.command(q, { type: 'configure-march', marchId: q.marches[0].id, targetId: 'warden', units: { infantry: 40, archers: 0, cavalry: 0 }, mythic: 0 });

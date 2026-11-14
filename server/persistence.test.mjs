@@ -4,10 +4,10 @@ import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
-import { KingdomDatabase, backupKingdom } from './database.mjs';
+import { KingdomDatabase, backupKingdom } from './testing/legacy-services.mjs';
 import { advanceDowntime, OFFLINE_PRODUCTION_CAP } from './downtime.mjs';
-import { World } from './world.mjs';
-import { createGameServer } from './http.mjs';
+import { World } from './testing/legacy-world.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { closeHttpServer, tempDirectory } from './testing/cleanup.mjs';
 const bins = new WeakMap();
@@ -129,7 +129,7 @@ test('a backward host clock cannot move the committed downtime watermark backwar
 });
 test('a hard-killed process retains the committed WAL state and receipt', async t => {
   const { spawn } = await import('node:child_process'), { once } = await import('node:events');
-  const path = join(directory(t), 'crash.sqlite'), moduleUrl = new URL('./database.mjs', import.meta.url).href;
+  const path = join(directory(t), 'crash.sqlite'), moduleUrl = new URL('./testing/legacy-services.mjs', import.meta.url).href;
   const source = `import {KingdomDatabase} from ${JSON.stringify(moduleUrl)}; const db=new KingdomDatabase(process.env.TEST_DB_PATH); const w=db.load(),s=w.join('Crash Survivor'); w.command(w.authenticate(s.token),{type:'train'}); db.save(w,{receipt:{id:'crash-key',digest:'train',response:{accepted:true}}}); process.send(s); setInterval(()=>{},1000);`;
   const child = spawn(process.execPath, ['--input-type=module', '-e', source], { env: { ...process.env, TEST_DB_PATH: path }, stdio: ['ignore', 'ignore', 'pipe', 'ipc'] });
   track(t, () => child.kill('SIGKILL')); child.stderr.resume();

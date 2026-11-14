@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {testWorld} from './testing/kingdom-fixture.mjs';
 import {ownCommander} from './testing/roster-fixture.mjs';
-import {World} from './world.mjs';
+import {World} from './testing/legacy-world.mjs';
 import {cargoTotal} from './field-logistics.mjs';
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(.1);};
 test('independent simultaneous marches retain their own target, cargo and troops across interruptions and restart',()=>{

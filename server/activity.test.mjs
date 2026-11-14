@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import { legacySpawns, testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { activitySnapshot, recordActivity, recordStrongholdActivity, DAILY_TASKS, ACTIVITY_CHESTS } from './activity.mjs';
 const DAY=86400000;
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
@@ -93,7 +93,7 @@ test('malformed daily counters, chest claims, alliance contribution rows and clo
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad,{now:()=>Date.UTC(2026,10,2,12)}),/activity|claims/);
  }
  const old=structuredClone(w.toSave());legacyMap(old);old.schema=9;delete old.world.activityClockMs;for(const p of old.world.players){delete p.daily;delete p.weeklyClaims;}for(const a of old.world.alliances)delete a.weekly;
- const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,26);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
+ const migrated=World.fromSave(old,{now:()=>Date.UTC(2026,10,2,12)}),p=migrated.players.get(a.id);assert.equal(migrated.toSave().schema,27);assert.equal(activitySnapshot(migrated,p).daily.points,0);assert.equal(activitySnapshot(migrated,p).alliance.goals[0].progress,0);
 });
 
 test('all three weekly goals unlock individual rewards only for members who earned the required contributions',()=>{
@@ -109,7 +109,7 @@ test('all three weekly goals unlock individual rewards only for members who earn
 });
 
 test('authenticated activity claims preserve daily privacy, alliance-only ledgers and replay safety over HTTP',async testContext=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Active','HTTP Member','HTTP Outsider'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));

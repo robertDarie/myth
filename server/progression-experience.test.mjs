@@ -4,7 +4,7 @@ import {testWorld} from './testing/kingdom-fixture.mjs';
 import {ownCommander} from './testing/roster-fixture.mjs';
 import {buildingCard,technologyCard} from './city.mjs';
 import {BUILDINGS,TECHNOLOGIES} from './city-content.mjs';
-import {createGameServer} from './http.mjs';
+import {createGameServer} from './testing/legacy-services.mjs';
 test('prerequisite cards expose actionable real dependencies without changing unlock rules or saves',()=>{
  const w=testWorld(),session=w.join('Progress'),p=w.authenticate(session.token),before=structuredClone(w.toSave());
  const academy=buildingCard(p,BUILDINGS.find(b=>b.id==='academy'));assert.ok(academy.prerequisites.some(r=>r.id==='citadel'&&!r.met&&r.level===2));assert.ok(academy.prerequisites.some(r=>r.id==='oracle'&&!r.met));

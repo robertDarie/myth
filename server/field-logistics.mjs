@@ -1,7 +1,8 @@
+import { referenceScale } from './numerics.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
 import { randomUUID } from 'node:crypto';
 import { armyList, age } from './progression.mjs';
-import { classCounts } from './troops.mjs';
+import { classCounts, troopTypes, countOf } from './troops.mjs';
 import { RESOURCES } from './city-content.mjs';
 import { journeyMetric } from './chapters.mjs';
 import { recordActivity } from './activity.mjs';
@@ -18,7 +19,7 @@ export function initializeLogistics(p,legacy=false){
 }
 export function carryCapacity(w,a){
  const u=a.units,p=w.owner(a);
- const classes=classCounts(u);const base=classes.infantry*16+classes.archers*12+classes.cavalry*24+a.mythic*80;
+ const classes=classCounts(u);const base=(referenceScale(p)?troopTypes(p).reduce((n,t)=>n+countOf(u,t.id)*t.load,0):classes.infantry*16+classes.archers*12+classes.cavalry*24)+a.mythic*80;
  return Math.floor(base*(1+.08*(p.technologies.logistics??0))*(1+.06*Math.max(0,Math.min(3,p.technologies.caravan??0))));
 }
 export function coreReport(w,p,report){

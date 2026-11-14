@@ -1,12 +1,12 @@
 import { recordActivity } from './activity.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { WORLD_SIZE, FOG_WIDTH, LIMITS, PROVINCES, FRONTIER_HUBS, cellIndex } from './world-map.mjs';
 import { route, travel } from './navigation.mjs';
 import { openKingdom } from './testing/kingdom-fixture.mjs';
 import { legacyMap } from './testing/legacy-save.mjs';
-import { WorldStore } from './storage.mjs';
+import { WorldStore } from './testing/legacy-services.mjs';
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -26,13 +26,13 @@ test('schema 25 fog migrates coordinates rather than row numbers, retaining hist
   for(const index of [0,19,64,1235])assert.ok(q.explored.includes(index));
   assert.ok(!q.explored.includes(20)); // Would falsely discover land at x=82.
   for(const key of ['gold','food','wood','aether','troops','ownedCommanders','inventory','loginStreak','kingdomClaims'])assert.deepEqual(q[key],p[key]);
-  assert.equal(r.toSave().schema,26);assert.equal(r.snapshot(q.id).version,17);
+  assert.equal(r.toSave().schema,27);assert.equal(r.snapshot(q.id).version,17);
   const restarted=World.fromSave(r.toSave());assert.deepEqual(restarted.authenticate(s.token).explored,q.explored);
   const bad=structuredClone(original);bad.world.players[0].explored=[400];assert.throws(()=>World.fromSave(bad),/exploration/);
 });
 test('JSON migration archives the exact schema-25 input before rotating saves',()=>{
   const dir=mkdtempSync(join(tmpdir(),'myth-map-migration-'));
-  try{const w=new World();w.join('Archive');const old=legacyMap(w.toSave());old.schema=25;const bytes=JSON.stringify(old),path=join(dir,'world.json');writeFileSync(path,bytes);const store=new WorldStore(path),r=store.load();store.save(r);assert.equal(readFileSync(path+'.schema25.bak','utf8'),bytes);assert.equal(store.load().toSave().schema,26);}finally{rmSync(dir,{recursive:true,force:true});}
+  try{const w=new World();w.join('Archive');const old=legacyMap(w.toSave());old.schema=25;const bytes=JSON.stringify(old),path=join(dir,'world.json');writeFileSync(path,bytes);const store=new WorldStore(path),r=store.load();store.save(r);assert.equal(readFileSync(path+'.schema25.bak','utf8'),bytes);assert.equal(store.load().toSave().schema,27);}finally{rmSync(dir,{recursive:true,force:true});}
 });
 test('frontier travel cannot enter or detour through locked legacy provinces, and recall remains legal',()=>{
   const w=openKingdom(new World()),s=w.join('Routes'),p=w.authenticate(s.token);p.x=128;p.z=128;

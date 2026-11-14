@@ -48,7 +48,7 @@ test('Linux package includes the entire live server import graph and source-vers
 });
 test('Linux launcher starts the real packaged server, runs a client stub, saves and stops only its child',{skip:linuxClient},async()=>{
  const {dir}=await fixture(),port=await freePort(),old=process.env.XDG_DATA_HOME;process.env.XDG_DATA_HOME=join(dir,'data');
- try{await launch(dir,['--port='+port]);const save=JSON.parse(await readFile(join(dir,'data/ThronesOfMyth/Saves/world-'+port+'.json'),'utf8'));assert.equal(save.schema,26);assert.deepEqual(save.world.players,[]);await assert.rejects(()=>lstat(join(dir,'data/ThronesOfMyth/launcher-'+port+'.lock')),/ENOENT/);await assert.rejects(()=>fetch('http://127.0.0.1:'+port+'/health',{signal:AbortSignal.timeout(400)}));}
+ try{await launch(dir,['--port='+port]);const save=JSON.parse(await readFile(join(dir,'data/ThronesOfMyth/Saves/world-'+port+'.json'),'utf8'));assert.equal(save.schema,27);assert.deepEqual(save.world.players,[]);await assert.rejects(()=>lstat(join(dir,'data/ThronesOfMyth/launcher-'+port+'.lock')),/ENOENT/);await assert.rejects(()=>fetch('http://127.0.0.1:'+port+'/health',{signal:AbortSignal.timeout(400)}));}
  finally{if(old===undefined)delete process.env.XDG_DATA_HOME;else process.env.XDG_DATA_HOME=old;await rm(dir,{recursive:true,force:true});}
 });
 test('Linux launcher refuses an occupied port without stopping or altering that server',async()=>{
@@ -60,7 +60,7 @@ test('a failing client stub still leaves a saved world and no owned server or la
  const {dir,manifest}=await fixture(),port=await freePort(),old=process.env.XDG_DATA_HOME;process.env.XDG_DATA_HOME=join(dir,'data');
  try{
   const exe=join(dir,'Game/ThronesOfMyth.x86_64');await writeFile(exe,'#!/bin/sh\nexit 7\n');manifest.files.find(f=>f.path==='Game/ThronesOfMyth.x86_64').sha256=createHash('sha256').update(await readFile(exe)).digest('hex');await writeFile(join(dir,'manifest.json'),JSON.stringify(manifest));
-  await assert.rejects(()=>launch(dir,['--port='+port]),/Client exited with 7/);assert.equal(JSON.parse(await readFile(join(dir,'data/ThronesOfMyth/Saves/world-'+port+'.json'),'utf8')).schema,26);await assert.rejects(()=>lstat(join(dir,'data/ThronesOfMyth/launcher-'+port+'.lock')),/ENOENT/);await assert.rejects(()=>fetch('http://127.0.0.1:'+port+'/health',{signal:AbortSignal.timeout(400)}));
+  await assert.rejects(()=>launch(dir,['--port='+port]),/Client exited with 7/);assert.equal(JSON.parse(await readFile(join(dir,'data/ThronesOfMyth/Saves/world-'+port+'.json'),'utf8')).schema,27);await assert.rejects(()=>lstat(join(dir,'data/ThronesOfMyth/launcher-'+port+'.lock')),/ENOENT/);await assert.rejects(()=>fetch('http://127.0.0.1:'+port+'/health',{signal:AbortSignal.timeout(400)}));
  }finally{if(old===undefined)delete process.env.XDG_DATA_HOME;else process.env.XDG_DATA_HOME=old;await rm(dir,{recursive:true,force:true});}
 });
 test('SIGTERM waits for owned client/server cleanup before releasing the launcher lock',{skip:linuxClient},async()=>{
@@ -73,7 +73,7 @@ test('SIGTERM waits for owned client/server cleanup before releasing the launche
  }finally{if(child&&child.exitCode===null)child.kill('SIGTERM');await rm(dir,{recursive:true,force:true});}
 });
 test('client-only join verifies host build/server payload and never stops the independently managed server',{skip:linuxClient},async()=>{
- const {createGameServer}=await import('./http.mjs');const {joinClient,serverDigest}=await import('../packaging/linux/Launch.mjs');const {dir,manifest}=await fixture();manifest.serverDigest=serverDigest(manifest);const app=createGameServer({buildIdentity:{version:manifest.version,commit:manifest.commit,serverDigest:manifest.serverDigest}});await new Promise(r=>app.server.listen(0,'127.0.0.1',r));const address='http://127.0.0.1:'+app.server.address().port,old=process.env.XDG_DATA_HOME;process.env.XDG_DATA_HOME=join(dir,'data');
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {joinClient,serverDigest}=await import('../packaging/linux/Launch.mjs');const {dir,manifest}=await fixture();manifest.serverDigest=serverDigest(manifest);const app=createGameServer({buildIdentity:{version:manifest.version,commit:manifest.commit,serverDigest:manifest.serverDigest}});await new Promise(r=>app.server.listen(0,'127.0.0.1',r));const address='http://127.0.0.1:'+app.server.address().port,old=process.env.XDG_DATA_HOME;process.env.XDG_DATA_HOME=join(dir,'data');
  try{await joinClient(dir,manifest,address,[]);assert.equal((await fetch(address+'/health')).status,200);await assert.rejects(()=>joinClient(dir,{...manifest,commit:'1'.repeat(40)},address,[]),/does not match/);assert.equal((await fetch(address+'/health')).status,200);assert.equal((await readdir(join(dir,'data/ThronesOfMyth'))).some(n=>n.endsWith('.lock')),false);}
  finally{await new Promise(r=>{app.server.close(r);app.server.closeAllConnections();});if(old===undefined)delete process.env.XDG_DATA_HOME;else process.env.XDG_DATA_HOME=old;await rm(dir,{recursive:true,force:true});}
 });

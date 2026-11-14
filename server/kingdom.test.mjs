@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { siteIsOpen, recordKingdomContribution, recordKingdomVictory, tickKingdom, kingdomSnapshot } from './kingdom.mjs';
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
 function setup(){let now=Date.UTC(2026,10,7,12);const w=legacySpawns(new World({now:()=>now})),s=w.join('Founder'),p=w.authenticate(s.token);return {w,p,s,setAge:seconds=>{now=Date.UTC(2026,10,7,12)+seconds*1000;w.snapshot(p.id);}};}
@@ -51,7 +51,7 @@ test('migration preserves owned-gate access without retroactive rewards and malf
 });
 
 test('authenticated milestone claims enforce ownership and snapshot eligibility without exposing private claim lists',async testContext=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port,sessions=await Promise.all(['HTTP Contributor','HTTP Observer'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json())),[p,q]=sessions.map(s=>w.authenticate(s.token));
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();

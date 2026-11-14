@@ -1,7 +1,7 @@
 import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { explorationTick, visible } from './exploration.mjs';
 const advance=(w,n)=>{for(let i=0;i<Math.ceil(n*10);i++)w.tick(.1);};
 const start=()=>{const w=legacySpawns(new World()),s=w.join('Showcase'),p=w.authenticate(s.token);return {w,p};};

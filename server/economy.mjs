@@ -1,3 +1,4 @@
+import { referenceScale } from './numerics.mjs';
 import { randomUUID } from 'node:crypto';
 import { activityClock } from './activity.mjs';
 import { COMMANDERS } from './content.mjs';
@@ -5,19 +6,21 @@ import { ensureHero } from './progression.mjs';
 import { RESOURCES } from './city-content.mjs';
 import { coreReport } from './field-logistics.mjs';
 export const ECONOMY={version:2,apCap:100,apIntervalMs:60000,campAP:5,strongholdAP:10,tradeTax:.1,tradeDailyLimit:3000,shardRecruit:10,buffPercent:.1,buffSeconds:600};
+export const economyRules=p=>referenceScale(p)?{...ECONOMY,version:3,apCap:1500,apIntervalMs:36000,campAP:50,strongholdAP:150}:ECONOMY;
 export const economyTime=w=>activityClock(w).now;
-export function initializeEconomy(w,p){const now=economyTime(w);p.aether=0;p.ap=ECONOMY.apCap;p.apUpdated=now;p.apRemainder=0;p.campPasses={};p.tradeDay=Math.floor(now/86400000);p.tradeSent=0;p.tradeSequence=0;p.tradeReceipts=[];p.buffs={attack:0,defense:0};}
+export function initializeEconomy(w,p){const now=economyTime(w);p.aether=0;p.ap=economyRules(p).apCap;p.apUpdated=now;p.apRemainder=0;p.campPasses={};p.tradeDay=Math.floor(now/86400000);p.tradeSent=0;p.tradeSequence=0;p.tradeReceipts=[];p.buffs={attack:0,defense:0};}
 export function refreshEconomy(w,p){
- const now=economyTime(w),elapsed=Math.max(0,now-p.apUpdated);p.apUpdated=Math.max(now,p.apUpdated);
- if(p.ap>=ECONOMY.apCap)p.apRemainder=0;
- else {const ms=p.apRemainder+elapsed,gain=Math.floor(ms/ECONOMY.apIntervalMs);p.ap=Math.min(ECONOMY.apCap,p.ap+gain);p.apRemainder=p.ap===ECONOMY.apCap?0:ms%ECONOMY.apIntervalMs;}
+ const rules=economyRules(p),now=economyTime(w),elapsed=Math.max(0,now-p.apUpdated);p.apUpdated=Math.max(now,p.apUpdated);
+ if(p.ap>=rules.apCap)p.apRemainder=0;
+ else {const ms=p.apRemainder+elapsed,gain=Math.floor(ms/rules.apIntervalMs);p.ap=Math.min(rules.apCap,p.ap+gain);p.apRemainder=p.ap===rules.apCap?0:ms%rules.apIntervalMs;}
  const day=Math.floor(now/86400000);if(day>p.tradeDay){p.tradeDay=day;p.tradeSent=0;}
  for(const kind of ['attack','defense'])if(p.buffs[kind]&&p.buffs[kind]<=now)p.buffs[kind]=0;
 }
-export function economySnapshot(w,p){refreshEconomy(w,p);return {rules:ECONOMY,ap:p.ap,apCap:ECONOMY.apCap,nextAPSeconds:p.ap>=ECONOMY.apCap?0:Math.ceil((ECONOMY.apIntervalMs-p.apRemainder)/1000),fullAPSeconds:p.ap>=ECONOMY.apCap?0:Math.ceil(((ECONOMY.apCap-p.ap)*ECONOMY.apIntervalMs-p.apRemainder)/1000),nextTransfer:p.tradeSequence+1,tradeRemaining:ECONOMY.tradeDailyLimit-p.tradeSent,tradeResetSeconds:Math.ceil(((p.tradeDay+1)*86400000-economyTime(w))/1000),buffs:['attack','defense'].map(kind=>({kind,percent:ECONOMY.buffPercent,remaining:Math.max(0,Math.ceil((p.buffs[kind]-economyTime(w))/1000))})),members:[...w.players.values()].filter(q=>q.id!==p.id&&p.allianceId&&q.allianceId===p.allianceId).map(q=>({id:q.id,name:q.name})),transfers:p.tradeReceipts};}
+export function economySnapshot(w,p){refreshEconomy(w,p);const rules=economyRules(p);return {rules,ap:p.ap,apCap:rules.apCap,nextAPSeconds:p.ap>=rules.apCap?0:Math.ceil((rules.apIntervalMs-p.apRemainder)/1000),fullAPSeconds:p.ap>=rules.apCap?0:Math.ceil(((rules.apCap-p.ap)*rules.apIntervalMs-p.apRemainder)/1000),nextTransfer:p.tradeSequence+1,tradeRemaining:ECONOMY.tradeDailyLimit-p.tradeSent,tradeResetSeconds:Math.ceil(((p.tradeDay+1)*86400000-economyTime(w))/1000),buffs:['attack','defense'].map(kind=>({kind,percent:ECONOMY.buffPercent,remaining:Math.max(0,Math.ceil((p.buffs[kind]-economyTime(w))/1000))})),members:[...w.players.values()].filter(q=>q.id!==p.id&&p.allianceId&&q.allianceId===p.allianceId).map(q=>({id:q.id,name:q.name})),transfers:p.tradeReceipts};}
 export function campAdmission(w,p,camp){
- refreshEconomy(w,p);if(p.campPasses[camp.id]===camp.cycle)return true;if(p.ap<ECONOMY.campAP)return false;
- p.ap-=ECONOMY.campAP;p.campPasses[camp.id]=camp.cycle;w.logisticsRevision++;return true;
+ const rules=economyRules(p);
+ refreshEconomy(w,p);if(p.campPasses[camp.id]===camp.cycle)return true;if(p.ap<rules.campAP)return false;
+ p.ap-=rules.campAP;p.campPasses[camp.id]=camp.cycle;w.logisticsRevision++;return true;
 }
 export function economyCommand(w,p,c,fail){
  if(c.type==='unlock-commander')fail('Recruit commanders through the Temple, earned progression or ten matching Echo Shards.');
@@ -48,9 +51,9 @@ export function economyCommand(w,p,c,fail){
  coreReport(w,p,{id,type:'trade',title:'Resources sent to '+receiver.name,detail:amount+' '+resource+' delivered; '+tax+' transport tax paid.',resources});coreReport(w,receiver,{id,type:'trade',title:'Resources received from '+p.name,detail:amount+' '+resource+' received. Sender paid '+tax+' tax.',resources});return true;
 }
 export function validateEconomy(w,p){
- const now=economyTime(w),int=n=>Number.isSafeInteger(n)&&n>=0;
- if(!RESOURCES.every(k=>int(p[k]))||!int(p.sigils)||!int(p.tradeSequence)||!int(p.aether)||!int(p.ap)||p.ap>ECONOMY.apCap||!int(p.apUpdated)||p.apUpdated>now||!int(p.apRemainder)||p.apRemainder>=ECONOMY.apIntervalMs||!int(p.tradeDay)||p.tradeDay>Math.floor(now/86400000)||!int(p.tradeSent)||p.tradeSent>ECONOMY.tradeDailyLimit)throw new Error('Invalid saved economy balances or clocks.');
- if(!p.campPasses||typeof p.campPasses!=='object'||Array.isArray(p.campPasses)||Object.keys(p.campPasses).length>30||Object.entries(p.campPasses).some(([id,cycle])=>!w.camps.some(c=>c.id===id)||!int(cycle)||cycle<1))throw new Error('Invalid saved PvE entitlements.');
+ const rules=economyRules(p),now=economyTime(w),int=n=>Number.isSafeInteger(n)&&n>=0;
+ if(!RESOURCES.every(k=>int(p[k]))||!int(p.sigils)||!int(p.tradeSequence)||!int(p.aether)||!int(p.ap)||p.ap>rules.apCap||!int(p.apUpdated)||p.apUpdated>now||!int(p.apRemainder)||p.apRemainder>=rules.apIntervalMs||!int(p.tradeDay)||p.tradeDay>Math.floor(now/86400000)||!int(p.tradeSent)||p.tradeSent>ECONOMY.tradeDailyLimit)throw new Error('Invalid saved economy balances or clocks.');
+ if(!p.campPasses||typeof p.campPasses!=='object'||Array.isArray(p.campPasses)||Object.keys(p.campPasses).length>w.camps.length||Object.entries(p.campPasses).some(([id,cycle])=>!w.camps.some(c=>c.id===id)||!int(cycle)||cycle<1))throw new Error('Invalid saved PvE entitlements.');
  if(!p.buffs||Object.keys(p.buffs).length!==2||!['attack','defense'].every(k=>int(p.buffs[k])&&p.buffs[k]<=now+ECONOMY.buffSeconds*1000))throw new Error('Invalid saved timed buffs.');
  if(!Array.isArray(p.tradeReceipts)||p.tradeSequence<p.tradeReceipts.length||p.tradeReceipts.length>100||new Set(p.tradeReceipts.map(r=>r.requestId)).size!==p.tradeReceipts.length||p.tradeReceipts.some((r,index)=>!r||typeof r.requestId!=='string'||!/^([1-9][0-9]*)-[A-Za-z0-9-]{8,60}$/.test(r.requestId)||Number(r.requestId.split('-')[0])!==p.tradeSequence-index||typeof r.senderName!=='string'||typeof r.recipientName!=='string'||r.day>p.tradeDay||typeof r.id!=='string'||r.senderId!==p.id||typeof r.recipientId!=='string'||!RESOURCES.includes(r.resource)||!int(r.amount)||r.amount<1||!int(r.tax)||r.tax!==Math.ceil(r.amount*ECONOMY.tradeTax)||!int(r.day)||!Number.isFinite(r.time)||r.time<0))throw new Error('Invalid saved transfer history.');
 }

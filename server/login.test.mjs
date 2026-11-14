@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { activitySnapshot, recordActivity, LOGIN_REWARDS } from './activity.mjs';
 import { tempDirectory } from './testing/cleanup.mjs';
-import { createGameServer } from './http.mjs';
+import { createGameServer } from './testing/legacy-services.mjs';
 
 const DAY = 86400000;
 const setup = (start = Date.UTC(2026, 0, 1, 12)) => {
@@ -139,7 +139,7 @@ test('schemas 19 and 20 gain a fresh streak without changing progress, and bad s
     delete old.world.players[0].loginStreak;
     const loaded = World.fromSave(old, { now: () => Date.UTC(2026, 0, 1, 12) });
     const q = loaded.authenticate(s.token);
-    assert.equal(loaded.toSave().schema, 26);
+    assert.equal(loaded.toSave().schema, 27);
     assert.equal(q.food, food);
     assert.equal(q.wood, wood);
     assert.equal(q.gold, gold);

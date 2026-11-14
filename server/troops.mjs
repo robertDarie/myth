@@ -1,3 +1,4 @@
+import { referenceScale, referenceTroop, REFERENCE_BATCHES } from './numerics.mjs';
 // Aggregate totals stay available to the economy; typed rosters own unit transfers.
 export const TROOP_TYPES = [
   { id: 'infantry', name: 'Oathguard', role: 'Infantry', description: 'Steady frontline troops.', health: 5, damage: 0.75, speed: 1, duration: 8, cityLevel: 1, cost: { food: 50, gold: 20 } },
@@ -51,34 +52,36 @@ export function tierLock(p,type) {
   }
   return '';
 }
-export const sourceType=type=>type?.sourceId?TROOP_TYPES.find(t=>t.id===type.sourceId)??null:null;
-export const promotionCost=type=>{
-  const source=sourceType(type);if(!source)return {};
+const REFERENCE_TYPES=Object.freeze(TROOP_TYPES.map(t=>{const value=referenceTroop(t);Object.freeze(value.cost);return Object.freeze(value);}));
+export const troopTypes=p=>referenceScale(p)?REFERENCE_TYPES:TROOP_TYPES;
+export const sourceType=(type,p)=>type?.sourceId?troopTypes(p).find(t=>t.id===type.sourceId)??null:null;
+export const promotionCost=(type,p)=>{
+  const source=sourceType(type,p);if(!source)return {};
   const keys=new Set([...Object.keys(type.cost),...Object.keys(source.cost)]);
   return Object.fromEntries([...keys].map(id=>[id,Math.max(0,(type.cost[id]??0)-(source.cost[id]??0))]).filter(([,value])=>value>0));
 };
 // Original curve. Hall levels 1–2 keep a batch of five so the first session stays readable.
 // Larger orders do not reduce the time or resources spent per soldier.
 export const TRAINING_BATCHES = { 1: 5, 2: 5, 3: 10, 4: 20, 5: 40 };
-export const trainingBatch = p => TRAINING_BATCHES[Math.max(1, Math.min(5, p.buildings?.barracks ?? 1))] ?? 5;
-export const batchCost = (cost, amount) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * amount / 5)]));
+export const trainingBatch = p => (referenceScale(p)?REFERENCE_BATCHES:TRAINING_BATCHES)[Math.max(1, Math.min(5, p.buildings?.barracks ?? 1))] ?? 5;
+export const batchCost = (cost, amount, p) => Object.fromEntries(Object.entries(cost).map(([id, value]) => [id, Math.ceil(value * amount / (referenceScale(p)?1:5))]));
 const hallSpeed = p => 1 + 0.1 * Math.max(0, (p.buildings?.barracks ?? 1) - 1);
 export const trainingSpeed = p => hallSpeed(p) * (1 + 0.04 * Math.max(0, Math.min(3, p.technologies?.drills ?? 0)));
 export function trainingOptions(p) {
   const amount = trainingBatch(p), speed = trainingSpeed(p);
-  return TROOP_TYPES.map(t => {
-    const quote = { orderAmount: amount, orderSeconds: t.duration * (amount / 5) / speed, orderCost: batchCost(t.cost, amount) };
-    const source = sourceType(t);
-    if (source) quote.promotionSeconds = (t.duration - source.duration) / speed;
-    return { ...t, ...quote, lockedReason: tierLock(p, t), promotionCost: source ? promotionCost(t) : {}, sourceAvailable: source ? countOf(p.reserveUnits, source.id) : 0 };
+  return troopTypes(p).map(t => {
+    const quote = { orderAmount: amount, orderSeconds: t.duration * (amount / (referenceScale(p)?1:5)) / speed, orderCost: batchCost(t.cost, amount,p) };
+    const source = sourceType(t,p);
+    if (source) quote.promotionSeconds = (t.duration - source.duration) * (referenceScale(p)?100:1) / speed;
+    return { ...t, ...quote, lockedReason: tierLock(p, t), promotionAmount:referenceScale(p)?100:5, promotionCost: source ? batchCost(promotionCost(t,p),referenceScale(p)?100:5,p) : {}, sourceAvailable: source ? countOf(p.reserveUnits, source.id) : 0 };
   });
 }
-export const unitPower=units=>TROOP_TYPES.reduce((sum,t)=>sum+countOf(units,t.id)*TIER_POWER[t.tier],0);
+export const unitPower=(units,p)=>TROOP_TYPES.reduce((sum,t)=>sum+countOf(units,t.id)*(referenceScale(p)?[0,1,2,3,4,10][t.tier]:TIER_POWER[t.tier]),0);
 export const unitTotal = units => TROOP_TYPES.reduce((sum, type) => sum + countOf(units,type.id), 0);
 export const legacyUnits = count => ({ ...emptyUnits(), infantry: count });
 export function validUnits(units) {
   return !!units && typeof units === 'object' && !Array.isArray(units) && Object.keys(units).every(id => TROOP_TYPES.some(t => t.id === id))
-    && TROOP_TYPES.every(t => (t.tier>1&&units[t.id]===undefined)||(Number.isSafeInteger(units[t.id]) && units[t.id] >= 0 && units[t.id] <= 100000));
+    && TROOP_TYPES.every(t => (t.tier>1&&units[t.id]===undefined)||(Number.isSafeInteger(units[t.id]) && units[t.id] >= 0 && units[t.id] <= 10000000));
 }
 export function migrateUnits(p) {
   // Schemas 1–3 had only generic mortal troops, including pending training orders.
@@ -87,6 +90,7 @@ export function migrateUnits(p) {
   for (const job of p.trainingQueue) if (job.type === 'train') job.targetId = 'infantry';
 }
 export function validateUnits(p) {
+  if(!referenceScale(p)&&[p.reserveUnits,p.wounded,p.healing?.units,...[p,...p.marches].map(a=>a.units)].filter(Boolean).some(u=>Object.values(u).some(n=>n>100000)))throw new Error('Invalid legacy troop count.');
   const ledgers=[p.reserveUnits,p.wounded,p.healing?.units,...[p,...p.marches].map(a=>a.units)].filter(Boolean);
   for(const type of TROOP_TYPES.filter(t=>t.tier>=2))if((ledgers.some(units=>countOf(units,type.id)>0)||p.trainingQueue.some(job=>job.targetId===type.id))&&tierLock(p,type))throw new Error('Invalid saved troop unlock.');
   if (!validUnits(p.reserveUnits) || unitTotal(p.reserveUnits) !== p.reserveTroops || !Number.isSafeInteger(p.reserveMythic) || p.reserveMythic < 0) throw new Error('Invalid saved troop reserves.');
@@ -94,15 +98,16 @@ export function validateUnits(p) {
   if (p.trainingQueue.some(job => {
     if (!['train','promote'].includes(job.type)) return false;
     const type = TROOP_TYPES.find(t => t.id === job.targetId);
-    if (!type || (job.type === 'train' && !Object.values(TRAINING_BATCHES).includes(job.amount))) return true;
+    if (!type || (job.type === 'train' && !Object.values(referenceScale(p)?REFERENCE_BATCHES:TRAINING_BATCHES).includes(job.amount) && !(referenceScale(p)&&job.numericMigration===1&&Object.values(TRAINING_BATCHES).some(n=>n*50===job.amount)))) return true;
     const source = sourceType(type);
-    return job.type === 'promote' && (!source || job.sourceId !== source.id || job.amount !== 5);
+    return job.type === 'promote' && (!source || job.sourceId !== source.id || job.amount !== (referenceScale(p)?(job.numericMigration===1?250:100):5));
   })) throw new Error('Invalid saved troop training order.');
 }
-export function troopBase(a) {
+export function troopBase(a,p=a) {
   const units = a.units ?? legacyUnits(a.troops);
-  return { health: TROOP_TYPES.reduce((sum, t) => sum + countOf(units,t.id) * t.health, 0),
-    damage: TROOP_TYPES.reduce((sum, t) => sum + countOf(units,t.id) * t.damage, 0),
+  return { defense: referenceScale(p)?troopTypes(p).reduce((sum,t)=>sum+countOf(units,t.id)*t.defense,0)/Math.max(1,unitTotal(units)):120,
+    health: troopTypes(p).reduce((sum, t) => sum + countOf(units,t.id) * t.health, 0),
+    damage: troopTypes(p).reduce((sum, t) => sum + countOf(units,t.id) * t.damage, 0),
     speed: a.troops > 0 && !a.mythic && classCounts(units).cavalry === a.troops ? 1.2 : 1 };
 }
 export function selection(c, fail) {

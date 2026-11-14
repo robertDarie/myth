@@ -1,7 +1,7 @@
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 const setup = () => { const w=testWorld(), p=['Leader','Officer','Member','Outsider'].map(name=>w.authenticate(w.join(name).token));for(const x of p)x.gold=1000;w.command(p[0],{type:'alliance-create',name:'Dawn'});for(const x of p.slice(1,3))w.command(x,{type:'alliance-join',targetId:p[0].allianceId});return {w,p}; };
 const cmd=(w,p,type,targetId='',extra={})=>w.command(p,{type,targetId,...extra});
 test('leaders manage ranks and succession; officers cannot remove peers or transfer leadership',()=>{

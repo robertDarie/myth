@@ -1,0 +1,864 @@
+{
+  "checked": "2026-11-14",
+  "sources": {
+    "A": "https://gacha-data.com/rise-of-kingdoms/barbarians/",
+    "B": "https://riseofkingdoms.fandom.com/wiki/Barbarians",
+    "capacity": "https://riseofkingdoms.fandom.com/wiki/Troop_Capacity",
+    "fort": "https://riseofkingdoms.fandom.com/wiki/Fort",
+    "experience": "https://riseofkingdoms.fandom.com/wiki/Commanders/Experience",
+    "troops": "https://gacha-data.com/rise-of-kingdoms/troops/"
+  },
+  "columns": {
+    "enemyPower": {
+      "source": "A",
+      "evidence": "documented",
+      "confidence": "medium: fan data"
+    },
+    "ap": {
+      "source": "A+B",
+      "evidence": "documented",
+      "confidence": "high: agreement"
+    },
+    "commanderXP": {
+      "source": "A",
+      "evidence": "documented base; conflicts with B at levels 1-10",
+      "confidence": "medium"
+    },
+    "recommendedTroops": {
+      "source": "B",
+      "evidence": "documented recommendation, not guaranteed victory",
+      "confidence": "medium"
+    },
+    "recommendedTier": {
+      "source": "B",
+      "evidence": "documented",
+      "confidence": "medium"
+    },
+    "enemyTroops": {
+      "source": "B",
+      "evidence": "documented lineup counts; null = missing; level25 lineup mislabeled22",
+      "confidence": "medium except level25 low"
+    },
+    "advertised": {
+      "source": "B",
+      "evidence": "advertised quantities, not guaranteed simultaneous drops; probabilities unknown",
+      "confidence": "medium"
+    }
+  },
+  "ordinary": [
+    {
+      "level": 1,
+      "enemyPower": 550,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "commanderXP": 100,
+      "ap": 50,
+      "enemyTroops": 750,
+      "advertised": {
+        "food": 2000,
+        "wood": 2000,
+        "tomeXP": 100,
+        "oneMinuteSpeedups": 1,
+        "gems": 10,
+        "arrows": 1
+      }
+    },
+    {
+      "level": 2,
+      "enemyPower": 650,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "commanderXP": 200,
+      "ap": 50,
+      "enemyTroops": 900,
+      "advertised": {
+        "food": 4000,
+        "wood": 4000,
+        "tomeXP": 200,
+        "oneMinuteSpeedups": 1,
+        "gems": 10,
+        "arrows": 2
+      }
+    },
+    {
+      "level": 3,
+      "enemyPower": 750,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "commanderXP": 300,
+      "ap": 50,
+      "enemyTroops": 1000,
+      "advertised": {
+        "food": 6000,
+        "wood": 6000,
+        "tomeXP": 300,
+        "oneMinuteSpeedups": 1,
+        "gems": 10,
+        "arrows": 3
+      }
+    },
+    {
+      "level": 4,
+      "enemyPower": 800,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "commanderXP": 400,
+      "ap": 50,
+      "enemyTroops": 1100,
+      "advertised": {
+        "food": 8000,
+        "wood": 8000,
+        "tomeXP": 400,
+        "oneMinuteSpeedups": 1,
+        "gems": 10,
+        "arrows": 4
+      }
+    },
+    {
+      "level": 5,
+      "enemyPower": 1100,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "commanderXP": 500,
+      "ap": 50,
+      "enemyTroops": 1500,
+      "advertised": {
+        "food": 10000,
+        "wood": 10000,
+        "tomeXP": 500,
+        "oneMinuteSpeedups": 1,
+        "gems": 10,
+        "arrows": 5
+      }
+    },
+    {
+      "level": 6,
+      "enemyPower": 1800,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "commanderXP": 600,
+      "ap": 50,
+      "enemyTroops": 2000,
+      "advertised": {
+        "food": 12000,
+        "wood": 12000,
+        "tomeXP": 600,
+        "oneMinuteSpeedups": 2,
+        "gems": 10,
+        "arrows": 6
+      }
+    },
+    {
+      "level": 7,
+      "enemyPower": 3600,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "commanderXP": 700,
+      "ap": 50,
+      "enemyTroops": 3200,
+      "advertised": {
+        "food": 14000,
+        "wood": 14000,
+        "tomeXP": 700,
+        "oneMinuteSpeedups": 2,
+        "gems": 10,
+        "arrows": 7
+      }
+    },
+    {
+      "level": 8,
+      "enemyPower": 6500,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "commanderXP": 800,
+      "ap": 50,
+      "enemyTroops": 4800,
+      "advertised": {
+        "food": 16000,
+        "wood": 16000,
+        "tomeXP": 800,
+        "oneMinuteSpeedups": 2,
+        "gems": 10,
+        "arrows": 8
+      }
+    },
+    {
+      "level": 9,
+      "enemyPower": 14000,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "commanderXP": 900,
+      "ap": 50,
+      "enemyTroops": 6800,
+      "advertised": {
+        "food": 18000,
+        "wood": 18000,
+        "tomeXP": 900,
+        "oneMinuteSpeedups": 2,
+        "gems": 10,
+        "arrows": 9
+      }
+    },
+    {
+      "level": 10,
+      "enemyPower": 38000,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "commanderXP": 1000,
+      "ap": 50,
+      "enemyTroops": 10000,
+      "advertised": {
+        "food": 20000,
+        "wood": 20000,
+        "tomeXP": 1000,
+        "oneMinuteSpeedups": 2,
+        "gems": 10,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 11,
+      "enemyPower": 88000,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "commanderXP": 1100,
+      "ap": 50,
+      "enemyTroops": null,
+      "advertised": {
+        "food": 22000,
+        "wood": 22000,
+        "tomeXP": 1100,
+        "oneMinuteSpeedups": 3,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 12,
+      "enemyPower": 130000,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "commanderXP": 1200,
+      "ap": 50,
+      "enemyTroops": null,
+      "advertised": {
+        "food": 24000,
+        "wood": 24000,
+        "tomeXP": 1200,
+        "oneMinuteSpeedups": 3,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 13,
+      "enemyPower": 190000,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "commanderXP": 1300,
+      "ap": 50,
+      "enemyTroops": null,
+      "advertised": {
+        "food": 26000,
+        "wood": 26000,
+        "tomeXP": 1300,
+        "oneMinuteSpeedups": 3,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 14,
+      "enemyPower": 300000,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "commanderXP": 1400,
+      "ap": 50,
+      "enemyTroops": null,
+      "advertised": {
+        "food": 28000,
+        "wood": 28000,
+        "tomeXP": 1400,
+        "oneMinuteSpeedups": 3,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 15,
+      "enemyPower": 380000,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "commanderXP": 1500,
+      "ap": 50,
+      "enemyTroops": null,
+      "advertised": {
+        "food": 30000,
+        "wood": 30000,
+        "tomeXP": 1500,
+        "oneMinuteSpeedups": 3,
+        "gems": 30,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 16,
+      "enemyPower": 800000,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "commanderXP": 1600,
+      "ap": 50,
+      "enemyTroops": 48000,
+      "advertised": {
+        "food": 32000,
+        "wood": 32000,
+        "tomeXP": 1600,
+        "oneMinuteSpeedups": 4,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 17,
+      "enemyPower": 1750000,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "commanderXP": 1700,
+      "ap": 50,
+      "enemyTroops": 56000,
+      "advertised": {
+        "food": 34000,
+        "wood": 34000,
+        "tomeXP": 1700,
+        "oneMinuteSpeedups": 4,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 18,
+      "enemyPower": 2153000,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "commanderXP": 1800,
+      "ap": 50,
+      "enemyTroops": 65000,
+      "advertised": {
+        "food": 36000,
+        "wood": 36000,
+        "tomeXP": 1800,
+        "oneMinuteSpeedups": 4,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 19,
+      "enemyPower": 2538000,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "commanderXP": 1900,
+      "ap": 50,
+      "enemyTroops": 68000,
+      "advertised": {
+        "food": 38000,
+        "wood": 38000,
+        "tomeXP": 1900,
+        "oneMinuteSpeedups": 4,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 20,
+      "enemyPower": 2854000,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "commanderXP": 2000,
+      "ap": 50,
+      "enemyTroops": 72000,
+      "advertised": {
+        "food": 40000,
+        "wood": 40000,
+        "tomeXP": 2000,
+        "oneMinuteSpeedups": 4,
+        "gems": 20,
+        "arrows": 10
+      }
+    },
+    {
+      "level": 21,
+      "enemyPower": 4433000,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "commanderXP": 2100,
+      "ap": 50,
+      "enemyTroops": 76000,
+      "advertised": {
+        "food": 42000,
+        "wood": 42000,
+        "tomeXP": 2100,
+        "oneMinuteSpeedups": 5,
+        "gems": 30,
+        "arrows": 11
+      }
+    },
+    {
+      "level": 22,
+      "enemyPower": 4538000,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "commanderXP": 2200,
+      "ap": 50,
+      "enemyTroops": 80000,
+      "advertised": {
+        "food": 44000,
+        "wood": 44000,
+        "tomeXP": 2200,
+        "oneMinuteSpeedups": 5,
+        "gems": 30,
+        "arrows": 12
+      }
+    },
+    {
+      "level": 23,
+      "enemyPower": 7241000,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "commanderXP": 2300,
+      "ap": 50,
+      "enemyTroops": 85000,
+      "advertised": {
+        "food": 46000,
+        "wood": 46000,
+        "tomeXP": 2300,
+        "oneMinuteSpeedups": 5,
+        "gems": 30,
+        "arrows": 13
+      }
+    },
+    {
+      "level": 24,
+      "enemyPower": 9866000,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "commanderXP": 2400,
+      "ap": 50,
+      "enemyTroops": 90000,
+      "advertised": {
+        "food": 48000,
+        "wood": 48000,
+        "tomeXP": 2400,
+        "oneMinuteSpeedups": 5,
+        "gems": 30,
+        "arrows": 14
+      }
+    },
+    {
+      "level": 25,
+      "enemyPower": 16301000,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "commanderXP": 2500,
+      "ap": 50,
+      "enemyTroops": 100000,
+      "advertised": {
+        "food": 50000,
+        "wood": 50000,
+        "tomeXP": 2500,
+        "oneMinuteSpeedups": 4,
+        "gems": 30,
+        "arrows": 15
+      }
+    }
+  ],
+  "cityHallCapacity": [
+    2000,
+    3000,
+    4000,
+    5000,
+    7000,
+    9000,
+    12000,
+    15000,
+    19000,
+    23000,
+    28000,
+    33000,
+    38000,
+    44000,
+    50000,
+    57000,
+    64000,
+    72000,
+    80000,
+    90000,
+    100000,
+    110000,
+    120000,
+    130000,
+    150000
+  ],
+  "commanderCapacity": {
+    "1": 500,
+    "2": 700,
+    "3": 900,
+    "4": 1200,
+    "5": 1500,
+    "6": 2000,
+    "7": 2500,
+    "8": 3000,
+    "9": 3500,
+    "10": 4000,
+    "11": 4500,
+    "12": 5000,
+    "13": 5500,
+    "14": 6000,
+    "15": 6500,
+    "18": 8000,
+    "20": 9000,
+    "21": 9500,
+    "22": 10000,
+    "23": 11000,
+    "26": 14000,
+    "27": 15000,
+    "28": 16000,
+    "29": 17000,
+    "30": 18000,
+    "32": 20000,
+    "33": 21000,
+    "34": 22000,
+    "35": 23000,
+    "37": 25000,
+    "38": 26000,
+    "39": 27000,
+    "40": 28000,
+    "41": 29000,
+    "42": 30000,
+    "43": 31000,
+    "44": 32000,
+    "45": 34000,
+    "46": 36000,
+    "47": 38000,
+    "48": 40000,
+    "49": 42000,
+    "50": 45000,
+    "53": 46500,
+    "54": 47000,
+    "60": 50000
+  },
+  "forts": [
+    {
+      "level": 1,
+      "recommendedTroops": 120000,
+      "recommendedTier": 1,
+      "enemyPower": 1001000,
+      "ap": 150,
+      "commanderXP": 2500
+    },
+    {
+      "level": 2,
+      "recommendedTroops": 300000,
+      "recommendedTier": 2,
+      "enemyPower": 11742000,
+      "ap": 150,
+      "commanderXP": 5000
+    },
+    {
+      "level": 3,
+      "recommendedTroops": 480000,
+      "recommendedTier": 3,
+      "enemyPower": 80622000,
+      "ap": 150,
+      "commanderXP": 10000
+    },
+    {
+      "level": 4,
+      "recommendedTroops": 780000,
+      "recommendedTier": 4,
+      "enemyPower": 229089000,
+      "ap": 150,
+      "commanderXP": 15000
+    },
+    {
+      "level": 5,
+      "recommendedTroops": 1200000,
+      "recommendedTier": 4,
+      "enemyPower": 974345000,
+      "ap": 150,
+      "commanderXP": 20000
+    }
+  ],
+  "troops": {
+    "infantry": [
+      [
+        62,
+        120,
+        120,
+        85,
+        7,
+        50,
+        50,
+        0,
+        0,
+        15
+      ],
+      [
+        128,
+        125,
+        125,
+        80,
+        11,
+        100,
+        100,
+        0,
+        0,
+        30
+      ],
+      [
+        163,
+        158,
+        155,
+        75,
+        12,
+        150,
+        150,
+        0,
+        10,
+        60
+      ],
+      [
+        192,
+        192,
+        187,
+        70,
+        13,
+        300,
+        300,
+        0,
+        20,
+        80
+      ],
+      [
+        220,
+        212,
+        216,
+        65,
+        15,
+        800,
+        800,
+        0,
+        400,
+        120
+      ]
+    ],
+    "archers": [
+      [
+        60,
+        123,
+        120,
+        90,
+        6,
+        40,
+        60,
+        0,
+        0,
+        15
+      ],
+      [
+        125,
+        128,
+        128,
+        85,
+        8,
+        0,
+        100,
+        75,
+        0,
+        30
+      ],
+      [
+        158,
+        155,
+        163,
+        80,
+        9,
+        0,
+        150,
+        112,
+        10,
+        60
+      ],
+      [
+        192,
+        192,
+        187,
+        75,
+        11,
+        0,
+        300,
+        225,
+        20,
+        80
+      ],
+      [
+        220,
+        216,
+        212,
+        70,
+        13,
+        0,
+        800,
+        600,
+        400,
+        120
+      ]
+    ],
+    "cavalry": [
+      [
+        60,
+        120,
+        120,
+        100,
+        5,
+        60,
+        40,
+        0,
+        0,
+        15
+      ],
+      [
+        128,
+        125,
+        125,
+        95,
+        7,
+        120,
+        80,
+        0,
+        0,
+        30
+      ],
+      [
+        158,
+        163,
+        155,
+        90,
+        8,
+        180,
+        120,
+        0,
+        10,
+        60
+      ],
+      [
+        187,
+        192,
+        192,
+        85,
+        10,
+        360,
+        240,
+        0,
+        20,
+        80
+      ],
+      [
+        220,
+        212,
+        216,
+        80,
+        12,
+        800,
+        0,
+        600,
+        400,
+        120
+      ]
+    ]
+  },
+  "troopColumns": [
+    "attack",
+    "defense",
+    "health",
+    "speed",
+    "load",
+    "food",
+    "wood",
+    "stone",
+    "gold",
+    "seconds"
+  ],
+  "troopEvidence": {
+    "default": "GachaData troops; common non-civilization baselines",
+    "infantryT5": "Wiki Troops/Infantry common Royal Guard, GachaData cost/time",
+    "archersT5": "GachaData Elite Arbalester common baseline row",
+    "cavalryT2T3": "Wiki Troops/Cavalry; T3 detailed card158/163 conflicts comparison163/158; use detailed, medium-low confidence; cost split follows T1 ratio, inferred",
+    "cavalryT4": "Wiki Troops/Cavalry; cost split follows T1 ratio, inferred",
+    "cavalryT5": "Wiki common Royal Knight stats, GachaData Elite Outrider cost/time"
+  },
+  "epicXPToLevel": [
+    0,
+    0,
+    100,
+    300,
+    600,
+    1000,
+    3000,
+    6000,
+    9000,
+    12000,
+    15000,
+    18500,
+    22500,
+    27000,
+    32000,
+    37500,
+    43500,
+    50000,
+    56500,
+    63000,
+    70000,
+    75000,
+    80000,
+    86000,
+    92000,
+    98000,
+    105000,
+    112000,
+    119000,
+    126000,
+    135000,
+    150000,
+    170000,
+    195000,
+    225000,
+    260000,
+    300000,
+    345000,
+    395000,
+    450000,
+    550000,
+    675000,
+    800000,
+    950000,
+    1100000,
+    1275000,
+    1450000,
+    1650000,
+    1850000,
+    2100000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000,
+    2350000
+  ],
+  "xpEvidence": "Rows2\u201359 interpreted as incremental costs to reach row level; row60 Max leaves final cost unknown, repeats59 as explicit ToM fallback. Common maps Advanced, Rare maps Elite. Advanced anomalies49/50 retained,30 inferred81000;51+ ratio fallback."
+}

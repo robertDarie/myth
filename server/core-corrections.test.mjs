@@ -2,7 +2,7 @@ import { legacyMap } from './testing/legacy-save.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { cargoTotal,carryCapacity,coreReport } from './field-logistics.mjs';
 import { explorationTick } from './exploration.mjs';
 import { armyList } from './progression.mjs';
@@ -73,7 +73,7 @@ test('combat defeat destroys carried resources with an attributed loss report an
 test('schema thirteen migration preserves paid progress and balances without inventing cargo or historical observations',()=>{
  const {w,p,session}=setup();p.gold=777;p.ownedRelics.push('aegis');command(w,p,'train');at(p,{x:30,z:30});const save=structuredClone(w.toSave());legacyMap(save);save.schema=13;
  for(const a of save.world.players){delete a.cargo;delete a.cargoTripId;delete a.cargoSources;delete a.cargoStarted;delete a.deployed;delete a.discovery;delete a.coreReports;}
- const next=World.fromSave(save),q=next.authenticate(session.token);assert.equal(next.toSave().schema,26);assert.equal(q.gold,p.gold);assert.equal(q.trainingQueue.length,1);assert.equal(cargoTotal(q),0);assert.ok(q.ownedRelics.includes('aegis'));assert.ok(q.discovery.every(r=>r.observedAt===next.time));
+ const next=World.fromSave(save),q=next.authenticate(session.token);assert.equal(next.toSave().schema,27);assert.equal(q.gold,p.gold);assert.equal(q.trainingQueue.length,1);assert.equal(cargoTotal(q),0);assert.ok(q.ownedRelics.includes('aegis'));assert.ok(q.discovery.every(r=>r.observedAt===next.time));
 });
 test('damaged cargo, discovery, settled trip replay and malformed report saves are rejected',()=>{
  const {w,p}=setup();const node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);
@@ -85,7 +85,7 @@ test('unified reports are bounded, private, durable and do not grant rewards whe
  for(let i=0;i<3;i++)w.snapshot(p.id);assert.equal(p.gold,balance);const restored=load(w,session);assert.equal(restored.p.coreReports.length,100);assert.equal(restored.p.scoutReports.length,1);
 });
 test('transactional storage failure rolls back cargo delivery and its report; recovery settles it once',async t=>{
- const {createGameServer}=await import('./http.mjs');const {w,p,session}=setup(),node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);command(w,p,'stop');
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {w,p,session}=setup(),node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);command(w,p,'stop');
  // Put a stopped loaded march on its actual home position to isolate command settlement.
  at(p,{x:p.homeX,z:p.homeZ});const amount=cargoTotal(p),balance=p.wood;let fail=false;
  const app=createGameServer({store:{load:()=>w,save:()=>{if(fail)throw new Error('Disk full');}}});
@@ -107,15 +107,15 @@ test('a hidden remembered depleted deposit accepts the same travel order without
  const stock=w.snapshot(p.id).nodes.find(n=>n.id===node.id).remaining;assert.ok(stock>0);command(w,p,'gather',{targetId:node.id});w.tick(.1);assert.equal(p.target.type,'gather');assert.equal(w.snapshot(p.id).nodes.find(n=>n.id===node.id).remaining,stock);advance(w,15);assert.equal(p.deployed,false);assert.equal(cargoTotal(p),0);
 });
 test('a failed simulation delivery commit rolls back and pauses, then recovery delivers once',async t=>{
- const {createGameServer}=await import('./http.mjs');const {w,p,session}=setup(),node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);const amount=cargoTotal(p),balance=p.wood;command(w,p,'return');p.x=p.homeX+.01;p.z=p.homeZ;
+ const {createGameServer}=await import('./testing/legacy-services.mjs');const {w,p,session}=setup(),node=w.nodes[0];at(p,node);command(w,p,'gather',{targetId:node.id});advance(w,2);const amount=cargoTotal(p),balance=p.wood;command(w,p,'return');p.x=p.homeX+.01;p.z=p.homeZ;
  let fail=false;const app=createGameServer({store:{load:()=>w,save:()=>{if(fail)throw new Error('Disk full');}}});await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));t.after(()=>new Promise(resolve=>{app.server.close(resolve);app.server.closeAllConnections();}));fail=true;
  const until=async predicate=>{const deadline=Date.now()+2000;while(!predicate()&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,20));assert.ok(predicate());};
  await until(()=>!!app.persistence.error);let current=w.authenticate(session.token);assert.equal(current.wood,balance);assert.equal(cargoTotal(current),amount);assert.equal(current.coreReports.filter(r=>r.type==='gathering').length,0);
  fail=false;assert.equal(app.saveNow(),true);await until(()=>w.authenticate(session.token).coreReports.some(r=>r.type==='gathering'));current=w.authenticate(session.token);assert.equal(current.wood,balance+amount);assert.equal(cargoTotal(current),0);assert.equal(current.coreReports.filter(r=>r.type==='gathering').length,1);
 });
 test('schema thirteen JSON migration archives the untouched original before saving current cargo format',async t=>{
- const {mkdtempSync,readFileSync,writeFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {WorldStore}=await import('./storage.mjs');
- const directory=mkdtempSync(join(tmpdir(),'tom-028-'));t.after(()=>rmSync(directory,{recursive:true,force:true}));const path=join(directory,'world.json'),{w}=setup(),old=structuredClone(w.toSave());legacyMap(old);old.schema=13;const original=JSON.stringify(old);writeFileSync(path,original);const store=new WorldStore(path),migrated=store.load();store.save(migrated);assert.equal(readFileSync(path+'.schema13.bak','utf8'),original);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,26);
+ const {mkdtempSync,readFileSync,writeFileSync,rmSync}=await import('node:fs');const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {WorldStore}=await import('./testing/legacy-services.mjs');
+ const directory=mkdtempSync(join(tmpdir(),'tom-028-'));t.after(()=>rmSync(directory,{recursive:true,force:true}));const path=join(directory,'world.json'),{w}=setup(),old=structuredClone(w.toSave());legacyMap(old);old.schema=13;const original=JSON.stringify(old);writeFileSync(path,original);const store=new WorldStore(path),migrated=store.load();store.save(migrated);assert.equal(readFileSync(path+'.schema13.bak','utf8'),original);assert.equal(JSON.parse(readFileSync(path,'utf8')).schema,27);
 });
 test('Windows package includes the entire server import graph and matches protocol sixteen',async()=>{
  const {readFileSync}=await import('node:fs');const builder=readFileSync(new URL('../client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs',import.meta.url),'utf8');const launcher=readFileSync(new URL('../packaging/windows/Launcher.ps1',import.meta.url),'utf8');const visited=new Set();

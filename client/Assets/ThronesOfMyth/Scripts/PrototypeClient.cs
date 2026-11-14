@@ -171,10 +171,10 @@ namespace ThronesOfMyth
             trainingTier=GUILayout.SelectionGrid(trainingTier,new[]{"I","II","III","IV","V"},5,GUILayout.Height(32));
             string[] tierNotes={
                 "Tier I trains from the Hall of Spears. Cavalry needs Citadel 2.",
-                "Tier II needs Citadel 2, Hall of Spears 2, Athenaeum 2 and Veteran Oaths. Promote five Tier I soldiers or train them directly.",
-                "Tier III needs Citadel 3, Hall of Spears 3, Athenaeum 3 and Bronze Columns. Promote five Tier II soldiers or train them directly.",
-                "Tier IV needs Citadel 4, Hall of Spears 4, Athenaeum 4 and Oath Bulwarks. Promote five Tier III soldiers or train them directly.",
-                "Tier V needs Citadel 5, Hall of Spears 5, Athenaeum 5 and Titan Host. Promote five Tier IV soldiers or train them directly."
+                "Tier II needs Citadel 2, Hall of Spears 2, Athenaeum 2 and Veteran Oaths. Promote a batch of Tier I soldiers or train them directly.",
+                "Tier III needs Citadel 3, Hall of Spears 3, Athenaeum 3 and Bronze Columns. Promote a batch of Tier II soldiers or train them directly.",
+                "Tier IV needs Citadel 4, Hall of Spears 4, Athenaeum 4 and Oath Bulwarks. Promote a batch of Tier III soldiers or train them directly.",
+                "Tier V needs Citadel 5, Hall of Spears 5, Athenaeum 5 and Titan Host. Promote a batch of Tier IV soldiers or train them directly."
             };
             string[] tierResearch={"","veterans","columns","bulwarks","titanhost"};
             string[] researchNames={"","Veteran Oaths","Bronze Columns","Oath Bulwarks","Titan Host"};
@@ -194,9 +194,9 @@ namespace ThronesOfMyth
                 if(source!=null)
                 {
                     GUILayout.Label("Per unit: health "+source.health.ToString("0.##")+" → "+troop.health.ToString("0.##")+" · damage "+source.damage.ToString("0.##")+" → "+troop.damage.ToString("0.##"),noteStyle);
-                    GUILayout.Label("Ready "+source.name+": "+troop.sourceAvailable+" · promotion keeps the same five soldiers",noteStyle);
-                    string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<5?"Needs five ready "+source.name+".":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
-                    if(theme.Action("Promote 5 · "+Mathf.CeilToInt(troop.promotionSeconds)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
+                    GUILayout.Label("Ready "+source.name+": "+troop.sourceAvailable+" · promotion preserves all "+troop.promotionAmount+" soldiers",noteStyle);
+                    string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<troop.promotionAmount?"Needs "+troop.promotionAmount+" ready "+source.name+".":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
+                    if(theme.Action("Promote "+troop.promotionAmount+" · "+Mathf.CeilToInt(troop.promotionSeconds)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
                 }
                 GUILayout.EndVertical();
             }

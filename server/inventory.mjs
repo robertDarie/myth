@@ -1,4 +1,4 @@
-import { ECONOMY, refreshEconomy, economyTime } from './economy.mjs';
+import { economyRules, ECONOMY, refreshEconomy, economyTime } from './economy.mjs';
 import { constructionJobs } from './progression.mjs';
 export const ITEMS = [
   { id:'food-pack-100',name:'Harvest Satchel',kind:'resource',resource:'food',amount:100,description:'Open to add 100 food to your spendable stockpile.' },
@@ -15,7 +15,7 @@ ITEMS.push(
  {id:'training-minute',name:'Muster Hourglass',kind:'speedup',scope:'training',seconds:60,description:'Remove up to 60 seconds from the first active training batch.'},
  {id:'healing-minute',name:'Renewal Hourglass',kind:'speedup',scope:'healing',seconds:60,description:'Remove up to 60 seconds from active treatment.'},
  {id:'echo-sigil',name:'Sealed Oracle Sigil',kind:'summon',amount:1,description:'Unseal one Oracle Sigil for Temple summons. No commander or rarity is guaranteed.'},
- {id:'ap-tonic-20',name:'Pilgrim’s Tonic',kind:'energy',amount:20,description:'Restore 20 AP. Cannot exceed the 100 AP cap; no item is consumed on overflow.'},
+ {id:'ap-tonic-20',name:'Pilgrim’s Tonic',kind:'energy',amount:20,description:'Restore 20 AP. Cannot exceed your AP cap; no item is consumed on overflow.'},
  {id:'attack-oath-10m',name:'Oath of Valor',kind:'buff',scope:'attack',amount:10,seconds:600,description:'+10% army attack for 10 real minutes, across all your marches. Same buff cannot stack or refresh while active.'},
  {id:'defense-oath-10m',name:'Oath of Shelter',kind:'buff',scope:'defense',amount:10,seconds:600,description:'10% less incoming damage for 10 real minutes, across all your marches. Multiplies existing mitigation; does not add health. Same buff cannot stack or refresh.'}
 );
@@ -50,7 +50,7 @@ export function inventoryCommand(w,p,c,fail) {
   }
   if(item.kind==='shards'){const value=(p.commanderShards[item.resource]??0)+item.amount*count;if(!Number.isSafeInteger(value))fail('Shard balance limit reached.');p.inventory[item.id]-=count;p.commanderShards[item.resource]=value;return true;}
   if(item.kind==='summon') {if(!Number.isSafeInteger(p.sigils+item.amount*count))fail('Sigil balance limit reached.');p.inventory[item.id]-=count;p.sigils+=item.amount*count;return true;}
-  if(item.kind==='energy'){refreshEconomy(w,p);if(p.ap+item.amount*count>ECONOMY.apCap)fail('This tonic would exceed the AP cap.');p.inventory[item.id]-=count;p.ap+=item.amount*count;if(p.ap===ECONOMY.apCap)p.apRemainder=0;return true;}
+  if(item.kind==='energy'){refreshEconomy(w,p);if(p.ap+item.amount*count>economyRules(p).apCap)fail('This tonic would exceed the AP cap.');p.inventory[item.id]-=count;p.ap+=item.amount*count;if(p.ap===economyRules(p).apCap)p.apRemainder=0;return true;}
   if(item.kind==='buff'){refreshEconomy(w,p);if(count!==1||p.buffs[item.scope]>economyTime(w))fail('Use one oath at a time; an active oath cannot stack or refresh.');p.inventory[item.id]--;p.buffs[item.scope]=economyTime(w)+item.seconds*1000;return true;}
   const entry=inventoryJobs(p).find(({job})=>job.id===c.jobId);
   if(!entry||entry.job.remaining<=.00001)fail('Choose a currently active job owned by this city.');

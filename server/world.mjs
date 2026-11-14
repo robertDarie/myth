@@ -1,4 +1,6 @@
 import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
+import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
+import { migrateNumericWorld } from './numeric-migration.mjs';
 import { chooseCitySpawn } from './spawning.mjs';
 import { ECONOMY, initializeEconomy, refreshEconomy, economySnapshot, economyCommand, validateEconomy, migrateEconomy, campAdmission, economyTime } from './economy.mjs';
 import { initializeLogistics, validateLogistics, activeMarches, cargoTotal, carryCapacity, gatherCargo, returnCargo, loseCargo, dock, unifiedReports, coreReport } from './field-logistics.mjs';
@@ -18,8 +20,8 @@ import { initializeFindings, validateFindings, findingCommand } from './findings
 import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
-import { initializeWar, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed } from './troops.mjs';
+import { initializeWar, retreat, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
+import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, troopTypes, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
@@ -42,11 +44,12 @@ function withRoster(world, action) {
 const distance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const finitePoint = p => [p.x, p.z].every(n => Number.isFinite(n) && n >= 1 && n <= SIZE - 1);
 export class World {
-  constructor({ random = secureRandom, now = () => Date.now(), cityCapacity = LIMITS.defaultCities } = {}) {
-    this.cityCapacity = cityLimit(cityCapacity);
+  constructor({ random = secureRandom, now = () => Date.now(), cityCapacity = LIMITS.defaultCities, numericVersion = 1 } = {}) {
+    if(![0,1].includes(numericVersion))throw new Error('Invalid numeric profile.');
+    this.numericVersion=numericVersion;this.cityCapacity = cityLimit(cityCapacity);
     this.random = random; this.now = now; this.activityClockMs = 0; activityClock(this);
     this.chooseIndex = length => this.random === secureRandom ? randomInt(length) : Math.floor(this.random() * length);
-    this.strongholds = createStrongholds(); this.rallies = []; this.garrisons = []; this.sieges = []; this.messages = []; this.markers = []; this.battles = new Map(); this.players = new Map(); this.sessions = new Map(); this.alliances = new Map();
+    this.strongholds = createStrongholds(this); this.rallies = []; this.garrisons = []; this.sieges = []; this.messages = []; this.markers = []; this.battles = new Map(); this.players = new Map(); this.sessions = new Map(); this.alliances = new Map();
     this.time = 0; this.events = []; this.diplomacy = { proposals: [], pacts: [] }; this.coalitions = []; this.coalitionInvites = []; this.logisticsRevision=0;
     this.camps = campDefinitions.map(([id, name, level, x, z]) => ({ id, name, level, x, z,
       health: 100 * level, maxHealth: 100 * level, respawn: 0, contributors: {}, cycle:1 }));
@@ -55,9 +58,11 @@ export class World {
     this.nodes[0].x = 8; this.nodes[0].z = 12;
     this.nodes[2].x = 12; this.nodes[2].z = 10;
     this.nodes.push(...resourceNodes.map(n => ({ ...n })), ...frontierNodes());
+    if(referenceScale(this))for(const n of this.nodes){n.remaining*=100;n.capacity*=100;}
     this.camps.push(...frontierCamps());
+    if(referenceScale(this))for(const c of this.camps){const r=referenceCamp(c.level);c.health=c.maxHealth=r.maxHealth;}
     this.sites = [...siteDefinitions,...frontierSites()].map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
-    this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind); initializeKingdom(this);
+    this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind,this); initializeKingdom(this);
   }
   event(message) { this.events.unshift({ time: Math.round(this.time), message }); this.events.length = Math.min(this.events.length, 12); }
   spawnLocation() { return chooseCitySpawn(this); }
@@ -74,8 +79,8 @@ export class World {
     const location = this.spawnLocation();
     if (!location) throw new GameError('No suitable starting land remains in this kingdom. Try another kingdom.', 503);
     const { x, z } = location;
-    const player = { id, slot, name: name.trim(), civilization, x, z, homeX: x, homeZ: z,
-      health: 0, gold: 150, wood: 150, food: 200, troops: 20, mythic: 0, cityLevel: 1,
+    const player = { numericVersion:this.numericVersion,id, slot, name: name.trim(), civilization, x, z, homeX: x, homeZ: z,
+      health: 0, gold: referenceScale(this)?1000:150, wood: referenceScale(this)?10000:150, food: referenceScale(this)?10000:200, troops: referenceScale(this)?900:20, mythic: 0, cityLevel: 1,
       commanderId: 'captain', ownedCommanders: ['captain'], xp: 0, level: 1, kills: 0, questClaimed: false,
       allianceId: '', target: null, cooldown: 0, gatherClock: 0, lastSeen: 0, state: 'Idle', recovery: 0, reserveTroops: 0, reserveMythic: 0, construction: null, trainingQueue: [], offline: false };
     initializeCity(player); initializeInventory(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeFindings(player); initializeRecon(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player); ensureEvents(this, player); player.kingdomClaims = [];
@@ -97,18 +102,18 @@ export class World {
     const civ = CIVILIZATIONS.find(c => c.id === p.civilization), commander = COMMANDERS.find(c => c.id === a.commanderId);
     const rank = p.commanderRanks[a.commanderId] ?? 0;
     const relic = RELICS.find(r => r.id === a.equippedRelic) ?? { damage: 1, health: 1 };
-    const skill = skillModifiers(p, a), level = heroLevel(r), base = troopBase(a);
+    const skill = skillModifiers(p, a), level = heroLevel(r), base = troopBase(a,p);
     const gear = armamentFactor(p, a.commanderId);
     const companionId = a.secondaryCommanderId || '';
     const companionGear = companionId ? armamentFactor(p, companionId) : { damage: 1, health: 1, speed: 1, pve: 1 };
     const companion = companionId && p.ownedCommanders?.includes(companionId) ? 1 + 0.01 * heroLevel(ensureHero(p, companionId)) : 1;
     const owns = id => !!p.allianceId && this.sites.some(s => s.id === id && s.allianceId === p.allianceId);
     const formation = formationOf(a.units);
-    return { level, maxHealth: Math.round((base.health + a.mythic * 35) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health * gear.health * companionGear.health * companion * formation.appliedHealth),
-      damage: (base.damage + a.mythic * 12 * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage * gear.damage * companionGear.damage * companion * (p.buffs?.attack>economyTime(this)?1+ECONOMY.buffPercent:1),
+    return { level, defense:base.defense, maxHealth: Math.round((base.health + a.mythic * (referenceScale(p)?35000:35)) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health * gear.health * companionGear.health * companion * formation.appliedHealth),
+      damage: (base.damage + a.mythic * (referenceScale(p)?2400:12) * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage * gear.damage * companionGear.damage * companion * (p.buffs?.attack>economyTime(this)?1+ECONOMY.buffPercent:1),
       speed: 4 * base.speed * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march) * skill.speed * gear.speed * companionGear.speed,
-      heal: 12 * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1) * skill.heal,
-      gather: civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) * skill.gather,
+      heal: (referenceScale(p)?Math.max(12,base.health*.02):12) * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1) * skill.heal,
+      gather: (referenceScale(p)?10:1) * civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) * skill.gather,
       pve: skill.pve * gear.pve * companionGear.pve, mitigation:1-(1-skill.mitigation)*(p.buffs?.defense>economyTime(this)?1-ECONOMY.buffPercent:1) };
   }
   atHome(p) { return distance(p, { x: p.homeX, z: p.homeZ }) < 2; }
@@ -153,18 +158,18 @@ export class World {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
         const queued = p.trainingQueue.filter(j => ['train','promote'].includes(j.type)).reduce((total, j) => total + j.amount, 0);
         const promoting=c.type==='promote';
-        const amount=promoting?5:trainingBatch(p);
+        const amount=promoting?(referenceScale(p)?100:5):trainingBatch(p);
         if (totalTroops(p) + p.reserveTroops + wardTroops(p) + queued + (promoting?0:amount) > capacity(p)) throw new GameError('Troop capacity reached. Upgrade your city.');
-        const type = TROOP_TYPES.find(t => t.id === (c.targetId || 'infantry'));
+        const type = troopTypes(p).find(t => t.id === (c.targetId || 'infantry'));
         if (!type) throw new GameError('Choose a valid troop type.');
         const locked=tierLock(p,type);if(locked)throw new GameError(locked);
-        const source=sourceType(type);
-        if(promoting&&(!source||countOf(p.reserveUnits,source.id)<5))throw new GameError('Promotion requires five ready reserves of the previous tier.');
-        const cost=batchCost(promoting?promotionCost(type):type.cost, amount);
+        const source=sourceType(type,p);
+        if(promoting&&(!source||countOf(p.reserveUnits,source.id)<amount))throw new GameError('Promotion requires a full batch of ready reserves of the previous tier.');
+        const cost=batchCost(promoting?promotionCost(type,p):type.cost, amount,p);
         this.spend(p,cost);
-        if(promoting){changeUnits(p.reserveUnits,source.id,-5);p.reserveTroops-=5;}
+        if(promoting){changeUnits(p.reserveUnits,source.id,-amount);p.reserveTroops-=amount;}
         const baseDuration=promoting?type.duration-source.duration:type.duration;
-        const job = this.job(promoting?'promote':'train', baseDuration * (promoting?1:amount/5) / trainingSpeed(p), { ...cost }, amount);
+        const job = this.job(promoting?'promote':'train', baseDuration * (referenceScale(p)?amount:promoting?1:amount/5) / trainingSpeed(p), { ...cost }, amount);
         job.targetId = type.id;if(promoting)job.sourceId=source.id; p.trainingQueue.push(job); return;
       }
       case 'recruit': {
@@ -254,18 +259,21 @@ export class World {
     for (const p of this.players.values()) refreshJourney(this, p); tickKingdom(this);
   }
   battle(a, camp, stats) {
+    if(camp.health<=0||camp.respawn>0)return;
     if(!campAdmission(this,this.owner(a),camp)){a.target=null;a.state='Not enough AP';return;}
     const p = this.owner(a);
+    const npc=referenceScale(p)?referenceCamp(camp.level):null;
     a.cooldown = 1;
     a.attackSequence = (a.attackSequence ?? 0) + 1; a.attackX = camp.x; a.attackZ = camp.z;
-    let damage = Math.min(camp.health, Math.round(stats.damage * stats.pve)); camp.health -= damage;
+    let damage = Math.min(camp.health, Math.round(stats.damage * stats.pve * (npc?defenseFactor(npc.defense):1))); camp.health -= damage;
     a.rage = Math.min(1000, a.rage + 200);
     if (camp.health > 0 && a.rage >= 1000) {
-      const extra = Math.min(camp.health, activeSkill(p, a, { ...stats, damage: stats.damage * stats.pve }));
+      const extra = Math.min(camp.health, activeSkill(p, a, { ...stats, damage: stats.damage * stats.pve * (npc?defenseFactor(npc.defense):1) }));
       camp.health -= extra; damage += extra;
     }
     camp.contributors[a.id] = (camp.contributors[a.id] ?? 0) + damage;
     if (camp.health === 0) {
+      this.logisticsRevision++;
       recordKingdomVictory(this,'camps');
       camp.respawn = 45;
       const participants = Object.keys(camp.contributors).map(id => this.army(id)).filter(Boolean);
@@ -274,21 +282,22 @@ export class World {
         member.gold += Math.floor(50 * camp.level / owners.length); member.food += Math.floor(30 * camp.level / owners.length);
         member.stone += 20 * camp.level; member.mana += 5 * camp.level; member.sigils++; member.kills++; recordActivity(this,member,'camps',1,camp.id+':'+camp.cycle); recordEvent(this,member,'camps',1,camp.id+':'+camp.cycle);
         const ownArmies = participants.filter(actor => this.owner(actor).id === member.id);
-        coreReport(this,member,{id:randomUUID(),type:'pve',title:camp.name+' · Victory',outcome:'Victory',detail:'Level '+camp.level+' camp defeated. Earned 1 Oracle Sigil and '+(25*camp.level)+' commander XP shared among participating marches.\n'+ownArmies.map(actor=>{const u=classCounts(actor.units);return actor.commanderId+' · '+u.infantry+' infantry / '+u.archers+' archers / '+u.cavalry+' cavalry / '+actor.mythic+' mythic at outcome · '+Math.ceil(actor.health)+' HP remaining · '+camp.contributors[actor.id]+' damage dealt';}).join('\n'),resources:{food:Math.floor(30*camp.level/owners.length),gold:Math.floor(50*camp.level/owners.length),stone:20*camp.level,mana:5*camp.level,wood:0}});
+        coreReport(this,member,{id:randomUUID(),type:'pve',title:camp.name+' · Victory',outcome:'Victory',detail:'Level '+camp.level+' camp defeated. Earned 1 Oracle Sigil and '+((referenceScale(member)?100:25)*camp.level)+(referenceScale(member)?' XP per participating commander.':' commander XP shared among participating marches.')+'\n'+ownArmies.map(actor=>{const u=classCounts(actor.units);return actor.commanderId+' · '+u.infantry+' infantry / '+u.archers+' archers / '+u.cavalry+' cavalry / '+actor.mythic+' mythic at outcome · '+Math.ceil(actor.health)+' HP remaining · '+camp.contributors[actor.id]+' damage dealt';}).join('\n'),resources:{food:Math.floor(30*camp.level/owners.length),gold:Math.floor(50*camp.level/owners.length),stone:20*camp.level,mana:5*camp.level,wood:0}});
         for (const actor of ownArmies) {
           const record = ensureHero(member, actor.commanderId);
-          const gained = 25 * camp.level / ownArmies.length;
+          const gained = referenceScale(member)?100*camp.level:25 * camp.level / ownArmies.length;
           record.xp += gained; actor.xp = record.xp; actor.level = heroLevel(record);
-          if (actor.secondaryCommanderId) { const companion = ensureHero(member, actor.secondaryCommanderId); companion.xp += Math.floor(gained / 2); }
+          if (actor.secondaryCommanderId) { const companion = ensureHero(member, actor.secondaryCommanderId); companion.xp += referenceScale(member)?gained:Math.floor(gained / 2); }
         }
       }
       this.event(`${p.name} defeated ${camp.name} (level ${camp.level}).`); a.target = null; a.state = 'Victorious';
     } else {
-      const hit = 8 * camp.level * (1 - stats.mitigation), absorbed = Math.min(a.shield, hit);
+      const hit = (npc?npc.retaliation*defenseFactor(stats.defense):8 * camp.level) * (1 - stats.mitigation), absorbed = Math.min(a.shield, hit);
       a.shield -= absorbed; a.health = Math.max(0, a.health - (hit - absorbed));
       if (a.health === 0) {
         coreReport(this,p,{id:randomUUID(),type:'pve',title:camp.name+' · Defeat',outcome:'Defeat',detail:'Survivors are recovering at home.'});
-        loseCargo(this,a);a.deployed=false;a.x = p.homeX; a.z = p.homeZ; a.target = null; a.recovery = 8; a.health = 1; a.rage = 0; a.shield = 0; a.state = 'Recovering';
+        if(referenceScale(p)){retreat(this,a,{wounded:{infantry:0,archers:0,cavalry:0},woundedMythic:0});this.logisticsRevision++;}
+        else {loseCargo(this,a);a.deployed=false;a.x = p.homeX; a.z = p.homeZ; a.target = null; a.recovery = 8; a.health = 1; a.rage = 0; a.shield = 0; a.state = 'Recovering';}
         this.event(`${p.name}'s march retreated home after defeat.`);
       }
     }
@@ -334,23 +343,33 @@ export class World {
   toSave() {
     this.normalizeDeployment();
     ensureSeason(this);
-    return { schema: WORLD_SCHEMA, world: { cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: WORLD_SCHEMA, world: { numericVersion:this.numericVersion, numericMigration:this.numericMigration??null, cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
+    if(!Number.isInteger(data?.schema)||data.schema<1||data.schema>27)throw new Error('Unsupported or damaged save format.');
+    if(data?.schema>=27&&data?.world?.numericVersion===undefined)throw new Error('Missing saved numeric profile.');
+    if(data?.world && data.world.numericVersion===undefined){
+      const original=structuredClone(data);original.world.numericVersion=0;
+      for(const p of original.world.players??[])p.numericVersion=0;
+      const legacy=World.fromSave(original,{...options,numericVersion:0});
+      return migrateNumericWorld(legacy);
+    }
     if(data?.schema<15)data=migrateEconomy(data);
     data = migrateMap(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > LIMITS.maxCities || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
-    const world = new World({...options,cityCapacity:options.cityCapacity??w.cityCapacity??LIMITS.defaultCities});
+    const world = new World({...options,numericVersion:w.numericVersion,cityCapacity:options.cityCapacity??w.cityCapacity??LIMITS.defaultCities});
+    world.numericMigration=w.numericMigration??null;
     if(data.schema<26&&Array.isArray(w.strongholds))for(const t of world.strongholds.filter(t=>t.id.startsWith('frontier-')))if(!w.strongholds.some(old=>old.id===t.id))w.strongholds.push(structuredClone(t));
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
     if (data.schema === 1) for (const node of resourceNodes) if (!w.nodes.some(n => n.id === node.id)) w.nodes.push({ ...node });
     const resumedOrders=new Map();
     for (const p of w.players) {
       if (data.schema < 3 && p) { initializeCity(p, true); initializeProgression(p); }
+      if(p&&p.numericVersion!==world.numericVersion)throw new Error('Invalid saved numeric profile.');
       if (!p || typeof p.id !== 'string' || typeof p.name !== 'string' || world.players.has(p.id) || !CIVILIZATIONS.some(c => c.id === p.civilization) || !COMMANDERS.some(c => c.id === p.commanderId)) throw new Error('Invalid saved city.');
       if (!['gold', 'wood', 'food', 'troops', 'mythic', 'reserveTroops', 'reserveMythic', 'health', 'xp', 'recovery', 'cooldown', 'gatherClock'].every(k => Number.isFinite(p[k]) && p[k] >= 0) || !finitePoint(p) || !finitePoint({ x: p.homeX, z: p.homeZ }) || !Number.isInteger(p.cityLevel) || p.cityLevel < 1 || p.cityLevel > 5) throw new Error('Invalid saved city values.');
       if (!Number.isInteger(p.slot) || p.slot < 0 || p.slot >= LIMITS.maxCities || !Number.isInteger(p.level) || p.level < 1 || !Number.isInteger(p.kills) || p.kills < 0 || !Array.isArray(p.ownedCommanders) || !p.ownedCommanders.includes(p.commanderId) || p.ownedCommanders.some(id => !COMMANDERS.some(c => c.id === id)) || !Array.isArray(p.trainingQueue) || p.trainingQueue.length > 3) throw new Error('Invalid saved roster or queue.');
@@ -446,7 +465,7 @@ export class World {
     world.messages = data.schema >= 5 ? w.messages : []; world.markers = data.schema >= 5 ? w.markers : [];
     if (data.schema >= 24) { world.coalitions = w.coalitions; world.coalitionInvites = w.coalitionInvites; validateCoalitions(world); } else { world.coalitions = []; world.coalitionInvites = []; }
     validateSocial(world);
-    if (data.schema >= 9) world.strongholds = validateStrongholds(w.strongholds);
+    if (data.schema >= 9) world.strongholds = validateStrongholds(w.strongholds,world);
     if (data.schema < 6) initializeCampaign(world); else restoreCampaign(world, w);
     if (data.schema >= 10) validateActivity(world); else for (const p of world.players.values()) initializeActivity(world, p);
     if (data.schema < 22) for (const p of world.players.values()) delete p.events;
@@ -495,7 +514,7 @@ export class World {
     const activity = viewerId && this.players.has(viewerId) ? { ...activitySnapshot(this, this.players.get(viewerId)), events: eventSnapshot(this, this.players.get(viewerId)) } : null;
     const kingdom = viewerId && this.players.has(viewerId) ? kingdomSnapshot(this, this.players.get(viewerId)) : null;
     const viewerAlliance = viewer?.allianceId;
-    const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),season:seasonSnapshot(this,viewer),version: PROTOCOL, provinces:PROVINCES, corridors:MAP_CORRIDORS, cityCapacity:this.cityCapacity, allianceCapacity:LIMITS.allianceMembers, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: TROOP_TYPES, ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
+    const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),season:seasonSnapshot(this,viewer),version: PROTOCOL, provinces:PROVINCES, corridors:MAP_CORRIDORS, cityCapacity:this.cityCapacity, allianceCapacity:LIMITS.allianceMembers, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: troopTypes(this), ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
       formation: { id: FORMATION.id, name: FORMATION.name, minimumPercent: FORMATION.minimumPercent, health: FORMATION.health },
       players: [...this.players.values()].map(p => {
         const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, loginStreak, events, ...visible } = p;

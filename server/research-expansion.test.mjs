@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from './world.mjs';
+import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { technologyCard, passiveCap, citySnapshot } from './city.mjs';
 import { trainingOptions, trainingSpeed } from './troops.mjs';
@@ -114,7 +114,7 @@ test('missing ranks load as zero and impossible research is rejected', () => {
   const old = structuredClone(w.toSave());
   for (const id of ['drills', 'mercy', 'stores', 'caravan']) delete old.world.players[0].technologies[id];
   const loaded = World.fromSave(old), q = loaded.authenticate(s.token);
-  assert.equal(loaded.toSave().schema, 26);
+  assert.equal(loaded.toSave().schema, 27);
   assert.equal(q.food, 321);
   assert.equal(q.technologies.drills, 0);
   assert.equal(q.technologies.drill, 1);

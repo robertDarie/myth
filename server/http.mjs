@@ -25,14 +25,14 @@ const equalSecret = (a, b) => timingSafeEqual(Buffer.from(hash(String(a ?? '')))
 // restart recovery and therefore must not be used as an in-process rollback.
 
 
-export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null,cityCapacity=null,telemetry=null,buildIdentity=null } = {}) {
+export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null,cityCapacity=null,telemetry=null,buildIdentity=null,numericVersion=1 } = {}) {
   const measure=(name,fn)=>telemetry?telemetry.measure(name,fn):fn();
   if(telemetry?.path&&[savePath,savePath&&savePath+'.bak',savePath&&savePath+'.'+process.pid+'.tmp',databasePath,databasePath&&databasePath+'-wal',databasePath&&databasePath+'-shm'].filter(Boolean).some(p=>[telemetry.path,telemetry.path+'.tmp'].some(m=>resolve(p)===resolve(m))))throw new Error('Metrics must use a separate file from game storage.');
   if(cityCapacity!==null)cityLimit(cityCapacity);
   if (savePath && databasePath) throw new Error('Choose JSON or SQLite storage, not both. Use legacyPath for explicit migration.');
-  const store = suppliedStore ?? (databasePath ? new KingdomDatabase(databasePath) : savePath ? new WorldStore(savePath) : null);
+  const store = suppliedStore ?? (databasePath ? new KingdomDatabase(databasePath,{numericVersion}) : savePath ? new WorldStore(savePath,console.warn,numericVersion) : null);
   let world;
-  try { world = store ? store.load() : new World(); } catch (error) { store?.close?.(); throw error; }
+  try { world = store ? store.load() : new World({numericVersion}); } catch (error) { store?.close?.(); throw error; }
   if(cityCapacity!==null)world.cityCapacity=cityLimit(cityCapacity);
   const persistence = { enabled: !!store, backend: databasePath ? 'sqlite' : savePath ? 'json' : suppliedStore ? 'custom' : 'memory', lastSaved: '', error: '' };
   let simulationFailed = false;

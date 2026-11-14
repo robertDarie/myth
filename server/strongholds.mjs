@@ -1,3 +1,4 @@
+import { referenceScale, defenseFactor } from './numerics.mjs';
 import { recordKingdomVictory } from './kingdom.mjs';
 import { recordStrongholdActivity } from './activity.mjs';
 import { activeSkill, ensureHero, heroLevel } from './progression.mjs';
@@ -10,16 +11,17 @@ const TIERS={
 };
 const DEFINITIONS=[['godbreaker-watch','Godbreaker Watch',1,27,20],['godbreaker-redoubt','Godbreaker Redoubt',1,14,32],['godbreaker-forge','Godbreaker War Forge',2,53,24],['godbreaker-spire','Godbreaker Runic Spire',2,24,53],['godbreaker-throne','Throne of the Godbreakers',3,62,61],['frontier-dawn-keep','Dawnreach Keep',1,224,48],['frontier-ashen-keep','Ashen Keep',1,48,224],['frontier-outer-throne','Throne of the Far Marches',3,224,224]];
 export const isStronghold=t=>t?.kind==='stronghold';
-export function createStrongholds(){return DEFINITIONS.map(([id,name,tier,x,z])=>{const t=TIERS[tier];return {id,name,tier,x,z,kind:'stronghold',allianceId:'',health:t.maxHealth,maxHealth:t.maxHealth,guardHealth:t.guardHealth,maxGuardHealth:t.guardHealth,guardDamage:t.guardDamage,units:{...t.units},respawn:0,cycle:1,reward:{...t.reward},xp:t.xp};});}
+const tierStats=(tier,profile)=>{const t=TIERS[tier];return referenceScale(profile)?{...t,guardHealth:t.guardHealth*1000,guardDamage:t.guardDamage*200,maxHealth:t.maxHealth*1000,units:Object.fromEntries(Object.entries(t.units).map(([id,n])=>[id,n*50])),reward:Object.fromEntries(Object.entries(t.reward).map(([id,n])=>[id,n*(id==='sigils'?1:100)])),xp:t.xp*4}:t;};
+export function createStrongholds(profile){return DEFINITIONS.map(([id,name,tier,x,z])=>{const t=tierStats(tier,profile);return {numericVersion:profile?.numericVersion??0,id,name,tier,x,z,kind:'stronghold',allianceId:'',health:t.maxHealth,maxHealth:t.maxHealth,guardHealth:t.guardHealth,maxGuardHealth:t.guardHealth,guardDamage:t.guardDamage,units:{...t.units},respawn:0,cycle:1,reward:{...t.reward},xp:t.xp};});}
 export function resetStronghold(t){if(isStronghold(t)&&t.respawn<=0){t.health=t.maxHealth;t.guardHealth=t.maxGuardHealth;}}
 export function tickStrongholds(w,dt){for(const t of w.strongholds)if(t.respawn>0){t.respawn=Math.max(0,t.respawn-dt);if(t.respawn===0){t.cycle++;resetStronghold(t);}}}
-export function initStrongholdReport(report,t){Object.assign(report,{kind:'stronghold',tier:t.tier,targetCycle:t.cycle,guardHealthBefore:t.guardHealth,guardHealthAfter:t.guardHealth,wallHealthBefore:t.health,wallHealthAfter:t.health,npcDamageDealt:0,npcDamageTaken:0,rewards:[],settled:false});}
+export function initStrongholdReport(report,t){Object.assign(report,{numericVersion:t.numericVersion,kind:'stronghold',tier:t.tier,targetCycle:t.cycle,guardHealthBefore:t.guardHealth,guardHealthAfter:t.guardHealth,wallHealthBefore:t.health,wallHealthAfter:t.health,npcDamageDealt:0,npcDamageTaken:0,rewards:[],settled:false});}
 const distribute=(total,hits,field)=>{const sum=hits.reduce((n,h)=>n+h.amount,0);let left=total;hits.forEach((h,i)=>{const actual=i===hits.length-1?left:total*h.amount/sum;h.entry[field]+=actual;left-=actual;});};
 export function strongholdRound(w,r,t,s){
  const report=s.report;if(w.time+0.0001<s.nextAt)return null;s.nextAt=w.time+1;report.rounds++;
  const armies=r.armyIds.map(id=>w.army(id)).filter(Boolean),guardAlive=t.guardHealth>0,hits=[],npc={units:t.units,troops:Object.values(t.units).reduce((n,v)=>n+v,0)};
  const victim=guardAlive?armies[(report.rounds-1)%armies.length]:null;
- const retaliation=victim?Math.max(1,t.guardDamage*counterMultiplier(npc,victim)*(1-w.stats(victim).mitigation)):0;
+ const retaliation=victim?Math.max(1,t.guardDamage*(referenceScale(w.owner(victim))?defenseFactor(w.stats(victim).defense):1)*counterMultiplier(npc,victim)*(1-w.stats(victim).mitigation)):0;
  for(const a of armies){
   if(a.cooldown>0.0001)continue;const entry=report.participants.find(e=>e.armyId===a.id),stats=w.stats(a),health=a.health,shield=a.shield;
   const damage=stats.damage*stats.pve*(guardAlive?counterMultiplier(a,npc):1);a.rage=Math.min(1000,a.rage+200);
@@ -58,15 +60,15 @@ export function rewardStronghold(w,t,report){
  }
  recordStrongholdActivity(w,report);recordKingdomVictory(w,'strongholds');
 }
-export function validateStrongholds(saved){
- const defs=createStrongholds();if(!Array.isArray(saved)||saved.length!==defs.length||new Set(saved.map(t=>t?.id)).size!==defs.length)throw new Error('Invalid saved strongholds.');
+export function validateStrongholds(saved,profile){
+ const defs=createStrongholds(profile);if(!Array.isArray(saved)||saved.length!==defs.length||new Set(saved.map(t=>t?.id)).size!==defs.length)throw new Error('Invalid saved strongholds.');
  return defs.map(base=>{const s=saved.find(t=>t?.id===base.id);if(!s||s.x!==base.x||s.z!==base.z||s.tier!==base.tier||!Number.isSafeInteger(s.cycle)||s.cycle<1||!Number.isFinite(s.health)||s.health<0||s.health>base.maxHealth||!Number.isFinite(s.guardHealth)||s.guardHealth<0||s.guardHealth>base.maxGuardHealth||!Number.isFinite(s.respawn)||s.respawn<0||s.respawn>STRONGHOLD_RULES.respawnSeconds||(s.respawn>0&&(s.health!==0||s.guardHealth!==0))||(s.respawn===0&&s.health<=0))throw new Error('Invalid saved stronghold state.');
   return {...base,health:s.health,guardHealth:s.guardHealth,respawn:s.respawn,cycle:s.cycle};});
 }
 export function validateStrongholdReport(r){
  if(!r||r.kind!=='stronghold')return;
  if(r.activityCredited!==undefined&&typeof r.activityCredited!=='boolean')throw new Error('Invalid saved stronghold activity receipt.');
- const tier=TIERS[r.tier];if(!tier||!Number.isSafeInteger(r.targetCycle)||r.targetCycle<1||typeof r.settled!=='boolean'||!Array.isArray(r.rewards)||r.rewards.length>5||['guardHealthBefore','guardHealthAfter','wallHealthBefore','wallHealthAfter','npcDamageDealt','npcDamageTaken'].some(k=>!Number.isFinite(r[k])||r[k]<0)||r.guardHealthBefore>tier.guardHealth||r.guardHealthAfter>r.guardHealthBefore||r.wallHealthBefore>tier.maxHealth||r.wallHealthAfter>r.wallHealthBefore||new Set(r.rewards.map(e=>e?.playerId)).size!==r.rewards.length)throw new Error('Invalid saved stronghold report.');
+ const tier=TIERS[r.tier]?tierStats(r.tier,r):null;if(!tier||!Number.isSafeInteger(r.targetCycle)||r.targetCycle<1||typeof r.settled!=='boolean'||!Array.isArray(r.rewards)||r.rewards.length>5||['guardHealthBefore','guardHealthAfter','wallHealthBefore','wallHealthAfter','npcDamageDealt','npcDamageTaken'].some(k=>!Number.isFinite(r[k])||r[k]<0)||r.guardHealthBefore>tier.guardHealth||r.guardHealthAfter>r.guardHealthBefore||r.wallHealthBefore>tier.maxHealth||r.wallHealthAfter>r.wallHealthBefore||new Set(r.rewards.map(e=>e?.playerId)).size!==r.rewards.length)throw new Error('Invalid saved stronghold report.');
  for(const e of r.rewards)if(!e||typeof e.playerId!=='string'||!r.participants.some(p=>p.playerId===e.playerId)||!Number.isFinite(e.contribution)||e.contribution<=0||!Number.isSafeInteger(e.xp)||e.xp<0||!e.resources||Object.keys(e.resources).length!==Object.keys(tier.reward).length||Object.entries(e.resources).some(([key,n])=>!(key in tier.reward)||!Number.isSafeInteger(n)||n<0||n>tier.reward[key]))throw new Error('Invalid saved stronghold rewards.');
  if(r.settled!==(r.outcome==='Stronghold defeated')||(r.settled&&!r.rewards.length)||r.rounds>STRONGHOLD_RULES.roundLimit||Math.abs((r.guardHealthBefore-r.guardHealthAfter)-r.npcDamageTaken)>0.00001||Math.abs((r.wallHealthBefore-r.wallHealthAfter)-r.structureDamage)>0.00001||Math.abs(r.participants.reduce((n,e)=>n+e.damageDealt,0)-r.npcDamageTaken)>0.00001||Math.abs(r.participants.reduce((n,e)=>n+e.damageTaken,0)-r.npcDamageDealt)>0.00001)throw new Error('Invalid saved stronghold battle totals.');
  if(r.rewards.length&&(!r.settled||r.outcome!=='Stronghold defeated'||Object.entries(tier.reward).some(([key,total])=>r.rewards.reduce((n,e)=>n+e.resources[key],0)!==total)||r.rewards.reduce((n,e)=>n+e.xp,0)!==tier.xp))throw new Error('Invalid saved stronghold reward totals.');
