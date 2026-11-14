@@ -19,7 +19,10 @@ namespace ThronesOfMyth
         private KingdomCard[] kingdoms = new KingdomCard[0];
         private int kingdomIndex;
         private bool explicitRoutes, loadingKingdoms;
-        private string status = "Your kingdom will be saved on this PC.";
+        private string status = "Join a shared kingdom. This device keeps your reconnect session.";
+        private bool clientOnlyConnection;
+        [Serializable] private sealed class HostBuild { public string version,commit; }
+        [Serializable] private sealed class HostHealth { public string game;public int version;public HostBuild build; }
         private bool joining, processing, placeBeacon, focused,freshGuest;
         private int civilization, selectedBuilding;
         private string activeMarchId, inspectedHeroId = "captain";
@@ -50,7 +53,9 @@ namespace ThronesOfMyth
         private void Awake()
         {
             Application.runInBackground = true;
-            var args=Environment.GetCommandLineArgs();for(int i=0;i<args.Length-1;i++)if(args[i]=="--thrones-server"&&Uri.TryCreate(args[i+1],UriKind.Absolute,out var address)&&(address.Scheme=="http"||address.Scheme=="https"))serverUrl=address.AbsoluteUri.TrimEnd('/');
+            var args=Environment.GetCommandLineArgs();clientOnlyConnection=Array.IndexOf(args,"--thrones-client-only")>=0;
+            if(clientOnlyConnection){advancedConnection=true;serverUrl=PlayerPrefs.GetString("ThronesOfMyth.remoteServer",serverUrl);}
+            for(int i=0;i<args.Length-1;i++)if(args[i]=="--thrones-server"&&Uri.TryCreate(args[i+1],UriKind.Absolute,out var address)&&(address.Scheme=="http"||address.Scheme=="https"))serverUrl=address.AbsoluteUri.TrimEnd('/');
             StartCoroutine(PreloadPresentation());
             InitializeInterface();
             playerName = PlayerPrefs.GetString("ThronesOfMyth.name", "Commander");
@@ -572,7 +577,18 @@ namespace ThronesOfMyth
         }
         private IEnumerator Join()
         {
+            if(!Uri.TryCreate(serverUrl,UriKind.Absolute,out var connectAddress)||(connectAddress.Scheme!="https"&&connectAddress.Scheme!="http")){loadingError=status="Enter a valid HTTPS server address.";yield break;}
+            if(clientOnlyConnection&&connectAddress.Scheme!="https"&&!connectAddress.IsLoopback){loadingError=status="Remote alpha connections require HTTPS. Ask the host for its private HTTPS address.";yield break;}
             cityProgress.Reset();joining = true; worldReady = false; loadingError = ""; loadingStage = "Opening the kingdom gates";
+            using(var health=new UnityWebRequest(serverUrl.TrimEnd('/')+"/health","GET"){downloadHandler=new DownloadHandlerBuffer(),timeout=5})
+            {
+                yield return health.SendWebRequest();
+                if(health.result!=UnityWebRequest.Result.Success){loadingError=status="The shared server is unavailable. Check its address and ask the host to verify readiness.";joining=false;yield break;}
+                var host=JsonUtility.FromJson<HostHealth>(health.downloadHandler.text);
+                if(host==null||host.game!="thrones-of-myth"||host.version!=ReleaseVersion.Protocol){loadingError=status="Server/client protocol mismatch. Ask the host for the matching client ZIP.";joining=false;yield break;}
+                string commit=ReleaseIdentity.Commit;
+                if(!string.IsNullOrEmpty(commit)&&!string.IsNullOrEmpty(host.build?.commit)&&commit!=host.build.commit){loadingError=status="Server/client source versions differ. Ask the host for a matching client ZIP.";joining=false;yield break;}
+            }
             var body = new JoinRequest { name = playerName, civilization = civilizationIds[civilization], resumeToken = SavedSession(), joinCode = kingdomJoinCode, kingdomId = ActiveKingdomId };
             using (var request = Request("/join", "POST", JsonUtility.ToJson(body)))
             {
@@ -582,7 +598,7 @@ namespace ThronesOfMyth
                     var session = JsonUtility.FromJson<JoinResponse>(request.downloadHandler.text);
                     freshGuest=string.IsNullOrEmpty(body.resumeToken);
                     token = session.token; playerId = session.playerId; activeMarchId = playerId; focused = false; lastSnapshotAt = Time.unscaledTime; interfacePage = InterfacePage.World;
-                    PlayerPrefs.SetString(SessionKey, token); PlayerPrefs.SetString("ThronesOfMyth.name", playerName); PlayerPrefs.Save();
+                    PlayerPrefs.SetString(SessionKey, token);if(clientOnlyConnection)PlayerPrefs.SetString("ThronesOfMyth.remoteServer",serverUrl); PlayerPrefs.SetString("ThronesOfMyth.name", playerName); PlayerPrefs.Save();
                     status = "Connected. Right-click ground to march; left-click objects to inspect.";
                     loadingStage = "Restoring your city and armies";
                     pollRoutine = StartCoroutine(Poll());

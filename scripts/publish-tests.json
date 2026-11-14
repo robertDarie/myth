@@ -2,6 +2,14 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "friends alpha shared-world reconnect and client-only packaging",
+      "command": ["node", "--test", "server/friends-alpha.test.mjs"]
+    },
+    {
+      "name": "client-only archive privacy and integrity",
+      "command": ["python", "-X", "utf8", "scripts/test_client_package.py"]
+    },
+    {
       "name": "expanded map migration, routes, registered capacity and alliance size",
       "command": ["node", "--test", "server/world-map.test.mjs"]
     },

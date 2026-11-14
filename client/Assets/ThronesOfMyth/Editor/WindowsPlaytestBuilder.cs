@@ -37,6 +37,36 @@ namespace ThronesOfMyth.Editor
         // ThronesOfMyth.Editor.WindowsPlaytestBuilder.BuildFromCommandLine
         public static void BuildFromCommandLine() { Build(); }
 
+        [MenuItem("Thrones of Myth/Build Windows Client Only")]
+        public static void BuildClientOnlyFromMenu() { BuildClientOnlyFromCommandLine(); }
+
+        public static void BuildClientOnlyFromCommandLine()
+        {
+            if (Application.platform != RuntimePlatform.WindowsEditor || !BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64))
+                throw new BuildFailedException("Use a Windows Unity Editor with Windows Build Support.");
+            string repository=Directory.GetParent(Application.dataPath).Parent.FullName;
+            string package=Path.GetFullPath(Path.Combine(repository,"dist","WindowsClient"));
+            string expected=Path.GetFullPath(Path.Combine(repository,"dist"))+Path.DirectorySeparatorChar;
+            if(!package.StartsWith(expected,StringComparison.OrdinalIgnoreCase))throw new BuildFailedException("Client output must remain inside dist.");
+            ArtReview.ValidateAssets(false);PrototypeSceneBuilder.EnsureBuildScene();
+            PlayerSettings.companyName="ThronesOfMyth";PlayerSettings.productName="Thrones of Myth";
+            PlayerSettings.bundleVersion=ReleaseVersion.Current;PlayerSettings.runInBackground=true;
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone,ScriptingImplementation.Mono2x);
+            if(Directory.Exists(package))Directory.Delete(package,true);
+            Directory.CreateDirectory(Path.Combine(package,"Game"));
+            using var identity=new PlaytestIdentity(repository,"windows-client-only-x86_64");
+            var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{ScenePath},locationPathName=Path.Combine(package,"Game","ThronesOfMyth.exe"),target=BuildTarget.StandaloneWindows64,options=BuildOptions.None});
+            if(report.summary.result!=BuildResult.Succeeded)throw new BuildFailedException("Windows client-only build failed.");
+            foreach(string file in new[]{"Start Thrones of Myth Online.cmd","CLIENT-ONLY-README.txt"})File.Copy(Path.Combine(repository,"packaging","windows",file),Path.Combine(package,file),true);
+            // Only the freshly built Game folder, launcher and public instructions
+            // enter this package. No server, runtime, preferences or operator data.
+            identity.WriteManifest(package);
+            string zip=Path.Combine(repository,"dist","Thrones-of-Myth-Windows-Client.zip");
+            if(File.Exists(zip))File.Delete(zip);
+            ZipFile.CreateFromDirectory(package,zip,System.IO.Compression.CompressionLevel.Optimal,false);
+            Debug.Log("Client-only ZIP created: "+zip);
+        }
+
         private static string Build()
         {
             if (Application.platform != RuntimePlatform.WindowsEditor)
