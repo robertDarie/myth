@@ -1,0 +1,8 @@
+---
+description: Require reference research and numerical evidence before gameplay implementation
+alwaysApply: true
+---
+
+Follow [AGENTS.md](../../AGENTS.md) and the authoritative [research-first policy](../../research/parity/README.md).
+
+No new gameplay feature or numerical balance change without reference research, evidence classification and a documented implementation plan. RoK is primary; keep Call of Dragons evidence separate. Use the feature template, declare deviations, validate formulas/migrations and run the research publication gate. Unrelated bug fixes and infrastructure need no invented RoK research. Never relabel estimates or historical prototypes as verified parity.

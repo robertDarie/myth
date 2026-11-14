@@ -5,6 +5,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+import check_parity
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "scripts" / "publish-tests.json"
@@ -111,6 +112,11 @@ def push_main(cwd=ROOT):
         raise RuntimeError("Refusing to publish because this worktree has uncommitted files. Nothing was reset or overwritten:\n" + "\n".join(pending[:20]))
     git("fetch", "origin", "main", cwd=cwd)
     head, remote = assert_fast_forward(cwd=cwd)
+    if (Path(cwd) / "AGENTS.md").exists() or (Path(cwd) / "research/parity").exists():
+        try:
+            check_parity.validate_repo(cwd, run_checks=False)
+        except (ValueError, KeyError, TypeError, OSError) as error:
+            raise RuntimeError("Research gate failed; not pushing: " + str(error)) from error
     if head == remote:
         return head
     ahead, files = commits_ahead(cwd=cwd)
@@ -126,8 +132,10 @@ def push_main(cwd=ROOT):
     confirmed = git("rev-parse", "origin/main", cwd=cwd).stdout.strip()
     if confirmed != head:
         raise RuntimeError(f"Push did not update origin/main. Remote is {confirmed}; local is {head}.")
-    if MARKER.exists():
-        MARKER.unlink()
+    # Offline test repositories must never clear the real workspace's marker.
+    marker = Path(cwd) / ".cursor" / "publish-pending"
+    if marker.exists():
+        marker.unlink()
     return confirmed
 
 
@@ -141,7 +149,9 @@ def main(argv=None):
         return 2
     try:
         tests = load_plan(args.plan)
-    except RuntimeError as error:
+        research = check_parity.validate_repo(ROOT)
+        print("Research gate passed: " + json.dumps(research))
+    except (RuntimeError, ValueError, KeyError, TypeError, OSError) as error:
         print(error, file=sys.stderr)
         return 2
     failed = run_plan(tests)

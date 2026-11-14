@@ -1,4 +1,18 @@
-# Thrones of Myth — complete reference adaptation plan
+# Active policy update — 14 November 2026
+
+The user replaced the prototype-first numerical approach with the [research-first engineering policy](../research/parity/README.md), enforced by [AGENTS.md](../AGENTS.md). Rise of Kingdoms is now the primary numerical/mechanical reference; Call of Dragons evidence stays separate. Verified relevant values default to numerical/behavioral parity after a coupled-system comparison, documented plan, expected-formula tests and safe migration. Original identities, assets/UI, currencies and deliberate product decisions remain.
+
+Every relevant feature now needs a dated, source-linked evidence document before new gameplay implementation. Labels are VERIFIED, CORROBORATED, ESTIMATED, UNKNOWN and CONFLICTING. Unknown internal formulas cannot be called exact; essential exact unknowns must be reported before substitution. The publication gate checks traceability and deterministic fixtures, not external factual truth.
+
+Existing status: sourced troop/AP/ordinary Forsaken work is **Partial parity**, with explicit original/uncertain formulas and migrations; the unpublished natural population draft is **Not yet verified**. Older gameplay is **Not yet verified** unless its own evidence supports a narrower classification. Deliberately original product choices (for example the earned second construction crew) are **Different by design**, not missing proof of equivalence. No historic mechanics are automatically promoted to Verified parity, and this policy update performs no historical rebalance.
+
+Current currency terminology is authoritative: **Mana is ordinary; Aether is premium**. The archived text below predates that separation and does not authorize a currency or monetization change. Its prototype-first numerical recommendations are historical, superseded by the effective policy above. The source workbooks remain research inputs, not independent proof of every claim.
+
+The 8 November plan below is retained for historical rationale, original scope and traceability. Its old counts/statuses are dated observations, not a current certification.
+
+---
+
+# Historical 8 November 2026 adaptation plan
 
 Decision baseline: 8 November 2026; expanded implementation scope through 0.20.
 Input: `Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx` supplied by the
@@ -58,10 +72,14 @@ Keep the agreed direction:
 - Windows first for development/playtesting; Android is the next shipping target.
   Touch, safe areas and device performance are work, not implied by a Unity build.
 
-Current costs, odds, caps and short testing timers are **our original prototype
-balance**, not validated RoK/CoD numbers. Implement the corresponding progression, tier, energy, catalog and seasonal
-functions using our own versioned rules; do not copy exact level counts, numeric
-caps, prices or reset schedules as if they were validated requirements.
+**Superseded numerical guidance (8 November 2026):**
+
+> Current costs, odds, caps and short testing timers are **our original prototype
+> balance**, not validated RoK/CoD numbers. Implement the corresponding progression, tier, energy, catalog and seasonal
+> functions using our own versioned rules; do not copy exact level counts, numeric
+> caps, prices or reset schedules as if they were validated requirements.
+
+This preserved historical guidance no longer defines the implementation default. Verified relevant RoK numbers now drive the compared, planned and tested numerical model; unverified values remain unverified.
 Five ages are the strategic progression structure; how many building ranks sit
 inside an age will be decided with multi-day economy simulation.
 

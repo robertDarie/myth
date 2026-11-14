@@ -11,8 +11,9 @@ This rule is permanent. It applies to every Thrones of Myth development task.
 
 After a task is implemented, tested, and recorded in the coverage register, finish it in this order:
 
+0. Before gameplay implementation, follow `AGENTS.md` and `research/parity/README.md`: research, classify evidence, compare, design and define acceptance. Unrelated fixes/infrastructure need no invented RoK research.
 1. Implement the functional change.
-2. Run the tests in `scripts/publish-tests.json`, plus the regression tests for the system you changed. That plan covers only the systems it names. It is not a full game audit. Add the new test command to the plan before publishing.
+2. Pass the research publication gate (including evidence/fixture bindings), then run the tests in `scripts/publish-tests.json`, plus the regression tests for the system you changed. That plan covers only the systems it names. It is not a full game audit. Add the new test command to the plan before publishing.
 3. Update the coverage register and the development report with the commands that actually ran.
 4. Commit only the verified files. The message must say why the change exists. If the prompt changed no files, do not create an empty commit. If tests fail or the work is incomplete, keep the files, do not commit, and say that publication is blocked.
 5. From the worktree where `main` is checked out, push with `python scripts/publish_task.py --push`. The script refuses any other branch, a dirty worktree, and a diverged remote. It does not switch branches, merge, reset, or overwrite uncommitted files.
@@ -24,4 +25,4 @@ If a test fails, do not commit or push. If GitHub rejects the push, or `origin/m
 
 Keep these untracked and out of every commit: the two original Excel research workbooks, credentials, `.env` files, kingdom saves, and SQLite databases. A machine-local hook path must not be committed.
 
-Mana stays an ordinary resource. Aether stays premium. Do not change world schema 25 or health protocol 16 unless the task says so and a migration test exists. Do not build custom 3D assets unless the task asks for them. Do not call a paid OpenAI API. Do not start a paid review loop or generate automatic follow-up prompts. This rule is about Git publication on `main`.
+Mana stays an ordinary resource. Aether stays premium. Do not change persisted formats or protocols without an explicit compatibility plan and migration tests. Do not build custom 3D assets unless the task asks for them. Do not call a paid OpenAI API. Do not start a paid review loop or generate automatic follow-up prompts. This rule is about Git publication on `main`.

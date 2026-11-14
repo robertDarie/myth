@@ -2,6 +2,32 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "research publication gate offline contracts",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/test_parity_gate.py"
+      ]
+    },
+    {
+      "name": "research evidence metadata and changed gameplay scope",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_parity.py",
+        "--metadata-only"
+      ]
+    },
+    {
+      "name": "recorded Forsaken numerical evidence matches production engine",
+      "command": [
+        "node",
+        "scripts/check-forsaken-evidence.mjs"
+      ]
+    },
+    {
       "name": "175 measured Forsaken battles, rewards, unlocks, admission and durable settlement",
       "command": [
         "node",

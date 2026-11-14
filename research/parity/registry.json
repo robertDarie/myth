@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "features": [
+    "research/parity/features/forsaken-numerics.md",
+    "research/parity/features/forsaken-population.md"
+  ],
+  "exemptions": []
+}

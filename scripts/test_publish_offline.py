@@ -99,10 +99,16 @@ def test_fast_forward_push_updates_origin():
         (local / "play.txt").write_text("play\n", encoding="utf-8")
         git(local, "add", "play.txt")
         git(local, "commit", "-m", "play")
+        marker = local / ".cursor" / "publish-pending"
+        marker.parent.mkdir()
+        marker.write_text("pending\n", encoding="utf-8")
+        ignored = local / ".git" / "info" / "exclude"
+        ignored.write_text(ignored.read_text(encoding="utf-8") + "\n.cursor/publish-pending\n", encoding="utf-8")
         confirmed = publish_task.push_main(local)
         remote = git(origin, "rev-parse", "main")
         check(confirmed == remote, "The local push did not update the remote main commit.")
         check(confirmed == git(local, "rev-parse", "HEAD"), "The confirmed SHA is not the local commit.")
+        check(not marker.exists(), "The confirmed test repository's own marker was not cleared.")
 
 
 def test_private_file_removal_is_publishable():
