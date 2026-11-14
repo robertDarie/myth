@@ -105,6 +105,29 @@ def test_fast_forward_push_updates_origin():
         check(confirmed == git(local, "rev-parse", "HEAD"), "The confirmed SHA is not the local commit.")
 
 
+def test_private_file_removal_is_publishable():
+    with tempfile.TemporaryDirectory() as temp:
+        seed, origin, local = pair(temp)
+        private = "Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx"
+        (seed / private).write_bytes(b"private fixture")
+        git(seed, "add", private)
+        git(seed, "commit", "-m", "existing private file fixture")
+        git(seed, "push", "origin", "main")
+        git(local, "pull", "--ff-only")
+        git(local, "rm", private)
+        git(local, "commit", "-m", "remove private file")
+        ahead, files = publish_task.commits_ahead(cwd=local)
+        check(bool(ahead) and private not in files, "Removing private files must be allowed.")
+        confirmed = publish_task.push_main(local)
+        check(confirmed == git(origin, "rev-parse", "main"), "Private removal was not published.")
+        # A rename is an addition for privacy checks, even if git detects a rename.
+        (local / private).write_bytes(b"new private fixture")
+        git(local, "add", private)
+        git(local, "commit", "-m", "private addition fixture")
+        _, files = publish_task.commits_ahead(cwd=local)
+        check(private in publish_task.forbidden(files), "Private additions must remain blocked.")
+
+
 def test_dirty_worktree_is_left_untouched():
     with tempfile.TemporaryDirectory() as temp:
         seed, origin, local = pair(temp)
@@ -120,31 +143,31 @@ def test_dirty_worktree_is_left_untouched():
 
 
 def test_guard_is_quiet_without_a_marker():
-    script = ROOT / ".cursor" / "hooks" / "publish_guard.py"
-    result = subprocess.run([sys.executable, "-X", "utf8", str(script)], input='{"status":"completed"}\n', text=True, capture_output=True, check=True)
-    check(result.stdout.strip() == "{}", "The publish reminder fired without a pending marker.")
-    marker = ROOT / ".cursor" / "publish-pending"
-    existed = marker.exists()
-    previous = marker.read_text(encoding="utf-8") if existed else None
-    marker.write_text("offline-test\n", encoding="utf-8")
-    try:
+    # Isolate the hook test from a real pending publication in this workspace.
+    # Never erase or replace the user's production publish marker.
+    source = ROOT / ".cursor" / "hooks" / "publish_guard.py"
+    with tempfile.TemporaryDirectory() as temp:
+        fixture_root = Path(temp)
+        script = fixture_root / ".cursor" / "hooks" / "publish_guard.py"
+        script.parent.mkdir(parents=True)
+        script.write_bytes(source.read_bytes())
+        result = subprocess.run([sys.executable, "-X", "utf8", str(script)], input='{"status":"completed"}\n', text=True, capture_output=True, check=True)
+        check(result.stdout.strip() == "{}", "The publish reminder fired without a pending marker.")
+        marker = fixture_root / ".cursor" / "publish-pending"
+        marker.write_text("offline-test\n", encoding="utf-8")
         result = subprocess.run([sys.executable, "-X", "utf8", str(script)], input="{}\n", text=True, capture_output=True, check=True)
         payload = json.loads(result.stdout)
         check("publish_task.py --push" in payload.get("followup_message", ""), "The pending marker did not remind the agent to publish.")
-    finally:
-        if existed:
-            marker.write_text(previous, encoding="utf-8")
-        elif marker.exists():
-            marker.unlink()
 
 
 def main():
     test_plan_and_forbidden()
     test_push_refuses_feature_branch_and_divergence()
     test_fast_forward_push_updates_origin()
+    test_private_file_removal_is_publishable()
     test_dirty_worktree_is_left_untouched()
     test_guard_is_quiet_without_a_marker()
-    print("Publish offline checks: 5 passed.")
+    print("Publish offline checks: 6 passed.")
 
 
 if __name__ == "__main__":

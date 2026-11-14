@@ -6,11 +6,12 @@ export function rememberStatics(w,p,seen){
  const live={nodes:w.nodes,camps:w.camps,sites:w.sites,flags:w.flags,strongholds:w.strongholds,cities:[...w.players.values()]};
  const cache=new Map(p.discovery.map(r=>[r.kind+':'+r.value.id,r]));
  for(const [kind,items] of Object.entries(live)){
+  const ids=new Set(items.map(item=>item.id));
   for(const item of items){if(!seen(position(kind,item)))continue;
-   const value=Object.fromEntries(fields[kind].filter(k=>item[k]!==undefined).map(k=>[k,item[k]]));
+   const value={};for(const key of fields[kind])if(item[key]!==undefined)value[key]=item[key];
    cache.set(kind+':'+item.id,{kind,observedAt:w.time,value});
   }
-  for(const [key,record] of cache)if(record.kind===kind&&seen(position(kind,record.value))&&!items.some(t=>t.id===record.value.id)){cache.delete(key);}
+  for(const [key,record] of cache)if(record.kind===kind&&!ids.has(record.value.id)&&seen(position(kind,record.value))){cache.delete(key);}
  }
  p.discovery=[...cache.values()].slice(-1024);
 }

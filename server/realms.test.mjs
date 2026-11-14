@@ -78,9 +78,10 @@ test('three kingdoms isolate sessions, diplomacy, combat, vision, seasons and re
   const birchHealth = host.realms.get('birch').world.players.get(birch.payload.playerId).health;
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'attack-player', targetId: birch.payload.playerId } })).status, 400);
   const rallyId = 'birch-rally-1';
-  host.realms.get('birch').world.rallies.push({ id: rallyId, allianceId: birchAlliance, phase: 'Assembling', assemblyEnds: 999, armyIds: ['birch-only'], meetX: 5, meetZ: 5 });
+  // A live scheduler may tick between HTTP assertions: keep this fixture valid.
+  host.realms.get('birch').world.rallies.push({ id: rallyId, allianceId: birchAlliance, leaderId: birch.payload.playerId, leaderArmyId: birch.payload.playerId, targetId: 'godbreaker-watch', targetCycle: 1, defendingAllianceId: '', phase: 'Assembling', assemblyEnds: 999, armyIds: [birch.payload.playerId], meetX: 5, meetZ: 5, x: 5, z: 5 });
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: other.payload.token, body: { type: 'rally-join', targetId: rallyId } })).status, 400);
-  assert.deepEqual(host.realms.get('birch').world.rallies[0].armyIds, ['birch-only']);
+  assert.deepEqual(host.realms.get('birch').world.rallies[0].armyIds, [birch.payload.playerId]);
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'garrison-join', targetId: 'foreign-gate' } })).status, 400);
   host.realms.get('dawn').world.players.get(dawn.payload.playerId).buildings.market = 1;
   const wood = host.realms.get('dawn').world.players.get(dawn.payload.playerId).wood;

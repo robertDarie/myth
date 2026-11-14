@@ -1,3 +1,4 @@
+import { checkpoint, restoreCheckpoint } from './checkpoint.mjs';
 import { createServer } from 'node:http';
 import { openSync, closeSync, readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -12,7 +13,7 @@ const ID = /^[a-z0-9](?:[a-z0-9-]{0,22}[a-z0-9])?$/;
 const CAPACITY = 32;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const equalSecret = (a, b) => timingSafeEqual(Buffer.from(hash(String(a ?? ''))), Buffer.from(hash(String(b ?? ''))));
-const checkpoint = world => structuredClone(Object.fromEntries(Object.entries(world).filter(([, value]) => typeof value !== 'function')));
+
 
 async function readJson(request) {
   let size = 0; const chunks = [];
@@ -74,19 +75,20 @@ export function openRealm(spec) {
       const result = action();
       if (!realm.saveNow({ ...options, ...(receipt ? { receipt: { ...receipt, response: result } } : {}) })) throw new GameError(persistence.error, 503);
       return result;
-    } catch (error) { if (before) Object.assign(world, before); throw error; }
+    } catch (error) { if (before) restoreCheckpoint(world, before); throw error; }
   };
   realm.identity = createIdentity({ store, world, mutate: realm.mutate });
   realm.tick = now => {
     if (realm.closed || persistence.error || realm.simulationFailed) return;
-    const before = store ? checkpoint(world) : null;
     const started = performance.now();
+    const before = store ? checkpoint(world) : null;
+    const revision = world.logisticsRevision;
     try {
       world.tick((now - realm.previous) / 1000); world.expire(now);
-      if (before && before.logisticsRevision !== world.logisticsRevision && !realm.saveNow()) Object.assign(world, before);
+      if (before && revision !== world.logisticsRevision && !realm.saveNow()) restoreCheckpoint(world, before);
       realm.lastTick = now; realm.lastTickMs = performance.now() - started;
     } catch (error) {
-      if (before) Object.assign(world, before);
+      if (before) restoreCheckpoint(world, before);
       realm.simulationFailed = true;
       persistence.error = 'Simulation failed. Restart this kingdom after checking server logs.';
       console.error(id + ': ' + persistence.error + ' ' + (error?.message ?? ''));

@@ -46,3 +46,7 @@ tests/PresentationContracts/obj/
 client/Assets/ThronesOfMyth/Resources/BuildIdentity.json
 client/Assets/ThronesOfMyth/Resources/BuildIdentity.json.meta
 .cursor/publish-pending
+
+# Private reference workbooks (keep local; never publish).
+/research/Rise_of_Kingdoms_Call_of_Dragons_Complete_Reference.xlsx
+/research/Thrones_of_Myth_RoK_Video_Research_v1.xlsx

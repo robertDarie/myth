@@ -82,7 +82,7 @@ def dirty(cwd=ROOT):
 
 def commits_ahead(remote_ref="origin/main", cwd=ROOT):
     listed = git("log", "--format=%H %s", f"{remote_ref}..HEAD", cwd=cwd).stdout.splitlines()
-    files = git("diff", "--name-only", f"{remote_ref}...HEAD", cwd=cwd).stdout.splitlines()
+    files = git("diff", "--no-renames", "--diff-filter=ACMRTUXB", "--name-only", f"{remote_ref}...HEAD", cwd=cwd).stdout.splitlines()
     return listed, [line for line in files if line]
 
 

@@ -68,8 +68,23 @@ function createScout(p, x, z) {
 }
 function visibleCells(w, p) {
   const known = new Set(p.explored);
-  for (const eye of sources(w, p)) for (let z = 0; z < 20; z++) for (let x = 0; x < 20; x++) if (dist(eye, { x: x * 4 + 2, z: z * 4 + 2 }) <= eye.radius) known.add(z * 20 + x);
+  for (const cell of sightCells(sources(w, p))) known.add(cell);
   return known;
+}
+// Enumerate just the bounding square of each eye, retaining the exact circular
+// boundary predicate. The result has the same ascending order as the old grid.
+export function sightCells(eyes) {
+  const cells = new Set();
+  for (const eye of eyes) {
+    const minX = Math.max(0, Math.ceil((eye.x - eye.radius - 2) / 4));
+    const maxX = Math.min(19, Math.floor((eye.x + eye.radius - 2) / 4));
+    const minZ = Math.max(0, Math.ceil((eye.z - eye.radius - 2) / 4));
+    const maxZ = Math.min(19, Math.floor((eye.z + eye.radius - 2) / 4));
+    for (let z = minZ; z <= maxZ; z++) for (let x = minX; x <= maxX; x++) {
+      if (dist(eye, { x: x * 4 + 2, z: z * 4 + 2 }) <= eye.radius) cells.add(z * 20 + x);
+    }
+  }
+  return [...cells].sort((a, b) => a - b);
 }
 export function nextAutoTarget(w, p, from, profile) {
   const origin = cellIndex(from), ox = origin % 20, oz = Math.floor(origin / 20);
@@ -175,9 +190,10 @@ export function explorationTick(w, dt) {
   }
   const contexts = new Map();
   for (const p of w.players.values()) {
-    const key = p.allianceId ? 'alliance:' + p.allianceId : 'player:' + p.id; if (!contexts.has(key)) contexts.set(key, visionContext(w, p)); const context = contexts.get(key);
-    const known = new Set(p.explored), eyes = context.eyes;
-    for (let z = 0; z < 20; z++) for (let x = 0; x < 20; x++) if (eyes.some(s => dist(s, { x: x * 4 + 2, z: z * 4 + 2 }) <= s.radius)) known.add(z * 20 + x);
+    const key = p.allianceId ? 'alliance:' + p.allianceId : 'player:' + p.id;
+    if (!contexts.has(key)) { const context = visionContext(w, p); context.cells = sightCells(context.eyes); contexts.set(key, context); }
+    const context = contexts.get(key), known = new Set(p.explored);
+    for (const cell of context.cells) known.add(cell);
     p.explored = [...known].sort((a, b) => a - b); revealFindings(p); rememberStatics(w, p, context.seen);
   }
 }
@@ -235,7 +251,7 @@ export function explorationCommand(w, p, c, fail) {
   return false;
 }
 export function fogSnapshot(w, p, context = visionContext(w, p)) {
-  const eyes = context.eyes, cells = []; for (let z = 0; z < 20; z++) for (let x = 0; x < 20; x++) if (eyes.some(s => dist(s, { x: x * 4 + 2, z: z * 4 + 2 }) <= s.radius)) cells.push(z * 20 + x);
+  const eyes = context.eyes, cells = sightCells(eyes);
   const profile = scoutProfile(p.buildings?.scoutcamp ?? 0);
   const explored = [...new Set([...p.explored, ...cells])].sort((a, b) => a - b);
   const own = p.scouts.map(s => presentScout(w, p, s, profile, true));

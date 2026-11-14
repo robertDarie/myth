@@ -1,3 +1,4 @@
+import { checkpoint, restoreCheckpoint } from './checkpoint.mjs';
 import { createServer } from 'node:http';
 import {resolve} from 'node:path';
 import { performance } from 'node:perf_hooks';
@@ -21,7 +22,7 @@ const hash = value => createHash('sha256').update(value).digest('hex');
 const equalSecret = (a, b) => timingSafeEqual(Buffer.from(hash(String(a ?? ''))), Buffer.from(hash(String(b ?? ''))));
 // Preserve live targets and engagements on rollback. fromSave deliberately applies
 // restart recovery and therefore must not be used as an in-process rollback.
-const checkpoint = world => structuredClone(Object.fromEntries(Object.entries(world).filter(([, value]) => typeof value !== 'function')));
+
 
 export function createGameServer({ savePath = null, databasePath = null, shutdownToken = null, joinCode = '', trustProxy = false, kingdomId = 'local', store: suppliedStore = null,telemetry=null,buildIdentity=null } = {}) {
   const measure=(name,fn)=>telemetry?telemetry.measure(name,fn):fn();
@@ -46,7 +47,7 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
       const result = measure('command',action);
       if (!saveNow({ ...options, ...(receipt ? { receipt: { ...receipt, response: result } } : {}) })) throw new GameError(persistence.error, 503);
       return result;
-    } catch (error) { if (before) Object.assign(world, before); throw error; }
+    } catch (error) { if (before) restoreCheckpoint(world, before); throw error; }
   };
   const identity = createIdentity({ store, world, mutate });
   const limits = new Map();
@@ -141,12 +142,13 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
   const timer = setInterval(() => {
     const now = performance.now();
     const before=store&&!persistence.error?measure('checkpoint',()=>checkpoint(world)):null;
+    const revision=world.logisticsRevision;
     try { if (!persistence.error) {
       measure('tick',()=>world.tick((now - previous) / 1000)); world.expire(now);
       // Commit node debit, cargo, delivery and report together before serving another request.
-      if(before&&before.logisticsRevision!==world.logisticsRevision&&!saveNow())Object.assign(world,before);
+      if(before&&revision!==world.logisticsRevision&&!saveNow())restoreCheckpoint(world,before);
     } lastTick = now; }
-    catch { if(before)Object.assign(world,before);simulationFailed = true; persistence.error = 'Simulation failed. Restart the kingdom after checking server logs.'; console.error(persistence.error); clearInterval(timer); }
+    catch { if(before)restoreCheckpoint(world,before);simulationFailed = true; persistence.error = 'Simulation failed. Restart the kingdom after checking server logs.'; console.error(persistence.error); clearInterval(timer); }
     previous = now;
   }, 100); timer.unref();
   const autosave = setInterval(saveNow, 2000); autosave.unref();

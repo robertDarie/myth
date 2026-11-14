@@ -42,7 +42,7 @@ Acceptance is `server/realms.test.mjs`.
 
 ### A. Large-world battle scale
 
-TM-025 / TM-084 is the next infrastructure package: mass-battle performance on a large map. Cross-kingdom migration, shared accounts, and war between kingdoms stay out until they are designed.
+TM-025 / TM-084 has a first measured server optimization checkpoint. Encoded rollback images, scoped army indexes, bounded fog checks and faster static memory updates are implemented; schema 25 and protocol 16 remain. All 21 publication checks and 364 server tests passed (5 skipped). Four-realm SQLite host p95 improved from 88.761 to 54.854 ms; JSON from 207.149 to 135.985 ms. Heavy polling still causes lag, so mass-battle acceptance remains OPEN. See `docs/tm-025-084-scalability.md` and its raw evidence. Next is sustained mass-battle reliability/load, snapshot and persistence work. Cross-kingdom migration, shared accounts, and war between kingdoms stay out until they are designed.
 
 ## Later functional packages
 
@@ -52,7 +52,7 @@ Citadel ages, one shared training hall, the forge, and production cycles exist. 
 
 ### C. World map, exploration and combat
 
-Fog, camps, gathering, and one relic per march exist. Separate kingdoms on one host exist. Kingdom age and migration are not built. Large-world performance (TM-025) and mass-battle scale (TM-084) are the next infrastructure work.
+Fog, camps, gathering, and one relic per march exist. Separate kingdoms on one host exist. Kingdom age and migration are not built. The first TM-025/TM-084 CPU optimization checkpoint is implemented; full large-world and mass-battle scale acceptance remains open.
 
 ### D. Alliances, diplomacy and warfare
 

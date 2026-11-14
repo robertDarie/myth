@@ -22,7 +22,8 @@ function summary(values) {
   return { samples: values.length, p50: at(.5), p95: at(.95), p99: at(.99), max: at(1) };
 }
 const timed = (values, fn) => { const at = performance.now(); const value = fn(); values.push(performance.now()-at); return value; };
-const checkpoint = w => structuredClone(Object.fromEntries(Object.entries(w).filter(([,v])=>typeof v!=='function')));
+const cloneWorld = w => structuredClone(Object.fromEntries(Object.entries(w).filter(([,v])=>typeof v!=='function')));
+const checkpoint = (await moduleAt('checkpoint').catch(error => { if(error.code !== 'ERR_MODULE_NOT_FOUND')throw error;return {checkpoint:cloneWorld}; })).checkpoint;
 function populate(w, count, idle = false) {
   w.now = () => fixedNow; w.random = () => .5;
   w.kingdom.completed = KINGDOM_STAGES.slice(0,3).map(s=>({id:s.id,atMs:w.activityClockMs,legacy:true,eligible:[]}));
@@ -86,6 +87,7 @@ async function httpCase(kingdoms,count,backend) {
       assert.equal(realm.saveNow(),true);
     }
     const tick=[], hostTick=[], save=[], polls=[], commands=[], failures=[], drift=[];
+    const initial = new Map([...host.realms.values()].map(r=>[r.id,cloneWorld(r.world)]));
     // Measure a separate fixed-step host loop including checkpoints, then live HTTP timers.
     let now=performance.now();
     for(const realm of host.realms.values())realm.previous=now;
@@ -93,15 +95,18 @@ async function httpCase(kingdoms,count,backend) {
       now+=100;
       timed(hostTick,()=>{for(const realm of host.realms.values())timed(tick,()=>realm.tick(now));});
     }
+    for(const realm of host.realms.values()){Object.assign(realm.world,initial.get(realm.id));assert.equal(realm.saveNow(),true);}
     await new Promise((ok,fail)=>{host.server.once('error',fail);host.server.listen(0,'127.0.0.1',ok);});
     // Reset the scheduler after the synthetic clock used above.
     for(const realm of host.realms.values())realm.previous=performance.now();
     const base='http://127.0.0.1:'+host.server.address().port;
+    global.gc?.();
     const memoryBefore=process.memoryUsage(), worldStart=host.world.time, wallStart=performance.now();
+    let memoryPeak=memoryBefore;
     const request=async(session,command)=>{
       const at=performance.now();
       try {
-        const response=await fetch(base+'/k/'+session.kingdomId+(command?'/command':'/world'),{method:command?'POST':'GET',headers:{Authorization:'Bearer '+session.token,...(command?{'Content-Type':'application/json'}:{})},body:command?JSON.stringify({type:'chat-send',name:'Load check'}):undefined,signal:AbortSignal.timeout(10000)});
+        const response=await fetch(base+'/k/'+session.kingdomId+(command?'/command':'/world'),{method:command?'POST':'GET',headers:{Authorization:'Bearer '+session.token,...(command?{'Content-Type':'application/json'}:{})},body:command?JSON.stringify({type:'scout-auto',enabled:false}):undefined,signal:AbortSignal.timeout(10000)});
         const body=await response.text();(command?commands:polls).push({ms:performance.now()-at,bytes:Buffer.byteLength(body),status:response.status});
         if(response.status!==200)failures.push({status:response.status,command});
       } catch(error) {failures.push({error:error.name,command});}
@@ -111,11 +116,12 @@ async function httpCase(kingdoms,count,backend) {
       await Promise.all([...sessions.map(s=>request(s,false)),...Array.from(host.realms.keys()).flatMap(id=>sessions.filter(s=>s.kingdomId===id).slice(0,2).map(s=>request(s,true)))]);
       const deadline=at+200;await new Promise(ok=>setTimeout(ok,Math.max(0,deadline-performance.now())));
       drift.push(Math.max(0,performance.now()-deadline));
+      const memory=process.memoryUsage();if(memory.heapUsed>memoryPeak.heapUsed)memoryPeak=memory;
     }
     const wallMs=performance.now()-wallStart, simulatedMs=(host.world.time-worldStart)*1000;
-    const memoryPeak=process.memoryUsage();
-    for(const realm of host.realms.values())timed(save,()=>assert.equal(realm.saveNow(),true));
-    return {kingdoms,count,backend,tick:summary(tick),hostTick:summary(hostTick),save:summary(save),poll:summary(polls.map(p=>p.ms)),command:summary(commands.map(p=>p.ms)),pollRequests:polls.length,commandRequests:commands.length,meanSnapshotBytes:Math.round(polls.reduce((n,p)=>n+p.bytes,0)/polls.length),failures,roundOverrun:summary(drift),wallMs:round(wallMs),simulatedMs:round(simulatedMs),simulationLagMs:round(wallMs-simulatedMs),memoryBefore,memoryPeak,activity:[...host.realms.values()].map(r=>activity(r.world)),healthy:[...host.realms.values()].every(r=>!r.persistence.error)};
+    for(let i=0;i<5;i++)for(const realm of host.realms.values())timed(save,()=>assert.equal(realm.saveNow(),true));
+    global.gc?.();const memoryRetained=process.memoryUsage();
+    return {kingdoms,count,backend,tick:summary(tick),hostTick:summary(hostTick),save:summary(save),poll:summary(polls.map(p=>p.ms)),command:summary(commands.map(p=>p.ms)),pollRequests:polls.length,commandRequests:commands.length,meanSnapshotBytes:Math.round(polls.reduce((n,p)=>n+p.bytes,0)/polls.length),failures,roundOverrun:summary(drift),wallMs:round(wallMs),simulatedMs:round(simulatedMs),simulationLagMs:round(wallMs-simulatedMs),memoryBefore,memoryPeak,memoryRetained,perRealmSimulatedMs:[...host.realms.values()].map(r=>round((r.world.time-worldStart)*1000)),activity:[...host.realms.values()].map(r=>activity(r.world)),healthy:[...host.realms.values()].every(r=>!r.persistence.error)};
   } finally {
     if(host)await new Promise(ok=>{host.server.close(ok);host.server.closeAllConnections();});
     rmSync(root,{recursive:true,force:true}); // Only our mkdtemp directory.

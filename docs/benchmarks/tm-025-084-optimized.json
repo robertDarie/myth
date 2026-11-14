@@ -1,0 +1,1113 @@
+{
+  "version": 2,
+  "at": "2026-11-14T00:09:57.830Z",
+  "node": "v24.18.0",
+  "cpu": "11th Gen Intel(R) Core(TM) i5-11400 @ 2.60GHz",
+  "logicalCpus": 12,
+  "totalMemory": 16930865152,
+  "source": "C:\\Users\\rober\\Documents\\GitHub\\myth\\server",
+  "ticks": 100,
+  "rounds": 6,
+  "direct": [
+    {
+      "count": 1,
+      "idle": true,
+      "startActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 0,
+        "garrisons": 0,
+        "scouts": 0,
+        "gatherers": 0,
+        "moving": 0,
+        "logisticsRevision": 0
+      },
+      "endActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 0,
+        "garrisons": 0,
+        "scouts": 0,
+        "gatherers": 0,
+        "moving": 0,
+        "logisticsRevision": 0
+      },
+      "tick": {
+        "samples": 100,
+        "p50": 0.111,
+        "p95": 0.347,
+        "p99": 0.595,
+        "max": 0.595
+      },
+      "checkpoint": {
+        "samples": 30,
+        "p50": 0.054,
+        "p95": 0.113,
+        "p99": 0.324,
+        "max": 0.324
+      },
+      "snapshot": {
+        "samples": 30,
+        "p50": 0.765,
+        "p95": 2.352,
+        "p99": 12.807,
+        "max": 12.807
+      },
+      "serialization": {
+        "samples": 30,
+        "p50": 0.484,
+        "p95": 1.034,
+        "p99": 1.168,
+        "max": 1.168
+      },
+      "meanSnapshotBytes": 100166,
+      "memory": {
+        "before": {
+          "rss": 59027456,
+          "heapTotal": 19111936,
+          "heapUsed": 8929040,
+          "external": 3984290,
+          "arrayBuffers": 146735
+        },
+        "peak": {
+          "rss": 66813952,
+          "heapTotal": 21225472,
+          "heapUsed": 12201888,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        },
+        "retained": {
+          "rss": 66064384,
+          "heapTotal": 19636224,
+          "heapUsed": 9646928,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        }
+      }
+    },
+    {
+      "count": 16,
+      "idle": false,
+      "startActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 1,
+        "garrisons": 1,
+        "scouts": 16,
+        "gatherers": 4,
+        "moving": 2,
+        "logisticsRevision": 0
+      },
+      "endActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 1,
+        "garrisons": 1,
+        "scouts": 5,
+        "gatherers": 4,
+        "moving": 0,
+        "logisticsRevision": 40
+      },
+      "tick": {
+        "samples": 100,
+        "p50": 1.838,
+        "p95": 3.368,
+        "p99": 16.486,
+        "max": 16.486
+      },
+      "checkpoint": {
+        "samples": 30,
+        "p50": 0.639,
+        "p95": 0.987,
+        "p99": 1.057,
+        "max": 1.057
+      },
+      "snapshot": {
+        "samples": 30,
+        "p50": 1.128,
+        "p95": 3.321,
+        "p99": 3.355,
+        "max": 3.355
+      },
+      "serialization": {
+        "samples": 30,
+        "p50": 0.647,
+        "p95": 1.037,
+        "p99": 1.325,
+        "max": 1.325
+      },
+      "meanSnapshotBytes": 113390,
+      "memory": {
+        "before": {
+          "rss": 67014656,
+          "heapTotal": 20684800,
+          "heapUsed": 10462944,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        },
+        "peak": {
+          "rss": 79507456,
+          "heapTotal": 30769152,
+          "heapUsed": 15736568,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        },
+        "retained": {
+          "rss": 78790656,
+          "heapTotal": 30121984,
+          "heapUsed": 11015360,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        }
+      }
+    },
+    {
+      "count": 32,
+      "idle": true,
+      "startActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 0,
+        "garrisons": 0,
+        "scouts": 0,
+        "gatherers": 0,
+        "moving": 0,
+        "logisticsRevision": 0
+      },
+      "endActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 0,
+        "garrisons": 0,
+        "scouts": 0,
+        "gatherers": 0,
+        "moving": 0,
+        "logisticsRevision": 0
+      },
+      "tick": {
+        "samples": 100,
+        "p50": 2.112,
+        "p95": 4.286,
+        "p99": 6.816,
+        "max": 6.816
+      },
+      "checkpoint": {
+        "samples": 30,
+        "p50": 0.759,
+        "p95": 1.232,
+        "p99": 1.389,
+        "max": 1.389
+      },
+      "snapshot": {
+        "samples": 30,
+        "p50": 1.148,
+        "p95": 2.149,
+        "p99": 3.384,
+        "max": 3.384
+      },
+      "serialization": {
+        "samples": 30,
+        "p50": 0.566,
+        "p95": 1.361,
+        "p99": 1.86,
+        "max": 1.86
+      },
+      "meanSnapshotBytes": 112024,
+      "memory": {
+        "before": {
+          "rss": 78520320,
+          "heapTotal": 30121984,
+          "heapUsed": 11013888,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        },
+        "peak": {
+          "rss": 99745792,
+          "heapTotal": 51232768,
+          "heapUsed": 30193328,
+          "external": 10541244,
+          "arrayBuffers": 146735
+        },
+        "retained": {
+          "rss": 95899648,
+          "heapTotal": 46637056,
+          "heapUsed": 11252384,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        }
+      }
+    },
+    {
+      "count": 32,
+      "idle": false,
+      "startActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 1,
+        "garrisons": 1,
+        "scouts": 32,
+        "gatherers": 4,
+        "moving": 2,
+        "logisticsRevision": 0
+      },
+      "endActivity": {
+        "battles": 0,
+        "battleRounds": 0,
+        "rallies": 1,
+        "garrisons": 1,
+        "scouts": 7,
+        "gatherers": 4,
+        "moving": 0,
+        "logisticsRevision": 40
+      },
+      "tick": {
+        "samples": 100,
+        "p50": 3.258,
+        "p95": 4.916,
+        "p99": 9.033,
+        "max": 9.033
+      },
+      "checkpoint": {
+        "samples": 30,
+        "p50": 1.249,
+        "p95": 2.463,
+        "p99": 2.956,
+        "max": 2.956
+      },
+      "snapshot": {
+        "samples": 30,
+        "p50": 1.196,
+        "p95": 2.008,
+        "p99": 6.441,
+        "max": 6.441
+      },
+      "serialization": {
+        "samples": 30,
+        "p50": 0.539,
+        "p95": 0.908,
+        "p99": 1.001,
+        "max": 1.001
+      },
+      "meanSnapshotBytes": 120002,
+      "memory": {
+        "before": {
+          "rss": 98697216,
+          "heapTotal": 47161344,
+          "heapUsed": 11111832,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        },
+        "peak": {
+          "rss": 99905536,
+          "heapTotal": 50286592,
+          "heapUsed": 26444824,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        },
+        "retained": {
+          "rss": 95985664,
+          "heapTotal": 47423488,
+          "heapUsed": 11443128,
+          "external": 3984294,
+          "arrayBuffers": 146735
+        }
+      }
+    }
+  ],
+  "http": [
+    {
+      "kingdoms": 1,
+      "count": 1,
+      "backend": "json",
+      "tick": {
+        "samples": 100,
+        "p50": 0.117,
+        "p95": 0.264,
+        "p99": 0.453,
+        "max": 0.453
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 0.118,
+        "p95": 0.265,
+        "p99": 0.482,
+        "max": 0.482
+      },
+      "save": {
+        "samples": 5,
+        "p50": 7.418,
+        "p95": 7.939,
+        "p99": 7.939,
+        "max": 7.939
+      },
+      "poll": {
+        "samples": 6,
+        "p50": 19.542,
+        "p95": 44.963,
+        "p99": 44.963,
+        "max": 44.963
+      },
+      "command": {
+        "samples": 6,
+        "p50": 20.674,
+        "p95": 39.163,
+        "p99": 39.163,
+        "max": 39.163
+      },
+      "pollRequests": 6,
+      "commandRequests": 6,
+      "meanSnapshotBytes": 100339,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 2.282,
+        "p95": 5.214,
+        "p99": 5.214,
+        "max": 5.214
+      },
+      "wallMs": 1213.389,
+      "simulatedMs": 1139.661,
+      "simulationLagMs": 73.728,
+      "memoryBefore": {
+        "rss": 100081664,
+        "heapTotal": 47423488,
+        "heapUsed": 11389304,
+        "external": 5348582,
+        "arrayBuffers": 212271
+      },
+      "memoryPeak": {
+        "rss": 107089920,
+        "heapTotal": 50618368,
+        "heapUsed": 22141120,
+        "external": 6481342,
+        "arrayBuffers": 2141757
+      },
+      "memoryRetained": {
+        "rss": 102588416,
+        "heapTotal": 48472064,
+        "heapUsed": 12842136,
+        "external": 6546878,
+        "arrayBuffers": 467693
+      },
+      "perRealmSimulatedMs": [
+        1139.661
+      ],
+      "activity": [
+        {
+          "battles": 0,
+          "battleRounds": 0,
+          "rallies": 0,
+          "garrisons": 0,
+          "scouts": 1,
+          "gatherers": 0,
+          "moving": 0,
+          "logisticsRevision": 0
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 1,
+      "count": 16,
+      "backend": "json",
+      "tick": {
+        "samples": 100,
+        "p50": 2.961,
+        "p95": 21.218,
+        "p99": 24.756,
+        "max": 24.756
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 2.963,
+        "p95": 21.221,
+        "p99": 24.76,
+        "max": 24.76
+      },
+      "save": {
+        "samples": 5,
+        "p50": 17.607,
+        "p95": 19.507,
+        "p99": 19.507,
+        "max": 19.507
+      },
+      "poll": {
+        "samples": 96,
+        "p50": 66.825,
+        "p95": 111.467,
+        "p99": 113.187,
+        "max": 113.187
+      },
+      "command": {
+        "samples": 12,
+        "p50": 102.856,
+        "p95": 113.337,
+        "p99": 113.337,
+        "max": 113.337
+      },
+      "pollRequests": 96,
+      "commandRequests": 12,
+      "meanSnapshotBytes": 113480,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 2.221,
+        "p95": 15.43,
+        "p99": 15.43,
+        "max": 15.43
+      },
+      "wallMs": 1226.317,
+      "simulatedMs": 1171.843,
+      "simulationLagMs": 54.473,
+      "memoryBefore": {
+        "rss": 140263424,
+        "heapTotal": 84811776,
+        "heapUsed": 14215648,
+        "external": 6649619,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 154714112,
+        "heapTotal": 92237824,
+        "heapUsed": 47570592,
+        "external": 10524987,
+        "arrayBuffers": 5924792
+      },
+      "memoryRetained": {
+        "rss": 141836288,
+        "heapTotal": 84430848,
+        "heapUsed": 14732952,
+        "external": 6568590,
+        "arrayBuffers": 266477
+      },
+      "perRealmSimulatedMs": [
+        1171.843
+      ],
+      "activity": [
+        {
+          "battles": 4,
+          "battleRounds": 8,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 16,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 4
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 1,
+      "count": 32,
+      "backend": "json",
+      "tick": {
+        "samples": 100,
+        "p50": 6.806,
+        "p95": 38.844,
+        "p99": 44.179,
+        "max": 44.179
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 6.812,
+        "p95": 38.849,
+        "p99": 44.189,
+        "max": 44.189
+      },
+      "save": {
+        "samples": 5,
+        "p50": 27.485,
+        "p95": 38.856,
+        "p99": 38.856,
+        "max": 38.856
+      },
+      "poll": {
+        "samples": 192,
+        "p50": 140.747,
+        "p95": 228.983,
+        "p99": 238.872,
+        "max": 239.666
+      },
+      "command": {
+        "samples": 12,
+        "p50": 227.687,
+        "p95": 240.17,
+        "p99": 240.17,
+        "max": 240.17
+      },
+      "pollRequests": 192,
+      "commandRequests": 12,
+      "meanSnapshotBytes": 120344,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 35.532,
+        "p95": 44.427,
+        "p99": 44.427,
+        "max": 44.427
+      },
+      "wallMs": 1416.318,
+      "simulatedMs": 1414.249,
+      "simulationLagMs": 2.069,
+      "memoryBefore": {
+        "rss": 213975040,
+        "heapTotal": 155996160,
+        "heapUsed": 14948264,
+        "external": 4431912,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 247652352,
+        "heapTotal": 172322816,
+        "heapUsed": 96544888,
+        "external": 17939763,
+        "arrayBuffers": 12637760
+      },
+      "memoryRetained": {
+        "rss": 219430912,
+        "heapTotal": 154423296,
+        "heapUsed": 14371816,
+        "external": 5962234,
+        "arrayBuffers": 573548
+      },
+      "perRealmSimulatedMs": [
+        1414.249
+      ],
+      "activity": [
+        {
+          "battles": 4,
+          "battleRounds": 8,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 4
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 4,
+      "count": 32,
+      "backend": "json",
+      "tick": {
+        "samples": 400,
+        "p50": 6.089,
+        "p95": 33.161,
+        "p99": 38.888,
+        "max": 48.522
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 24.879,
+        "p95": 135.985,
+        "p99": 150.008,
+        "max": 150.008
+      },
+      "save": {
+        "samples": 20,
+        "p50": 26.409,
+        "p95": 30.986,
+        "p99": 30.986,
+        "max": 30.986
+      },
+      "poll": {
+        "samples": 768,
+        "p50": 599.446,
+        "p95": 845.625,
+        "p99": 1003.155,
+        "max": 1005.659
+      },
+      "command": {
+        "samples": 48,
+        "p50": 1006.627,
+        "p95": 1373.792,
+        "p99": 1374.953,
+        "max": 1374.953
+      },
+      "pollRequests": 768,
+      "commandRequests": 48,
+      "meanSnapshotBytes": 122751,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 1008.268,
+        "p95": 1226.605,
+        "p99": 1226.605,
+        "max": 1226.605
+      },
+      "wallMs": 6906.18,
+      "simulatedMs": 4973.011,
+      "simulationLagMs": 1933.169,
+      "memoryBefore": {
+        "rss": 255922176,
+        "heapTotal": 178016256,
+        "heapUsed": 16729584,
+        "external": 4932076,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 306413568,
+        "heapTotal": 198754304,
+        "heapUsed": 96595648,
+        "external": 15564602,
+        "arrayBuffers": 9590549
+      },
+      "memoryRetained": {
+        "rss": 263786496,
+        "heapTotal": 165957632,
+        "heapUsed": 18095832,
+        "external": 5786265,
+        "arrayBuffers": 266477
+      },
+      "perRealmSimulatedMs": [
+        4973.011,
+        4973.01,
+        4973.01,
+        4973.01
+      ],
+      "activity": [
+        {
+          "battles": 4,
+          "battleRounds": 20,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 16
+        },
+        {
+          "battles": 4,
+          "battleRounds": 20,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 16
+        },
+        {
+          "battles": 4,
+          "battleRounds": 20,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 16
+        },
+        {
+          "battles": 4,
+          "battleRounds": 20,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 16
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 1,
+      "count": 1,
+      "backend": "sqlite",
+      "tick": {
+        "samples": 100,
+        "p50": 0.135,
+        "p95": 0.199,
+        "p99": 0.413,
+        "max": 0.413
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 0.136,
+        "p95": 0.201,
+        "p99": 0.418,
+        "max": 0.418
+      },
+      "save": {
+        "samples": 5,
+        "p50": 2.732,
+        "p95": 3.224,
+        "p99": 3.224,
+        "max": 3.224
+      },
+      "poll": {
+        "samples": 6,
+        "p50": 20.342,
+        "p95": 37.046,
+        "p99": 37.046,
+        "max": 37.046
+      },
+      "command": {
+        "samples": 6,
+        "p50": 20.413,
+        "p95": 36.096,
+        "p99": 36.096,
+        "max": 36.096
+      },
+      "pollRequests": 6,
+      "commandRequests": 6,
+      "meanSnapshotBytes": 100350,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 12.258,
+        "p95": 15.344,
+        "p99": 15.344,
+        "max": 15.344
+      },
+      "wallMs": 1245.437,
+      "simulatedMs": 1163.573,
+      "simulationLagMs": 81.864,
+      "memoryBefore": {
+        "rss": 265781248,
+        "heapTotal": 156258304,
+        "heapUsed": 17769760,
+        "external": 6979307,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 259981312,
+        "heapTotal": 158683136,
+        "heapUsed": 26072912,
+        "external": 6411431,
+        "arrayBuffers": 2076416
+      },
+      "memoryRetained": {
+        "rss": 257773568,
+        "heapTotal": 156258304,
+        "heapUsed": 14495240,
+        "external": 6411431,
+        "arrayBuffers": 266477
+      },
+      "perRealmSimulatedMs": [
+        1163.573
+      ],
+      "activity": [
+        {
+          "battles": 0,
+          "battleRounds": 0,
+          "rallies": 0,
+          "garrisons": 0,
+          "scouts": 1,
+          "gatherers": 0,
+          "moving": 0,
+          "logisticsRevision": 0
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 1,
+      "count": 16,
+      "backend": "sqlite",
+      "tick": {
+        "samples": 100,
+        "p50": 2.581,
+        "p95": 7.309,
+        "p99": 10.07,
+        "max": 10.07
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 2.583,
+        "p95": 7.311,
+        "p99": 10.076,
+        "max": 10.076
+      },
+      "save": {
+        "samples": 5,
+        "p50": 4.94,
+        "p95": 8.753,
+        "p99": 8.753,
+        "max": 8.753
+      },
+      "poll": {
+        "samples": 96,
+        "p50": 58.185,
+        "p95": 85.748,
+        "p99": 86.489,
+        "max": 86.489
+      },
+      "command": {
+        "samples": 12,
+        "p50": 80.851,
+        "p95": 86.631,
+        "p99": 86.631,
+        "max": 86.631
+      },
+      "pollRequests": 96,
+      "commandRequests": 12,
+      "meanSnapshotBytes": 113444,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 2.39,
+        "p95": 3.151,
+        "p99": 3.151,
+        "max": 3.151
+      },
+      "wallMs": 1208.502,
+      "simulatedMs": 1171.305,
+      "simulationLagMs": 37.197,
+      "memoryBefore": {
+        "rss": 261668864,
+        "heapTotal": 153636864,
+        "heapUsed": 14917296,
+        "external": 6662076,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 283697152,
+        "heapTotal": 168202240,
+        "heapUsed": 65556080,
+        "external": 16146319,
+        "arrayBuffers": 11112285
+      },
+      "memoryRetained": {
+        "rss": 269688832,
+        "heapTotal": 152326144,
+        "heapUsed": 14227800,
+        "external": 4542670,
+        "arrayBuffers": 266477
+      },
+      "perRealmSimulatedMs": [
+        1171.305
+      ],
+      "activity": [
+        {
+          "battles": 4,
+          "battleRounds": 8,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 16,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 4
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 1,
+      "count": 32,
+      "backend": "sqlite",
+      "tick": {
+        "samples": 100,
+        "p50": 5.762,
+        "p95": 13.515,
+        "p99": 18.181,
+        "max": 18.181
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 5.765,
+        "p95": 13.518,
+        "p99": 18.186,
+        "max": 18.186
+      },
+      "save": {
+        "samples": 5,
+        "p50": 6.178,
+        "p95": 12.503,
+        "p99": 12.503,
+        "max": 12.503
+      },
+      "poll": {
+        "samples": 192,
+        "p50": 145.351,
+        "p95": 192.675,
+        "p99": 196.323,
+        "max": 196.763
+      },
+      "command": {
+        "samples": 12,
+        "p50": 168.433,
+        "p95": 194.673,
+        "p99": 194.673,
+        "max": 194.673
+      },
+      "pollRequests": 192,
+      "commandRequests": 12,
+      "meanSnapshotBytes": 119996,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 2.145,
+        "p95": 17.047,
+        "p99": 17.047,
+        "max": 17.047
+      },
+      "wallMs": 1221.365,
+      "simulatedMs": 1129.793,
+      "simulationLagMs": 91.572,
+      "memoryBefore": {
+        "rss": 273969152,
+        "heapTotal": 154161152,
+        "heapUsed": 16607184,
+        "external": 7803165,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 303923200,
+        "heapTotal": 189349888,
+        "heapUsed": 94794064,
+        "external": 19086308,
+        "arrayBuffers": 14085741
+      },
+      "memoryRetained": {
+        "rss": 255995904,
+        "heapTotal": 155209728,
+        "heapUsed": 15311696,
+        "external": 19086308,
+        "arrayBuffers": 266477
+      },
+      "perRealmSimulatedMs": [
+        1129.793
+      ],
+      "activity": [
+        {
+          "battles": 4,
+          "battleRounds": 8,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 4
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "kingdoms": 4,
+      "count": 32,
+      "backend": "sqlite",
+      "tick": {
+        "samples": 400,
+        "p50": 6.227,
+        "p95": 14.067,
+        "p99": 17.521,
+        "max": 20.212
+      },
+      "hostTick": {
+        "samples": 100,
+        "p50": 26.343,
+        "p95": 54.854,
+        "p99": 66.517,
+        "max": 66.517
+      },
+      "save": {
+        "samples": 20,
+        "p50": 6.779,
+        "p95": 8.684,
+        "p99": 8.684,
+        "max": 8.684
+      },
+      "poll": {
+        "samples": 768,
+        "p50": 580.61,
+        "p95": 704.405,
+        "p99": 752.522,
+        "max": 757.397
+      },
+      "command": {
+        "samples": 48,
+        "p50": 750.737,
+        "p95": 936.261,
+        "p99": 936.399,
+        "max": 936.399
+      },
+      "pollRequests": 768,
+      "commandRequests": 48,
+      "meanSnapshotBytes": 122596,
+      "failures": [],
+      "roundOverrun": {
+        "samples": 6,
+        "p50": 567.835,
+        "p95": 752.347,
+        "p99": 752.347,
+        "max": 752.347
+      },
+      "wallMs": 4654.35,
+      "simulatedMs": 3471.215,
+      "simulationLagMs": 1183.135,
+      "memoryBefore": {
+        "rss": 264581120,
+        "heapTotal": 172773376,
+        "heapUsed": 19558512,
+        "external": 6784446,
+        "arrayBuffers": 266477
+      },
+      "memoryPeak": {
+        "rss": 293773312,
+        "heapTotal": 170233856,
+        "heapUsed": 75509176,
+        "external": 19197383,
+        "arrayBuffers": 11780634
+      },
+      "memoryRetained": {
+        "rss": 284270592,
+        "heapTotal": 158355456,
+        "heapUsed": 17980384,
+        "external": 13754407,
+        "arrayBuffers": 266477
+      },
+      "perRealmSimulatedMs": [
+        3471.215,
+        3471.214,
+        3471.214,
+        3471.213
+      ],
+      "activity": [
+        {
+          "battles": 4,
+          "battleRounds": 16,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 12
+        },
+        {
+          "battles": 4,
+          "battleRounds": 16,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 12
+        },
+        {
+          "battles": 4,
+          "battleRounds": 16,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 12
+        },
+        {
+          "battles": 4,
+          "battleRounds": 16,
+          "rallies": 1,
+          "garrisons": 1,
+          "scouts": 32,
+          "gatherers": 4,
+          "moving": 2,
+          "logisticsRevision": 12
+        }
+      ],
+      "healthy": true
+    }
+  ]
+}
