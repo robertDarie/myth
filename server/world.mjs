@@ -28,6 +28,16 @@ export class GameError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
 }
 const secureRandom = () => randomInt(1_000_000) / 1_000_000;
+const rosters = new WeakMap();
+const routeCache = new WeakMap();
+function cachedRoute(world, army, destination, returning) {
+  const key = (world.gateEpoch || 0) + '|' + army.x + '|' + army.z + '|' + (destination.id || '') + '|' + destination.x + '|' + destination.z + '|' + (returning ? 1 : 0);
+  const box = routeCache.get(army);
+  if (box?.key === key) return box.path;
+  const path = route(world, army, destination, returning);
+  routeCache.set(army, { key, path });
+  return path;
+}
 const distance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const finitePoint = p => [p.x, p.z].every(n => Number.isFinite(n) && n >= 1 && n <= SIZE - 1);
 export class World {
@@ -64,7 +74,7 @@ export class World {
       allianceId: '', target: null, cooldown: 0, gatherClock: 0, lastSeen: 0, state: 'Idle', recovery: 0, reserveTroops: 0, reserveMythic: 0, construction: null, trainingQueue: [], offline: false };
     initializeCity(player); initializeInventory(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeFindings(player); initializeRecon(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player); ensureEvents(this, player); player.kingdomClaims = [];
     initializeEconomy(this,player);initializeLogistics(player);player.health = this.stats(player).maxHealth;
-    this.players.set(id, player); this.sessions.set(token, id); refreshJourney(this, player);explorationTick(this,0);
+    this.players.set(id, player); this.sessions.set(token, id); this.noteRoster(); refreshJourney(this, player);explorationTick(this,0);
     this.event(`${player.name} founded a ${civilization} city.`);
     return { playerId: id, token };
   }
@@ -74,9 +84,30 @@ export class World {
     return this.players.get(id);
   }
   owner(a) { return this.players.get(a.ownerId || a.id) ?? a; }
-  armies() { return [...this.players.values()].flatMap(armyList); }
-  army(id) { return this.armies().find(a => a.id === id); }
+  noteRoster() { this.rosterGeneration = (this.rosterGeneration || 0) + 1; }
+  armies() {
+    const generation = this.rosterGeneration || 0;
+    let roster = rosters.get(this);
+    if (!roster || roster.generation !== generation) {
+      const list = []; const byId = new Map();
+      for (const player of this.players.values()) for (const army of armyList(player)) { list.push(army); byId.set(army.id, army); }
+      roster = { generation, list, byId }; rosters.set(this, roster);
+    }
+    return roster.list;
+  }
+  army(id) {
+    this.armies();
+    return rosters.get(this).byId.get(id);
+  }
   stats(a) {
+    const cached = this._statsTick?.get(a);
+    if (cached) return cached;
+    const value = this._stats(a);
+    if (this._statsTick) this._statsTick.set(a, value);
+    return value;
+  }
+  invalidateStats(a) { this._statsTick?.delete(a); }
+  _stats(a) {
     const p = this.owner(a), r = ensureHero(p, a.commanderId);
     const civ = CIVILIZATIONS.find(c => c.id === p.civilization), commander = COMMANDERS.find(c => c.id === a.commanderId);
     const rank = p.commanderRanks[a.commanderId] ?? 0;
@@ -109,6 +140,7 @@ export class World {
   normalizeDeployment(){for(const a of this.armies())if(a.target||!this.atHome(a))a.deployed=true;}
   command(p, c) {
     if(!c||typeof c!=='object')throw new GameError('Invalid command.');
+    this.noteRoster();
     this.normalizeDeployment();
     refreshEconomy(this,p);
     if(economyCommand(this,p,c,message=>{throw new GameError(message);}))return;
@@ -187,6 +219,12 @@ export class World {
   }
   tick(dt) {
     if (!Number.isFinite(dt) || dt <= 0) return;
+    this.noteRoster();
+    Object.defineProperty(this, '_statsTick', { value: new Map(), writable: true, enumerable: false, configurable: true });
+    try { this._tick(dt); }
+    finally { this._statsTick = null; }
+  }
+  _tick(dt) {
     activityClock(this);ensureDiplomacy(this);ensureSeason(this);const beforeMovement=new Map(this.armies().map(a=>[a.id,{x:a.x,z:a.z}]));
     dt = Math.min(dt, 0.25); this.time += dt; this.markers = this.markers.filter(m => m.expires > this.time);
     for (const camp of this.camps) if (camp.health <= 0) {
@@ -227,6 +265,7 @@ export class World {
     tickCampaign(this, dt); tickStrongholds(this, dt);
     for(const a of this.armies())if(!campaignFor(this,a.id)){dock(this,a);if(a.deployed&&!a.target&&cargoTotal(a)>=carryCapacity(this,a)&&cargoTotal(a)>0&&!combatFor(this,a.id))returnCargo(this,a,'Capacity reached');}
     for (const site of this.sites) this.captureTick(site, dt);
+    this._statsTick?.clear();
     for(const a of this.armies()){const previous=beforeMovement.get(a.id);if(previous&&a.recovery<=0){const moved=distance(a,previous);if(moved<=this.stats(a).speed*dt+0.001)recordActivity(this,this.owner(a),'distance',moved);}}
     explorationTick(this, dt);
     for (const p of this.players.values()) refreshJourney(this, p); tickKingdom(this);
@@ -280,7 +319,7 @@ export class World {
     if (site.challengerId !== allianceId) { site.progress = 0; site.challengerId = allianceId; }
     site.progress += dt;
     if (site.progress >= 15) {
-      site.allianceId = allianceId; site.progress = 0; site.challengerId = '';
+      site.allianceId = allianceId; site.progress = 0; site.challengerId = ''; this.gateEpoch = (this.gateEpoch || 0) + 1;
       this.event(`${this.alliances.get(allianceId).name} captured ${site.name}.`);
       for (const p of this.armies()) if (p.target?.id === site.id && p.target.type === 'capture') { p.target = null; p.state = 'Idle'; }
     }
@@ -456,7 +495,7 @@ export class World {
     const p = this.owner(a);
     const destination = campaignDestination(this, a) ?? (a.target?.type === 'pvp' ? this.army(a.target.id) : a.target?.id ? [...this.camps, ...this.nodes, ...this.sites].find(item => item.id === a.target.id) : a.target);
     const assignment = campaignFor(this, a.id);
-    const path = destination ? route(this, a, destination, a.target?.type === 'return') : [];
+    const path = destination ? cachedRoute(this, a, destination, a.target?.type === 'return') : [];
     return { protectedField:p.cityLevel<2||this.atHome(a)||a.recovery>0,deployed:a.deployed,cargo:{...a.cargo},carryCapacity:carryCapacity(this,a), route: path || [], assignmentKind: assignment?.kind || '', assignmentId: assignment ? (assignment.group.id || assignment.group.targetId) : '', id: a.id, ownerId: p.id, civilization: p.civilization, attackSequence: a.attackSequence ?? 0, attackX: a.attackX ?? a.x, attackZ: a.attackZ ?? a.z, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
       units: { ...a.units }, skillKind: activeKind(a.commanderId), commanderId: a.commanderId, secondaryCommanderId: a.secondaryCommanderId || '', equippedRelic: a.equippedRelic, formationActive: formationOf(a.units).active, formationName: FORMATION.name, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
       troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), recovery: a.recovery, rage: Math.floor(a.rage), shield: Math.ceil(a.shield), lastSkill: a.lastSkill, skillCasts: a.skillCasts,
