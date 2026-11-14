@@ -45,10 +45,11 @@ export function marchCommand(world, p, c, fail) {
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
       const camp = world.camps.find(e => e.id === c.targetId);
-      const known = camp && (visible(world,p,camp) || p.discovery.some(r=>r.kind==='camps'&&r.value.id===camp.id));
-      if (!known || (visible(world,p,camp)&&camp.health<=0)||!world.canEnter(p, camp)) fail('Camp unavailable or behind a locked gate.');
-      if(p.numericVersion===1){const reason=forsakenReason(world,p,camp);if(reason)fail(reason);}
-      a.target = { type: 'attack', id: camp.id }; break;
+      const seen=camp&&camp.spawned!==false&&visible(world,p,camp);
+      const known=seen?camp:p.discovery.find(r=>r.kind==='camps'&&r.value.id===c.targetId)?.value;
+      if (!camp||!known || (seen&&camp.health<=0)||!world.canEnter(p, known)) fail('Camp unavailable or behind a locked gate.');
+      if(p.numericVersion===1){const reason=forsakenReason(world,p,known);if(reason)fail(reason);}
+      a.target = { type: 'attack', id: camp.id,x:known.x,z:known.z,cycle:known.cycle??0 }; break;
     }
     case 'gather': {
       const node = world.nodes.find(n => n.id === c.targetId);

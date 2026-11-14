@@ -1,3 +1,4 @@
+import { initializePopulation, prepareSavedPopulation, restorePopulation, populationTick, populationCommand, campDestination, publicForsakenProgress } from './forsaken-population.mjs';
 import { configureForsaken, forsakenCard, initializeForsakenPlayer, restoreForsaken, fightForsaken, forsakenReason } from './forsaken.mjs';
 import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
 import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
@@ -63,7 +64,7 @@ export class World {
     this.camps.push(...frontierCamps());
     if(referenceScale(this))for(const c of this.camps){const r=referenceCamp(c.level);c.health=c.maxHealth=r.maxHealth;configureForsaken(c);}
     this.sites = [...siteDefinitions,...frontierSites()].map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
-    this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind,this); initializeKingdom(this);
+    this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind,this); initializeKingdom(this);initializePopulation(this,true);
   }
   event(message) { this.events.unshift({ time: Math.round(this.time), message }); this.events.length = Math.min(this.events.length, 12); }
   spawnLocation() { return chooseCitySpawn(this); }
@@ -153,7 +154,7 @@ export class World {
   applyCommand(p, c) {
     if (!c || typeof c !== 'object') throw new GameError('Invalid command.');
     const fail = message => { throw new GameError(message); };
-    if (kingdomCommand(this, p, c, fail) || eventCommand(this, p, c, fail) || diplomacyCommand(this, p, c, fail) || coalitionCommand(this, p, c, fail) || seasonCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || findingCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
+    if (populationCommand(this,p,c,fail) || kingdomCommand(this, p, c, fail) || eventCommand(this, p, c, fail) || diplomacyCommand(this, p, c, fail) || coalitionCommand(this, p, c, fail) || seasonCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || findingCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
     switch (c.type) {
       case 'promote': case 'train': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
@@ -219,8 +220,9 @@ export class World {
     dt = Math.min(dt, 0.25); this.time += dt; this.markers = this.markers.filter(m => m.expires > this.time);
     for (const camp of this.camps) if (camp.health <= 0) {
       camp.respawn = Math.max(0, camp.respawn - dt);
-      if (camp.respawn === 0) { camp.cycle++;camp.health = camp.maxHealth; camp.contributors = {};delete camp.encounter; }
+      if (camp.respawn === 0 && this.numericVersion!==1) { camp.cycle++;camp.health = camp.maxHealth; camp.contributors = {};delete camp.encounter; }
     }
+    populationTick(this,dt);
     for (const node of this.nodes) if (node.remaining <= 0) {
       node.refill += dt; if (node.refill >= 30) { node.remaining = node.capacity; node.refill = 0; }
     }
@@ -236,12 +238,12 @@ export class World {
       if (!p.target && this.atHome(p)) { p.health = Math.min(stats.maxHealth, p.health + stats.heal * dt); p.state = p.health < stats.maxHealth ? 'Healing' : 'Idle'; }
       if (!p.target || p.health <= 0) continue;
       const target = p.target;
-      const destination = target.type === 'pvp' ? this.army(target.id) : target.type === 'attack' ? this.camps.find(e => e.id === target.id)
+      const destination = target.type === 'pvp' ? this.army(target.id) : target.type === 'attack' ? campDestination(this,p,true)
         : target.type === 'gather' ? this.nodes.find(n => n.id === target.id)
         : target.type === 'capture' ? this.sites.find(s => s.id === target.id) : target;
       if (target.type === 'pvp' && (!destination || campaignFor(this, destination.id) || !visible(this, owner, destination) || attackReason(this, p, destination))) { const battle = combatFor(this, p.id); if (battle) finishBattle(this, battle, 'Protected / unavailable'); p.target = null; p.state = 'Idle'; continue; }
       if(target.type==='gather'&&(!destination||visible(this,owner,destination)&&destination.remaining<=0)){returnCargo(this,p,'Deposit exhausted');continue;}
-      if (!destination || (target.type === 'attack' && visible(this, owner, destination) && destination.health <= 0)) { p.target = null; p.state = 'Target unavailable'; continue; }
+      if (!destination || destination.unavailable || (target.type === 'attack' && visible(this, owner, destination) && destination.health <= 0)) { p.target = null; p.state = 'Target unavailable'; continue; }
       // Ownership can change while an army is marching. Returning home always remains possible.
       if (target.type !== 'return' && !route(this, p, destination)) { p.target = null; p.state = 'Route locked'; continue; }
       const stop = ['move', 'return'].includes(target.type) ? 0 : 2;
@@ -249,6 +251,7 @@ export class World {
       if (distance(p, destination) > stop + 0.0001) continue;
       if (target.type === 'move' || target.type === 'return') { p.target = null; p.state = 'Idle'; }
       if (target.type === 'pvp') tickBattle(this, p, destination);
+      if(target.type==='attack'&&destination.lastSighting){p.target=null;p.state='Target out of sight; scout again';continue;}
       if (target.type === 'attack' && p.cooldown === 0) this.battle(p, destination, stats);
       if(target.type==='gather')gatherCargo(this,p,destination,dt);
     }
@@ -345,7 +348,7 @@ export class World {
   toSave() {
     this.normalizeDeployment();
     ensureSeason(this);
-    return { schema: WORLD_SCHEMA, world: { pveVersion:this.pveVersion,numericVersion:this.numericVersion, numericMigration:this.numericMigration??null, cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: WORLD_SCHEMA, world: { population:this.population??null,pveVersion:this.pveVersion,numericVersion:this.numericVersion, numericMigration:this.numericMigration??null, cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
@@ -356,7 +359,7 @@ export class World {
       const original=structuredClone(data);original.world.numericVersion=0;
       for(const p of original.world.players??[])p.numericVersion=0;
       const legacy=World.fromSave(original,{...options,numericVersion:0});
-      const migrated=migrateNumericWorld(legacy);restoreForsaken(migrated,true);return migrated;
+      const migrated=migrateNumericWorld(legacy);restoreForsaken(migrated,true);initializePopulation(migrated,false);return migrated;
     }
     if(data?.schema<15)data=migrateEconomy(data);
     data = migrateMap(data);
@@ -365,6 +368,7 @@ export class World {
     if (w.players.length > LIMITS.maxCities || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World({...options,numericVersion:w.numericVersion,cityCapacity:options.cityCapacity??w.cityCapacity??LIMITS.defaultCities});
     if(w.pveVersion!==undefined&&![0,1].includes(w.pveVersion))throw new Error('Unsupported saved PvE version.');
+    prepareSavedPopulation(w,world);
     world.numericMigration=w.numericMigration??null;world.pveVersion=w.pveVersion??0;
     if(data.schema<26&&Array.isArray(w.strongholds))for(const t of world.strongholds.filter(t=>t.id.startsWith('frontier-')))if(!w.strongholds.some(old=>old.id===t.id))w.strongholds.push(structuredClone(t));
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
@@ -489,7 +493,7 @@ export class World {
       }
       if(!campaignFor(world,a.id))dock(world,a);
     }
-    restoreForsaken(world,world.pveVersion===0);
+    restoreForsaken(world,world.pveVersion===0);restorePopulation(world,w.population);
     explorationTick(world, 0);
     for (const p of world.players.values()) refreshJourney(world, p);
     return world;
@@ -501,7 +505,7 @@ export class World {
   }
   armySnapshot(a) {
     const p = this.owner(a);
-    const destination = campaignDestination(this, a) ?? (a.target?.type === 'pvp' ? this.army(a.target.id) : a.target?.id ? [...this.camps, ...this.nodes, ...this.sites].find(item => item.id === a.target.id) : a.target);
+    const destination = campaignDestination(this, a) ?? (a.target?.type === 'pvp' ? this.army(a.target.id) : a.target?.type==='attack'?campDestination(this,a):a.target?.id ? [...this.camps, ...this.nodes, ...this.sites].find(item => item.id === a.target.id) : a.target);
     const assignment = campaignFor(this, a.id);
     const path = destination ? route(this, a, destination, a.target?.type === 'return') : [];
     return { protectedField:p.cityLevel<2||this.atHome(a)||a.recovery>0,deployed:a.deployed,cargo:{...a.cargo},carryCapacity:carryCapacity(this,a), route: path || [], assignmentKind: assignment?.kind || '', assignmentId: assignment ? (assignment.group.id || assignment.group.targetId) : '', id: a.id, ownerId: p.id, civilization: p.civilization, attackSequence: a.attackSequence ?? 0, attackX: a.attackX ?? a.x, attackZ: a.attackZ ?? a.z, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
@@ -521,14 +525,14 @@ export class World {
     const snapshot = { allianceRoster:allianceRoster(this,viewer),diplomacy:diplomacySnapshot(this,viewer),coalition:coalitionSnapshot(this,viewer),season:seasonSnapshot(this,viewer),version: PROTOCOL, provinces:PROVINCES, corridors:MAP_CORRIDORS, cityCapacity:this.cityCapacity, allianceCapacity:LIMITS.allianceMembers, rankings: rankings(this), activity, kingdom, strongholds: this.strongholds.map(t => ({ ...t })), strongholdRules: STRONGHOLD_RULES, ...campaignSnapshot(this, viewerId), chatMessages: this.messages.filter(m => !viewerId || m.channel === 'kingdom' || (m.channel === 'alliance' && m.allianceId && m.allianceId === viewerAlliance) || (m.channel === 'coalition' && m.coalitionId && coalitionOf(this, viewerAlliance)?.id === m.coalitionId)), markers: this.markers.filter(m => !viewerId || m.allianceId === viewerAlliance), troopTypes: troopTypes(this), ages: AGES, armies: this.armies().filter(a=>a.deployed&&(!viewer||this.owner(a).id===viewer.id||viewer.allianceId&&this.owner(a).allianceId===viewer.allianceId||vision.seen(a))).map(a => this.armySnapshot(a)), summonRules: SUMMON_RULES, relics: RELICS, armaments: ARMAMENTS, trades: TRADES, size: SIZE, time: this.time,
       formation: { id: FORMATION.id, name: FORMATION.name, minimumPercent: FORMATION.minimumPercent, health: FORMATION.health },
       players: [...this.players.values()].map(p => {
-        const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, loginStreak, events, ...visible } = p;
+        const { ap,apUpdated,apRemainder,campPasses,tradeDay,tradeSent,tradeReceipts,tradeSequence,buffs,lastSeen, target, cooldown, gatherClock, slot, marches, discovery, coreReports, loginStreak, events, forsaken, ...visible } = p;
         if (viewerId && viewerId !== p.id) {
           const ally = p.allianceId && this.players.get(viewerId)?.allianceId === p.allianceId;
           const visibleJob = job => ally && job ? { id: job.id, type: job.type, remaining: job.remaining, duration: job.duration } : null;
           return { id: p.id, name: p.name, civilization: p.civilization, allianceId: p.allianceId, allianceRole: allianceRole(this, p), x: p.x, z: p.z, homeX: p.homeX, homeZ: p.homeZ, cityLevel: p.cityLevel, ageName: age(p).name, construction: visibleJob(p.construction), secondConstruction: visibleJob(p.secondConstruction), research: visibleJob(p.research) };
         }
-        return { ...visible, activeMarches:activeMarches(p).length,homeFormations:armyList(p).filter(a=>!a.deployed).map(a=>this.armySnapshot(a)),economy:economySnapshot(this,p),reports:unifiedReports(this,p,warSnapshot(this,p).battleReports,groupReports(this,p)), inventory: inventorySnapshot(p), powerBreakdown: powerOf(p), journeyCampaign: journeySnapshot(this, p), ...warSnapshot(this, p), groupReports: groupReports(this, p), allianceRole: allianceRole(this, p), ...citySnapshot(this, p), ...this.stats(p), health: Math.ceil(p.health), hasOrder: !!target, targetId: target?.id ?? '', targetX: target?.x ?? p.x, targetZ: target?.z ?? p.z };
-      }), camps: this.camps.map(({ contributors, encounter, ...camp }) => referenceScale(this)?forsakenCard(camp):({ ...camp, respawn: Math.ceil(camp.respawn) })),
+        return { ...visible, ...(referenceScale(p)?{forsaken:publicForsakenProgress(this,p)}:{}), activeMarches:activeMarches(p).length,homeFormations:armyList(p).filter(a=>!a.deployed).map(a=>this.armySnapshot(a)),economy:economySnapshot(this,p),reports:unifiedReports(this,p,warSnapshot(this,p).battleReports,groupReports(this,p)), inventory: inventorySnapshot(p), powerBreakdown: powerOf(p), journeyCampaign: journeySnapshot(this, p), ...warSnapshot(this, p), groupReports: groupReports(this, p), allianceRole: allianceRole(this, p), ...citySnapshot(this, p), ...this.stats(p), health: Math.ceil(p.health), hasOrder: !!target, targetId: target?.id ?? '', targetX: target?.x ?? p.x, targetZ: target?.z ?? p.z };
+      }), camps: this.camps.filter(c=>c.spawned!==false).map(({ contributors, encounter, ...camp }) => referenceScale(this)?forsakenCard(camp):({ ...camp, respawn: Math.ceil(camp.respawn) })),
       nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s, locked: !siteIsOpen(this,s.id) })), flags: this.flags.map(f => ({ ...f })),
       alliances: [...this.alliances.values()].map(({weekly,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
       commanders: COMMANDERS.map(c => ({ ...c, skillKind: activeKind(c.id) })), civilizations: CIVILIZATIONS, events: this.events.map(e => ({ ...e })) };

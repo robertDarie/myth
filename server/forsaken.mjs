@@ -13,7 +13,7 @@ export const FORSAKEN_RULES=Object.freeze({version:1,maxLevel:25,respawnSeconds:
 export const kingdomForsakenLevel=w=>Math.min(25,6+Math.floor(Math.max(0,economyTime(w)-w.kingdom.startedAtMs)/86400000));
 export function initializeForsakenPlayer(w,p,migrated=false) {
   if(!referenceScale(p))return;
-  p.forsaken={version:1,unlocked:migrated?6:1,firstClears:[],admissions:{}};
+  p.forsaken={version:1,unlocked:migrated?6:1,firstClears:[],admissions:{},searchReadyAtMs:0,searchSequence:0,searchResult:null};
   if(migrated)for(const c of w.camps)if(p.campPasses[c.id]===c.cycle)p.forsaken.admissions[c.id]={cycle:c.cycle,armyIds:armyList(p).map(a=>a.id)};
 }
 export function configureForsaken(c) {
@@ -22,7 +22,7 @@ export function configureForsaken(c) {
 }
 export function forsakenCard(c) {
   const r=referenceCamp(c.level);
-  return {id:c.id,name:'Forsaken Lv. '+c.level,category:'forsaken',level:c.level,x:c.x,z:c.z,health:c.health,maxHealth:c.maxHealth,respawn:Math.ceil(c.respawn),cycle:c.cycle,
+  return {patrolState:c.patrolState??'IDLE',id:c.id,name:'Forsaken Lv. '+c.level,category:'forsaken',level:c.level,x:c.x,z:c.z,health:c.health,maxHealth:c.maxHealth,respawn:Math.ceil(c.respawn),cycle:c.cycle,
     enemyPower:r.enemyPower,enemyTroops:r.troopCount,enemyTier:r.recommendedTier,attack:r.attack,defense:r.defense,damage:r.retaliation,recommendedTroops:r.recommendedTroops,recommendedTier:r.recommendedTier,commanderXP:r.commanderXP,apCost:r.ap};
 }
 export function validateForsaken(w,p) {

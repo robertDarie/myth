@@ -13,10 +13,11 @@ export function suitableSpawn(w, point) {
   if (!w.canEnter(actor,point)) return false;
   if ([...w.players.values()].some(p=>distance(point,{x:p.homeX,z:p.homeZ})<SPAWN_RULES.cityDistance)) return false;
   if (w.nodes.some(n=>distance(point,n)<SPAWN_RULES.depositDistance)) return false;
-  if ([...w.camps,...w.sites,...w.flags,...w.strongholds,...FINDINGS].some(s=>distance(point,s)<SPAWN_RULES.structureDistance)) return false;
+  if (w.camps.some(c=>c.spawned!==false&&distance(point,{x:c.anchorX??c.x,z:c.anchorZ??c.z})<SPAWN_RULES.structureDistance+(c.roamRadius??0)))return false;
+  if ([...w.sites,...w.flags,...w.strongholds,...FINDINGS].some(s=>distance(point,s)<SPAWN_RULES.structureDistance)) return false;
   const reachable = target => !!route(w,actor,target);
   if (!['wood','food','gold'].every(resource=>w.nodes.some(n=>n.resource===resource&&distance(point,n)<=SPAWN_RULES.starterReach&&reachable(n)))) return false;
-  return w.camps.some(c=>c.level===1&&distance(point,c)<=SPAWN_RULES.campReach&&reachable(c));
+  return w.camps.some(c=>c.spawned!==false&&c.health>0&&c.level===1&&distance(point,c)<=SPAWN_RULES.campReach&&reachable(c));
 }
 export function chooseCitySpawn(w) {
   const regions=STARTING_REGIONS;
