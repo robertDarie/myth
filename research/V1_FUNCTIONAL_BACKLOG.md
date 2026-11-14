@@ -76,3 +76,8 @@ The forge, hall, training, and guide screens send server commands for the system
 - Aether prices and new premium currencies.
 - New 3D models and cinematic effects.
 - Roads, claim polygons, and territory resource bonuses that this game has already declined.
+
+
+## Friends alpha milestone - checkpoint A
+
+Random continuous city spawning in the gate-free First Frontier is implemented. Four-unit city spacing, static-object clearance, reachable starter deposits/camps, bounded full-land rejection and durable join rollback preserve old positions and sessions. Five spawn tests, 369 server tests and the 22-command plan passed (five Linux packaging checks skipped on Windows). Schema 25 / protocol 16. See `docs/random-city-spawns.md`. Map expansion and the friends distribution workflow remain next.

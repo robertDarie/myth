@@ -1,4 +1,4 @@
-import { testWorld } from './testing/kingdom-fixture.mjs';
+import { legacySpawns, testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -88,7 +88,7 @@ test('garrisons and rally centers obey the same gate corridors as ordinary march
 });
 
 test('authenticated HTTP does not expose hidden troops or another city scouting history',async t=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();
+ const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});t.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Scout','HTTP Hidden'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));

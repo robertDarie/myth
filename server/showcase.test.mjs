@@ -1,9 +1,10 @@
+import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { explorationTick, visible } from './exploration.mjs';
 const advance=(w,n)=>{for(let i=0;i<Math.ceil(n*10);i++)w.tick(.1);};
-const start=()=>{const w=new World(),s=w.join('Showcase'),p=w.authenticate(s.token);return {w,p};};
+const start=()=>{const w=legacySpawns(new World()),s=w.join('Showcase'),p=w.authenticate(s.token);return {w,p};};
 const command=(w,p,type,extra={})=>w.command(p,{type,...extra});
 test('real opening patrol trains, scouts, attacks remembered Scouts, casts Rallying Cry, wins and returns without grants',()=>{
  const {w,p}=start(),camp=w.camps.find(c=>c.name==='Forsaken Scouts');assert.ok(camp);

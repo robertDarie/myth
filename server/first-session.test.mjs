@@ -1,10 +1,11 @@
+import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 
 // No rich-player fixtures, teleports, fabricated troops, forced wins or changed tuning.
 test('fresh-city first session legally builds, trains, assembles, gathers, defeats a real camp and returns', () => {
-  const w = new World();
+  const w = legacySpawns(new World());
   const joined = w.join('First session 027', 'greek');
   const p = w.authenticate(joined.token);
   const command = (type, extra = {}) => w.command(p, { type, ...extra });

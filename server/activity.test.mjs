@@ -1,4 +1,4 @@
-import { testWorld } from './testing/kingdom-fixture.mjs';
+import { legacySpawns, testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
@@ -108,7 +108,7 @@ test('all three weekly goals unlock individual rewards only for members who earn
 });
 
 test('authenticated activity claims preserve daily privacy, alliance-only ledgers and replay safety over HTTP',async testContext=>{
- const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();
+ const {createGameServer}=await import('./http.mjs');const {server,world:w}=createGameServer();legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port;
  const sessions=await Promise.all(['HTTP Active','HTTP Member','HTTP Outsider'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json()));

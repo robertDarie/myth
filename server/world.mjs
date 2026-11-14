@@ -1,3 +1,4 @@
+import { chooseCitySpawn } from './spawning.mjs';
 import { ECONOMY, initializeEconomy, refreshEconomy, economySnapshot, economyCommand, validateEconomy, migrateEconomy, campAdmission, economyTime } from './economy.mjs';
 import { initializeLogistics, validateLogistics, activeMarches, cargoTotal, carryCapacity, gatherCargo, returnCargo, loseCargo, dock, unifiedReports, coreReport } from './field-logistics.mjs';
 import { validateDiscovery } from './discovery.mjs';
@@ -56,6 +57,7 @@ export class World {
     this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind); initializeKingdom(this);
   }
   event(message) { this.events.unshift({ time: Math.round(this.time), message }); this.events.length = Math.min(this.events.length, 12); }
+  spawnLocation() { return chooseCitySpawn(this); }
   join(name, civilization = 'greek', resumeToken = '') {
     if (resumeToken && this.sessions.has(resumeToken)) return { playerId: this.sessions.get(resumeToken), token: resumeToken };
     if (typeof name !== 'string' || !name.trim() || name.trim().length > 24) throw new GameError('Name must contain 1–24 characters.');
@@ -66,7 +68,9 @@ export class World {
     // Reuse vacant slots rather than relying on player count after disconnects.
     const occupied = new Set([...this.players.values()].map(p => p.slot));
     let slot = 0; while (occupied.has(slot)) slot++;
-    const x = 5 + (slot % 8) * 3.5, z = 5 + Math.floor(slot / 8) * 2.5;
+    const location = this.spawnLocation();
+    if (!location) throw new GameError('No suitable starting land remains in this kingdom. Try another kingdom.', 503);
+    const { x, z } = location;
     const player = { id, slot, name: name.trim(), civilization, x, z, homeX: x, homeZ: z,
       health: 0, gold: 150, wood: 150, food: 200, troops: 20, mythic: 0, cityLevel: 1,
       commanderId: 'captain', ownedCommanders: ['captain'], xp: 0, level: 1, kills: 0, questClaimed: false,

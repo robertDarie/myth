@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "random city spawn distribution and persistence",
+      "command": ["node", "--test", "server/spawning.test.mjs"]
+    },
+    {
       "name": "scalability rollback, fog equivalence and durable concurrency",
       "command": ["node", "--test", "server/scalability.test.mjs"]
     },

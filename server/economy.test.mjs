@@ -1,3 +1,4 @@
+import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,mkdtempSync,rmSync} from 'node:fs';
@@ -12,7 +13,7 @@ import {advanceDowntime} from './downtime.mjs';
 import {KingdomDatabase} from './database.mjs';
 import {closeHttpServer,tempDirectory} from './testing/cleanup.mjs';
 const date=Date.UTC(2026,10,8,12);
-const setup=()=>{let now=date;const w=new World({now:()=>now}),session=w.join('Economy');return {w,p:w.authenticate(session.token),session,setNow:n=>now=n};};
+const setup=()=>{let now=date;const w=legacySpawns(new World({now:()=>now})),session=w.join('Economy');return {w,p:w.authenticate(session.token),session,setNow:n=>now=n};};
 const command=(w,p,type,extra={})=>w.command(p,{type,...extra});
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(.1);};
 const reload=(w,session,now=date)=>{const next=World.fromSave(w.toSave(),{now:()=>now});return {w:next,p:next.authenticate(session.token)};};

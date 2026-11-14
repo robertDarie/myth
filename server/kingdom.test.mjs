@@ -1,9 +1,10 @@
+import { legacySpawns } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './world.mjs';
 import { siteIsOpen, recordKingdomContribution, recordKingdomVictory, tickKingdom, kingdomSnapshot } from './kingdom.mjs';
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
-function setup(){let now=Date.UTC(2026,10,7,12);const w=new World({now:()=>now}),s=w.join('Founder'),p=w.authenticate(s.token);return {w,p,s,setAge:seconds=>{now=Date.UTC(2026,10,7,12)+seconds*1000;w.snapshot(p.id);}};}
+function setup(){let now=Date.UTC(2026,10,7,12);const w=legacySpawns(new World({now:()=>now})),s=w.join('Founder'),p=w.authenticate(s.token);return {w,p,s,setAge:seconds=>{now=Date.UTC(2026,10,7,12)+seconds*1000;w.snapshot(p.id);}};}
 const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
 function prepare(e){const {w,p}=e;recordKingdomContribution(w,p,'gather',400);recordKingdomContribution(w,p,'trained',10);p.cityLevel=2;for(let i=0;i<4;i++)recordKingdomVictory(w,'camps');recordKingdomContribution(w,p,'camps',4);tickKingdom(w);}
 

@@ -1,0 +1,13 @@
+# Random city spawns - checkpoint A
+
+New cities use server random continuous coordinates in the First Frontier (3..37 on each axis). This is the existing gate-free starting province. No slot determines geographic position. Production uses crypto.randomInt through World.random; tests inject seeded random streams. The bounded 4,096-candidate sampler has no occupancy reservation cache. Uniform random draws plus irrational offsets avoid a visible grid and allow deterministic fixed-value test generators to progress past blocked candidates.
+
+A city requires four units of separation from every existing city home, 2.3 units from deposits, and 3.5 units from camps, sacred sites, gates, beacons, strongholds and ancient findings. Existing legacy cities retain their coordinates even when they are closer together. Candidate points must have reachable wood, food and gold within 17 units and a reachable level-one camp within 23 units. All current starting land is navigable; no alliance gate access is needed. New city rejection returns HTTP 503 with a useful no-starting-land message after the bounded search. The player/session is not inserted until a location succeeds; failed durable joins restore state through the existing transaction checkpoint.
+
+Reconnect is resolved before spawn selection. Save/restart never invokes spawning for existing cities. Kingdom occupancy is the kingdom's own players and permanent structures only. Schema remains 25 and protocol remains 16. No existing city, structure, save or port 8091 was modified.
+
+Verification: server/spawning.test.mjs has five tests: 24 deterministic full 32-city worlds (768 placements), a 240-first-city distribution check covering all four starter quadrants, repeated seeded replay, spacing and starter-content route checks, legacy save/reconnect, full-land rejection, failed-save rollback and realm occupancy isolation. The full server suite passed 369 tests with five Windows-inapplicable Linux packaging tests skipped (374 total). The 22-command publication plan passed. Unity was not compiled for this server-only checkpoint.
+
+Earlier scenario tests intentionally author the legacy starting arrangement through server/testing/kingdom-fixture.mjs. This preserves their opening-path and fog timing inputs; production spawning is tested separately with real World instances. The older two-player proof also uses that explicitly authored starting arrangement. The HTTP state-isolation test now reads each city through its own token, because random separation can correctly hide the other city.
+
+Population remains 32. Expanding starting regions, population configuration, map content and fog belongs to checkpoint B; the current change does not claim larger-world capacity or friend connectivity.
