@@ -1,0 +1,7829 @@
+{
+  "engine": "Production World.command + World.tick(0.25); authored deterministic combat fixtures",
+  "randomPolicy": "Fixed .25 for reproducible loot; does not estimate drop frequencies",
+  "assumptions": "Infantry composition; source recommendations are not guaranteed minimums. Missing NPC counts inferred. Higher/lower-tier boundary cases clamp at T5/T1. Original ToM commander abilities and aggregate equation.",
+  "rows": [
+    {
+      "level": 1,
+      "variant": "recommended",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 900,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 113400,
+      "remainingHealth": 94800,
+      "wounded": 0,
+      "remainingTroops": 900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 100,
+      "resources": {
+        "food": 0,
+        "wood": 2000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 1,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 90000,
+      "damageTaken": 18600
+    },
+    {
+      "level": 1,
+      "variant": "half",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 450,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 43.25,
+      "initialHealth": 56700,
+      "remainingHealth": 1,
+      "wounded": 112,
+      "remainingTroops": 338,
+      "apCharged": 50,
+      "netAPSpent": 49,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 68728,
+      "damageTaken": 56700
+    },
+    {
+      "level": 1,
+      "variant": "more",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 1080,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 23.25,
+      "initialHealth": 136080,
+      "remainingHealth": 119805,
+      "wounded": 0,
+      "remainingTroops": 1080,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 100,
+      "resources": {
+        "food": 0,
+        "wood": 2000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 1,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 90000,
+      "damageTaken": 16275
+    },
+    {
+      "level": 1,
+      "variant": "strong-commander",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 900,
+      "attackerTier": 1,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 6.25,
+      "initialHealth": 124200,
+      "remainingHealth": 110250,
+      "wounded": 0,
+      "remainingTroops": 900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 100,
+      "resources": {
+        "food": 0,
+        "wood": 2000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 1,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 90000,
+      "damageTaken": 13950
+    },
+    {
+      "level": 1,
+      "variant": "higher-tier",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 900,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 118125,
+      "remainingHealth": 106965,
+      "wounded": 0,
+      "remainingTroops": 900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 100,
+      "resources": {
+        "food": 0,
+        "wood": 2000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 1,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 90000,
+      "damageTaken": 11160
+    },
+    {
+      "level": 1,
+      "variant": "lower-tier",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 900,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 113400,
+      "remainingHealth": 94800,
+      "wounded": 0,
+      "remainingTroops": 900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 100,
+      "resources": {
+        "food": 0,
+        "wood": 2000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 1,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 90000,
+      "damageTaken": 18600
+    },
+    {
+      "level": 1,
+      "variant": "technology",
+      "enemyPower": 550,
+      "enemyTroops": 750,
+      "enemyComposition": {
+        "infantry": 750
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 900,
+      "recommendedTier": 1,
+      "attackerTroops": 900,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 25.25,
+      "initialHealth": 130410,
+      "remainingHealth": 111810,
+      "wounded": 0,
+      "remainingTroops": 900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 100,
+      "resources": {
+        "food": 0,
+        "wood": 2000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 1,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 90000,
+      "damageTaken": 18600
+    },
+    {
+      "level": 2,
+      "variant": "recommended",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 1100,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 138600,
+      "remainingHealth": 116280,
+      "wounded": 0,
+      "remainingTroops": 1100,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 200,
+      "resources": {
+        "food": 0,
+        "wood": 4000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 2,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 108000,
+      "damageTaken": 22320
+    },
+    {
+      "level": 2,
+      "variant": "half",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 550,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 47.25,
+      "initialHealth": 69300,
+      "remainingHealth": 1,
+      "wounded": 137,
+      "remainingTroops": 413,
+      "apCharged": 50,
+      "netAPSpent": 49,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 91680,
+      "damageTaken": 69300
+    },
+    {
+      "level": 2,
+      "variant": "more",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 1320,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 23.25,
+      "initialHealth": 166320,
+      "remainingHealth": 146790,
+      "wounded": 0,
+      "remainingTroops": 1320,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 200,
+      "resources": {
+        "food": 0,
+        "wood": 4000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 2,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 108000,
+      "damageTaken": 19530
+    },
+    {
+      "level": 2,
+      "variant": "strong-commander",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 1100,
+      "attackerTier": 1,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 6.25,
+      "initialHealth": 151800,
+      "remainingHealth": 135060,
+      "wounded": 0,
+      "remainingTroops": 1100,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 200,
+      "resources": {
+        "food": 0,
+        "wood": 4000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 2,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 108000,
+      "damageTaken": 16740
+    },
+    {
+      "level": 2,
+      "variant": "higher-tier",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 1100,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 144375,
+      "remainingHealth": 130983.00000000003,
+      "wounded": 0,
+      "remainingTroops": 1100,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 200,
+      "resources": {
+        "food": 0,
+        "wood": 4000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 2,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 108000,
+      "damageTaken": 13392
+    },
+    {
+      "level": 2,
+      "variant": "lower-tier",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 1100,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 138600,
+      "remainingHealth": 116280,
+      "wounded": 0,
+      "remainingTroops": 1100,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 200,
+      "resources": {
+        "food": 0,
+        "wood": 4000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 2,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 108000,
+      "damageTaken": 22320
+    },
+    {
+      "level": 2,
+      "variant": "technology",
+      "enemyPower": 650,
+      "enemyTroops": 900,
+      "enemyComposition": {
+        "infantry": 900
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1100,
+      "recommendedTier": 1,
+      "attackerTroops": 1100,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 24.25,
+      "initialHealth": 159390,
+      "remainingHealth": 137070,
+      "wounded": 0,
+      "remainingTroops": 1100,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 200,
+      "resources": {
+        "food": 0,
+        "wood": 4000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 2,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 108000,
+      "damageTaken": 22320
+    },
+    {
+      "level": 3,
+      "variant": "recommended",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 1200,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 151200,
+      "remainingHealth": 126400,
+      "wounded": 0,
+      "remainingTroops": 1200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 300,
+      "resources": {
+        "food": 0,
+        "wood": 6000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 3,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 120000,
+      "damageTaken": 24800
+    },
+    {
+      "level": 3,
+      "variant": "half",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 600,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 43.25,
+      "initialHealth": 75600,
+      "remainingHealth": 1,
+      "wounded": 150,
+      "remainingTroops": 450,
+      "apCharged": 50,
+      "netAPSpent": 49,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 91652,
+      "damageTaken": 75600
+    },
+    {
+      "level": 3,
+      "variant": "more",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 1440,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 23.25,
+      "initialHealth": 181440,
+      "remainingHealth": 159740,
+      "wounded": 0,
+      "remainingTroops": 1440,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 300,
+      "resources": {
+        "food": 0,
+        "wood": 6000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 3,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 120000,
+      "damageTaken": 21700
+    },
+    {
+      "level": 3,
+      "variant": "strong-commander",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 1200,
+      "attackerTier": 1,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 6.25,
+      "initialHealth": 165600,
+      "remainingHealth": 147000,
+      "wounded": 0,
+      "remainingTroops": 1200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 300,
+      "resources": {
+        "food": 0,
+        "wood": 6000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 3,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 120000,
+      "damageTaken": 18600
+    },
+    {
+      "level": 3,
+      "variant": "higher-tier",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 1200,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 157500,
+      "remainingHealth": 142620,
+      "wounded": 0,
+      "remainingTroops": 1200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 300,
+      "resources": {
+        "food": 0,
+        "wood": 6000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 3,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 120000,
+      "damageTaken": 14880
+    },
+    {
+      "level": 3,
+      "variant": "lower-tier",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 1200,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 151200,
+      "remainingHealth": 126400,
+      "wounded": 0,
+      "remainingTroops": 1200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 300,
+      "resources": {
+        "food": 0,
+        "wood": 6000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 3,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 120000,
+      "damageTaken": 24800
+    },
+    {
+      "level": 3,
+      "variant": "technology",
+      "enemyPower": 750,
+      "enemyTroops": 1000,
+      "enemyComposition": {
+        "infantry": 1000
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1200,
+      "recommendedTier": 1,
+      "attackerTroops": 1200,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 25.25,
+      "initialHealth": 173880,
+      "remainingHealth": 149080,
+      "wounded": 0,
+      "remainingTroops": 1200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 300,
+      "resources": {
+        "food": 0,
+        "wood": 6000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 3,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 120000,
+      "damageTaken": 24800
+    },
+    {
+      "level": 4,
+      "variant": "recommended",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 1400,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 27.25,
+      "initialHealth": 176400,
+      "remainingHealth": 149120,
+      "wounded": 0,
+      "remainingTroops": 1400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 400,
+      "resources": {
+        "food": 0,
+        "wood": 8000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 4,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 132000,
+      "damageTaken": 27280
+    },
+    {
+      "level": 4,
+      "variant": "half",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 700,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 51.25,
+      "initialHealth": 88200,
+      "remainingHealth": 1,
+      "wounded": 175,
+      "remainingTroops": 525,
+      "apCharged": 50,
+      "netAPSpent": 49,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 126360,
+      "damageTaken": 88200
+    },
+    {
+      "level": 4,
+      "variant": "more",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 1680,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 211680,
+      "remainingHealth": 187810,
+      "wounded": 0,
+      "remainingTroops": 1680,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 400,
+      "resources": {
+        "food": 0,
+        "wood": 8000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 4,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 132000,
+      "damageTaken": 23870
+    },
+    {
+      "level": 4,
+      "variant": "strong-commander",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 1400,
+      "attackerTier": 1,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 5.25,
+      "initialHealth": 193200,
+      "remainingHealth": 176150,
+      "wounded": 0,
+      "remainingTroops": 1400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 400,
+      "resources": {
+        "food": 0,
+        "wood": 8000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 4,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 132000,
+      "damageTaken": 17050
+    },
+    {
+      "level": 4,
+      "variant": "higher-tier",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 1400,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 183750,
+      "remainingHealth": 167381.99999999997,
+      "wounded": 0,
+      "remainingTroops": 1400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 400,
+      "resources": {
+        "food": 0,
+        "wood": 8000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 4,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 132000,
+      "damageTaken": 16368
+    },
+    {
+      "level": 4,
+      "variant": "lower-tier",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 1400,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 27.25,
+      "initialHealth": 176400,
+      "remainingHealth": 149120,
+      "wounded": 0,
+      "remainingTroops": 1400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 400,
+      "resources": {
+        "food": 0,
+        "wood": 8000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 4,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 132000,
+      "damageTaken": 27280
+    },
+    {
+      "level": 4,
+      "variant": "technology",
+      "enemyPower": 800,
+      "enemyTroops": 1100,
+      "enemyComposition": {
+        "infantry": 1100
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1400,
+      "recommendedTier": 1,
+      "attackerTroops": 1400,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 23.25,
+      "initialHealth": 202860,
+      "remainingHealth": 178990,
+      "wounded": 0,
+      "remainingTroops": 1400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 400,
+      "resources": {
+        "food": 0,
+        "wood": 8000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 4,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 132000,
+      "damageTaken": 23870
+    },
+    {
+      "level": 5,
+      "variant": "recommended",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 1800,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 226800,
+      "remainingHealth": 189600,
+      "wounded": 0,
+      "remainingTroops": 1800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 500,
+      "resources": {
+        "food": 0,
+        "wood": 10000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 5,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 180000,
+      "damageTaken": 37200
+    },
+    {
+      "level": 5,
+      "variant": "half",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 900,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 43.25,
+      "initialHealth": 113400,
+      "remainingHealth": 1,
+      "wounded": 225,
+      "remainingTroops": 675,
+      "apCharged": 50,
+      "netAPSpent": 49,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 137500,
+      "damageTaken": 113400
+    },
+    {
+      "level": 5,
+      "variant": "more",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 2160,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 23.25,
+      "initialHealth": 272160,
+      "remainingHealth": 239610,
+      "wounded": 0,
+      "remainingTroops": 2160,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 500,
+      "resources": {
+        "food": 0,
+        "wood": 10000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 5,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 180000,
+      "damageTaken": 32550
+    },
+    {
+      "level": 5,
+      "variant": "strong-commander",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 1800,
+      "attackerTier": 1,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 6.25,
+      "initialHealth": 248400,
+      "remainingHealth": 220500,
+      "wounded": 0,
+      "remainingTroops": 1800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 500,
+      "resources": {
+        "food": 0,
+        "wood": 10000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 5,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 180000,
+      "damageTaken": 27900
+    },
+    {
+      "level": 5,
+      "variant": "higher-tier",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 1800,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 236250,
+      "remainingHealth": 213930,
+      "wounded": 0,
+      "remainingTroops": 1800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 500,
+      "resources": {
+        "food": 0,
+        "wood": 10000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 5,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 180000,
+      "damageTaken": 22320
+    },
+    {
+      "level": 5,
+      "variant": "lower-tier",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 1800,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 28.25,
+      "initialHealth": 226800,
+      "remainingHealth": 189600,
+      "wounded": 0,
+      "remainingTroops": 1800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 500,
+      "resources": {
+        "food": 0,
+        "wood": 10000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 5,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 180000,
+      "damageTaken": 37200
+    },
+    {
+      "level": 5,
+      "variant": "technology",
+      "enemyPower": 1100,
+      "enemyTroops": 1500,
+      "enemyComposition": {
+        "infantry": 1500
+      },
+      "enemyTier": 1,
+      "recommendedTroops": 1800,
+      "recommendedTier": 1,
+      "attackerTroops": 1800,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 25.25,
+      "initialHealth": 260820,
+      "remainingHealth": 223620,
+      "wounded": 0,
+      "remainingTroops": 1800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 500,
+      "resources": {
+        "food": 0,
+        "wood": 10000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 5,
+        "universal-minute": 1
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 180000,
+      "damageTaken": 37200
+    },
+    {
+      "level": 6,
+      "variant": "recommended",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 2400,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 315000,
+      "remainingHealth": 205968,
+      "wounded": 0,
+      "remainingTroops": 2400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 600,
+      "resources": {
+        "food": 0,
+        "wood": 12000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 6,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 250000,
+      "damageTaken": 109032
+    },
+    {
+      "level": 6,
+      "variant": "half",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 1200,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 157500,
+      "remainingHealth": 1,
+      "wounded": 300,
+      "remainingTroops": 900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 147390,
+      "damageTaken": 157500
+    },
+    {
+      "level": 6,
+      "variant": "more",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 2880,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 378000,
+      "remainingHealth": 305208,
+      "wounded": 0,
+      "remainingTroops": 2880,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 600,
+      "resources": {
+        "food": 0,
+        "wood": 12000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 6,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 250000,
+      "damageTaken": 72792
+    },
+    {
+      "level": 6,
+      "variant": "strong-commander",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 2400,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 345000,
+      "remainingHealth": 295848,
+      "wounded": 0,
+      "remainingTroops": 2400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 600,
+      "resources": {
+        "food": 0,
+        "wood": 12000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 6,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 250000,
+      "damageTaken": 49152
+    },
+    {
+      "level": 6,
+      "variant": "higher-tier",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 2400,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 390600,
+      "remainingHealth": 341992.4050632911,
+      "wounded": 0,
+      "remainingTroops": 2400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 600,
+      "resources": {
+        "food": 0,
+        "wood": 12000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 6,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 250000,
+      "damageTaken": 48607.59493670886
+    },
+    {
+      "level": 6,
+      "variant": "lower-tier",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 2400,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 302400,
+      "remainingHealth": 82400,
+      "wounded": 0,
+      "remainingTroops": 2400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 600,
+      "resources": {
+        "food": 0,
+        "wood": 12000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 6,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 250000,
+      "damageTaken": 220000
+    },
+    {
+      "level": 6,
+      "variant": "technology",
+      "enemyPower": 1800,
+      "enemyTroops": 2000,
+      "enemyComposition": {
+        "infantry": 2000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 2400,
+      "recommendedTier": 2,
+      "attackerTroops": 2400,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 362250,
+      "remainingHealth": 274956,
+      "wounded": 0,
+      "remainingTroops": 2400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 600,
+      "resources": {
+        "food": 0,
+        "wood": 12000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 6,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 250000,
+      "damageTaken": 87294
+    },
+    {
+      "level": 7,
+      "variant": "recommended",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 3900,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 511875,
+      "remainingHealth": 338999.80000000005,
+      "wounded": 0,
+      "remainingTroops": 3900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 700,
+      "resources": {
+        "food": 0,
+        "wood": 14000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 7,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 400000,
+      "damageTaken": 172875.19999999998
+    },
+    {
+      "level": 7,
+      "variant": "half",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 1950,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 255938,
+      "remainingHealth": 1,
+      "wounded": 487,
+      "remainingTroops": 1463,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 239513,
+      "damageTaken": 255938
+    },
+    {
+      "level": 7,
+      "variant": "more",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 4680,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 614250,
+      "remainingHealth": 498727.7999999998,
+      "wounded": 0,
+      "remainingTroops": 4680,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 700,
+      "resources": {
+        "food": 0,
+        "wood": 14000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 7,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 400000,
+      "damageTaken": 115522.2
+    },
+    {
+      "level": 7,
+      "variant": "strong-commander",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 3900,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 560625,
+      "remainingHealth": 481981.8,
+      "wounded": 0,
+      "remainingTroops": 3900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 700,
+      "resources": {
+        "food": 0,
+        "wood": 14000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 7,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 400000,
+      "damageTaken": 78643.2
+    },
+    {
+      "level": 7,
+      "variant": "higher-tier",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 3900,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 634725,
+      "remainingHealth": 556952.8481012658,
+      "wounded": 0,
+      "remainingTroops": 3900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 700,
+      "resources": {
+        "food": 0,
+        "wood": 14000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 7,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 400000,
+      "damageTaken": 77772.15189873418
+    },
+    {
+      "level": 7,
+      "variant": "lower-tier",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 3900,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 30.25,
+      "initialHealth": 491400,
+      "remainingHealth": 143180,
+      "wounded": 0,
+      "remainingTroops": 3900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 700,
+      "resources": {
+        "food": 0,
+        "wood": 14000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 7,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 400000,
+      "damageTaken": 348220
+    },
+    {
+      "level": 7,
+      "variant": "technology",
+      "enemyPower": 3600,
+      "enemyTroops": 3200,
+      "enemyComposition": {
+        "infantry": 3200
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 3900,
+      "recommendedTier": 2,
+      "attackerTroops": 3900,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 588656,
+      "remainingHealth": 470458.39999999985,
+      "wounded": 0,
+      "remainingTroops": 3900,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 700,
+      "resources": {
+        "food": 0,
+        "wood": 14000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 7,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 400000,
+      "damageTaken": 118197.6
+    },
+    {
+      "level": 8,
+      "variant": "recommended",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 5800,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 761250,
+      "remainingHealth": 500623.20000000036,
+      "wounded": 0,
+      "remainingTroops": 5800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 800,
+      "resources": {
+        "food": 0,
+        "wood": 16000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 8,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 5
+        }
+      },
+      "damageDealt": 600000,
+      "damageTaken": 260626.8
+    },
+    {
+      "level": 8,
+      "variant": "half",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 2900,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 380625,
+      "remainingHealth": 1,
+      "wounded": 725,
+      "remainingTroops": 2175,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 356201,
+      "damageTaken": 380624.99999999994
+    },
+    {
+      "level": 8,
+      "variant": "more",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 6960,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 913500,
+      "remainingHealth": 739429.2000000002,
+      "wounded": 0,
+      "remainingTroops": 6960,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 800,
+      "resources": {
+        "food": 0,
+        "wood": 16000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 8,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 5
+        }
+      },
+      "damageDealt": 600000,
+      "damageTaken": 174070.8
+    },
+    {
+      "level": 8,
+      "variant": "strong-commander",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 5800,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 833750,
+      "remainingHealth": 715785.2000000002,
+      "wounded": 0,
+      "remainingTroops": 5800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 800,
+      "resources": {
+        "food": 0,
+        "wood": 16000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 8,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 5
+        }
+      },
+      "damageDealt": 600000,
+      "damageTaken": 117964.79999999999
+    },
+    {
+      "level": 8,
+      "variant": "higher-tier",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 5800,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 943950,
+      "remainingHealth": 827291.7721518985,
+      "wounded": 0,
+      "remainingTroops": 5800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 800,
+      "resources": {
+        "food": 0,
+        "wood": 16000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 8,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 5
+        }
+      },
+      "damageDealt": 600000,
+      "damageTaken": 116658.22784810126
+    },
+    {
+      "level": 8,
+      "variant": "lower-tier",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 5800,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 730800,
+      "remainingHealth": 205320,
+      "wounded": 0,
+      "remainingTroops": 5800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 800,
+      "resources": {
+        "food": 0,
+        "wood": 16000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 8,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 5
+        }
+      },
+      "damageDealt": 600000,
+      "damageTaken": 525480
+    },
+    {
+      "level": 8,
+      "variant": "technology",
+      "enemyPower": 6500,
+      "enemyTroops": 4800,
+      "enemyComposition": {
+        "infantry": 4800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 5800,
+      "recommendedTier": 2,
+      "attackerTroops": 5800,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 875437,
+      "remainingHealth": 667139.4000000004,
+      "wounded": 0,
+      "remainingTroops": 5800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 800,
+      "resources": {
+        "food": 0,
+        "wood": 16000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 8,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 5
+        }
+      },
+      "damageDealt": 600000,
+      "damageTaken": 208297.59999999998
+    },
+    {
+      "level": 9,
+      "variant": "recommended",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 8200,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 1076250,
+      "remainingHealth": 706591.2000000004,
+      "wounded": 0,
+      "remainingTroops": 8200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 900,
+      "resources": {
+        "food": 0,
+        "wood": 18000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 9,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 850000,
+      "damageTaken": 369658.8
+    },
+    {
+      "level": 9,
+      "variant": "half",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 4100,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 538125,
+      "remainingHealth": 1,
+      "wounded": 1025,
+      "remainingTroops": 3075,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 503608,
+      "damageTaken": 538124.9999999999
+    },
+    {
+      "level": 9,
+      "variant": "more",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 9840,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 1291500,
+      "remainingHealth": 1044637.2000000002,
+      "wounded": 0,
+      "remainingTroops": 9840,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 900,
+      "resources": {
+        "food": 0,
+        "wood": 18000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 9,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 850000,
+      "damageTaken": 246862.8
+    },
+    {
+      "level": 9,
+      "variant": "strong-commander",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 8200,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 1178750,
+      "remainingHealth": 1011633.2000000002,
+      "wounded": 0,
+      "remainingTroops": 8200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 900,
+      "resources": {
+        "food": 0,
+        "wood": 18000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 9,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 850000,
+      "damageTaken": 167116.8
+    },
+    {
+      "level": 9,
+      "variant": "higher-tier",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 8200,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 1334550,
+      "remainingHealth": 1169284.1772151901,
+      "wounded": 0,
+      "remainingTroops": 8200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 900,
+      "resources": {
+        "food": 0,
+        "wood": 18000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 9,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 850000,
+      "damageTaken": 165265.82278481015
+    },
+    {
+      "level": 9,
+      "variant": "lower-tier",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 8200,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 1033200,
+      "remainingHealth": 287720,
+      "wounded": 0,
+      "remainingTroops": 8200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 900,
+      "resources": {
+        "food": 0,
+        "wood": 18000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 9,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 850000,
+      "damageTaken": 745480
+    },
+    {
+      "level": 9,
+      "variant": "technology",
+      "enemyPower": 14000,
+      "enemyTroops": 6800,
+      "enemyComposition": {
+        "infantry": 6800
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 8200,
+      "recommendedTier": 2,
+      "attackerTroops": 8200,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 1237688,
+      "remainingHealth": 942096.4000000003,
+      "wounded": 0,
+      "remainingTroops": 8200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 900,
+      "resources": {
+        "food": 0,
+        "wood": 18000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 9,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 850000,
+      "damageTaken": 295591.6
+    },
+    {
+      "level": 10,
+      "variant": "recommended",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 12000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 1575000,
+      "remainingHealth": 1029840,
+      "wounded": 0,
+      "remainingTroops": 12000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1000,
+      "resources": {
+        "food": 0,
+        "wood": 20000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 10,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1250000,
+      "damageTaken": 545160
+    },
+    {
+      "level": 10,
+      "variant": "half",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 6000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 787500,
+      "remainingHealth": 1,
+      "wounded": 1500,
+      "remainingTroops": 4500,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 736984,
+      "damageTaken": 787500
+    },
+    {
+      "level": 10,
+      "variant": "more",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 14400,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 1890000,
+      "remainingHealth": 1526040,
+      "wounded": 0,
+      "remainingTroops": 14400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1000,
+      "resources": {
+        "food": 0,
+        "wood": 20000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 10,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1250000,
+      "damageTaken": 363960
+    },
+    {
+      "level": 10,
+      "variant": "strong-commander",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 12000,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 1725000,
+      "remainingHealth": 1479240,
+      "wounded": 0,
+      "remainingTroops": 12000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1000,
+      "resources": {
+        "food": 0,
+        "wood": 20000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 10,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1250000,
+      "damageTaken": 245760
+    },
+    {
+      "level": 10,
+      "variant": "higher-tier",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 12000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 1953000,
+      "remainingHealth": 1709962.0253164554,
+      "wounded": 0,
+      "remainingTroops": 12000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1000,
+      "resources": {
+        "food": 0,
+        "wood": 20000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 10,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1250000,
+      "damageTaken": 243037.9746835443
+    },
+    {
+      "level": 10,
+      "variant": "lower-tier",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 12000,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 1512000,
+      "remainingHealth": 412000,
+      "wounded": 0,
+      "remainingTroops": 12000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1000,
+      "resources": {
+        "food": 0,
+        "wood": 20000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 10,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1250000,
+      "damageTaken": 1100000
+    },
+    {
+      "level": 10,
+      "variant": "technology",
+      "enemyPower": 38000,
+      "enemyTroops": 10000,
+      "enemyComposition": {
+        "infantry": 10000
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 12000,
+      "recommendedTier": 2,
+      "attackerTroops": 12000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 1811250,
+      "remainingHealth": 1374780,
+      "wounded": 0,
+      "remainingTroops": 12000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1000,
+      "resources": {
+        "food": 0,
+        "wood": 20000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 10,
+        "universal-minute": 2
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1250000,
+      "damageTaken": 436470
+    },
+    {
+      "level": 11,
+      "variant": "recommended",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 17000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 2231250,
+      "remainingHealth": 1458911.3280000002,
+      "wounded": 0,
+      "remainingTroops": 17000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1100,
+      "resources": {
+        "food": 0,
+        "wood": 22000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 11,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1770875,
+      "damageTaken": 772338.6719999999
+    },
+    {
+      "level": 11,
+      "variant": "half",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 8500,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 1115625,
+      "remainingHealth": 1,
+      "wounded": 2125,
+      "remainingTroops": 6375,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 1044055,
+      "damageTaken": 1115625
+    },
+    {
+      "level": 11,
+      "variant": "more",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 20400,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 2677500,
+      "remainingHealth": 2161871.5680000004,
+      "wounded": 0,
+      "remainingTroops": 20400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1100,
+      "resources": {
+        "food": 0,
+        "wood": 22000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 11,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1770875,
+      "damageTaken": 515628.432
+    },
+    {
+      "level": 11,
+      "variant": "strong-commander",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 17000,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 2443750,
+      "remainingHealth": 2095581.8080000002,
+      "wounded": 0,
+      "remainingTroops": 17000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1100,
+      "resources": {
+        "food": 0,
+        "wood": 22000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 11,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1770875,
+      "damageTaken": 348168.192
+    },
+    {
+      "level": 11,
+      "variant": "higher-tier",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 17000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 2766750,
+      "remainingHealth": 2422438.1012658216,
+      "wounded": 0,
+      "remainingTroops": 17000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1100,
+      "resources": {
+        "food": 0,
+        "wood": 22000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 11,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1770875,
+      "damageTaken": 344311.89873417723
+    },
+    {
+      "level": 11,
+      "variant": "lower-tier",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 17000,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 2142000,
+      "remainingHealth": 583604.7999999996,
+      "wounded": 0,
+      "remainingTroops": 17000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1100,
+      "resources": {
+        "food": 0,
+        "wood": 22000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 11,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1770875,
+      "damageTaken": 1558395.2000000002
+    },
+    {
+      "level": 11,
+      "variant": "technology",
+      "enemyPower": 88000,
+      "enemyTroops": 14167,
+      "enemyComposition": {
+        "infantry": 14167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 17000,
+      "recommendedTier": 2,
+      "attackerTroops": 17000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 2565938,
+      "remainingHealth": 1947579.3760000004,
+      "wounded": 0,
+      "remainingTroops": 17000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1100,
+      "resources": {
+        "food": 0,
+        "wood": 22000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 11,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1770875,
+      "damageTaken": 618358.624
+    },
+    {
+      "level": 12,
+      "variant": "recommended",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 19000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 2493750,
+      "remainingHealth": 1630608.6719999998,
+      "wounded": 0,
+      "remainingTroops": 19000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1200,
+      "resources": {
+        "food": 0,
+        "wood": 24000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 12,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1979125,
+      "damageTaken": 863141.3280000002
+    },
+    {
+      "level": 12,
+      "variant": "half",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 9500,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 1246875,
+      "remainingHealth": 1,
+      "wounded": 2375,
+      "remainingTroops": 7125,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 1166897,
+      "damageTaken": 1246875
+    },
+    {
+      "level": 12,
+      "variant": "more",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 22800,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 2992500,
+      "remainingHealth": 2416248.4319999996,
+      "wounded": 0,
+      "remainingTroops": 22800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1200,
+      "resources": {
+        "food": 0,
+        "wood": 24000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 12,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1979125,
+      "damageTaken": 576251.5680000001
+    },
+    {
+      "level": 12,
+      "variant": "strong-commander",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 19000,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 2731250,
+      "remainingHealth": 2342138.192,
+      "wounded": 0,
+      "remainingTroops": 19000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1200,
+      "resources": {
+        "food": 0,
+        "wood": 24000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 12,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1979125,
+      "damageTaken": 389111.808
+    },
+    {
+      "level": 12,
+      "variant": "higher-tier",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 19000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 3092250,
+      "remainingHealth": 2707447.9746835446,
+      "wounded": 0,
+      "remainingTroops": 19000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1200,
+      "resources": {
+        "food": 0,
+        "wood": 24000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 12,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1979125,
+      "damageTaken": 384802.02531645575
+    },
+    {
+      "level": 12,
+      "variant": "lower-tier",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 19000,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 2394000,
+      "remainingHealth": 652395.1999999997,
+      "wounded": 0,
+      "remainingTroops": 19000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1200,
+      "resources": {
+        "food": 0,
+        "wood": 24000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 12,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1979125,
+      "damageTaken": 1741604.8
+    },
+    {
+      "level": 12,
+      "variant": "technology",
+      "enemyPower": 130000,
+      "enemyTroops": 15833,
+      "enemyComposition": {
+        "infantry": 15833
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 19000,
+      "recommendedTier": 2,
+      "attackerTroops": 19000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 2867813,
+      "remainingHealth": 2176761.6239999994,
+      "wounded": 0,
+      "remainingTroops": 19000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1200,
+      "resources": {
+        "food": 0,
+        "wood": 24000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 12,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 1979125,
+      "damageTaken": 691051.376
+    },
+    {
+      "level": 13,
+      "variant": "recommended",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 29000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 3806250,
+      "remainingHealth": 2488751.3280000007,
+      "wounded": 0,
+      "remainingTroops": 29000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1300,
+      "resources": {
+        "food": 0,
+        "wood": 26000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 13,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3020875,
+      "damageTaken": 1317498.672
+    },
+    {
+      "level": 13,
+      "variant": "half",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 14500,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 1903125,
+      "remainingHealth": 1,
+      "wounded": 3625,
+      "remainingTroops": 10875,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 1781039,
+      "damageTaken": 1903125
+    },
+    {
+      "level": 13,
+      "variant": "more",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 34800,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 4567500,
+      "remainingHealth": 3687911.5679999995,
+      "wounded": 0,
+      "remainingTroops": 34800,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1300,
+      "resources": {
+        "food": 0,
+        "wood": 26000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 13,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3020875,
+      "damageTaken": 879588.432
+    },
+    {
+      "level": 13,
+      "variant": "strong-commander",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 29000,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 4168750,
+      "remainingHealth": 3574821.808,
+      "wounded": 0,
+      "remainingTroops": 29000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1300,
+      "resources": {
+        "food": 0,
+        "wood": 26000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 13,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3020875,
+      "damageTaken": 593928.192
+    },
+    {
+      "level": 13,
+      "variant": "higher-tier",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 29000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 4719750,
+      "remainingHealth": 4132400.1265822775,
+      "wounded": 0,
+      "remainingTroops": 29000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1300,
+      "resources": {
+        "food": 0,
+        "wood": 26000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 13,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3020875,
+      "damageTaken": 587349.8734177216
+    },
+    {
+      "level": 13,
+      "variant": "lower-tier",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 29000,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 3654000,
+      "remainingHealth": 995604.8000000012,
+      "wounded": 0,
+      "remainingTroops": 29000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1300,
+      "resources": {
+        "food": 0,
+        "wood": 26000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 13,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3020875,
+      "damageTaken": 2658395.2
+    },
+    {
+      "level": 13,
+      "variant": "technology",
+      "enemyPower": 190000,
+      "enemyTroops": 24167,
+      "enemyComposition": {
+        "infantry": 24167
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 29000,
+      "recommendedTier": 2,
+      "attackerTroops": 29000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 4377188,
+      "remainingHealth": 3322359.376,
+      "wounded": 0,
+      "remainingTroops": 29000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1300,
+      "resources": {
+        "food": 0,
+        "wood": 26000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 13,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3020875,
+      "damageTaken": 1054828.624
+    },
+    {
+      "level": 14,
+      "variant": "recommended",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 32000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 4200000,
+      "remainingHealth": 2746211.3280000007,
+      "wounded": 0,
+      "remainingTroops": 32000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1400,
+      "resources": {
+        "food": 0,
+        "wood": 28000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 14,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3333375,
+      "damageTaken": 1453788.672
+    },
+    {
+      "level": 14,
+      "variant": "half",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 16000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 2100000,
+      "remainingHealth": 1,
+      "wounded": 4000,
+      "remainingTroops": 12000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 1965302,
+      "damageTaken": 2100000
+    },
+    {
+      "level": 14,
+      "variant": "more",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 38400,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 5040000,
+      "remainingHealth": 4069421.5679999986,
+      "wounded": 0,
+      "remainingTroops": 38400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1400,
+      "resources": {
+        "food": 0,
+        "wood": 28000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 14,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3333375,
+      "damageTaken": 970578.432
+    },
+    {
+      "level": 14,
+      "variant": "strong-commander",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 32000,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 4600000,
+      "remainingHealth": 3944631.8079999993,
+      "wounded": 0,
+      "remainingTroops": 32000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1400,
+      "resources": {
+        "food": 0,
+        "wood": 28000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 14,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3333375,
+      "damageTaken": 655368.192
+    },
+    {
+      "level": 14,
+      "variant": "higher-tier",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 32000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 5208000,
+      "remainingHealth": 4559890.632911394,
+      "wounded": 0,
+      "remainingTroops": 32000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1400,
+      "resources": {
+        "food": 0,
+        "wood": 28000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 14,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3333375,
+      "damageTaken": 648109.3670886077
+    },
+    {
+      "level": 14,
+      "variant": "lower-tier",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 32000,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 4032000,
+      "remainingHealth": 1098604.8000000014,
+      "wounded": 0,
+      "remainingTroops": 32000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1400,
+      "resources": {
+        "food": 0,
+        "wood": 28000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 14,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3333375,
+      "damageTaken": 2933395.1999999997
+    },
+    {
+      "level": 14,
+      "variant": "technology",
+      "enemyPower": 300000,
+      "enemyTroops": 26667,
+      "enemyComposition": {
+        "infantry": 26667
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 32000,
+      "recommendedTier": 2,
+      "attackerTroops": 32000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 4830000,
+      "remainingHealth": 3666053.375999999,
+      "wounded": 0,
+      "remainingTroops": 32000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1400,
+      "resources": {
+        "food": 0,
+        "wood": 28000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 14,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 3333375,
+      "damageTaken": 1163946.624
+    },
+    {
+      "level": 15,
+      "variant": "recommended",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 40000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 5250000,
+      "remainingHealth": 3432828.6720000017,
+      "wounded": 0,
+      "remainingTroops": 40000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1500,
+      "resources": {
+        "food": 0,
+        "wood": 30000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 15,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 4166625,
+      "damageTaken": 1817171.328
+    },
+    {
+      "level": 15,
+      "variant": "half",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 20000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 16.25,
+      "initialHealth": 2625000,
+      "remainingHealth": 1,
+      "wounded": 5000,
+      "remainingTroops": 15000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 2456619,
+      "damageTaken": 2625000
+    },
+    {
+      "level": 15,
+      "variant": "more",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 48000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 12.25,
+      "initialHealth": 6300000,
+      "remainingHealth": 5086818.432000002,
+      "wounded": 0,
+      "remainingTroops": 48000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1500,
+      "resources": {
+        "food": 0,
+        "wood": 30000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 15,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 4166625,
+      "damageTaken": 1213181.568
+    },
+    {
+      "level": 15,
+      "variant": "strong-commander",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 40000,
+      "attackerTier": 2,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 5750000,
+      "remainingHealth": 4930808.192000002,
+      "wounded": 0,
+      "remainingTroops": 40000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1500,
+      "resources": {
+        "food": 0,
+        "wood": 30000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 15,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 4166625,
+      "damageTaken": 819191.808
+    },
+    {
+      "level": 15,
+      "variant": "higher-tier",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 40000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 11.25,
+      "initialHealth": 6510000,
+      "remainingHealth": 5699881.518987343,
+      "wounded": 0,
+      "remainingTroops": 40000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1500,
+      "resources": {
+        "food": 0,
+        "wood": 30000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 15,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 4166625,
+      "damageTaken": 810118.4810126583
+    },
+    {
+      "level": 15,
+      "variant": "lower-tier",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 40000,
+      "attackerTier": 1,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 0,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 31.25,
+      "initialHealth": 5040000,
+      "remainingHealth": 1373395.1999999976,
+      "wounded": 0,
+      "remainingTroops": 40000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1500,
+      "resources": {
+        "food": 0,
+        "wood": 30000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 15,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 4166625,
+      "damageTaken": 3666604.800000001
+    },
+    {
+      "level": 15,
+      "variant": "technology",
+      "enemyPower": 380000,
+      "enemyTroops": 33333,
+      "enemyComposition": {
+        "infantry": 33333
+      },
+      "enemyTier": 2,
+      "recommendedTroops": 40000,
+      "recommendedTier": 2,
+      "attackerTroops": 40000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 13.25,
+      "initialHealth": 6037500,
+      "remainingHealth": 4582626.624000004,
+      "wounded": 0,
+      "remainingTroops": 40000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1500,
+      "resources": {
+        "food": 0,
+        "wood": 30000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 15,
+        "universal-minute": 3
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 5
+        }
+      },
+      "damageDealt": 4166625,
+      "damageTaken": 1454873.376
+    },
+    {
+      "level": 16,
+      "variant": "recommended",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 58000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 17.25,
+      "initialHealth": 9439500,
+      "remainingHealth": 7167805.06329114,
+      "wounded": 0,
+      "remainingTroops": 58000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1600,
+      "resources": {
+        "food": 0,
+        "wood": 32000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 16,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 7440000,
+      "damageTaken": 2271694.936708861
+    },
+    {
+      "level": 16,
+      "variant": "half",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 29000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 22.25,
+      "initialHealth": 4719750,
+      "remainingHealth": 1,
+      "wounded": 7250,
+      "remainingTroops": 21750,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 4855277,
+      "damageTaken": 4719750.000000001
+    },
+    {
+      "level": 16,
+      "variant": "more",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 69600,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 11327400,
+      "remainingHealth": 9433285.06329114,
+      "wounded": 0,
+      "remainingTroops": 69600,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1600,
+      "resources": {
+        "food": 0,
+        "wood": 32000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 16,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 7440000,
+      "damageTaken": 1894114.9367088606
+    },
+    {
+      "level": 16,
+      "variant": "strong-commander",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 58000,
+      "attackerTier": 3,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 10338500,
+      "remainingHealth": 9150044.303797469,
+      "wounded": 0,
+      "remainingTroops": 58000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1600,
+      "resources": {
+        "food": 0,
+        "wood": 32000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 16,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 7440000,
+      "damageTaken": 1188455.6962025317
+    },
+    {
+      "level": 16,
+      "variant": "higher-tier",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 58000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 11388300,
+      "remainingHealth": 9921300,
+      "wounded": 0,
+      "remainingTroops": 58000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1600,
+      "resources": {
+        "food": 0,
+        "wood": 32000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 16,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 7440000,
+      "damageTaken": 1467000
+    },
+    {
+      "level": 16,
+      "variant": "lower-tier",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 58000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 7612500,
+      "remainingHealth": 2395356,
+      "wounded": 0,
+      "remainingTroops": 58000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1600,
+      "resources": {
+        "food": 0,
+        "wood": 32000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 16,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 7440000,
+      "damageTaken": 5217144
+    },
+    {
+      "level": 16,
+      "variant": "technology",
+      "enemyPower": 800000,
+      "enemyTroops": 48000,
+      "enemyComposition": {
+        "infantry": 48000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 58000,
+      "recommendedTier": 3,
+      "attackerTroops": 58000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 16.25,
+      "initialHealth": 10855425,
+      "remainingHealth": 8866916.06329114,
+      "wounded": 0,
+      "remainingTroops": 58000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1600,
+      "resources": {
+        "food": 0,
+        "wood": 32000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 16,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 7440000,
+      "damageTaken": 1988508.9367088608
+    },
+    {
+      "level": 17,
+      "variant": "recommended",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 68000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 17.25,
+      "initialHealth": 11067000,
+      "remainingHealth": 8427539.240506325,
+      "wounded": 0,
+      "remainingTroops": 68000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1700,
+      "resources": {
+        "food": 0,
+        "wood": 34000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 17,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 8680000,
+      "damageTaken": 2639460.759493672
+    },
+    {
+      "level": 17,
+      "variant": "half",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 34000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 22.25,
+      "initialHealth": 5533500,
+      "remainingHealth": 1,
+      "wounded": 8500,
+      "remainingTroops": 25500,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 5692408,
+      "damageTaken": 5533500
+    },
+    {
+      "level": 17,
+      "variant": "more",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 81600,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 13280400,
+      "remainingHealth": 11083619.240506325,
+      "wounded": 0,
+      "remainingTroops": 81600,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1700,
+      "resources": {
+        "food": 0,
+        "wood": 34000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 17,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 8680000,
+      "damageTaken": 2196780.759493672
+    },
+    {
+      "level": 17,
+      "variant": "strong-commander",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 68000,
+      "attackerTier": 3,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 12121000,
+      "remainingHealth": 10734468.354430377,
+      "wounded": 0,
+      "remainingTroops": 68000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1700,
+      "resources": {
+        "food": 0,
+        "wood": 34000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 17,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 8680000,
+      "damageTaken": 1386531.6455696204
+    },
+    {
+      "level": 17,
+      "variant": "higher-tier",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 68000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 13351800,
+      "remainingHealth": 11640300,
+      "wounded": 0,
+      "remainingTroops": 68000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1700,
+      "resources": {
+        "food": 0,
+        "wood": 34000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 17,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 8680000,
+      "damageTaken": 1711500
+    },
+    {
+      "level": 17,
+      "variant": "lower-tier",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 68000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 8925000,
+      "remainingHealth": 2855832,
+      "wounded": 0,
+      "remainingTroops": 68000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1700,
+      "resources": {
+        "food": 0,
+        "wood": 34000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 17,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 8680000,
+      "damageTaken": 6069168
+    },
+    {
+      "level": 17,
+      "variant": "technology",
+      "enemyPower": 1750000,
+      "enemyTroops": 56000,
+      "enemyComposition": {
+        "infantry": 56000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 68000,
+      "recommendedTier": 3,
+      "attackerTroops": 68000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 16.25,
+      "initialHealth": 12727050,
+      "remainingHealth": 10419599.240506325,
+      "wounded": 0,
+      "remainingTroops": 68000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1700,
+      "resources": {
+        "food": 0,
+        "wood": 34000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 17,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 8680000,
+      "damageTaken": 2307450.759493672
+    },
+    {
+      "level": 18,
+      "variant": "recommended",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 78000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 17.25,
+      "initialHealth": 12694500,
+      "remainingHealth": 9600615.18987342,
+      "wounded": 0,
+      "remainingTroops": 78000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1800,
+      "resources": {
+        "food": 0,
+        "wood": 36000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 18,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10075000,
+      "damageTaken": 3093884.8101265826
+    },
+    {
+      "level": 18,
+      "variant": "half",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 39000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 22.25,
+      "initialHealth": 6347250,
+      "remainingHealth": 1,
+      "wounded": 9750,
+      "remainingTroops": 29250,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 6529516,
+      "damageTaken": 6347250
+    },
+    {
+      "level": 18,
+      "variant": "more",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 93600,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 15233400,
+      "remainingHealth": 12647295.18987342,
+      "wounded": 0,
+      "remainingTroops": 93600,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1800,
+      "resources": {
+        "food": 0,
+        "wood": 36000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 18,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10075000,
+      "damageTaken": 2586104.8101265826
+    },
+    {
+      "level": 18,
+      "variant": "strong-commander",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 78000,
+      "attackerTier": 3,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 13903500,
+      "remainingHealth": 12294132.911392406,
+      "wounded": 0,
+      "remainingTroops": 78000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1800,
+      "resources": {
+        "food": 0,
+        "wood": 36000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 18,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10075000,
+      "damageTaken": 1609367.088607595
+    },
+    {
+      "level": 18,
+      "variant": "higher-tier",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 78000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 15.25,
+      "initialHealth": 15315300,
+      "remainingHealth": 13328737.5,
+      "wounded": 0,
+      "remainingTroops": 78000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1800,
+      "resources": {
+        "food": 0,
+        "wood": 36000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 18,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10075000,
+      "damageTaken": 1986562.5
+    },
+    {
+      "level": 18,
+      "variant": "lower-tier",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 78000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 10237500,
+      "remainingHealth": 3144180,
+      "wounded": 0,
+      "remainingTroops": 78000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1800,
+      "resources": {
+        "food": 0,
+        "wood": 36000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 18,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10075000,
+      "damageTaken": 7093320
+    },
+    {
+      "level": 18,
+      "variant": "technology",
+      "enemyPower": 2153000,
+      "enemyTroops": 65000,
+      "enemyComposition": {
+        "infantry": 65000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 78000,
+      "recommendedTier": 3,
+      "attackerTroops": 78000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 16.25,
+      "initialHealth": 14598675,
+      "remainingHealth": 11885626.18987342,
+      "wounded": 0,
+      "remainingTroops": 78000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1800,
+      "resources": {
+        "food": 0,
+        "wood": 36000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 18,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10075000,
+      "damageTaken": 2713048.8101265826
+    },
+    {
+      "level": 19,
+      "variant": "recommended",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 82000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 17.25,
+      "initialHealth": 13345500,
+      "remainingHealth": 10121840.506329115,
+      "wounded": 0,
+      "remainingTroops": 82000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1900,
+      "resources": {
+        "food": 0,
+        "wood": 38000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 19,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10540000,
+      "damageTaken": 3223659.493670887
+    },
+    {
+      "level": 19,
+      "variant": "half",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 41000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 22.25,
+      "initialHealth": 6672750,
+      "remainingHealth": 1,
+      "wounded": 10250,
+      "remainingTroops": 30750,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 6864373,
+      "damageTaken": 6672750
+    },
+    {
+      "level": 19,
+      "variant": "more",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 98400,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 16014600,
+      "remainingHealth": 13324760.506329115,
+      "wounded": 0,
+      "remainingTroops": 98400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1900,
+      "resources": {
+        "food": 0,
+        "wood": 38000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 19,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10540000,
+      "damageTaken": 2689839.493670887
+    },
+    {
+      "level": 19,
+      "variant": "strong-commander",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 82000,
+      "attackerTier": 3,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 14616500,
+      "remainingHealth": 12932854.430379748,
+      "wounded": 0,
+      "remainingTroops": 82000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1900,
+      "resources": {
+        "food": 0,
+        "wood": 38000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 19,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10540000,
+      "damageTaken": 1683645.5696202533
+    },
+    {
+      "level": 19,
+      "variant": "higher-tier",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 82000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 16100700,
+      "remainingHealth": 14022450,
+      "wounded": 0,
+      "remainingTroops": 82000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1900,
+      "resources": {
+        "food": 0,
+        "wood": 38000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 19,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10540000,
+      "damageTaken": 2078250
+    },
+    {
+      "level": 19,
+      "variant": "lower-tier",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 82000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 10762500,
+      "remainingHealth": 3362796,
+      "wounded": 0,
+      "remainingTroops": 82000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1900,
+      "resources": {
+        "food": 0,
+        "wood": 38000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 19,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10540000,
+      "damageTaken": 7399704
+    },
+    {
+      "level": 19,
+      "variant": "technology",
+      "enemyPower": 2538000,
+      "enemyTroops": 68000,
+      "enemyComposition": {
+        "infantry": 68000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 82000,
+      "recommendedTier": 3,
+      "attackerTroops": 82000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 16.25,
+      "initialHealth": 15347325,
+      "remainingHealth": 12524031.506329115,
+      "wounded": 0,
+      "remainingTroops": 82000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 1900,
+      "resources": {
+        "food": 0,
+        "wood": 38000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 19,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 10540000,
+      "damageTaken": 2823293.493670887
+    },
+    {
+      "level": 20,
+      "variant": "recommended",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 87000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 17.25,
+      "initialHealth": 14159250,
+      "remainingHealth": 10751707.59493671,
+      "wounded": 0,
+      "remainingTroops": 87000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2000,
+      "resources": {
+        "food": 0,
+        "wood": 40000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 20,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 11160000,
+      "damageTaken": 3407542.4050632915
+    },
+    {
+      "level": 20,
+      "variant": "half",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 43500,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 22.25,
+      "initialHealth": 7079625,
+      "remainingHealth": 1,
+      "wounded": 10875,
+      "remainingTroops": 32625,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 7282927,
+      "damageTaken": 7079625
+    },
+    {
+      "level": 20,
+      "variant": "more",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 104400,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 16991100,
+      "remainingHealth": 14149927.59493671,
+      "wounded": 0,
+      "remainingTroops": 104400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2000,
+      "resources": {
+        "food": 0,
+        "wood": 40000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 20,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 11160000,
+      "damageTaken": 2841172.4050632915
+    },
+    {
+      "level": 20,
+      "variant": "strong-commander",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 87000,
+      "attackerTier": 3,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 15507750,
+      "remainingHealth": 13725066.455696203,
+      "wounded": 0,
+      "remainingTroops": 87000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2000,
+      "resources": {
+        "food": 0,
+        "wood": 40000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 20,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 11160000,
+      "damageTaken": 1782683.5443037977
+    },
+    {
+      "level": 20,
+      "variant": "higher-tier",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 87000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 14.25,
+      "initialHealth": 17082450,
+      "remainingHealth": 14881950,
+      "wounded": 0,
+      "remainingTroops": 87000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2000,
+      "resources": {
+        "food": 0,
+        "wood": 40000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 20,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 11160000,
+      "damageTaken": 2200500
+    },
+    {
+      "level": 20,
+      "variant": "lower-tier",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 87000,
+      "attackerTier": 2,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 11418750,
+      "remainingHealth": 3593034,
+      "wounded": 0,
+      "remainingTroops": 87000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2000,
+      "resources": {
+        "food": 0,
+        "wood": 40000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 20,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 11160000,
+      "damageTaken": 7825716
+    },
+    {
+      "level": 20,
+      "variant": "technology",
+      "enemyPower": 2854000,
+      "enemyTroops": 72000,
+      "enemyComposition": {
+        "infantry": 72000
+      },
+      "enemyTier": 3,
+      "recommendedTroops": 87000,
+      "recommendedTier": 3,
+      "attackerTroops": 87000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 16.25,
+      "initialHealth": 16283137,
+      "remainingHealth": 13300372.59493671,
+      "wounded": 0,
+      "remainingTroops": 87000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2000,
+      "resources": {
+        "food": 0,
+        "wood": 40000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 20,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 11160000,
+      "damageTaken": 2982764.4050632915
+    },
+    {
+      "level": 21,
+      "variant": "recommended",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 92000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 21.25,
+      "initialHealth": 18064200,
+      "remainingHealth": 14819460,
+      "wounded": 0,
+      "remainingTroops": 92000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2100,
+      "resources": {
+        "food": 0,
+        "wood": 42000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 21,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14212000,
+      "damageTaken": 3244740.0000000005
+    },
+    {
+      "level": 21,
+      "variant": "half",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 46000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 31.25,
+      "initialHealth": 9032100,
+      "remainingHealth": 1,
+      "wounded": 11500,
+      "remainingTroops": 34500,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 10386432,
+      "damageTaken": 9032100.000000002
+    },
+    {
+      "level": 21,
+      "variant": "more",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 110400,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 18.25,
+      "initialHealth": 21677040,
+      "remainingHealth": 18941040,
+      "wounded": 0,
+      "remainingTroops": 110400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2100,
+      "resources": {
+        "food": 0,
+        "wood": 42000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 21,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14212000,
+      "damageTaken": 2736000.0000000005
+    },
+    {
+      "level": 21,
+      "variant": "strong-commander",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 92000,
+      "attackerTier": 4,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 19784600,
+      "remainingHealth": 17960600,
+      "wounded": 0,
+      "remainingTroops": 92000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2100,
+      "resources": {
+        "food": 0,
+        "wood": 42000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 21,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14212000,
+      "damageTaken": 1824000.0000000002
+    },
+    {
+      "level": 21,
+      "variant": "higher-tier",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 92000,
+      "attackerTier": 5,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 19.25,
+      "initialHealth": 20865600,
+      "remainingHealth": 17974732.07547171,
+      "wounded": 0,
+      "remainingTroops": 92000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2100,
+      "resources": {
+        "food": 0,
+        "wood": 42000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 21,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14212000,
+      "damageTaken": 2890867.924528302
+    },
+    {
+      "level": 21,
+      "variant": "lower-tier",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 92000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 25.25,
+      "initialHealth": 14973000,
+      "remainingHealth": 7663162.0253164545,
+      "wounded": 0,
+      "remainingTroops": 92000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2100,
+      "resources": {
+        "food": 0,
+        "wood": 42000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 21,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14212000,
+      "damageTaken": 7309837.974683545
+    },
+    {
+      "level": 21,
+      "variant": "technology",
+      "enemyPower": 4433000,
+      "enemyTroops": 76000,
+      "enemyComposition": {
+        "infantry": 76000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 92000,
+      "recommendedTier": 4,
+      "attackerTroops": 92000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 19.25,
+      "initialHealth": 20773830,
+      "remainingHealth": 17581830,
+      "wounded": 0,
+      "remainingTroops": 92000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2100,
+      "resources": {
+        "food": 0,
+        "wood": 42000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 21,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14212000,
+      "damageTaken": 3192000.0000000005
+    },
+    {
+      "level": 22,
+      "variant": "recommended",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 96000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 18849600,
+      "remainingHealth": 15384480,
+      "wounded": 0,
+      "remainingTroops": 96000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2200,
+      "resources": {
+        "food": 0,
+        "wood": 44000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 22,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14960000,
+      "damageTaken": 3465120.0000000005
+    },
+    {
+      "level": 22,
+      "variant": "half",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 48000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 31.25,
+      "initialHealth": 9424800,
+      "remainingHealth": 1,
+      "wounded": 12000,
+      "remainingTroops": 36000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 10838016,
+      "damageTaken": 9424800.000000002
+    },
+    {
+      "level": 22,
+      "variant": "more",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 115200,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 18.25,
+      "initialHealth": 22619520,
+      "remainingHealth": 19739520,
+      "wounded": 0,
+      "remainingTroops": 115200,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2200,
+      "resources": {
+        "food": 0,
+        "wood": 44000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 22,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14960000,
+      "damageTaken": 2880000.0000000005
+    },
+    {
+      "level": 22,
+      "variant": "strong-commander",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 96000,
+      "attackerTier": 4,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 20644800,
+      "remainingHealth": 18724800,
+      "wounded": 0,
+      "remainingTroops": 96000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2200,
+      "resources": {
+        "food": 0,
+        "wood": 44000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 22,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14960000,
+      "damageTaken": 1920000.0000000002
+    },
+    {
+      "level": 22,
+      "variant": "higher-tier",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 96000,
+      "attackerTier": 5,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 19.25,
+      "initialHealth": 21772800,
+      "remainingHealth": 18729781.132075474,
+      "wounded": 0,
+      "remainingTroops": 96000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2200,
+      "resources": {
+        "food": 0,
+        "wood": 44000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 22,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14960000,
+      "damageTaken": 3043018.867924529
+    },
+    {
+      "level": 22,
+      "variant": "lower-tier",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 96000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 26.25,
+      "initialHealth": 15624000,
+      "remainingHealth": 7874612.6582278395,
+      "wounded": 0,
+      "remainingTroops": 96000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2200,
+      "resources": {
+        "food": 0,
+        "wood": 44000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 22,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14960000,
+      "damageTaken": 7749387.341772153
+    },
+    {
+      "level": 22,
+      "variant": "technology",
+      "enemyPower": 4538000,
+      "enemyTroops": 80000,
+      "enemyComposition": {
+        "infantry": 80000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 96000,
+      "recommendedTier": 4,
+      "attackerTroops": 96000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 20.25,
+      "initialHealth": 21677040,
+      "remainingHealth": 18317040,
+      "wounded": 0,
+      "remainingTroops": 96000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2200,
+      "resources": {
+        "food": 0,
+        "wood": 44000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 22,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 14960000,
+      "damageTaken": 3360000.0000000005
+    },
+    {
+      "level": 23,
+      "variant": "recommended",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 102000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 20027700,
+      "remainingHealth": 16346010,
+      "wounded": 0,
+      "remainingTroops": 102000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2300,
+      "resources": {
+        "food": 0,
+        "wood": 46000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 23,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 15895000,
+      "damageTaken": 3681690.0000000005
+    },
+    {
+      "level": 23,
+      "variant": "half",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 51000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 31.25,
+      "initialHealth": 10013850,
+      "remainingHealth": 1,
+      "wounded": 12750,
+      "remainingTroops": 38250,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 11515392,
+      "damageTaken": 10013850.000000002
+    },
+    {
+      "level": 23,
+      "variant": "more",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 122400,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 18.25,
+      "initialHealth": 24033240,
+      "remainingHealth": 20973240,
+      "wounded": 0,
+      "remainingTroops": 122400,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2300,
+      "resources": {
+        "food": 0,
+        "wood": 46000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 23,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 15895000,
+      "damageTaken": 3060000.0000000005
+    },
+    {
+      "level": 23,
+      "variant": "strong-commander",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 102000,
+      "attackerTier": 4,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 21935100,
+      "remainingHealth": 19895100,
+      "wounded": 0,
+      "remainingTroops": 102000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2300,
+      "resources": {
+        "food": 0,
+        "wood": 46000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 23,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 15895000,
+      "damageTaken": 2040000.0000000002
+    },
+    {
+      "level": 23,
+      "variant": "higher-tier",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 102000,
+      "attackerTier": 5,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 19.25,
+      "initialHealth": 23133600,
+      "remainingHealth": 19900392.452830184,
+      "wounded": 0,
+      "remainingTroops": 102000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2300,
+      "resources": {
+        "food": 0,
+        "wood": 46000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 23,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 15895000,
+      "damageTaken": 3233207.547169812
+    },
+    {
+      "level": 23,
+      "variant": "lower-tier",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 102000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 26.25,
+      "initialHealth": 16600500,
+      "remainingHealth": 8366775.949367084,
+      "wounded": 0,
+      "remainingTroops": 102000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2300,
+      "resources": {
+        "food": 0,
+        "wood": 46000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 23,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 15895000,
+      "damageTaken": 8233724.050632917
+    },
+    {
+      "level": 23,
+      "variant": "technology",
+      "enemyPower": 7241000,
+      "enemyTroops": 85000,
+      "enemyComposition": {
+        "infantry": 85000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 102000,
+      "recommendedTier": 4,
+      "attackerTroops": 102000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 20.25,
+      "initialHealth": 23031855,
+      "remainingHealth": 19461855,
+      "wounded": 0,
+      "remainingTroops": 102000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2300,
+      "resources": {
+        "food": 0,
+        "wood": 46000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 23,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {}
+      },
+      "damageDealt": 15895000,
+      "damageTaken": 3570000.0000000005
+    },
+    {
+      "level": 24,
+      "variant": "recommended",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 108000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 21205800,
+      "remainingHealth": 17307540,
+      "wounded": 0,
+      "remainingTroops": 108000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2400,
+      "resources": {
+        "food": 0,
+        "wood": 48000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 24,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 75
+        }
+      },
+      "damageDealt": 16830000,
+      "damageTaken": 3898260.000000002
+    },
+    {
+      "level": 24,
+      "variant": "half",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 54000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 31.25,
+      "initialHealth": 10602900,
+      "remainingHealth": 1,
+      "wounded": 13500,
+      "remainingTroops": 40500,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 12192768,
+      "damageTaken": 10602900
+    },
+    {
+      "level": 24,
+      "variant": "more",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 129600,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 18.25,
+      "initialHealth": 25446960,
+      "remainingHealth": 22206960,
+      "wounded": 0,
+      "remainingTroops": 129600,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2400,
+      "resources": {
+        "food": 0,
+        "wood": 48000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 24,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 75
+        }
+      },
+      "damageDealt": 16830000,
+      "damageTaken": 3240000.0000000005
+    },
+    {
+      "level": 24,
+      "variant": "strong-commander",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 108000,
+      "attackerTier": 4,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 23225400,
+      "remainingHealth": 21065400,
+      "wounded": 0,
+      "remainingTroops": 108000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2400,
+      "resources": {
+        "food": 0,
+        "wood": 48000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 24,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 75
+        }
+      },
+      "damageDealt": 16830000,
+      "damageTaken": 2160000.0000000005
+    },
+    {
+      "level": 24,
+      "variant": "higher-tier",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 108000,
+      "attackerTier": 5,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 19.25,
+      "initialHealth": 24494400,
+      "remainingHealth": 21071003.773584895,
+      "wounded": 0,
+      "remainingTroops": 108000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2400,
+      "resources": {
+        "food": 0,
+        "wood": 48000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 24,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 75
+        }
+      },
+      "damageDealt": 16830000,
+      "damageTaken": 3423396.226415095
+    },
+    {
+      "level": 24,
+      "variant": "lower-tier",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 108000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 26.25,
+      "initialHealth": 17577000,
+      "remainingHealth": 8858939.240506321,
+      "wounded": 0,
+      "remainingTroops": 108000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2400,
+      "resources": {
+        "food": 0,
+        "wood": 48000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 24,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 75
+        }
+      },
+      "damageDealt": 16830000,
+      "damageTaken": 8718060.759493673
+    },
+    {
+      "level": 24,
+      "variant": "technology",
+      "enemyPower": 9866000,
+      "enemyTroops": 90000,
+      "enemyComposition": {
+        "infantry": 90000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 108000,
+      "recommendedTier": 4,
+      "attackerTroops": 108000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 20.25,
+      "initialHealth": 24386670,
+      "remainingHealth": 20606670,
+      "wounded": 0,
+      "remainingTroops": 108000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2400,
+      "resources": {
+        "food": 0,
+        "wood": 48000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 24,
+        "universal-minute": 5
+      },
+      "firstClear": {
+        "items": {
+          "chronicle-page": 75
+        }
+      },
+      "damageDealt": 16830000,
+      "damageTaken": 3780000.0000000005
+    },
+    {
+      "level": 25,
+      "variant": "recommended",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 120000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 22.25,
+      "initialHealth": 23562000,
+      "remainingHealth": 19230600,
+      "wounded": 0,
+      "remainingTroops": 120000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2500,
+      "resources": {
+        "food": 0,
+        "wood": 50000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 25,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 25
+        }
+      },
+      "damageDealt": 18700000,
+      "damageTaken": 4331400.000000001
+    },
+    {
+      "level": 25,
+      "variant": "half",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 60000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Defeat",
+      "seconds": 31.25,
+      "initialHealth": 11781000,
+      "remainingHealth": 1,
+      "wounded": 15000,
+      "remainingTroops": 45000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 0,
+      "resources": {
+        "food": 0,
+        "wood": 0,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {},
+      "firstClear": {},
+      "damageDealt": 13547520,
+      "damageTaken": 11781000
+    },
+    {
+      "level": 25,
+      "variant": "more",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 144000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 18.25,
+      "initialHealth": 28274400,
+      "remainingHealth": 24674400,
+      "wounded": 0,
+      "remainingTroops": 144000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2500,
+      "resources": {
+        "food": 0,
+        "wood": 50000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 25,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 25
+        }
+      },
+      "damageDealt": 18700000,
+      "damageTaken": 3600000.0000000005
+    },
+    {
+      "level": 25,
+      "variant": "strong-commander",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 120000,
+      "attackerTier": 4,
+      "commander": "heracles",
+      "commanderLevel": 30,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 4.25,
+      "initialHealth": 25806000,
+      "remainingHealth": 23406000,
+      "wounded": 0,
+      "remainingTroops": 120000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2500,
+      "resources": {
+        "food": 0,
+        "wood": 50000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 25,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 25
+        }
+      },
+      "damageDealt": 18700000,
+      "damageTaken": 2400000.0000000005
+    },
+    {
+      "level": 25,
+      "variant": "higher-tier",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 120000,
+      "attackerTier": 5,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 19.25,
+      "initialHealth": 27216000,
+      "remainingHealth": 23412226.415094342,
+      "wounded": 0,
+      "remainingTroops": 120000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2500,
+      "resources": {
+        "food": 0,
+        "wood": 50000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 25,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 25
+        }
+      },
+      "damageDealt": 18700000,
+      "damageTaken": 3803773.5849056607
+    },
+    {
+      "level": 25,
+      "variant": "lower-tier",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 120000,
+      "attackerTier": 3,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 1,
+        "vitality": 0
+      },
+      "outcome": "Victory",
+      "seconds": 26.25,
+      "initialHealth": 19530000,
+      "remainingHealth": 9843265.822784811,
+      "wounded": 0,
+      "remainingTroops": 120000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2500,
+      "resources": {
+        "food": 0,
+        "wood": 50000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 25,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 25
+        }
+      },
+      "damageDealt": 18700000,
+      "damageTaken": 9686734.177215194
+    },
+    {
+      "level": 25,
+      "variant": "technology",
+      "enemyPower": 16301000,
+      "enemyTroops": 100000,
+      "enemyComposition": {
+        "infantry": 100000
+      },
+      "enemyTier": 4,
+      "recommendedTroops": 120000,
+      "recommendedTier": 4,
+      "attackerTroops": 120000,
+      "attackerTier": 4,
+      "commander": "captain",
+      "commanderLevel": 1,
+      "technology": {
+        "drill": 3,
+        "vitality": 3
+      },
+      "outcome": "Victory",
+      "seconds": 20.25,
+      "initialHealth": 27096300,
+      "remainingHealth": 22896300,
+      "wounded": 0,
+      "remainingTroops": 120000,
+      "apCharged": 50,
+      "netAPSpent": 50,
+      "xpAwarded": 2500,
+      "resources": {
+        "food": 0,
+        "wood": 50000,
+        "gold": 0,
+        "stone": 0,
+        "mana": 0
+      },
+      "items": {
+        "chronicle-page": 25,
+        "universal-minute": 4
+      },
+      "firstClear": {
+        "items": {
+          "ap-tonic-20": 25
+        }
+      },
+      "damageDealt": 18700000,
+      "damageTaken": 4200000.000000001
+    }
+  ]
+}

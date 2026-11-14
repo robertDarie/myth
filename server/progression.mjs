@@ -77,7 +77,7 @@ export function initializeProgression(p) {
   for (const a of armyList(p)) { a.rage ??= 0; a.shield ??= 0; a.shieldTime ??= 0; a.lastSkill ??= ''; a.skillCasts ??= 0; }
 }
 export function skillInfo(p, id) {
-  const hero = COMMANDERS.find(c => c.id === id), r = p.heroRecords[id] ?? { xp: 0, stars: 1, skills: [1, 0, 0, 0] };
+  const hero = COMMANDERS.find(c => c.id === id), r = p.heroRecords[id] ?? { numericVersion:p.numericVersion,rarity:hero.rarity,xp: 0, stars: 1, skills: [1, 0, 0, 0] };
   const [active, kind, role] = PROFILES[id];
   const expertise = ['Epic', 'Legendary'].includes(hero.rarity) && r.skills.every(level => level === 5);
   const descriptions = role === 'offense' ? ['+4% army damage per level.', '+3% PvE damage per level.', '+2% maximum health per level.']
@@ -94,7 +94,7 @@ export function skillInfo(p, id) {
     return { ...node, rank, available: lockedReason === '', lockedReason };
   }) }));
   const spent = spentTalents(r);
-  return { id, heroLevel: heroLevel(r), xp: r.xp, stars: r.stars, talentPoints: talentPoints(r), talentPointsSpent: spent, respecMana: 15 * spent, respecLockedReason: spent < 1 ? 'This commander has no talents to respec.' : '', talents, expertise,
+  return { id, heroLevel: heroLevel(r), xp: r.xp, xpLevelStart:xpAtLevel(r,heroLevel(r)),xpNextLevel:xpAtLevel(r,Math.min(60,heroLevel(r)+1)), stars: r.stars, talentPoints: talentPoints(r), talentPointsSpent: spent, respecMana: 15 * spent, respecLockedReason: spent < 1 ? 'This commander has no talents to respec.' : '', talents, expertise,
     expertiseDescription: ['Epic', 'Legendary'].includes(hero.rarity) ? 'All four normal skills at level 5: +20% active-skill effect.' : 'No expertise in this prototype rarity.',
     skills: [
       { index: 0, name: active, kind: 'Active', level: r.skills[0], unlockStar: 1, description: kind === 'damage' ? 'Automatically spends 1,000 rage for extra damage (1.2 + 0.2 × skill level) times normal attack damage.' : kind === 'shield' ? 'At 1,000 rage, shields for (8% + 2% × skill level) of maximum health for four seconds.' : 'At 1,000 rage, heals (8% + 2% × skill level) of maximum health.' },

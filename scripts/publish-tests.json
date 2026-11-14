@@ -2,6 +2,14 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "175 measured Forsaken battles, rewards, unlocks, admission and durable settlement",
+      "command": [
+        "node",
+        "--test",
+        "server/forsaken.test.mjs"
+      ]
+    },
+    {
       "name": "production numerical reference, AP, migration and real troop accounting",
       "command": [
         "node",

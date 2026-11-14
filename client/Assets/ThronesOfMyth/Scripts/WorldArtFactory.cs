@@ -122,13 +122,17 @@ namespace ThronesOfMyth
             }
             else if (kind == "camp")
             {
-                if (variant == "forsaken-4" || variant == "forsaken-6") Beast(root, Vector3.zero, variant == "forsaken-6" ? "norse" : "greek", team);
-                else
+                int tier=1;
+                if(variant.StartsWith("forsaken-tier-",System.StringComparison.Ordinal))int.TryParse(variant.Substring(14),out tier);
+                tier=Mathf.Clamp(tier,1,5);
+                Color cloth=Color.Lerp(new Color(0.38f,0.18f,0.16f),new Color(0.19f,0.20f,0.24f),(tier-1)/4f);
+                for(int i=0;i<Mathf.Min(5,2+tier);i++)
                 {
-                    if(variant!="forsaken-1"||!Imported(root,"ForsakenShelter",team))ShowcaseCamp(root, team);
+                    var rig=Soldier(root,new Vector3((i%3-1)*.75f,0,(i/3)*.8f),cloth,"forsaken",actor,i==2?"archers":"infantry");
+                    rig.root.name="Forsaken mortal · Tier "+tier;
+                    if(tier>=3)Ball(rig.body,0,1.5f,0,.43f,.24f,.43f,darkStone);
                 }
-                Pillar(root, 0, 0.15f, -1.3f, 0.9f, 0.3f, darkStone);
-                actor.fire = Ball(root, 0, 0.48f, -1.3f, 0.4f, 0.6f, 0.4f, new Color(1, 0.54f, 0.16f));
+
             }
             if (actor.selection == null)
             {

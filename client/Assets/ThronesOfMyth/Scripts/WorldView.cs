@@ -90,8 +90,8 @@ namespace ThronesOfMyth
             {
                 if(c.lastKnown && !LandmarkCopy.ShowRemembered(c.terrainExplored))continue;
                 bool wasAlive = pieces.TryGetValue(c.id, out var previous) && previous.health > 0;
-                string campLabel = c.lastKnown ? LandmarkCopy.MapLabel(c.terrainExplored, c.name) : c.name + " · Lv " + c.level + (c.health <= 0 ? " · " + c.respawn + "s" : "");
-                Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, campLabel, c.lastKnown ? -1 : (float)c.health / c.maxHealth, c.id);
+                string campLabel = c.lastKnown ? LandmarkCopy.MapLabel(c.terrainExplored, c.name) : c.name + (c.health <= 0 ? " · " + c.respawn + "s" : "");
+                Put(seen, c.id, "camp", c.x, c.z, c.health > 0 ? red : Color.gray, campLabel, c.lastKnown ? -1 : (float)c.health / c.maxHealth, "forsaken-tier-"+(c.recommendedTier>0?c.recommendedTier:Mathf.Clamp(1+(c.level-1)/5,1,5)));
                 pieces[c.id].compactLabel=c.lastKnown?LandmarkCopy.Compact(c.terrainExplored,c.name):c.health>0?"Lv "+c.level:"Reforming";pieces[c.id].icon="camp";
                 if(!c.lastKnown)pieces[c.id].actor.ObserveCamp(c, wasAlive && c.health <= 0);
             }

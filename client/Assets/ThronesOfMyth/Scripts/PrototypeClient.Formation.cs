@@ -89,9 +89,10 @@ namespace ThronesOfMyth
             int marchShare = selectedHero!=null&&selectedHero.marchTroopCap>0?selectedHero.marchTroopCap:me.marchTroopCap;
             theme.Text(new Rect(right.x + 18, right.y + 42, right.width - 36, 38), marchShare > 0 ? "This march can take " + marchShare + " mortal troops. The city store is " + me.troopCapacity + ". Unselected units stay home." : "Choose a patrol or set exact counts. Unselected units stay home.", theme.Small);
             bool captainFree=Array.IndexOf(me.ownedCommanders,"captain")>=0&&!OwnMarches().Exists(a=>a.id!=formationMarchId&&a.commanderId=="captain");
-            bool patrolReady=captainFree&&ready.Get("infantry")>=15&&ready.Get("archers")>=5;
-            if(theme.Button(new Rect(right.x+18,right.y+80,right.width-36,34),"Scout patrol · Captain · 15 infantry + 5 archers",false,patrolReady,"Needs the Captain, 15 ready infantry and 5 archers. Train archers in your city."))
-            {formationHeroId="captain";formationUnits=new UnitCounts();formationUnits.Set("infantry",15);formationUnits.Set("archers",5);formationMythic=0;formationEntries.Clear();GUIUtility.keyboardControl=0;}
+            int patrolInfantry=me.numericVersion==1?900:15,patrolArchers=me.numericVersion==1?0:5;
+            bool patrolReady=captainFree&&ready.Get("infantry")>=patrolInfantry&&ready.Get("archers")>=patrolArchers;
+            if(theme.Button(new Rect(right.x+18,right.y+80,right.width-36,34),"Captain · "+patrolInfantry+" infantry"+(patrolArchers>0?" + "+patrolArchers+" archers":""),false,patrolReady,"Needs the Captain and "+patrolInfantry+" ready infantry"+(patrolArchers>0?" plus "+patrolArchers+" archers.":". Heal wounded troops or train reserves if needed.")))
+            {formationHeroId="captain";formationUnits=new UnitCounts();formationUnits.Set("infantry",patrolInfantry);formationUnits.Set("archers",patrolArchers);formationMythic=0;formationEntries.Clear();GUIUtility.keyboardControl=0;}
             theme.Text(new Rect(right.x + 18, right.y + 118, right.width - 36, 62), FormationPreview(formationUnits), theme.Small);
             var viewport = new Rect(right.x + 10, right.y + 184, right.width - 20, right.height - 286);
             formationTroopScroll = GUI.BeginScrollView(viewport, formationTroopScroll, new Rect(0, 0, viewport.width - 16, (world.troopTypes.Length+1) * InterfaceLayout.TroopRowStep));

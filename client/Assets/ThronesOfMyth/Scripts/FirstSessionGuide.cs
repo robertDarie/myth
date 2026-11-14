@@ -35,6 +35,9 @@ namespace ThronesOfMyth
         }
         private static readonly OpeningCue City=new OpeningCue(1,"Discover your city","Meet your Captain and inspect a district.","city","citadel");
         private static readonly OpeningCue Meet=new OpeningCue(2,"Meet your Frontier Captain","Inspect Rallying Cry, then return to the city to train.","heroes","captain");
+        private static readonly OpeningCue ReferenceMeet=new OpeningCue(2,"Meet your Frontier Captain","Inspect Rallying Cry, then prepare your starting army.","heroes","captain");
+        private static readonly OpeningCue ReferencePrepare=new OpeningCue(4,"Prepare the Captain's march","Keep900 ready infantry in the first march. Training extra troops is optional.","prepare");
+        private static readonly OpeningCue ReferenceFight=new OpeningCue(5,"Challenge Forsaken Lv.1","Survey nearby ground and select a discovered level1 Forsaken. Suggested force:900 T1.","combat","opening-level-one");
         private static readonly OpeningCue Train=new OpeningCue(3,"Train five archers","One archer batch completes the starting patrol.","training");
         private static readonly OpeningCue Prepare=new OpeningCue(4,"Prepare a Scout patrol","Captain, 15 infantry, 5 archers; select the patrol preset.","prepare");
         private static readonly OpeningCue Fight=new OpeningCue(5,"Challenge Forsaken Scouts","Survey the nearby frontier, then select a discovered level 1 camp.","combat","opening-level-one");
@@ -74,7 +77,8 @@ namespace ThronesOfMyth
         {
             if(city.kills>0){if(!OutcomeViewed)return Outcome;if(!home)return Home;return city.cityLevel<2?Build:null;}
             if(!CityViewed&&city.cityLevel==1)return City;
-            if(!CommanderViewed&&city.cityLevel==1)return Meet;
+            if(!CommanderViewed&&city.cityLevel==1)return city.numericVersion==1?ReferenceMeet:Meet;
+            if(city.numericVersion==1){if(!ArmyPrepared&&home)return ReferencePrepare;return ReferenceFight;}
             int archers=(city.reserveUnits?.Archers??0)+(army.units?.Archers??0);
             if(archers<5)return Train;
             if(!ArmyPrepared&&home)return Prepare;

@@ -48,7 +48,7 @@ namespace ThronesOfMyth
                 case "patrol": interfacePage = InterfacePage.World; FocusGameplay(ActiveArmy.x,ActiveArmy.z); status = "Right-click accessible ground to march. Scout travel and forced retreats do not count as army patrol distance."; break;
                 case "combat":
                     CampData camp = null; float distance = float.MaxValue;
-                    foreach (var c in world.camps) if (c.health > 0 && c.x <= 40 && c.z <= 40 && (task.targetId!="opening-level-one"||c.level==1))
+                    foreach (var c in world.camps) if (c.health > 0 && (me.numericVersion==1||c.x <= 40 && c.z <= 40) && string.IsNullOrEmpty(c.lockedReason) && (task.targetId!="opening-level-one"||c.level==1))
                     { float d = c.level * 100 + Vector2.Distance(new Vector2(ActiveArmy.x, ActiveArmy.z), new Vector2(c.x, c.z)); if (d < distance) { distance = d; camp = c; } }
                     if (camp != null) { interfacePage = InterfacePage.World; Select(camp.id, "camp"); FocusGameplay(camp.x,camp.z); status = "Camp selected · choose March & attack. Recall after battle to recover and free the march slot."; }
                     else { GuidePage(InterfacePage.Exploration); status = "Send a scout toward the frontier to reveal a Forsaken camp."; }

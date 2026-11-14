@@ -1,3 +1,4 @@
+import { forsakenCard } from './forsaken.mjs';
 import { WORLD_SIZE, FOG_WIDTH, CELL_SIZE, cellIndex } from './world-map.mjs';
 import { rememberStatics, recalled, staticContext } from './discovery.mjs';
 import { recordActivity } from './activity.mjs';
@@ -115,7 +116,7 @@ function dispatchAuto(w, p, profile) {
 }
 function surveyReport(w, p, s, radius) {
   return { id: randomUUID(), x: s.x, z: s.z, time: w.time,
-    camps: w.camps.filter(c => dist(c, s) <= radius).map(({ contributors, ...c }) => ({ ...c })),
+    camps: w.camps.filter(c => dist(c, s) <= radius).map(({ contributors, encounter, ...c }) => w.numericVersion===1?forsakenCard(c):({ ...c })),
     flags: w.flags.filter(f => dist(f, s) <= radius).map(f => ({ ...f })),
     armies: w.armies().filter(a => a.deployed && !allied(p, w.owner(a)) && dist(a, s) <= radius).map(a => ({ id: a.id, ownerId: w.owner(a).id, name: w.owner(a).name, x: a.x, z: a.z, troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), commanderId: a.commanderId })),
     strongholds: w.strongholds.filter(t => dist(t, s) <= radius).map(t => ({ ...t })),

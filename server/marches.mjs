@@ -1,3 +1,4 @@
+import { forsakenReason } from './forsaken.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
 import { initializeLogistics, cargoTotal } from './field-logistics.mjs';
 import { visible } from './exploration.mjs';
@@ -46,6 +47,7 @@ export function marchCommand(world, p, c, fail) {
       const camp = world.camps.find(e => e.id === c.targetId);
       const known = camp && (visible(world,p,camp) || p.discovery.some(r=>r.kind==='camps'&&r.value.id===camp.id));
       if (!known || (visible(world,p,camp)&&camp.health<=0)||!world.canEnter(p, camp)) fail('Camp unavailable or behind a locked gate.');
+      if(p.numericVersion===1){const reason=forsakenReason(world,p,camp);if(reason)fail(reason);}
       a.target = { type: 'attack', id: camp.id }; break;
     }
     case 'gather': {

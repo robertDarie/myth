@@ -5,7 +5,7 @@ namespace ThronesOfMyth
     public sealed partial class PrototypeClient
     {
         private int selectedItem,itemQuantity=1,itemCategory;
-        private string speedupJobId="";
+        private string speedupJobId="",chronicleCommanderId="";
         private Vector2 itemScroll,itemDetailScroll;
         private string selectedInventoryId="";
         private bool inventoryCatalogue,shownCatalogue;
@@ -21,8 +21,8 @@ namespace ThronesOfMyth
             theme.Section("Stored supplies","Select a stack; items stay sealed until used.");
             if(bag.suppliesAvailable&&theme.Action("Collect founding supplies",!processing&&pendingOrder==null,"Confirm the pending order first."))Send("inventory-supplies");
             inventoryCatalogue=GUILayout.Toggle(inventoryCatalogue,"Show unowned items");
-            itemCategory=theme.Tabs(itemCategory,new[]{"All","Resources","Speedups","Summons","Energy","Combat buffs"},list.width-24);
-            var categories=new[]{"","Resources","Speedups","Summons","Energy","Combat buffs"};
+            itemCategory=theme.Tabs(itemCategory,new[]{"All","Resources","Speedups","Summons","Energy","Combat buffs","Commander XP"},list.width-24);
+            var categories=new[]{"","Resources","Speedups","Summons","Energy","Combat buffs","Commander XP"};
             if(!ReferenceEquals(shownBag,bag)||shownCategory!=itemCategory||shownCatalogue!=inventoryCatalogue){shownBag=bag;shownCategory=itemCategory;shownCatalogue=inventoryCatalogue;shownItems=Array.FindAll(bag.items??Array.Empty<InventoryItem>(),i=>InterfaceLayout.ShowItem(i,categories[itemCategory],inventoryCatalogue));}
             var filtered=shownItems;
             itemScroll=GUILayout.BeginScrollView(itemScroll);
@@ -55,15 +55,28 @@ namespace ThronesOfMyth
                 if(job!=null)GUILayout.Label("Remove "+Mathf.CeilToInt(Mathf.Min(job.remaining,item.seconds*itemQuantity))+" seconds. Unused time: "+Mathf.FloorToInt(Mathf.Max(0,item.seconds*itemQuantity-job.remaining))+" seconds. Other jobs do not advance.",theme.Small);
                 else GUILayout.Label("Only the first active training batch can be accelerated. Select a job above.",theme.Small);
             }
+            else if(item.kind=="experience")
+            {
+                if(!Array.Exists(me.ownedCommanders,id=>id==chronicleCommanderId))chronicleCommanderId=ActiveArmy.commanderId;
+                GUILayout.Label("Choose a commander · "+(item.amount*itemQuantity)+" XP",theme.Heading);
+                foreach(var id in me.ownedCommanders)
+                {
+                    var progress=Array.Find(me.heroProgress,h=>h.id==id);bool capped=progress==null||progress.heroLevel>=progress.stars*10;
+                    GUI.enabled=!capped&&!processing;
+                    if(GUILayout.Button((chronicleCommanderId==id?"✓ ":"")+HeroName(id)+(capped?" · promote stars first":"")))chronicleCommanderId=id;
+                }
+                GUI.enabled=true;
+            }
             else if(item.kind=="resource")GUILayout.Label("Adds "+item.amount*itemQuantity+" "+item.resource+" to your spendable stockpile.",theme.Heading);
 
             if(me.economy!=null&&(item.kind=="energy"||item.kind=="buff")){var e=me.economy;GUILayout.Label("AP "+e.ap+" / "+e.apCap+(e.ap<e.apCap?" · Next point in "+e.nextAPSeconds+"s · Full in "+e.fullAPSeconds+"s":" · Full")+". Movement, PvP, gathering and scouting cost no AP.",noteStyle);foreach(var buff in e.buffs)if(buff.remaining>0)GUILayout.Label("Active "+buff.kind+" oath · "+buff.remaining+" seconds remaining",noteStyle);}
 
             bool valid=item.kind!="speedup"||job!=null&&(item.scope=="universal"||job.lane==item.scope)&&itemQuantity<=Mathf.CeilToInt(job.remaining/Mathf.Max(1,item.seconds));
+            if(item.kind=="experience"){var hero=Array.Find(me.heroProgress,h=>h.id==chronicleCommanderId);valid &= hero!=null&&hero.heroLevel<hero.stars*10;}
             if(item.kind=="energy"&&me.economy!=null)valid &= me.economy.ap+item.amount*itemQuantity<=me.economy.apCap;
             if(item.kind=="buff"&&me.economy!=null)valid &= itemQuantity==1&&!Array.Exists(me.economy.buffs,b=>b.kind==item.scope&&b.remaining>0);
             string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm the previous order first.":item.count<itemQuantity?"Not enough items in this stack.":!valid?item.kind=="energy"?"This would exceed your AP capacity. Lower the quantity or use AP first.":item.kind=="buff"?"Use one oath at a time; the same active oath cannot stack.":"Select a compatible active job and an appropriate quantity.":"";
-            if(theme.Action(item.kind=="speedup"?"Use hourglass":item.kind=="buff"?"Activate oath":"Use selected supplies",string.IsNullOrEmpty(reason),reason))Send(new GameCommand{type="inventory-use",targetId=item.id,count=itemQuantity,jobId=job==null?"":job.id});
+            if(theme.Action(item.kind=="speedup"?"Use hourglass":item.kind=="buff"?"Activate oath":"Use selected supplies",string.IsNullOrEmpty(reason),reason))Send(new GameCommand{type="inventory-use",targetId=item.id,count=itemQuantity,name=chronicleCommanderId,jobId=job==null?"":job.id});
             GUILayout.EndScrollView();GUILayout.EndArea();
         }
         private void RenderRankingsWindow(Rect r)

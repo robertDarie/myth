@@ -1,3 +1,4 @@
+import { configureForsaken, forsakenCard, initializeForsakenPlayer, restoreForsaken, fightForsaken, forsakenReason } from './forsaken.mjs';
 import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
 import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
 import { migrateNumericWorld } from './numeric-migration.mjs';
@@ -46,7 +47,7 @@ const finitePoint = p => [p.x, p.z].every(n => Number.isFinite(n) && n >= 1 && n
 export class World {
   constructor({ random = secureRandom, now = () => Date.now(), cityCapacity = LIMITS.defaultCities, numericVersion = 1 } = {}) {
     if(![0,1].includes(numericVersion))throw new Error('Invalid numeric profile.');
-    this.numericVersion=numericVersion;this.cityCapacity = cityLimit(cityCapacity);
+    this.pveVersion=numericVersion===1?1:0;this.numericVersion=numericVersion;this.cityCapacity = cityLimit(cityCapacity);
     this.random = random; this.now = now; this.activityClockMs = 0; activityClock(this);
     this.chooseIndex = length => this.random === secureRandom ? randomInt(length) : Math.floor(this.random() * length);
     this.strongholds = createStrongholds(this); this.rallies = []; this.garrisons = []; this.sieges = []; this.messages = []; this.markers = []; this.battles = new Map(); this.players = new Map(); this.sessions = new Map(); this.alliances = new Map();
@@ -60,7 +61,7 @@ export class World {
     this.nodes.push(...resourceNodes.map(n => ({ ...n })), ...frontierNodes());
     if(referenceScale(this))for(const n of this.nodes){n.remaining*=100;n.capacity*=100;}
     this.camps.push(...frontierCamps());
-    if(referenceScale(this))for(const c of this.camps){const r=referenceCamp(c.level);c.health=c.maxHealth=r.maxHealth;}
+    if(referenceScale(this))for(const c of this.camps){const r=referenceCamp(c.level);c.health=c.maxHealth=r.maxHealth;configureForsaken(c);}
     this.sites = [...siteDefinitions,...frontierSites()].map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
     this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind,this); initializeKingdom(this);
   }
@@ -84,7 +85,7 @@ export class World {
       commanderId: 'captain', ownedCommanders: ['captain'], xp: 0, level: 1, kills: 0, questClaimed: false,
       allianceId: '', target: null, cooldown: 0, gatherClock: 0, lastSeen: 0, state: 'Idle', recovery: 0, reserveTroops: 0, reserveMythic: 0, construction: null, trainingQueue: [], offline: false };
     initializeCity(player); initializeInventory(player); initializeProgression(player); migrateUnits(player); initializeWar(player); initializeSocial(player); player.groupReports = []; initializeExploration(player); initializeFindings(player); initializeRecon(player); initializeJourney(player); player.strongholdVictories = 0; initializeActivity(this, player); ensureEvents(this, player); player.kingdomClaims = [];
-    initializeEconomy(this,player);initializeLogistics(player);player.health = this.stats(player).maxHealth;
+    initializeEconomy(this,player);initializeForsakenPlayer(this,player);initializeLogistics(player);player.health = this.stats(player).maxHealth;
     this.players.set(id, player); this.sessions.set(token, id); refreshJourney(this, player);explorationTick(this,0);
     this.event(`${player.name} founded a ${civilization} city.`);
     return { playerId: id, token };
@@ -218,7 +219,7 @@ export class World {
     dt = Math.min(dt, 0.25); this.time += dt; this.markers = this.markers.filter(m => m.expires > this.time);
     for (const camp of this.camps) if (camp.health <= 0) {
       camp.respawn = Math.max(0, camp.respawn - dt);
-      if (camp.respawn === 0) { camp.cycle++;camp.health = camp.maxHealth; camp.contributors = {}; }
+      if (camp.respawn === 0) { camp.cycle++;camp.health = camp.maxHealth; camp.contributors = {};delete camp.encounter; }
     }
     for (const node of this.nodes) if (node.remaining <= 0) {
       node.refill += dt; if (node.refill >= 30) { node.remaining = node.capacity; node.refill = 0; }
@@ -260,6 +261,7 @@ export class World {
   }
   battle(a, camp, stats) {
     if(camp.health<=0||camp.respawn>0)return;
+    if(referenceScale(this))return fightForsaken(this,a,camp,stats);
     if(!campAdmission(this,this.owner(a),camp)){a.target=null;a.state='Not enough AP';return;}
     const p = this.owner(a);
     const npc=referenceScale(p)?referenceCamp(camp.level):null;
@@ -343,7 +345,7 @@ export class World {
   toSave() {
     this.normalizeDeployment();
     ensureSeason(this);
-    return { schema: WORLD_SCHEMA, world: { numericVersion:this.numericVersion, numericMigration:this.numericMigration??null, cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
+    return { schema: WORLD_SCHEMA, world: { pveVersion:this.pveVersion,numericVersion:this.numericVersion, numericMigration:this.numericMigration??null, cityCapacity:this.cityCapacity, kingdom: this.kingdom, diplomacy: this.diplomacy, coalitions: this.coalitions, coalitionInvites: this.coalitionInvites, season: this.season, activityClockMs: this.activityClockMs, players: [...this.players.values()], sessions: [...this.sessions.entries()],
       alliances: [...this.alliances.values()], camps: this.camps, nodes: this.nodes, sites: this.sites,
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
@@ -354,7 +356,7 @@ export class World {
       const original=structuredClone(data);original.world.numericVersion=0;
       for(const p of original.world.players??[])p.numericVersion=0;
       const legacy=World.fromSave(original,{...options,numericVersion:0});
-      return migrateNumericWorld(legacy);
+      const migrated=migrateNumericWorld(legacy);restoreForsaken(migrated,true);return migrated;
     }
     if(data?.schema<15)data=migrateEconomy(data);
     data = migrateMap(data);
@@ -362,7 +364,8 @@ export class World {
     if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > LIMITS.maxCities || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World({...options,numericVersion:w.numericVersion,cityCapacity:options.cityCapacity??w.cityCapacity??LIMITS.defaultCities});
-    world.numericMigration=w.numericMigration??null;
+    if(w.pveVersion!==undefined&&![0,1].includes(w.pveVersion))throw new Error('Unsupported saved PvE version.');
+    world.numericMigration=w.numericMigration??null;world.pveVersion=w.pveVersion??0;
     if(data.schema<26&&Array.isArray(w.strongholds))for(const t of world.strongholds.filter(t=>t.id.startsWith('frontier-')))if(!w.strongholds.some(old=>old.id===t.id))w.strongholds.push(structuredClone(t));
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
     if (data.schema === 1) for (const node of resourceNodes) if (!w.nodes.some(n => n.id === node.id)) w.nodes.push({ ...node });
@@ -486,6 +489,7 @@ export class World {
       }
       if(!campaignFor(world,a.id))dock(world,a);
     }
+    restoreForsaken(world,world.pveVersion===0);
     explorationTick(world, 0);
     for (const p of world.players.values()) refreshJourney(world, p);
     return world;
@@ -524,10 +528,12 @@ export class World {
           return { id: p.id, name: p.name, civilization: p.civilization, allianceId: p.allianceId, allianceRole: allianceRole(this, p), x: p.x, z: p.z, homeX: p.homeX, homeZ: p.homeZ, cityLevel: p.cityLevel, ageName: age(p).name, construction: visibleJob(p.construction), secondConstruction: visibleJob(p.secondConstruction), research: visibleJob(p.research) };
         }
         return { ...visible, activeMarches:activeMarches(p).length,homeFormations:armyList(p).filter(a=>!a.deployed).map(a=>this.armySnapshot(a)),economy:economySnapshot(this,p),reports:unifiedReports(this,p,warSnapshot(this,p).battleReports,groupReports(this,p)), inventory: inventorySnapshot(p), powerBreakdown: powerOf(p), journeyCampaign: journeySnapshot(this, p), ...warSnapshot(this, p), groupReports: groupReports(this, p), allianceRole: allianceRole(this, p), ...citySnapshot(this, p), ...this.stats(p), health: Math.ceil(p.health), hasOrder: !!target, targetId: target?.id ?? '', targetX: target?.x ?? p.x, targetZ: target?.z ?? p.z };
-      }), camps: this.camps.map(({ contributors, ...camp }) => ({ ...camp, respawn: Math.ceil(camp.respawn) })),
+      }), camps: this.camps.map(({ contributors, encounter, ...camp }) => referenceScale(this)?forsakenCard(camp):({ ...camp, respawn: Math.ceil(camp.respawn) })),
       nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s, locked: !siteIsOpen(this,s.id) })), flags: this.flags.map(f => ({ ...f })),
       alliances: [...this.alliances.values()].map(({weekly,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
       commanders: COMMANDERS.map(c => ({ ...c, skillKind: activeKind(c.id) })), civilizations: CIVILIZATIONS, events: this.events.map(e => ({ ...e })) };
-    return viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId),vision) : snapshot;
+    const result=viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId),vision) : snapshot;
+    if(referenceScale(this)&&viewer)for(const c of result.camps)c.lockedReason=forsakenReason(this,viewer,c);
+    return result;
   }
 }

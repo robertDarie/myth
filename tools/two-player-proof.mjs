@@ -6,11 +6,11 @@ import {mkdtemp,rm,mkdir,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
-// Real HTTP, SQLite, commands, ticks and reports. Accelerated simulation time;
+// Explicit legacy-balance scenario using real HTTP, SQLite, commands, ticks and reports. Accelerated simulation time;
 // no resource grants, teleports, forced victories or stub gameplay.
 export async function twoPlayerProof(output=null){
  const folder=await mkdtemp(join(tmpdir(),'thrones-two-player-')),databasePath=join(folder,'world.sqlite');let app,url;const steps=[];
- const start=async()=>{app=createGameServer({databasePath});legacySpawns(app.world);await new Promise(r=>app.server.listen(0,'127.0.0.1',r));url='http://127.0.0.1:'+app.server.address().port;};
+ const start=async()=>{app=createGameServer({databasePath,numericVersion:0});legacySpawns(app.world);await new Promise(r=>app.server.listen(0,'127.0.0.1',r));url='http://127.0.0.1:'+app.server.address().port;};
  const close=async()=>{await new Promise(r=>{app.server.close(r);app.server.closeAllConnections();});};
  const advance=seconds=>{for(let i=0;i<Math.ceil(seconds*10);i++)app.world.tick(.1);assert.ok(app.saveNow());};
  const get=async p=>{const r=await fetch(url+'/world',{headers:{Authorization:'Bearer '+p.token}});assert.equal(r.status,200);return r.json();};

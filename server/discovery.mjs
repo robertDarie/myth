@@ -1,6 +1,7 @@
+import { forsakenCard } from './forsaken.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
 // Only static last-observed fields are retained. No enemy formations, cargo or garrisons.
-const fields={nodes:['id','name','resource','x','z','remaining','capacity'],camps:['id','name','level','x','z','health','maxHealth','respawn'],sites:['id','name','kind','description','x','z','allianceId','health','maxHealth'],flags:['id','x','z','allianceId','isRoot','connected','buildRemaining','health','maxHealth'],strongholds:['id','name','tier','x','z','health','maxHealth','guardHealth','maxGuardHealth','respawn'],cities:['id','name','civilization','homeX','homeZ','cityLevel','ageName','allianceId']};
+const fields={nodes:['id','name','resource','x','z','remaining','capacity'],camps:['id','name','level','x','z','health','maxHealth','respawn','category','cycle','enemyPower','enemyTroops','enemyTier','attack','defense','damage','recommendedTroops','recommendedTier','commanderXP','apCost'],sites:['id','name','kind','description','x','z','allianceId','health','maxHealth'],flags:['id','x','z','allianceId','isRoot','connected','buildRemaining','health','maxHealth'],strongholds:['id','name','tier','x','z','health','maxHealth','guardHealth','maxGuardHealth','respawn'],cities:['id','name','civilization','homeX','homeZ','cityLevel','ageName','allianceId']};
 const position=(kind,t)=>kind==='cities'?{x:t.homeX,z:t.homeZ}:t;
 // Prepared observations belong to one world's completed movement pass. Members
 // share immutable records; a later sight update replaces records, never mutates
@@ -9,7 +10,7 @@ export function staticContext(w,seen){
  const live={nodes:w.nodes,camps:w.camps,sites:w.sites,flags:w.flags,strongholds:w.strongholds,cities:[...w.players.values()]};
  return Object.entries(live).map(([kind,items])=>{
   const ids=new Set(items.map(item=>item.id)),updates=[];
-  for(const item of items){if(!seen(position(kind,item)))continue;
+  for(const source of items){if(!seen(position(kind,source)))continue;const item=kind==='camps'&&w.numericVersion===1?forsakenCard(source):source;
    const value={};for(const key of fields[kind])if(item[key]!==undefined)value[key]=item[key];
    updates.push([kind+':'+item.id,Object.freeze({kind,observedAt:w.time,value:Object.freeze(value)})]);
   }

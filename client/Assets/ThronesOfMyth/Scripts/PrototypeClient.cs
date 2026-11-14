@@ -475,7 +475,7 @@ namespace ThronesOfMyth
             {
             GUILayout.Label($"Level {progress.heroLevel}/{progress.stars * 10} · {progress.stars} stars · XP {progress.xp:F0}", sectionStyle);
             var experience = GUILayoutUtility.GetRect(80, 9, GUILayout.ExpandWidth(true));
-            theme.Bar(experience, progress.heroLevel >= progress.stars * 10 ? 1 : progress.xp % 100 / 100f, MythInterfaceTheme.Teal);
+            theme.Bar(experience, progress.heroLevel >= progress.stars * 10 ? 1 : (progress.xp-progress.xpLevelStart)/Mathf.Max(1,progress.xpNextLevel-progress.xpLevelStart), MythInterfaceTheme.Teal);
             GUILayout.Space(8);
             GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20 && !processing;
             if (GUILayout.Button("Mentor +100 XP · 40 gold / 20 food")) Send("mentor-commander", hero.id);

@@ -68,6 +68,12 @@ static class FeelContracts
         army.recovery=8;var recovering=guide.Next(city,army);check(recovering.Guide=="city"&&recovering.Title=="Recover at home","Recovery should guide city work rather than another attack");army.recovery=0;
         city.cityLevel=3;guide.Profile("another");check(guide.Next(city,army)==null,"Advanced cities must not be forced through intro");
         city.cityLevel=1;city.kills=0;check(guide.Next(city,army).Number==1,"Switching profiles should clear local introduction advice");
+        var referenceGuide=new FirstSessionGuide();referenceGuide.Profile("reference");referenceGuide.CityViewed=referenceGuide.CommanderViewed=true;
+        var referenceCity=new ArmyData{numericVersion=1,cityLevel=1,homeX=5,homeZ=5,troops=900,journeyCampaign=new JourneyCampaign{chapters=new[]{new JourneyChapter{tasks=tasks}}}};
+        var referenceArmy=new ArmyData{x=5,z=5,troops=900};
+        check(referenceGuide.Next(referenceCity,referenceArmy).Guide=="prepare","Reference founder must not wait25 minutes for archers before a legal first battle");
+        check(referenceGuide.Next(referenceCity,referenceArmy).Hint.Contains("900"),"Reference guide must state a real recommended army");referenceGuide.ArmyPrepared=true;
+        check(referenceGuide.Next(referenceCity,referenceArmy).Guide=="combat"&&referenceGuide.Next(referenceCity,referenceArmy).Title.Contains("Forsaken Lv.1"),"Reference guide must use the ordinary enemy identity");
         OpeningMatrix(check);
         var json="{\"id\":\"owner\",\"activeMarches\":0,\"homeFormations\":[{\"id\":\"march\",\"deployed\":false,\"carryCapacity\":320,\"cargo\":{\"wood\":12}}],\"reports\":[{\"type\":\"gathering\",\"outcome\":\"Delivered\",\"resources\":{\"wood\":12},\"sources\":[{\"nodeId\":\"grove\",\"amount\":12}]}]}";
         var dto=System.Text.Json.JsonSerializer.Deserialize<ArmyData>(json,new System.Text.Json.JsonSerializerOptions{IncludeFields=true});

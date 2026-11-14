@@ -78,7 +78,8 @@ export function buildingCard(p, b) {
   const dependencies=[...(b.id==='citadel'?CITADEL_REQUIREMENTS[next]??[]:b.requirements??[])];
   if(b.id!=='citadel')dependencies.unshift({id:'citadel',level:Math.max(b.unlock,next)});
   const eachFive = b.resource && level ? (b.resource === 'mana' ? 1 : 2) * level * (1 + 0.15 * (p.technologies.harvest ?? 0)) : 0;
-  const card = { ...b, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason, productionPerFive: eachFive };
+  const description=referenceScale(p)&&b.id==='barracks'?'+10% training speed per level beyond the first. Higher levels increase training order sizes.':referenceScale(p)&&b.id==='infirmary'?'2,000 treatment beds at level1, plus750 per further level. Paid treatment returns wounded troops to reserves.':b.description;
+  const card = { ...b, description, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason, productionPerFive: eachFive };
   if (b.id === 'scoutcamp') card.scoutCamp = scoutCampCard(level);
   return card;
 }

@@ -1,6 +1,7 @@
 import { economyRules, ECONOMY, refreshEconomy, economyTime } from './economy.mjs';
-import { constructionJobs } from './progression.mjs';
+import { constructionJobs, ensureHero, heroLevel } from './progression.mjs';
 export const ITEMS = [
+  {id:'chronicle-page',name:'Chronicle of the Fallen',kind:'experience',amount:100,description:'Grants100 commander XP to one recruited commander below the current star cap.'},
   { id:'food-pack-100',name:'Harvest Satchel',kind:'resource',resource:'food',amount:100,description:'Open to add 100 food to your spendable stockpile.' },
   { id:'wood-pack-100',name:'Grove Supplies',kind:'resource',resource:'wood',amount:100,description:'Open to add 100 wood to your spendable stockpile.' },
   { id:'stone-pack-75',name:'Mason’s Crate',kind:'resource',resource:'stone',amount:75,description:'Open to add 75 stone to your spendable stockpile.' },
@@ -19,7 +20,7 @@ ITEMS.push(
  {id:'attack-oath-10m',name:'Oath of Valor',kind:'buff',scope:'attack',amount:10,seconds:600,description:'+10% army attack for 10 real minutes, across all your marches. Same buff cannot stack or refresh while active.'},
  {id:'defense-oath-10m',name:'Oath of Shelter',kind:'buff',scope:'defense',amount:10,seconds:600,description:'10% less incoming damage for 10 real minutes, across all your marches. Multiplies existing mitigation; does not add health. Same buff cannot stack or refresh.'}
 );
-for(const item of ITEMS)item.category=item.kind==='resource'?'Resources':item.kind==='speedup'?'Speedups':(item.kind==='summon'||item.kind==='shards')?'Summons':item.kind==='energy'?'Energy':'Combat buffs';
+for(const item of ITEMS)item.category=item.kind==='experience'?'Commander XP':item.kind==='resource'?'Resources':item.kind==='speedup'?'Speedups':(item.kind==='summon'||item.kind==='shards')?'Summons':item.kind==='energy'?'Energy':'Combat buffs';
 export const INITIAL_SUPPLIES = { 'food-pack-100':2,'wood-pack-100':2,'stone-pack-75':1,'gold-pack-50':1,'mana-pack-10':1,'build-minute':1,'universal-minute':2,'echo-sigil':1,'ap-tonic-20':2,'attack-oath-10m':1,'defense-oath-10m':1 };
 export function initializeInventory(p) { p.inventory={};p.suppliesClaimed=false; }
 export function validateInventory(p) {
@@ -43,6 +44,7 @@ export function inventoryCommand(w,p,c,fail) {
   const item=ITEMS.find(i=>i.id===c.targetId),count=c.count??1;
   if(!item||!Number.isSafeInteger(count)||count<1||count>100)fail('Choose a known item and a whole quantity from 1 to 100.');
   if((p.inventory[item.id]??0)<count)fail('Not enough items in your inventory.');
+  if(item.kind==='experience'){if(!p.ownedCommanders.includes(c.name))fail('Choose a recruited commander.');const r=ensureHero(p,c.name);if(heroLevel(r)>=r.stars*10)fail('Promote that commander before using another chronicle.');if(!Number.isSafeInteger(r.xp+item.amount*count))fail('Commander XP limit reached.');r.xp+=item.amount*count;p.inventory[item.id]-=count;for(const a of [p,...p.marches])if(a.commanderId===c.name){a.xp=r.xp;a.level=heroLevel(r);}return true;}
   if(item.kind==='resource') {
     const balance=p[item.resource]+item.amount*count;
     if(!Number.isFinite(balance)||balance>Number.MAX_SAFE_INTEGER)fail('Resource balance limit reached.');

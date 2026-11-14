@@ -11,7 +11,7 @@ export function referenceTroop(type) {
   const [attack,defense,health,marchSpeed,load,food,wood,stone,gold,duration] = reference.troops[type.baseId][type.tier-1];
   return {...type,attack,defense,health,marchSpeed,load,duration,damage:attack*DAMAGE_COEFFICIENT,
     cost:Object.fromEntries(Object.entries({food,wood,stone,gold}).filter(([,n])=>n)),
-    description:type.description+' Reference troop attributes; original aggregate combat calibration.'};
+    description:{infantry:'Mortal infantry countering cavalry. Vulnerable to archers.',archers:'Mortal archers countering infantry. Vulnerable to cavalry.',cavalry:'Mounted mortals countering archers. Vulnerable to infantry.'}[type.baseId]};
 }
 export function commanderCapacity(level) {
   const values = reference.commanderCapacity;

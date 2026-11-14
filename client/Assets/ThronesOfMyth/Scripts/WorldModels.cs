@@ -64,7 +64,7 @@ namespace ThronesOfMyth
     {
         public string id, ownerId, name, civilization, commanderId, secondaryCommanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
         public bool deployed, mapVisible, lastKnown, protectedField; public float observedAt; public int activeMarches, carryCapacity; public ResourceAmounts cargo; public ArmyData[] homeFormations; public CoreReport[] reports;
-        public EconomyData economy; public int aether;
+        public EconomyData economy; public int aether,numericVersion;
         public InventoryData inventory; public PowerData powerBreakdown;
         public TroopTypeData[] trainingOptions;
         public RoutePoint[] route;
@@ -109,7 +109,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class ResearchCard { public RequirementCard[] prerequisites; public string id, name, branch, description, lockedReason, prerequisite, effect; public int level, maxLevel, percent, currentBonus, nextBonus; public bool canResearch; public ResourceAmounts cost; public float duration; }
     [Serializable] public sealed class TalentNode { public string id, name, requires, effect, lockedReason; public int max, rank; public bool available; }
     [Serializable] public sealed class TalentTree { public string id, name; public TalentNode[] nodes; }
-    [Serializable] public sealed class HeroProgress { public string id, expertiseDescription, respecLockedReason; public int rank, shards, nextShards, nextGold, marchTroopCap, heroLevel, stars, talentPoints, talentPointsSpent, respecMana; public float xp; public bool expertise; public HeroSkill[] skills; public TalentTree[] talents; }
+    [Serializable] public sealed class HeroProgress { public string id, expertiseDescription, respecLockedReason; public int rank, shards, nextShards, nextGold, marchTroopCap, heroLevel, stars, talentPoints, talentPointsSpent, respecMana; public float xp,xpLevelStart,xpNextLevel; public bool expertise; public HeroSkill[] skills; public TalentTree[] talents; }
     [Serializable] public sealed class HeroSkill { public int index, level, unlockStar; public string name, kind, description; }
     [Serializable] public sealed class DrawResult { public string id, commanderId, rarity; public bool duplicate; public int shards, number; }
     [Serializable] public sealed class RelicData { public string id, name, description; public ResourceAmounts cost; public float duration, damage, health; }
@@ -118,7 +118,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error, backend; }
     [Serializable] public sealed class CoreReport { public string id,type,title,detail,outcome,armyId,commanderId,reason,sourceId,currencyNote; public float time,started; public ResourceAmounts resources,lost; public CargoSource[] sources; }
     [Serializable] public sealed class CargoSource { public string nodeId,name,resource; public float x,z; public int amount; }
-    [Serializable] public sealed class CampData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name; public int level, health, maxHealth, respawn; public float x, z; }
+    [Serializable] public sealed class CampData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name,lockedReason; public int level, health, maxHealth, respawn,enemyPower,enemyTroops,enemyTier,recommendedTroops,recommendedTier,commanderXP,apCost; public float x, z; }
     [Serializable] public sealed class NodeData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name, resource; public float x, z; public int remaining, capacity; }
     [Serializable] public sealed class SiteData { public bool lastKnown, terrainExplored; public float observedAt; public bool unknown, locked; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
     [Serializable] public sealed class FlagData { public bool lastKnown, terrainExplored; public float observedAt; public string id, allianceId; public float x, z, health, maxHealth, buildRemaining; public bool isRoot, connected; }

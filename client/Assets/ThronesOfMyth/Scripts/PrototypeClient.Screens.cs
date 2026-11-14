@@ -242,10 +242,10 @@ namespace ThronesOfMyth
                 theme.OneLine(new Rect(x+140,y+100,width-140,20),recruited?"STARS "+progress.stars+" / 6":"Not recruited",theme.Eyebrow);
                 int cap=Math.Max(1,progress.stars*10);
                 bool capped=progress.heroLevel>=cap;
-                float into=progress.xp%100f;
+                float into=Mathf.Max(0,progress.xp-progress.xpLevelStart),needed=Mathf.Max(1,progress.xpNextLevel-progress.xpLevelStart);
                 theme.OneLine(new Rect(x,y+124,width,18),"LEVEL "+progress.heroLevel,theme.Heading);
-                theme.Bar(new Rect(x,y+146,width,10),capped?1f:into/100f,MythInterfaceTheme.Gold);
-                theme.OneLine(new Rect(x,y+158,width,18),capped?(int)progress.xp+" XP · star cap "+cap:(int)progress.xp+" XP · "+(int)into+" / 100 toward the next level",theme.Small);
+                theme.Bar(new Rect(x,y+146,width,10),capped?1f:into/needed,MythInterfaceTheme.Gold);
+                theme.OneLine(new Rect(x,y+158,width,18),capped?(int)progress.xp+" XP · star cap "+cap:(int)progress.xp+" XP · "+(int)into+" / "+(int)needed+" toward the next level",theme.Small);
             }
             float skillsY=progress==null?y+108:y+182;
             if(progress?.skills!=null)
@@ -493,7 +493,8 @@ namespace ThronesOfMyth
             else if (camp != null)
             {
                 title = camp.name; subtitle = "LEVEL " + camp.level + " · " + camp.health + " / " + camp.maxHealth + " HEALTH"; health = (float)camp.health / camp.maxHealth;
-                subtitle += " · "+(me.economy?.rules.campAP??5)+" AP ON FIRST ENGAGEMENT";
+                subtitle += " · "+(camp.apCost>0?camp.apCost:(me.economy?.rules.campAP??5))+" AP PER MARCH";
+                if(camp.recommendedTroops>0)subtitle="Suggested "+camp.recommendedTroops.ToString("N0")+" T"+camp.recommendedTier+" · "+camp.apCost+" AP · "+camp.commanderXP.ToString("N0")+" XP · Power "+camp.enemyPower.ToString("N0");
                 action = camp.health > 0 ? "March & attack" : "Returns in " + camp.respawn + "s"; enabled &= camp.health > 0;
                 perform = () => Send("attack", camp.id);
             }
@@ -561,9 +562,11 @@ namespace ThronesOfMyth
             if(remembered){subtitle=LandmarkCopy.Inspection(terrainExplored);health=-1;float sx=boss!=null?boss.x:camp!=null?camp.x:node!=null?node.x:site!=null?site.x:beacon!=null?beacon.x:city.homeX;float sz=boss!=null?boss.z:camp!=null?camp.z:node!=null?node.z:site!=null?site.z:beacon!=null?beacon.z:city.homeZ;
                 if(!keepCityReading){action="Scout to refresh";enabled=!processing;perform=()=>ScoutAt(sx,sz);}
                 if(camp!=null){action="March & attack";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}}
+            if(camp!=null&&!string.IsNullOrEmpty(camp.lockedReason)){enabled=false;action="Level locked";subtitle=camp.lockedReason;}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
             theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);
+            if(camp!=null)theme.Hint(new Rect(r.x+68,r.y+46,r.width-92,37),camp.enemyTroops.ToString("N0")+" enemy mortals · T"+camp.enemyTier+" · "+camp.health.ToString("N0")+" / "+camp.maxHealth.ToString("N0")+" health. Recommendations vary with commanders, talents and research.");
             if (health >= 0) theme.Bar(new Rect(r.x + 68, r.y + 78, 220, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
             bool readMarch = army != null && army.ownerId != playerId && (string.IsNullOrEmpty(me.allianceId) || army.allianceId != me.allianceId) && army.deployed && !army.protectedField;
             bool readGarrison = (site != null || beacon != null) && (string.IsNullOrEmpty(me.allianceId) || (site != null ? site.allianceId : beacon.allianceId) != me.allianceId) && (site == null || !site.unknown && !site.locked);
