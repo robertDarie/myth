@@ -45,7 +45,16 @@ namespace ThronesOfMyth.Editor
             if (Application.platform != RuntimePlatform.WindowsEditor || !BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64))
                 throw new BuildFailedException("Use a Windows Unity Editor with Windows Build Support.");
             string repository=Directory.GetParent(Application.dataPath).Parent.FullName;
-            string package=Path.GetFullPath(Path.Combine(repository,"dist","WindowsClient"));
+            string packageName="WindowsClient";
+            var arguments=Environment.GetCommandLineArgs();
+            int outputArgument=Array.IndexOf(arguments,"-thronesClientPackage");
+            if(outputArgument>=0)
+            {
+                if(outputArgument+1>=arguments.Length)throw new BuildFailedException("Missing client package folder name.");
+                packageName=arguments[outputArgument+1];
+                if(!System.Text.RegularExpressions.Regex.IsMatch(packageName,@"\A[A-Za-z0-9][A-Za-z0-9_-]{0,63}\z"))throw new BuildFailedException("Client package must be a simple folder name inside dist.");
+            }
+            string package=Path.GetFullPath(Path.Combine(repository,"dist",packageName));
             string expected=Path.GetFullPath(Path.Combine(repository,"dist"))+Path.DirectorySeparatorChar;
             if(!package.StartsWith(expected,StringComparison.OrdinalIgnoreCase))throw new BuildFailedException("Client output must remain inside dist.");
             ArtReview.ValidateAssets(false);PrototypeSceneBuilder.EnsureBuildScene();
@@ -61,7 +70,7 @@ namespace ThronesOfMyth.Editor
             // Only the freshly built Game folder, launcher and public instructions
             // enter this package. No server, runtime, preferences or operator data.
             identity.WriteManifest(package);
-            string zip=Path.Combine(repository,"dist","Thrones-of-Myth-Windows-Client.zip");
+            string zip=Path.Combine(repository,"dist",packageName=="WindowsClient"?"Thrones-of-Myth-Windows-Client.zip":"Thrones-of-Myth-"+packageName+".zip");
             if(File.Exists(zip))File.Delete(zip);
             ZipFile.CreateFromDirectory(package,zip,System.IO.Compression.CompressionLevel.Optimal,false);
             Debug.Log("Client-only ZIP created: "+zip);
@@ -89,8 +98,8 @@ namespace ThronesOfMyth.Editor
             PlayerSettings.companyName = "ThronesOfMyth";
             PlayerSettings.productName = "Thrones of Myth";
             PlayerSettings.bundleVersion = ReleaseVersion.Current;
-            PlayerSettings.defaultScreenWidth = 1280;
-            PlayerSettings.defaultScreenHeight = 800;
+            // Respect the versioned project resolution instead of dirtying it
+            // during packaging or changing an operator's chosen defaults.
             PlayerSettings.fullScreenMode = FullScreenMode.Windowed;
             PlayerSettings.resizableWindow = true;
             PlayerSettings.runInBackground = true;
