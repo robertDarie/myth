@@ -33,6 +33,8 @@ Original four new regressions: **0PASS/4FAIL red→4PASS/0FAIL green**. Added cr
 
 Corrected old assertions that scouts must return on gate loss or be rejected by a closed kingdom gate; retained military denial and explicit manual recall/no-reward checks. The unchanged historical Task4 matrix/diagnostics remain dated under its evidence folder. Current matrix separates post-fix server proof from native NOTTESTED. Native cross-pass interaction and full4096-cell legal exploration remain unverified; local scout numerical parity is not certified. Research/expected unchanged inputs: [scout passage record](../../research/parity/features/scout-pass-access.md).
 
+The first guarded B push was correctly blocked by a randomized multi-kingdom rally fixture: hard-coded target could be across a now-closed frontier, so the live scheduler canceled it before the isolation assertion. The fixture now chooses a target with a real authorized route and assembles at the leader's actual home. All original foreign-kingdom rejection/state assertions remain; corrected realms suite3/3PASS. This changes tests only, not military access. Publication must rerun the full plan; no failed push is claimed successful.
+
 ## C–F status and remaining task dependencies
 
 - **B scout access: server functional scope verified**, native interaction and full reference numerical equivalence NOTTESTED/UNKNOWN. Scout send/redirect/auto/investigate/recon/recall no longer need military ownership.

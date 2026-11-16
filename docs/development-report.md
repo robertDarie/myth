@@ -2,6 +2,8 @@
 
 ## Recovery B — separate scout passage
 
+First guarded push of B was blocked by the multi-kingdom suite's hard-coded rally target becoming unreachable for some random spawns. Repaired that hand-written fixture to choose a reachable real stronghold and the actual leader home; kept every isolation/foreign-action assertion. Focused realms3/3PASS. No production rule weakened. Guarded publication reruns36checks before remote confirmation; a1bd3d4 is not called published until that succeeds.
+
 After remote-confirmed A safety checkpoint de42f6cf29cf524ba87d3313a4db15abac64e5f5 (35checks), corrected actual scout routes independently of missing frontier pass objectives. Dedicated scout route/travel policy preserves physical corridors, bounds, speed, capacity and privacy without military ownership. Applies to send/redirect/auto/investigate/recon/ETA/ongoing travel/recall. Originalfour regressions0pass/4fail→4/4green; additional legitimate cave discovery/investigation/claim and private recon test; focused41/41; full409tests404pass/0fail/5skips; real JSON/SQLite HTTP22/22 including foreign scout denial and ordinary military refusal. No schema/numeric/client change; native NOTTESTED. Existing obsolete scout-gate expectations replaced with required positive passage and explicit manual-recall assertions. Mandatory plan36checks, registered evidence/fixture. Full A–F and Tasks6–11 remain incomplete; no fabricated parity/timing claim.
 
 ## Recovery A — military route safety subset

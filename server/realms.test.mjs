@@ -1,5 +1,6 @@
 import { legacyMap } from './testing/legacy-save.mjs';
 import { test } from 'node:test';
+import { route } from './navigation.mjs';
 import assert from 'node:assert/strict';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -80,7 +81,10 @@ test('three kingdoms isolate sessions, diplomacy, combat, vision, seasons and re
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'attack-player', targetId: birch.payload.playerId } })).status, 400);
   const rallyId = 'birch-rally-1';
   // A live scheduler may tick between HTTP assertions: keep this fixture valid.
-  host.realms.get('birch').world.rallies.push({ id: rallyId, allianceId: birchAlliance, leaderId: birch.payload.playerId, leaderArmyId: birch.payload.playerId, targetId: 'godbreaker-watch', targetCycle: 1, defendingAllianceId: '', phase: 'Assembling', assemblyEnds: 999, armyIds: [birch.payload.playerId], meetX: 5, meetZ: 5, x: 5, z: 5 });
+  const foreignWorld=host.realms.get('birch').world,foreignLeader=foreignWorld.players.get(birch.payload.playerId);
+  const reachableTarget=foreignWorld.strongholds.find(target=>route(foreignWorld,foreignLeader,target));
+  assert.ok(reachableTarget,'Isolation fixture needs a physically accessible rally target');
+  foreignWorld.rallies.push({ id: rallyId, allianceId: birchAlliance, leaderId: birch.payload.playerId, leaderArmyId: birch.payload.playerId, targetId: reachableTarget.id, targetCycle: reachableTarget.cycle, defendingAllianceId: '', phase: 'Assembling', assemblyEnds: 999, armyIds: [birch.payload.playerId], meetX: foreignLeader.homeX, meetZ: foreignLeader.homeZ, x: foreignLeader.x, z: foreignLeader.z });
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: other.payload.token, body: { type: 'rally-join', targetId: rallyId } })).status, 400);
   assert.deepEqual(host.realms.get('birch').world.rallies[0].armyIds, [birch.payload.playerId]);
   assert.equal((await call(base, '/k/dawn/command', { method: 'POST', token: dawn.payload.token, body: { type: 'garrison-join', targetId: 'foreign-gate' } })).status, 400);
