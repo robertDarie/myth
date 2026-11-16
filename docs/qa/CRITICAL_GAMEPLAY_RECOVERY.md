@@ -49,11 +49,17 @@ No skill coefficient changed; existing local factor composition remains a disclo
 
 Unity6000.3.0f1 batch compilation exited0; portable16,757 C#contracts and37publication checks passed. No rebuilt/new native executable was operated for this correction; native visual/stat-panel validation remains NOTTESTED. **Full Recovery C remains incomplete:** secondary active casts/timing, expertise and exact reference stacking are not certified. Indexed player accounts disagree on one-vs-two-turn timing; no guessed interval substituted.
 
-## D–F status and remaining task dependencies
+## D — client map/camera source and geometry correction
+
+C passive subset published/remote-confirmed at `0f9bbcd94c889dfec92273e3f4f05801485f195f`,37checks. Fixed minimap20-column mask/indexing, added truthful public province outlines/distinct known gate markers, cursor-anchored zoom and visible buttons with panel input protection. Real Unity tests reproduced a further fixed-height overview defect (rays below ground and failed constraint recovery), now corrected by scaling view altitude/far plane. Pure geometry12 new checks red→green; full portable16,769PASS; actual Unity13,774boundary checks now0errors, cursor drift2.420525→0.00001707194, blocked-scroll guard preserved. See [map/camera report](MAP_CAMERA_CORRECTION.md) for test commands and limitations.
+
+Native post-fix input/HUD/appearance **NOTTESTED**; current desktop tool cannot obtain a foreground process ID. Original disposable client had exited, old scoped host shut down, only exact QA-changed display/server preferences restored; sessions/real saves preserved. Server-only observation confirms100trained reserves after normal elapsed time, not native completion. D remains partial until native acceptance. A clean package is built after source commit before guarded publication; no full alpha/parity readiness claim.
+
+## E–F status and remaining task dependencies
 
 - **B scout access: server functional scope verified**, native interaction and full reference numerical equivalence NOTTESTED/UNKNOWN. Scout send/redirect/auto/investigate/recon/recall no longer need military ownership.
 - **C secondary passive/level/primary-only gear and talents: server subset verified.** Secondary active casts/timing and complete numerical/native parity remain unfinished; do not call the whole commander system complete.
-- **D native map/camera: unfinished.** Legacy minimap overlay assumptions and reported Windows wheel issue remain. UI tool detected user input; no exclusive native control result. No new client build was made for this server-only patch; protocol unchanged.
+- **D map/camera: source/Unity geometry corrected**, native feel/input/HUD acceptance NOTTESTED. See dedicated report; no false Windows interaction PASS.
 - **E progression design: unfinished.** Building table observations exist but complete prerequisites, output/power/capacity, all research, modifiers and deterministic old-age migration are not yet independently established. Copying650 costs/times alone would produce an incompatible system.
 - **F matrix revalidation: partial.** Task4's41 rows are preserved as dated baseline; current movement row records containment separately. Overall native, full progression and reference parity remain unverified.
 

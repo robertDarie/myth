@@ -7,5 +7,16 @@
     "research/parity/features/forsaken-numerics.md",
     "research/parity/features/forsaken-population.md"
   ],
-  "exemptions": []
+  "exemptions": [
+    {
+      "kind": "bug-fix",
+      "paths": [
+        "client/Assets/ThronesOfMyth/Scripts/MinimapGeometry.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/StrategyCamera.cs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+      ],
+      "reason": "Recovery D restores authoritative minimap dimensions and existing public province presentation, corrects camera footprint/cursor input geometry and adds requested explicit view controls. No server gameplay, balance, rewards, progression or save format changes; camera zoom limits are original UI preferences, not RoK gameplay quantities. See docs/qa/MAP_CAMERA_CORRECTION.md and source-bound real Unity geometry evidence."
+    }
+  ]
 }

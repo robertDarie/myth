@@ -1,0 +1,18 @@
+{
+  "unityVersion": "6000.3.0f1",
+  "checks": 13774,
+  "success": false,
+  "limitation": "Geometry validation only. Keyboard/drag smoothing, HUD, scene appearance and standalone performance require Play mode and Windows review.",
+  "errorCount": 4724,
+  "sampleErrors": [
+    "(1024, 768) zoom=1000 target=(1.00, 0.00, 1.00): ray missed ground",
+    "(1024, 768) zoom=1000 target=(1.00, 0.00, 1.00): ray missed ground",
+    "(1024, 768) zoom=1000 target=(1.00, 0.00, 1.00) pan: ray missed ground",
+    "(1024, 768) zoom=1000 target=(1.00, 0.00, 1.00) pan: ray missed ground",
+    "(1024, 768) zoom=1000 target=(1.00, 0.00, 1.00) Focus: ray missed ground",
+    "(1024, 768) zoom=1000 target=(1.00, 0.00, 1.00) Focus: ray missed ground"
+  ],
+  "cursorAnchorFailure": false,
+  "isolatedCursorDriftBefore": 2.420525,
+  "isolatedCursorExit": 1
+}

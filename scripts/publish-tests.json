@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "source-bound actual Unity map/camera geometry evidence (not native certification)",
+      "command": ["python", "-X", "utf8", "scripts/check-map-camera-evidence.py"]
+    },
+    {
       "name": "secondary learned passives, primary-only bonuses and level invariance",
       "command": ["node", "--test", "server/secondary-passive-correction.test.mjs"]
     },

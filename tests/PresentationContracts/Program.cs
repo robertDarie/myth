@@ -29,6 +29,7 @@ class Program
     }
     static void Main()
     {
+        checks+=MinimapContracts.Run();
         var signal=new CityProgressFeedback();
         signal.Observe("A",City(4),0);Check(!signal.IsRecent("academy",0),"Initial saved level must not celebrate");
         signal.Observe("A",City(4,true,true),1);signal.Observe("A",City(5),2);

@@ -18,6 +18,38 @@ namespace ThronesOfMyth.Editor
             public string limitation="Geometry validation only. Keyboard/drag smoothing, HUD, scene appearance and standalone performance require Play mode and Windows review.";
         }
         private static readonly Vector2[] Samples={Vector2.zero,Vector2.right,Vector2.up,Vector2.one,new Vector2(.5f,.5f),new Vector2(.25f,.75f)};
+        [Serializable] private sealed class CursorReport
+        {
+            public string unityVersion;
+            public float drift;
+            public bool blockedScrollPreserved,success;
+            public string limitation="Actual Unity geometry and controller calls; no native wheel, HUD interaction or FPS certification.";
+        }
+        public static void ValidateRecoveryGeometry(){ValidateCameraBoundaries();ValidateCursorZoom();}
+        public static void ValidateCursorZoom()
+        {
+            var root=new GameObject("Isolated cursor zoom"){hideFlags=HideFlags.HideAndDontSave};
+            try
+            {
+                var camera=root.AddComponent<Camera>();camera.enabled=false;camera.aspect=16f/9;
+                var controller=root.AddComponent<StrategyCamera>();controller.Initialize();controller.reducedMotion=true;
+                controller.SetView(new Vector3(128,0,128),14,true);var viewport=new Vector2(.3f,.7f);
+                if(!CameraFootprint.GroundPoint(camera,viewport,out var before))throw new InvalidOperationException("Initial cursor ray missed ground");
+                controller.ZoomBy(2,viewport);controller.ConstrainNow(true);
+                if(!CameraFootprint.GroundPoint(camera,viewport,out var after))throw new InvalidOperationException("Zoomed cursor ray missed ground");
+                float drift=Vector3.Distance(before,after);
+                Debug.Log("Cursor anchor measured drift="+drift);
+                if(drift>.002f)throw new InvalidOperationException("Cursor anchor drifts under center-based zoom: "+drift);
+                float zoom=camera.orthographicSize;controller.blockInput=true;controller.Scroll(2,viewport);controller.ConstrainNow(true);
+                bool blocked=Mathf.Abs(camera.orthographicSize-zoom)<.0001f;
+                controller.blockInput=false;controller.inputBlocked=()=>true;controller.Scroll(2,viewport);controller.ConstrainNow(true);
+                blocked&=Mathf.Abs(camera.orthographicSize-zoom)<.0001f;
+                if(!blocked)throw new InvalidOperationException("Blocked wheel intent changed camera zoom");
+                string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../..","work/native-visual-review"));Directory.CreateDirectory(folder);
+                File.WriteAllText(Path.Combine(folder,"cursor-zoom.json"),JsonUtility.ToJson(new CursorReport{unityVersion=Application.unityVersion,drift=drift,blockedScrollPreserved=blocked,success=true},true));
+            }
+            finally{UnityEngine.Object.DestroyImmediate(root);}
+        }
         private static void Check(Camera camera,Rect bounds,List<string> errors,ref int checks,string context)
         {
             foreach(var viewport in Samples)
@@ -40,7 +72,8 @@ namespace ThronesOfMyth.Editor
             var root=new GameObject("Isolated camera validation"){hideFlags=HideFlags.HideAndDontSave};
             var camera=root.AddComponent<Camera>();camera.enabled=false;
             var controller=root.AddComponent<StrategyCamera>();controller.Initialize();controller.reducedMotion=true;
-            var targets=new[]{new Vector3(1,0,1),new Vector3(79,0,1),new Vector3(1,0,79),new Vector3(79,0,79),new Vector3(40,0,1),new Vector3(1,0,40),new Vector3(79,0,40),new Vector3(40,0,79),new Vector3(40,0,40),new Vector3(-100,0,200)};
+            float edge=ReleaseVersion.WorldSize-1,centerPoint=ReleaseVersion.WorldSize*.5f;
+            var targets=new[]{new Vector3(1,0,1),new Vector3(edge,0,1),new Vector3(1,0,edge),new Vector3(edge,0,edge),new Vector3(centerPoint,0,1),new Vector3(1,0,centerPoint),new Vector3(edge,0,centerPoint),new Vector3(centerPoint,0,edge),new Vector3(centerPoint,0,centerPoint),new Vector3(-100,0,ReleaseVersion.WorldSize+100)};
             var sizes=new[]{new Vector2Int(1280,720),new Vector2Int(1920,1080),new Vector2Int(2560,1440),new Vector2Int(1024,768),new Vector2Int(2560,1080),new Vector2Int(3840,1080),new Vector2Int(720,1280),new Vector2Int(16384,2),new Vector2Int(2,16384)};
             try
             {
@@ -60,7 +93,7 @@ namespace ThronesOfMyth.Editor
                             Check(camera,controller.MapBounds,errors,ref checks,context);
                             checks++;if(camera.orthographicSize>controller.MaximumZoom+.001f||camera.orthographicSize<controller.MinimumZoom-.001f)errors.Add(context+": zoom outside fit range");
                             // In-map targets must remain visible even when focus is clamped.
-                            if(position.x>=1&&position.x<=79&&position.z>=1&&position.z<=79)
+                            if(position.x>=1&&position.x<=edge&&position.z>=1&&position.z<=edge)
                             {
                                 checks++;var visible=camera.WorldToViewportPoint(position);
                                 if(visible.x<-.001f||visible.x>1.001f||visible.y<-.001f||visible.y>1.001f)errors.Add(context+": focus target clipped");
@@ -69,10 +102,10 @@ namespace ThronesOfMyth.Editor
                             controller.Focus(position.x,position.z);controller.ConstrainNow(true);Check(camera,controller.MapBounds,errors,ref checks,context+" Focus");
                         }
                         controller.reducedMotion=false;
-                        controller.SetView(new Vector3(40,0,40),1000,true);
-                        controller.SetView(new Vector3(1,0,79),6,false);
+                        controller.SetView(new Vector3(centerPoint,0,centerPoint),1000,true);
+                        controller.SetView(new Vector3(1,0,edge),3,false);
                         for(int frame=0;frame<120;frame++){controller.ConstrainNow(false,1/60f);Check(camera,controller.MapBounds,errors,ref checks,size+" smooth zoom-in frame="+frame);}
-                        checks++;var targetPoint=camera.WorldToViewportPoint(new Vector3(1,0,79));if(targetPoint.x<0||targetPoint.x>1||targetPoint.y<0||targetPoint.y>1)errors.Add(size+": smoothed focus lost its destination");
+                        checks++;var targetPoint=camera.WorldToViewportPoint(new Vector3(1,0,edge));if(targetPoint.x<0||targetPoint.x>1||targetPoint.y<0||targetPoint.y>1)errors.Add(size+": smoothed focus lost its destination");
                         // Resize at maximum zoom before constraining: no intermediate blank frame.
                         controller.SetView(new Vector3(1,0,1),1000,true);camera.aspect=4;
                         controller.ConstrainNow(false,1/60f);Check(camera,controller.MapBounds,errors,ref checks,"live wide resize");
@@ -80,6 +113,13 @@ namespace ThronesOfMyth.Editor
                     }
                     finally{camera.targetTexture=null;UnityEngine.Object.DestroyImmediate(target);}
                 }
+                camera.aspect=16f/9;controller.SetMapBounds(new Rect(0,0,ReleaseVersion.WorldSize,ReleaseVersion.WorldSize));
+                controller.SetView(new Vector3(128,0,128),14,true);
+                var anchorViewport=new Vector2(.3f,.7f);
+                CameraFootprint.GroundPoint(camera,anchorViewport,out var beforeZoom);
+                controller.ZoomBy(2,anchorViewport);controller.ConstrainNow(true);
+                CameraFootprint.GroundPoint(camera,anchorViewport,out var afterZoom);
+                checks++;if(Vector3.Distance(beforeZoom,afterZoom)>.002f)errors.Add("Wheel zoom must keep the ground point under the cursor");
                 // Non-origin / differently sized kingdoms, plus helpers under alternate
                 // pitch/yaw. The production controller currently uses its original angle.
                 foreach(var bounds in new[]{new Rect(-20,10,50,90),new Rect(0,0,12,12)})

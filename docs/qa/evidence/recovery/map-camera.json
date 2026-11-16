@@ -1,0 +1,28 @@
+{
+  "checked": "2026-11-16",
+  "testedParent": "0f9bbcd94c889dfec92273e3f4f05801485f195f",
+  "scope": "Parent plus recovery D math/UI changes; actual Unity batch geometry, not native interaction",
+  "unityVersion": "6000.3.0f1",
+  "geometry": {
+    "unityVersion": "6000.3.0f1",
+    "checks": 13774,
+    "success": true,
+    "errors": [],
+    "limitation": "Geometry validation only. Keyboard/drag smoothing, HUD, scene appearance and standalone performance require Play mode and Windows review."
+  },
+  "cursor": {
+    "unityVersion": "6000.3.0f1",
+    "drift": 1.707193769107107e-05,
+    "blockedScrollPreserved": true,
+    "success": true,
+    "limitation": "Actual Unity geometry and controller calls; no native wheel, HUD interaction or FPS certification."
+  },
+  "nativeInputVerdict": "NOT TESTED",
+  "portableContracts": 16769,
+  "sourceSha256": {
+    "client/Assets/ThronesOfMyth/Scripts/StrategyCamera.cs": "b29a95cc2e478324340eb5b1ec6f57348bb7c1ac62eaf2e514906b21a0280e84",
+    "client/Assets/ThronesOfMyth/Scripts/CameraFootprint.cs": "9c2149e7d7fea3228ec6f757f27408bda8705a3583a953284bc140e9953ea5a4",
+    "client/Assets/ThronesOfMyth/Scripts/MinimapGeometry.cs": "139c5a4268f014e69b3083822b1041acb4ac2f4b45b5136bc7a5e067dfd44eb9"
+  },
+  "hashConvention": "UTF-8 source text with universal LF newlines; independent of Git checkout CRLF"
+}

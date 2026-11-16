@@ -24,6 +24,7 @@ namespace ThronesOfMyth
         private Rect QuestRect => new Rect(18,150,242,Opening==null?142:200);
         private Rect ActivityRect => new Rect(18,112,242,28);
         private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);
+        private Rect ZoomControlsRect => new Rect(CityShortcutRect.xMax+8,CityShortcutRect.y,92,44);
         private Rect NotificationRect => interfacePage==InterfacePage.World||LoadingActive||pendingOrder!=null?new Rect((ViewWidth-560)/2,108,560,88):new Rect(WindowRect.x+24,WindowRect.yMax-42,Mathf.Min(640,WindowRect.width-48),34);
         private float MarchStep => InterfaceLayout.MarchStep;
         private Rect MarchRail => new Rect(ViewWidth-232,112,InterfaceLayout.RailWidth,32+5*MarchStep);
@@ -78,7 +79,7 @@ namespace ThronesOfMyth
             }
             if(MarchRail.Contains(p)||MinimapRect.Contains(p)||ActiveArmy!=null&&ActiveArmy.deployed&&MarchOrdersRect.Contains(p))return true;
             if(!string.IsNullOrEmpty(selectedId)&&ContextRect.Contains(p))return true;
-            return CityShortcutRect.Contains(p);
+            return CityShortcutRect.Contains(p)||ZoomControlsRect.Contains(p);
         }
         private bool HandleInterfaceKeys()
         {
@@ -370,25 +371,30 @@ namespace ThronesOfMyth
             float mapSize=Mathf.Min(r.width-24,r.height-40);var mapArea=new Rect(r.center.x-mapSize*.5f,r.y+33,mapSize,mapSize);
             MythInterfaceTheme.Fill(mapArea,new Color(.07f,.12f,.17f));if(map.MinimapTerrain!=null)GUI.DrawTexture(mapArea,map.MinimapTerrain);
             theme.Hint(mapArea,"Kingdom overview · dark: unexplored · green: permanently explored. Click to focus.");
-            MythInterfaceTheme.Line(new Vector2(mapArea.center.x, mapArea.y), new Vector2(mapArea.center.x, mapArea.yMax), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
-            MythInterfaceTheme.Line(new Vector2(mapArea.x, mapArea.center.y), new Vector2(mapArea.xMax, mapArea.center.y), 1, new Color(0.7f, 0.6f, 0.35f, 0.55f));
+            if(world.provinces!=null&&world.size>0)foreach(var province in world.provinces)
+            {
+                float left=mapArea.x+province.minX/world.size*mapArea.width,right=mapArea.x+province.maxX/world.size*mapArea.width;
+                float top=mapArea.y+(1-province.maxZ/world.size)*mapArea.height,bottom=mapArea.y+(1-province.minZ/world.size)*mapArea.height;
+                var edge=new Color(.7f,.6f,.35f,.55f);
+                MythInterfaceTheme.Line(new Vector2(left,top),new Vector2(right,top),1,edge);MythInterfaceTheme.Line(new Vector2(left,bottom),new Vector2(right,bottom),1,edge);
+                MythInterfaceTheme.Line(new Vector2(left,top),new Vector2(left,bottom),1,edge);MythInterfaceTheme.Line(new Vector2(right,top),new Vector2(right,bottom),1,edge);
+            }
             if (world.exploration != null)
             {
-                var known = new HashSet<int>(world.exploration.explored);
-                for (int z = 0; z < 20; z++) for (int x = 0; x < 20; x++)
-                { int cell = z * 20 + x; if (!known.Contains(cell)) MythInterfaceTheme.Fill(new Rect(mapArea.x + x * mapArea.width / 20, mapArea.y + (19 - z) * mapArea.height / 20, mapArea.width / 20 + 1, mapArea.height / 20 + 1), new Color(0.03f, 0.05f, 0.08f)); }
+                // MinimapTerrain already caches the authoritative explored grid.
+                // A second legacy20-column mask covered the wrong64-column cells.
                 foreach (var scout in world.exploration.scouts) if (scout.phase != "Idle") { Dot(mapArea, scout.x, scout.z, Color.cyan, 4); Dot(mapArea, scout.targetX, scout.targetZ, MythInterfaceTheme.Gold, 3); }
                 if (world.exploration.findings != null) foreach (var place in world.exploration.findings) Dot(mapArea, place.x, place.z, place.category == "cavern" ? new Color(.25f, .55f, .62f) : place.category == "ruin" ? new Color(.72f, .58f, .28f) : MythInterfaceTheme.Gold, 4);
             }
             foreach (var boss in world.strongholds) Dot(mapArea, boss.x, boss.z, MythInterfaceTheme.Red, 6);
-            foreach (var site in world.sites) Dot(mapArea, site.x, site.z, new Color(0.85f, 0.72f, 0.95f), 5);
+            foreach (var site in world.sites) Dot(mapArea, site.x, site.z, site.kind=="gate"?MythInterfaceTheme.Gold:new Color(0.85f, 0.72f, 0.95f), site.kind=="gate"?7:5);
             foreach (var army in world.armies) Dot(mapArea, army.x, army.z, army.ownerId==playerId?MythInterfaceTheme.Teal:!string.IsNullOrEmpty(me.allianceId)&&army.allianceId==me.allianceId?new Color(.4f,.85f,.6f):MythInterfaceTheme.Red, army.id == ActiveArmy.id ? 6 : 3);
             Dot(mapArea, me.homeX, me.homeZ, Color.white, 5);
             if(cameraControl!=null)Dot(mapArea,cameraControl.FocusPoint.x,cameraControl.FocusPoint.z,MythInterfaceTheme.Gold,3);
             if (Event.current.type == EventType.MouseDown && mapArea.Contains(Event.current.mousePosition))
             {
                 float x=(Event.current.mousePosition.x-mapArea.x)/mapArea.width*world.size,z=(1-(Event.current.mousePosition.y-mapArea.y)/mapArea.height)*world.size;cameraControl?.Focus(x,z);selectedId="";map.selectedId="";
-                int sector=Mathf.Clamp(Mathf.FloorToInt(z/4),0,19)*20+Mathf.Clamp(Mathf.FloorToInt(x/4),0,19);
+                int sector=MinimapGeometry.CellIndex(x,z,world.size,world.exploration?.width??0);
                 if(world.exploration!=null&&Array.IndexOf(world.exploration.explored,sector)<0){status="Unexplored frontier · Send a scout to reveal this region, or press H to return home.";toastUntil=Time.unscaledTime+5;}
                 Event.current.Use();
             }
@@ -409,7 +415,12 @@ namespace ThronesOfMyth
                 if(theme.NavigationButton(rect,PrimaryTitles[i],PrimaryIcons[i],interfacePage==PrimaryPages[i],i==4?"Every screen and action":"Open "+PrimaryTitles[i]))
                 {if(interfacePage!=PrimaryPages[i])Navigate(PrimaryPages[i]);else CloseInterface();}
             }
-            if(interfacePage==InterfacePage.World){if(theme.Button(new Rect(18,ViewHeight-100,166,28),SupplyReachShown()?"Hide supply reach":"Show supply reach")){PlayerPrefs.SetInt("ThronesOfMyth.supplyReach",SupplyReachShown()?0:1);ApplySupplyReach();}if(theme.Button(new Rect(18,ViewHeight-68,166,28),"Home [H]"))cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);if(theme.Button(new Rect(18,ViewHeight-36,166,28),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);}
+            if(interfacePage==InterfacePage.World){
+                var zoom=ZoomControlsRect;
+                if(theme.Button(new Rect(zoom.x,zoom.y,44,44),"−"))cameraControl?.ZoomBy(-1,new Vector2(.5f,.5f));
+                if(theme.Button(new Rect(zoom.x+48,zoom.y,44,44),"+"))cameraControl?.ZoomBy(1,new Vector2(.5f,.5f));
+                if(theme.Button(new Rect(18,ViewHeight-100,166,28),SupplyReachShown()?"Hide supply reach":"Show supply reach")){PlayerPrefs.SetInt("ThronesOfMyth.supplyReach",SupplyReachShown()?0:1);ApplySupplyReach();}if(theme.Button(new Rect(18,ViewHeight-68,166,28),"Home [H]"))cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);if(theme.Button(new Rect(18,ViewHeight-36,166,28),"Controls & shortcuts"))OpenInterface(InterfacePage.Settings);
+            }
         }
         private void DrawInterfaceToast()
         {

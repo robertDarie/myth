@@ -17,7 +17,7 @@ namespace ThronesOfMyth
         public Rect MapBounds => bounds;
         public Vector3 FocusPoint => focus;
         public float MaximumZoom {get;private set;}
-        public float MinimumZoom => Mathf.Min(6,MaximumZoom);
+        public float MinimumZoom => Mathf.Min(3,MaximumZoom);
         private void Awake(){Initialize();}
         public void Initialize()
         {
@@ -38,14 +38,36 @@ namespace ThronesOfMyth
             Initialize();wantedFocus=point;wantedZoom=zoom;ConstrainNow(immediate);
         }
         public void Pan(Vector3 delta){wantedFocus+=new Vector3(delta.x,0,delta.z);ConstrainNow(false);}
-        private void Pose(){transform.position=focus+Offset;transform.rotation=Quaternion.LookRotation(-Offset,Vector3.up);}
+        public void ZoomBy(float steps,Vector2 viewport)
+        {
+            Initialize();if(float.IsNaN(steps)||float.IsInfinity(steps)||steps==0)return;
+            viewport=new Vector2(Mathf.Clamp01(viewport.x),Mathf.Clamp01(viewport.y));
+            if(!CameraFootprint.GroundPoint(view,viewport,out var anchor))return;
+            var offset=(anchor-focus)/view.orthographicSize;
+            wantedZoom=Mathf.Clamp(wantedZoom-steps*Mathf.Max(.6f,wantedZoom*.1f),MinimumZoom,MaximumZoom);
+            wantedFocus=anchor-offset*wantedZoom;
+            ConstrainNow(false);
+        }
+        public void Scroll(float steps,Vector2 viewport)
+        {
+            if(blockInput||(inputBlocked?.Invoke()??false))return;
+            ZoomBy(steps,viewport);
+        }
+        private void Pose()
+        {
+            // A256-wide overview needs enough altitude for every orthographic ray
+            // to start above the ground. Fixed42-height rays failed at large zoom.
+            var offset=Offset*Mathf.Max(1,view.orthographicSize/14f);
+            transform.position=focus+offset;transform.rotation=Quaternion.LookRotation(-Offset,Vector3.up);
+            view.farClipPlane=Mathf.Max(512,offset.magnitude*2+view.orthographicSize*4);
+        }
         private void Update()
         {
             bool blocked=blockInput||(inputBlocked?.Invoke()??false);
             if(blocked){dragging=false;return;}
             var keys=new Vector3(Input.GetAxisRaw("Horizontal"),0,Input.GetAxisRaw("Vertical"));
             wantedFocus+=Vector3.ClampMagnitude(keys,1)*view.orthographicSize*.8f*Time.unscaledDeltaTime;
-            wantedZoom-=Input.mouseScrollDelta.y*Mathf.Max(.6f,view.orthographicSize*.1f);
+            Scroll(Input.mouseScrollDelta.y,view.ScreenToViewportPoint(Input.mousePosition));
             if(Input.GetMouseButtonDown(2)){dragging=true;previousMouse=Input.mousePosition;}
             if(!Input.GetMouseButton(2))dragging=false;
             if(dragging)

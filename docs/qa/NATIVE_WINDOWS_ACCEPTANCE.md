@@ -1,6 +1,6 @@
 # Native Windows recovery acceptance
 
-**Post-recovery verification NOT TESTED.** Actual clean f5c0cdf Windows build was launched in Task4; city creation, Greek choice, Citadel2 paid completion, infantry queue/debit and city/world rendering have captured evidence. Further UI automation was blocked by the tool detecting user input. Backend tests are not substituted for these remaining native steps.
+**Post-recovery verification NOT TESTED.** Actual clean f5c0cdf Windows build was launched in Task4; city creation, Greek choice, Citadel2 paid completion, infantry queue/debit and city/world rendering have captured evidence. Further UI automation was first blocked by user-input detection; later the desktop tool could not obtain a foreground process ID. D now has actual Unity ray/geometry and minimap-helper proof, which is not native wheel/HUD proof. Backend tests are not substituted for these remaining native steps.
 
 Use a fresh isolated kingdom and client package matching the server commit/protocol; record exact build identity, resolution and screenshots. Never connect destructive tests to live/port8091 worlds. Use ordinary production actions; if stages or resources are prepared, explicitly label that scenario FIXTURE TESTED.
 
@@ -11,7 +11,7 @@ For each step record: expected result, observed result, source/build SHA, time, 
 3. Unaffiliated army cannot cross Dawn→Outer or Ashen→Outer. Existing ordinary local movement remains possible. Missing frontier passes must be described as closed/incomplete rather than appearing capturable when absent.
 4. Legitimately capture the relevant pass, march two consecutive boundaries, test outsider refusal, revoke during travel, then recall stranded troops home without losing units. **Full new frontier pass implementation prerequisite missing.**
 5. Scout send/redirect/automatic search/investigate/recon/recall across closed or enemy passes, while ordinary armies remain denied. **Scout server correction verified; native retest outstanding.**
-6. Recruit/unlock a commander, pair as secondary, upgrade each supported passive/active family and verify actual server events plus matching visual feedback. Check primary-only talents/equipment and remove/reload. **Secondary correction missing.**
+6. Recruit/unlock a commander, pair as secondary, upgrade each supported passive/active family and verify actual server events plus matching visual feedback. Check primary-only talents/equipment and remove/reload. **Secondary passive/level correction server-tested; active sequencing still missing.**
 7. Complete actual training, research, PvE/report/reward, hospital/heal, cooperative fort rally and garrison. Record natural vs simulation-clock waits. No max-state fixture is organic progression.
 8. Disconnect/restart client and disposable server; resume same city, queues, scouts, inventory, troops and alliance. Task4 HTTP worker restart passed, native equivalent remains unobserved.
 

@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## 2026-11-16 recovery D source/geometry checkpoint
+
+Corrected minimap snapshot dimensions/fog overlay and province presentation; explicit camera buttons/cursor zoom, scalable altitude/depth fixes real Unity overview-ray defect. Redlegacyminimap +cursor2.420525drift +4,724boundaryerrors→12purechecks/all16,769portable contracts,13,774Unityboundarychecks0errors,drift0.00001707194; Unityexit0. Plan38checks passed; originalUI bugfix exemption, no gameplay rebalance/schema. Native input/appearance remainsNOTTESTED; full D not certified. Old disposablehost cleanedup/prefs restored; later packaging verified separately. See MAP_CAMERA_CORRECTION.md.
+
 ## 2026-11-16 recovery C passive/level subset
 
 B remote192a3ca confirmed36checks. Corrected secondary learned passives and primary-only talents/gear, removed flatlevelbonus, preserved original coefficients and primary175battle results. Six red0/6→green6/6; finalseven tests all11passiveprofiles bothpositions, actual skill-upgrade/pair commands and PvP; focused27pass; full416tests411pass/0fail/5skips. Original four defectprobes nowPASS at their narrow scope. Unitycompile0,37checks. Schema unchanged; paired derivedHP cap idempotent/unitsXPwardinventory preserved. Secondary active timing CONFLICTING and unimplemented; exact numerical/native parity unknown. Full C not complete; no later task completion claim.

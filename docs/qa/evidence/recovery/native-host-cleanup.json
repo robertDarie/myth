@@ -1,0 +1,9 @@
+{
+  "checked": "2026-11-16T21:32:39.993Z",
+  "hostCommit": "f5c0cdf75af286c33a9c116f46139ee40c8fbce1",
+  "scope": "Read-only server observation after the original native client exited; not native UI completion evidence",
+  "cityLevel": 2,
+  "trainingJobs": 0,
+  "reserveTroops": 100,
+  "disposableHostShutdown": true
+}
