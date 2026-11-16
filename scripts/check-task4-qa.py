@@ -57,7 +57,8 @@ def main():
     for name in ['native-first-city.jpg', 'native-upgrade-running.jpg', 'native-upgrade-complete.jpg',
                  'native-training-queued.jpg', 'native-world-before-zoom.jpg']:
         assert (DATA / name).read_bytes().startswith(b'\xff\xd8\xff')
-    with (QA / 'FEATURE_VERIFICATION_MATRIX.csv').open(encoding='utf-8', newline='') as stream:
+    # The live matrix evolves with recovery; retain this dated baseline as evidence.
+    with (DATA / 'feature-verification-matrix.csv').open(encoding='utf-8', newline='') as stream:
         rows = list(csv.DictReader(stream))
     assert len(rows) == len({r['feature_id'] for r in rows}) == 41
     for row in rows:

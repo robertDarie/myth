@@ -1,5 +1,6 @@
 import { forsakenReason } from './forsaken.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
+import { route } from './navigation.mjs';
 import { initializeLogistics, cargoTotal } from './field-logistics.mjs';
 import { visible } from './exploration.mjs';
 import { siteIsOpen } from './kingdom.mjs';
@@ -34,6 +35,7 @@ export function marchCommand(world, p, c, fail) {
   if (!types.includes(c.type)) return false;
   const a = armyList(p).find(a => a.id === (c.marchId || p.id));
   if (!a) fail('That march does not belong to your city.');
+  const requireRoute = destination => { if (!route(world, a, destination)) fail('No authorized gate route from this march to that destination.'); };
   if (c.type === 'return') { if(!a.deployed&&world.atHome(a)){a.target=null;a.state='Home';return true;}a.target = { type: 'return', x: p.homeX, z: p.homeZ }; a.state = 'Returning'; a.returnReason='Manual recall'; return true; }
   if (c.type === 'stop') { a.target = null; a.state = 'Idle'; return true; }
   if (a.health <= 0 || a.recovery > 0) fail('This army is recovering at home.');
@@ -42,6 +44,7 @@ export function marchCommand(world, p, c, fail) {
     case 'move':
       if (!point(c)) fail('Destination must be inside the map (1–79).');
       if (!world.canEnter(p, c)) fail('Your alliance must capture the corresponding Divine Gate first.');
+      requireRoute(c);
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
       const camp = world.camps.find(e => e.id === c.targetId);
@@ -49,11 +52,13 @@ export function marchCommand(world, p, c, fail) {
       const known=seen?camp:p.discovery.find(r=>r.kind==='camps'&&r.value.id===c.targetId)?.value;
       if (!camp||!known || (seen&&camp.health<=0)||!world.canEnter(p, known)) fail('Camp unavailable or behind a locked gate.');
       if(p.numericVersion===1){const reason=forsakenReason(world,p,known);if(reason)fail(reason);}
+      requireRoute(known);
       a.target = { type: 'attack', id: camp.id,x:known.x,z:known.z,cycle:known.cycle??0 }; break;
     }
     case 'gather': {
       const node = world.nodes.find(n => n.id === c.targetId);
       if (!node || (!visible(world,p,node)&&!p.discovery.some(r=>r.kind==='nodes'&&r.value.id===node.id))||!world.canEnter(p, node)) fail('Resource unavailable.');
+      requireRoute(node);
       a.target = { type: 'gather', id: node.id }; a.gatherClock = 0; break;
     }
     case 'commander': {
@@ -118,6 +123,7 @@ export function marchCommand(world, p, c, fail) {
       if (!p.allianceId) fail('Join an alliance first.');
       if (!['Leader','Officer'].includes(allianceRole(world,p))) fail('Only alliance leaders and officers can build beacons.');
       if (!point(c) || !world.canEnter(p, c) || dist(a, c) > TERRITORY_RULES.placeRadius) fail(`Place a beacon within ${TERRITORY_RULES.placeRadius} units of the selected march in an accessible province.`);
+      requireRoute(c);
       const flags = world.flags.filter(f => f.allianceId === p.allianceId);
       if (flags.length >= TERRITORY_RULES.beaconLimit) fail('Alliance beacon limit reached.');
       if (world.flags.some(f => dist(f, c) < TERRITORY_RULES.beaconSpacing)) fail('Too close to another beacon.');
@@ -134,6 +140,7 @@ export function marchCommand(world, p, c, fail) {
       if (!siteIsOpen(world,site.id)) fail('This sacred site is sealed until its kingdom milestone opens.');
       if (site.allianceId && site.allianceId !== p.allianceId) fail('An enemy-held site must be defeated with a rally.');
       if (!world.canEnter(p, site)) fail('Capture the necessary gates first.');
+      requireRoute(site);
       if (!territoryNear(world, p.allianceId, site)) fail(`Extend alliance beacons to within ${TERRITORY_RULES.supplyRadius} units of this site.`);
       a.target = { type: 'capture', id: site.id }; break;
     }

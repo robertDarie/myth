@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## 2026-11-16 recovery A safety subset
+
+After publishedTask4 bd1b157, implemented fail-closed military corridors and complete-route admission in production commands. Five originaltests red2pass/3fail→green5/5; expandedfocused24/24; full404tests399pass/0fail/5skips; freshHTTP20/20. No balance/migration changes. Full RecoveryA **incomplete**: two frontier crossings are contained/closed until real researched capturable passes exist. Scouts/secondary effects remain unresolved. See `docs/qa/CRITICAL_GAMEPLAY_RECOVERY.md`, migration/native acceptance and reference blocker documents. Current matrix/coverage10-031 updated; historical Task4 evidence retained. User authorizes remaining Tasks6–11, but their missing prerequisites and unsupported reference values cannot be treated as completion.
+
 ## 2026-11-16 Task4 QA delivered — alpha NOT READY
 
 User authorized Task4 after reviewing published Task3 audit at f5c0cdf75af286c33a9c116f46139ee40c8fbce1. Executed actual clean Windows build/native guest-city-upgrade-training checks, fresh3/10-player production HTTP scenarios, process restart/save checks,120.80-second loopback soak and prepared large-world performance measurements. Full server suite393pass/0fail/5skips outof398. See `docs/qa/ALPHA_READINESS_REPORT.md` and its41-row matrix for exact axes and NOTTESTED native/remote cases. This is delivered QA, not a queued application job.

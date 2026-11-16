@@ -1,0 +1,11 @@
+# Recovery save compatibility
+
+2026-11-16; recovery source baseline `bd1b157c2db54f81049b1b74a1b131cfe63d7288` plus the military safety checkpoint. **No schema migration:** schema27/protocol17 unchanged. No live/player/port8091 store opened for mutation.
+
+The new route regression creates a disposable current-schema save with a previously stranded army at (128,128), home(128,30), its owned troops/reserves and session. Production `World.fromSave` preserves identity, units, troop totals, home and current position. Production fixed-home recall traverses corridors without granting arbitrary destination access; troops conserved, a second load validates. No relocation, army deletion, XP/resource conversion or new world objective is performed.
+
+Existing restored ordinary move/gather orders are still read normally; the next production tick revalidates the route and pauses an unauthorized order. Return remains constrained to stored home. Gate loss mid-march stops rather than teleports the army. Current-schema round-trip is a fixture test, not evidence that every historical real-world save was upgraded.
+
+Full regression404 tests:399passed,0failed,5platform skips. Includes existing old-schema/map migration and malformed-save tests. Fresh separate JSON/SQLite HTTP workers restarted through a new Node process with20/20 assertions preserving tested identities, homes, levels, memberships, units/reserves and queue counts. Previous Task4 first-hour/month policy has six production-state round-trips. No universal save-corruption or crash-atomicity certification is inferred.
+
+Backup/rollback: preserve original serialized bytes and ordinary production backups. Since this patch changes no saved format, a previous executable can parse the same schema; rolling back server source also reintroduces the fail-open route bug and is not recommended. Future physical passes and25-level cities require their own explicit version/content migration, old-save fixtures and conservation tests **before** implementation. No arbitrary age-to-level mapping is approved by these results.

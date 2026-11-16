@@ -95,6 +95,8 @@ function targetReason(w,rally) {
   if(!t||t.health<=0)return 'Target unavailable or ownership changed';
   const p=w.players.get(rally.leaderId);
   if(!p||p.allianceId!==rally.allianceId||!w.canEnter(p,t))return 'Leader unavailable or route locked';
+  const leader=w.army(rally.leaderArmyId);
+  if(!leader||!route(w,leader,t))return 'No authorized gate route to the rally target';
   if(isStronghold(t))return t.respawn>0||rally.targetCycle!==t.cycle?'Stronghold is unavailable or has respawned':'';
   if(t.allianceId!==rally.defendingAllianceId||!t.allianceId||t.allianceId===rally.allianceId)return 'Target unavailable or ownership changed';
   const treaty=protectionReason(w,rally.allianceId,t.allianceId);if(treaty)return treaty;
@@ -139,6 +141,7 @@ export function campaignCommand(w,p,c,fail) {
     const a=ownMarch(w,p,c,fail);readyMarch(w,p,a,fail);w.requireHome(a);
     if(r.armyIds.length>=CAMPAIGN_LIMITS.rallyMarches||totalLoad(w,r.armyIds)+load(a)>campaignLimits(w).rallyLoad)fail('Rally march or troop capacity reached.');
     if(!w.canEnter(p,{x:r.meetX,z:r.meetZ}))fail('The assembly point is behind a locked gate.');
+    if(!route(w,a,{x:r.meetX,z:r.meetZ}))fail('No authorized gate route to the assembly point.');
     r.armyIds.push(a.id);setOrder(a,'rally',r.id,{x:r.meetX,z:r.meetZ},'Rally assembling');return true;
   }
   if(c.type==='garrison-join') {

@@ -20,7 +20,16 @@ class ResearchGate(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        for name in ["AGENTS.md", "research/parity/README.md", "research/parity/FEATURE_TEMPLATE.md", gate.REGISTRY, DOC, POP, "scripts/publish-tests.json", "research/MYTH_feature_coverage_register.csv", "server/balance-reference.json", "docs/benchmarks/forsaken-calibration.json"]:
+        names = {"AGENTS.md", "research/parity/README.md", "research/parity/FEATURE_TEMPLATE.md", gate.REGISTRY, DOC, POP, "scripts/publish-tests.json", "research/MYTH_feature_coverage_register.csv", "server/balance-reference.json", "docs/benchmarks/forsaken-calibration.json"}
+        # New registered features must be present in these isolated repositories too.
+        # Keep testing the actual registry rather than freezing a two-feature fixture.
+        registry = json.loads((gate.ROOT / gate.REGISTRY).read_text(encoding="utf-8"))
+        for name in registry["features"]:
+            names.add(name)
+            content = (gate.ROOT / name).read_text(encoding="utf-8")
+            meta = json.loads(re.search(r"<!--\s*parity\s*\n(.*?)\n\s*-->", content, re.S).group(1))
+            names.update(fixture["path"] for fixture in meta["numeric_fixtures"])
+        for name in sorted(names):
             dest = self.root / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(gate.ROOT / name, dest)

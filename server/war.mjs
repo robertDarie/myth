@@ -1,6 +1,7 @@
 import { referenceScale, defenseFactor } from './numerics.mjs';
 import { loseCargo } from './field-logistics.mjs';
 import { protectionReason } from './diplomacy.mjs';
+import { route } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
 import { activeSkill, armyList } from './progression.mjs';
@@ -20,6 +21,7 @@ export function attackReason(w, a, b) {
   if (a.recovery > 0 || b.recovery > 0 || a.health <= 0 || b.health <= 0) return 'That army is recovering.';
   if (w.atHome(a) || w.atHome(b)) return 'Armies at their own city are protected. Move both armies into the field.';
   if (!w.canEnter(p, b)) return 'Target is behind a locked Divine Gate.';
+  if (!route(w, a, b)) return 'No authorized gate route to that army.';
   return '';
 }
 export function counterMultiplier(a, b) {

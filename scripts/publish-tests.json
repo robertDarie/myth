@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "military route authority and safe recall regression",
+      "command": ["node", "--test", "server/military-route-safety.test.mjs"]
+    },
+    {
       "name": "Task4 dated QA evidence integrity (red readiness retained)",
       "command": ["python", "-X", "utf8", "scripts/check-task4-qa.py"]
     },

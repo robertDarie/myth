@@ -1,5 +1,11 @@
 # Development report — 2026-11-16
 
+## Recovery A — military route safety subset
+
+Task4 published/remote-confirmed `bd1b157c2db54f81049b1b74a1b131cfe63d7288`,34 checks. New user instruction authorizes continuing through Task11; none of those later milestones is falsely marked complete. Implemented actual route containment: missing gate IDs deny ordinary crossings; move/PvE/gather/capture/PvP/rally admission validates full routes. Originalfive tests red2pass/3fail, then samefive green; expanded route/exploration/map focused24/24; full404tests399pass/0fail/5platform skips; freshHTTP20/20. Preserved home recall and saved troops/positions, no schema/protocol/balance changes. Full frontier pass construction remains incomplete, not replaced with guessed defender values.
+
+Research record/fixture added before implementation; route acceptance bound to publication gate. Added critical recovery, migration, native acceptance and exact reference-blocker reports. Current matrix movement row updated, dated Task4 matrix retained under its evidence folder. Coverage10-031 updated conservatively. Mandatory plan35checks must pass before guarded publication. No post-fix native pass proof, scout or secondary correction claim. Source URLs/access limitations and later-task dependencies remain visible.
+
 ## Task 4 — executed playable-alpha QA
 
 Tested clean gameplay/client `f5c0cdf75af286c33a9c116f46139ee40c8fbce1`. **NOT READY — BLOCKERS REMAIN.** Delivered the four required reports, a 41-row evidence-axis matrix and sanitized reproducible evidence under `docs/qa/`. All three supplied independent retest reports reviewed; prior Linux results remain attributed, not silently re-certified.

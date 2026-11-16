@@ -37,7 +37,10 @@ test('JSON migration archives the exact schema-25 input before rotating saves',(
 test('frontier travel cannot enter or detour through locked legacy provinces, and recall remains legal',()=>{
   const w=openKingdom(new World()),s=w.join('Routes'),p=w.authenticate(s.token);p.x=128;p.z=128;
   for(const target of [{x:50,z:20},{x:20,z:50},{x:60,z:60},{x:20,z:20}])assert.equal(route(w,p,target),null);
-  const target={x:180,z:24};assert.ok(route(w,p,target));const before={x:p.x,z:p.z};travel(w,p,target,4,.1);assert.ok(Math.hypot(p.x-before.x,p.z-before.z)<=.40001);
+  assert.equal(route(w,p,{x:180,z:24}),null); // Missing frontier pass must not become free access.
+  const target={x:180,z:128};assert.ok(route(w,p,target));const before={x:p.x,z:p.z};travel(w,p,target,4,.1);assert.ok(Math.hypot(p.x-before.x,p.z-before.z)<=.40001);
+  // Separate explicit Ashen-side fixture tests the existing controlled legacy connections.
+  p.x=30;p.z=128;
   p.gold=1000;w.command(p,{type:'alliance-create',name:'Road owners'});w.sites.find(s=>s.id==='gate-north').allianceId=p.allianceId;
   const path=route(w,p,{x:20,z:20});assert.ok(path);assert.ok(path.every(t=>w.canEnter(p,t)));
   assert.equal(route(w,p,{x:60,z:60}),null);w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;assert.ok(route(w,p,{x:60,z:60}));

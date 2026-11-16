@@ -29,10 +29,11 @@ test('losing gates stops outward orders while a stranded army returns through co
  assert.equal(p.target,null);assert.equal(p.x,p.homeX);assert.equal(p.z,p.homeZ);
 });
 
-test('all four corridors support movement in both directions including fractional portal positions',()=>{
+test('explicitly gated corridors support both directions; incomplete frontier links fail closed',()=>{
  const {w,players:[p]}=setup();gates(w,p);
  for(const c of CORRIDORS)for(const [a,b]of[[c.a,c.b],[c.b,c.a]]){
   p.x=a.x;p.z=a.z;const d={x:b.x+(b.x-a.x)*2,z:b.z+(b.z-a.z)*2};
+  if(!c.gateId){assert.equal(route(w,p,d),null);continue;}
   for(let i=0;i<100;i++)if(travel(w,p,d,4,0.1))break;
   assert.ok(Math.hypot(p.x-d.x,p.z-d.z)<0.001);
  }
@@ -108,7 +109,7 @@ test('a stranded march cannot silently wait on an unreachable friendly garrison 
  const {w,players:[p]}=setup();p.cityLevel=2;gates(w,p);const shrine=w.sites.find(s=>s.id==='shrine-dawn');shrine.allianceId=p.allianceId;
  p.x=55;p.z=20;w.sites.find(s=>s.id==='gate-east').allianceId='';
  assert.throws(()=>cmd(w,p,'garrison-join',{targetId:shrine.id}),/route/);
- cmd(w,p,'move',{x:20,z:20});w.tick(0.1);assert.equal(p.target,null);assert.equal(p.state,'Route locked');
+ assert.throws(()=>cmd(w,p,'move',{x:20,z:20}),/route/);assert.equal(p.target,null);
  cmd(w,p,'return');advance(w,40);assert.ok(w.atHome(p));
 });
 

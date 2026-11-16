@@ -1,0 +1,12 @@
+{
+  "classification": "Local deterministic acceptance; not a RoK numerical table",
+  "origin": {"x": 128, "z": 30},
+  "deniedTargets": [
+    {"x": 128, "z": 128},
+    {"x": 81, "z": 81},
+    {"x": 255, "z": 255},
+    {"x": 30, "z": 128}
+  ],
+  "ownedLegacyTarget": {"x": 60, "z": 60},
+  "requiredLegacyPasses": ["gate-east", "gate-north"]
+}
