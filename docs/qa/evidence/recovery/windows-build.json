@@ -1,0 +1,46 @@
+{
+  "checked": "2026-11-16",
+  "sourceCommit": "05ab132928f4eb4d148f189ef09c29592598421e",
+  "unity": "6000.3.0f1",
+  "nativePostFix": "NOT TESTED",
+  "packages": [
+    {
+      "path": "dist/Thrones-of-Myth-WindowsClient-Recovery.zip",
+      "platform": "windows-client-only-x86_64",
+      "commit": "05ab132928f4eb4d148f189ef09c29592598421e",
+      "dirty": false,
+      "protocol": 17,
+      "files": 145,
+      "bytes": 87198971,
+      "sha256": "c8ffd477fbebf86764ce7ef7357537fd3fb293bb26cead9a11937b38da67bdcc"
+    },
+    {
+      "path": "dist/Thrones-of-Myth-Windows.zip",
+      "platform": "windows-x86_64",
+      "commit": "05ab132928f4eb4d148f189ef09c29592598421e",
+      "dirty": false,
+      "protocol": 17,
+      "files": 193,
+      "bytes": 121940931,
+      "sha256": "ea6e47a75a603365aa047b5c0dfba50ff32e92265aeb920b282fe0e61ca197f4"
+    }
+  ],
+  "runtime": {
+    "testedPackageCommit": "05ab132928f4eb4d148f189ef09c29592598421e",
+    "protocol": 17,
+    "scope": "Actual bundled Windows Node and Server/index.mjs; fresh JSON and real wall-clock construction; no native graphics or remote PCs",
+    "checks": [
+      "PASS matching packaged build readiness",
+      "PASS unauthenticated request rejected",
+      "PASS three authenticated fresh cities",
+      "PASS military denial with scout exemption",
+      "PASS foreign army control rejected",
+      "PASS paid production training queue",
+      "PASS Citadel2 completion on real production clock",
+      "PASS new packaged process preserves three identities, city and paid job",
+      "PASS both graceful packaged process shutdowns"
+    ],
+    "startupMs": 1450.0797,
+    "actualConstructionWallSeconds": 20.0806679
+  }
+}

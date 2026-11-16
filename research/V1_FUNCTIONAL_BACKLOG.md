@@ -2,6 +2,8 @@
 
 ## 2026-11-16 recovery D source/geometry checkpoint
 
+Clean05ab132Windows artifacts built/verified:145-file recoveryclient and193-file fullbundle, dirtyfalse/protocol17. PackagedactualNode/server9/9 production checks,3fresh identities,20.08actual seconds paid Citadel2 andrestart; no artificialclock. Existingtwo open clients preserved. FullZIPverifier plus3offlinearchive tests added; plan39checks. NativeupdatedGUI stillNOTTESTED; no fullD/alpha/parity claim.
+
 Corrected minimap snapshot dimensions/fog overlay and province presentation; explicit camera buttons/cursor zoom, scalable altitude/depth fixes real Unity overview-ray defect. Redlegacyminimap +cursor2.420525drift +4,724boundaryerrors→12purechecks/all16,769portable contracts,13,774Unityboundarychecks0errors,drift0.00001707194; Unityexit0. Plan38checks passed; originalUI bugfix exemption, no gameplay rebalance/schema. Native input/appearance remainsNOTTESTED; full D not certified. Old disposablehost cleanedup/prefs restored; later packaging verified separately. See MAP_CAMERA_CORRECTION.md.
 
 ## 2026-11-16 recovery C passive/level subset
