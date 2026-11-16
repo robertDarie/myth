@@ -303,7 +303,7 @@ namespace ThronesOfMyth
                 if(heroDetailTab==2)
                 {
                     GUILayout.Space(18);GUILayout.Label("COMPANION",theme.Eyebrow);
-                    GUILayout.Label("A companion adds 1% damage and maximum health for each of their levels. They do not cast a skill. Camp victories still pay the primary the full grant and add half of that grant to the companion.",theme.Small);
+                    GUILayout.Label("A companion contributes learned passive skills. Their level, talents and equipment do not add march bonuses. Only the primary casts an active skill. Camp victories still pay the primary the full grant and add half of that grant to the companion.",theme.Small);
                     GUILayout.Space(12);GUILayout.Label("ASCENSION · RANK "+progress.rank+" / 5",theme.Eyebrow);
                     GUILayout.Label("Each ascension rank adds 3% damage and 2% maximum health. Ascension is separate from stars and skills.",theme.Small);
                     string reason=progress.rank>=5?"Maximum ascension reached.":processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":progress.shards<progress.nextShards?"Collect more Echo Shards for this commander.":me.gold<progress.nextGold?"More gold required.":"";

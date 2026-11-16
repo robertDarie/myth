@@ -101,8 +101,9 @@ export function skillInfo(p, id) {
       ...names.map((name, i) => ({ index: i + 1, name, kind: 'Passive', level: r.skills[i + 1], unlockStar: i + 2, description: descriptions[i] })),
     ] };
 }
-export function skillModifiers(p, a) {
-  const r = ensureHero(p, a.commanderId), role = PROFILES[a.commanderId][2], talents = talentMods(r);
+export function skillModifiers(p, a, includeTalents = true) {
+  const r = ensureHero(p, a.commanderId), role = PROFILES[a.commanderId][2];
+  const talents = includeTalents ? talentMods(r) : {damage:1,pve:1,health:1,speed:1,gather:1,heal:1,mitigation:0};
   const [, s2, s3, s4] = r.skills;
   return { damage: (role === 'offense' ? 1 + 0.04 * s2 : 1) * talents.damage,
     pve: (role === 'offense' ? 1 + 0.03 * s3 : 1) * talents.pve,

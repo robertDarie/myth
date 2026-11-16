@@ -35,10 +35,24 @@ Corrected old assertions that scouts must return on gate loss or be rejected by 
 
 The first guarded B push was correctly blocked by a randomized multi-kingdom rally fixture: hard-coded target could be across a now-closed frontier, so the live scheduler canceled it before the isolation assertion. The fixture now chooses a target with a real authorized route and assembles at the leader's actual home. All original foreign-kingdom rejection/state assertions remain; corrected realms suite3/3PASS. This changes tests only, not military access. Publication must rerun the full plan; no failed push is claimed successful.
 
-## C–F status and remaining task dependencies
+## C — learned secondary passive/level correction subset
+
+B published as `a1bd3d4100e1de9ae6b8e40926eb8e8611a70135` plus fixture correction `192a3caec510e3567b8ec96d0bc6699bfeaa2840`; remote-confirmed36checks. C source baseline is192a3ca plus this publication.
+
+Root causes: `World.stats` invoked only primary skill modifiers, multiplied companion damage/health by1+.01×level, and applied companion equipment. Corrected to evaluate secondary learned passives once with talents disabled, apply the existing original-character factors, and omit secondary level/gear/leadership bonuses. Primary-only unpaired results and all175 recorded Forsaken battle rows remain identical. Updated misleading native comparison/companion text; only primary active casts currently occur.
+
+Six new tests red**0PASS/6FAIL**, then same six green**6/6**. Added primary-role coverage: seven tests now exercise every passive slot for all11implemented commanders in both primary and secondary positions using explicit recruited/star/material fixtures and actual paid skill-upgrade/assignment commands. Focused commander/armament/progression27/27PASS; full416tests411PASS/0FAIL/5platform skips,31,984.9216ms. Actual first-round PvP damage rises after offensive secondary upgrade, not just an ID-pair check. Primary-only gear/talent effects, fixed-skill level invariance and march capacity, unpair/removal, malformed/duplicate assignment regressions, save/load and inventory/XP/units conservation tested.
+
+Rerunning all four original reconstructed defect probes now yields4/4PASS at the narrow historical requirement scope: unauthorized frontier move rejected; scout pass accepted; Wukong rank1→2 damage3249.792→3374.784; fixed-skill secondary level1/60 damage3124.8→3124.8. [Dated evidence](evidence/recovery/secondary-correction.json) records the tested parent+working-source fingerprint. This does **not** certify missing new pass objectives, organic commander acquisition or full combat parity.
+
+No skill coefficient changed; existing local factor composition remains a disclosed numerical reference gap. On loading an old paired march, cap only absolute HP above its corrected derived maximum; no troop/ward/reserve/XP/inventory deletion, no HP increase. Schema27/protocol17 unchanged; repeated load is idempotent. See migration report and [research/acceptance record](../../research/parity/features/secondary-passive-correction.md).
+
+Unity6000.3.0f1 batch compilation exited0; portable16,757 C#contracts and37publication checks passed. No rebuilt/new native executable was operated for this correction; native visual/stat-panel validation remains NOTTESTED. **Full Recovery C remains incomplete:** secondary active casts/timing, expertise and exact reference stacking are not certified. Indexed player accounts disagree on one-vs-two-turn timing; no guessed interval substituted.
+
+## D–F status and remaining task dependencies
 
 - **B scout access: server functional scope verified**, native interaction and full reference numerical equivalence NOTTESTED/UNKNOWN. Scout send/redirect/auto/investigate/recon/recall no longer need military ownership.
-- **C secondary skills: unfinished.** Both skill contribution and blanket level multiplier defects remain. Must verify active timing, passive families, primary-only talent/gear effects and save compatibility before changing them.
+- **C secondary passive/level/primary-only gear and talents: server subset verified.** Secondary active casts/timing and complete numerical/native parity remain unfinished; do not call the whole commander system complete.
 - **D native map/camera: unfinished.** Legacy minimap overlay assumptions and reported Windows wheel issue remain. UI tool detected user input; no exclusive native control result. No new client build was made for this server-only patch; protocol unchanged.
 - **E progression design: unfinished.** Building table observations exist but complete prerequisites, output/power/capacity, all research, modifiers and deterministic old-age migration are not yet independently established. Copying650 costs/times alone would produce an incompatible system.
 - **F matrix revalidation: partial.** Task4's41 rows are preserved as dated baseline; current movement row records containment separately. Overall native, full progression and reference parity remain unverified.

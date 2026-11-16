@@ -107,16 +107,17 @@ export class World {
     const skill = skillModifiers(p, a), level = heroLevel(r), base = troopBase(a,p);
     const gear = armamentFactor(p, a.commanderId);
     const companionId = a.secondaryCommanderId || '';
-    const companionGear = companionId ? armamentFactor(p, companionId) : { damage: 1, health: 1, speed: 1, pve: 1 };
-    const companion = companionId && p.ownedCommanders?.includes(companionId) ? 1 + 0.01 * heroLevel(ensureHero(p, companionId)) : 1;
+    const companion = companionId && p.ownedCommanders?.includes(companionId)
+      ? skillModifiers(p, {commanderId:companionId}, false)
+      : {damage:1,health:1,speed:1,pve:1,gather:1,heal:1,mitigation:0};
     const owns = id => !!p.allianceId && this.sites.some(s => s.id === id && s.allianceId === p.allianceId);
     const formation = formationOf(a.units);
-    return { level, defense:base.defense, maxHealth: Math.round((base.health + a.mythic * (referenceScale(p)?35000:35)) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health * gear.health * companionGear.health * companion * formation.appliedHealth),
-      damage: (base.damage + a.mythic * (referenceScale(p)?2400:12) * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage * gear.damage * companionGear.damage * companion * (p.buffs?.attack>economyTime(this)?1+ECONOMY.buffPercent:1),
-      speed: 4 * base.speed * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march) * skill.speed * gear.speed * companionGear.speed,
-      heal: (referenceScale(p)?Math.max(12,base.health*.02):12) * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1) * skill.heal,
-      gather: (referenceScale(p)?10:1) * civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) * skill.gather,
-      pve: skill.pve * gear.pve * companionGear.pve, mitigation:1-(1-skill.mitigation)*(p.buffs?.defense>economyTime(this)?1-ECONOMY.buffPercent:1) };
+    return { level, defense:base.defense, maxHealth: Math.round((base.health + a.mythic * (referenceScale(p)?35000:35)) * civ.health * commander.health * (1 + 0.05 * p.technologies.vitality) * (1 + 0.02 * rank) * relic.health * skill.health * gear.health * companion.health * formation.appliedHealth),
+      damage: (base.damage + a.mythic * (referenceScale(p)?2400:12) * (1 + 0.1 * p.technologies.beastlore)) * (1 + 0.05 * p.technologies.drill) * (1 + 0.03 * rank) * relic.damage * civ.damage * commander.damage * (1 + (level - 1) * 0.03) * (owns('shrine-dawn') ? 1.1 : 1) * skill.damage * gear.damage * companion.damage * (p.buffs?.attack>economyTime(this)?1+ECONOMY.buffPercent:1),
+      speed: 4 * base.speed * civ.speed * commander.speed * (1 + 0.04 * p.technologies.march) * skill.speed * gear.speed * companion.speed,
+      heal: (referenceScale(p)?Math.max(12,base.health*.02):12) * civ.healing * (1 + 0.15 * Math.max(0, p.buildings.infirmary - 1)) * (owns('shrine-life') ? 1.25 : 1) * skill.heal * companion.heal,
+      gather: (referenceScale(p)?10:1) * civ.gathering * commander.gather * (1 + 0.08 * p.technologies.logistics) * (owns('first-sanctuary') ? 1.2 : 1) * skill.gather * companion.gather,
+      pve: skill.pve * gear.pve * companion.pve, mitigation:1-(1-skill.mitigation)*(1-companion.mitigation)*(p.buffs?.defense>economyTime(this)?1-ECONOMY.buffPercent:1) };
   }
   atHome(p) { return distance(p, { x: p.homeX, z: p.homeZ }) < 2; }
   requireHome(p) { if (!this.atHome(p) || p.target) throw new GameError('Return your army home and stop before changing its composition or commander.'); }
@@ -493,6 +494,9 @@ export class World {
       }
       if(!campaignFor(world,a.id))dock(world,a);
     }
+    // Derived HP can exceed the corrected companion maximum in older saves.
+    // Match equipment removal: cap HP only, never delete units or heal absolute HP.
+    for(const a of world.armies())if(a.secondaryCommanderId)a.health=Math.min(a.health,world.stats(a).maxHealth);
     restoreForsaken(world,world.pveVersion===0);restorePopulation(world,w.population);
     explorationTick(world, 0);
     for (const p of world.players.values()) refreshJourney(world, p);

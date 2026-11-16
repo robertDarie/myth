@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## 2026-11-16 recovery C passive/level subset
+
+B remote192a3ca confirmed36checks. Corrected secondary learned passives and primary-only talents/gear, removed flatlevelbonus, preserved original coefficients and primary175battle results. Six red0/6→green6/6; finalseven tests all11passiveprofiles bothpositions, actual skill-upgrade/pair commands and PvP; focused27pass; full416tests411pass/0fail/5skips. Original four defectprobes nowPASS at their narrow scope. Unitycompile0,37checks. Schema unchanged; paired derivedHP cap idempotent/unitsXPwardinventory preserved. Secondary active timing CONFLICTING and unimplemented; exact numerical/native parity unknown. Full C not complete; no later task completion claim.
+
 ## 2026-11-16 recovery B server correction
 
 A safety checkpoint de42f6c remote-confirmed35checks. Implemented independent scout physical routing across locked/enemy passes for send/redirect/auto/investigation/recon/recall; military policy unchanged. Red0/4→green4/4 plus fifth scenario; focused41/41; full409tests404pass/0fail/5skips; HTTP22/22. No schema/numeric changes, full scout numerical/native parity unverified. Plan36checks. See current recovery/migration reports and matrix; historic Task4 evidence retained. C secondary effects, D native map, E progression research and full A frontier objectives still open.

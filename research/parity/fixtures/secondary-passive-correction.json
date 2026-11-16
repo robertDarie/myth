@@ -1,0 +1,8 @@
+{
+  "classification": "Existing local advertised effects; exact RoK coefficients and composition UNKNOWN",
+  "wukongDamageBySkillRank": {"1": 1.04, "2": 1.08},
+  "secondaryLevelOnlyStatRatio": 1,
+  "secondaryEquipmentStatRatio": 1,
+  "secondaryTalentStatRatio": 1,
+  "activeTiming": "CONFLICTING; not implemented by this subset"
+}

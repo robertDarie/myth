@@ -1,5 +1,9 @@
 # Development report — 2026-11-16
 
+## Recovery C — passive/level subset
+
+Baseline remote192a3ca (B,36checks). Actual secondary learned factors now contribute without secondary talents, equipment or flat level scaling; existing original skill coefficients retained/disclosed, active timing unresolved. Six tests0pass/6fail→6/6green; seven final tests cover all11commanders' passive slots in both positions, real paid upgrades/assignment, actual first-round PvP and derived-HP save cap/conservation. Commander-focused27/27; full416tests411pass/0fail/5skips. Original four reconstructed probes now4PASS (narrow scope); exact values/source fingerprint in public sanitized evidence.175Forsaken rows unchanged. Unity6000.3.0f1 compilation exit0;37publication checks/16757C#contracts passed. No native post-fix gameplay claim. Schema27/protocol17; no troop/inventory/XP deletion; paired HP capped only if above corrected max. Updated misleading companion UI text. Full C/A objectives and later parity tasks remain incomplete, not disguised as full parity.
+
 ## Recovery B — separate scout passage
 
 First guarded push of B was blocked by the multi-kingdom suite's hard-coded rally target becoming unreachable for some random spawns. Repaired that hand-written fixture to choose a reachable real stronghold and the actual leader home; kept every isolation/foreign-action assertion. Focused realms3/3PASS. No production rule weakened. Guarded publication reruns36checks before remote confirmation; a1bd3d4 is not called published until that succeeds.

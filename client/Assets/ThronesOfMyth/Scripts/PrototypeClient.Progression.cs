@@ -36,7 +36,7 @@ namespace ThronesOfMyth
             var c=comparison;if(c==null||c.marchId!=ActiveArmy.id||c.candidateId!=selected.id)return;
             GUILayout.Label(HeroName(c.currentId)+" → "+selected.name,theme.Heading);
             ComparisonRow("Maximum HP",c.current.maxHealth,c.candidate.maxHealth);ComparisonRow("Base damage",c.current.damage,c.candidate.damage);ComparisonRow("March speed",c.current.speed,c.candidate.speed);ComparisonRow("Gather multiplier",c.current.gather,c.candidate.gather);ComparisonRow("Recovery / second",c.current.heal,c.candidate.heal);
-            GUILayout.Label("Server snapshot · same troops, relics and city bonuses; before enemy counters and battle context. A companion adds 1% damage and maximum health per companion level and does not cast a second skill.",theme.Small);
+            GUILayout.Label("Server snapshot · same troops, relics and city bonuses; before enemy counters and battle context. Companions contribute learned passive skills. Only the primary contributes level, talents and equipment or casts an active skill.",theme.Small);
             if(!c.available)GUILayout.Label(c.candidateId==c.currentId?"This commander already leads the selected march.":"This commander already serves on a march.",theme.Small);
         }
         private void ComparisonRow(string name,float current,float candidate)

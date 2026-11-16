@@ -1,0 +1,61 @@
+{
+  "commit": "192a3caec510e3567b8ec96d0bc6699bfeaa2840",
+  "referenceBuild": "UNKNOWN",
+  "fogWidth": 64,
+  "gateSites": 2,
+  "ungatedCorridors": [
+    "dawn-outer",
+    "ashen-outer"
+  ],
+  "freshRestart": {
+    "playerCount": 1,
+    "positionPreserved": true
+  },
+  "probes": [
+    {
+      "id": "military-frontier",
+      "expected": "Reject unauthorized cross-zone move",
+      "accepted": false,
+      "error": "No authorized gate route from this march to that destination.",
+      "path": null,
+      "ticks": 0,
+      "arrived": false,
+      "verdict": "PASS",
+      "fixture": "Coordinates prepared; production command and ticks"
+    },
+    {
+      "id": "scout-pass",
+      "expected": "Accept scout through physical corridor without pass ownership",
+      "error": "",
+      "verdict": "PASS",
+      "fixture": "Coordinates prepared; production command"
+    },
+    {
+      "id": "secondary-passive",
+      "expected": "Secondary offensive passive rank affects army damage",
+      "before": 3249.7920000000004,
+      "after": 3374.7840000000006,
+      "verdict": "PASS",
+      "fixture": "Prepared ownership/stars/skill ranks; actual pair command and stat calculation; not an organic skill purchase"
+    },
+    {
+      "id": "secondary-level",
+      "expected": "No blanket skill-independent companion-level damage multiplier",
+      "level1": 3124.8,
+      "level60": 3124.8,
+      "ratio": 1,
+      "verdict": "PASS",
+      "fixture": "Prepared levels; production stats"
+    }
+  ],
+  "scope": "192a3ca parent plus recovery C working source before commit; prepared probes, not organic acquisition",
+  "sourceFingerprintSha256": "fce2e556d913c0365a9d4fe75d79d0a63a1335f77cf03b3d9bac89a80db2f556",
+  "checked": "2026-11-16",
+  "fullServer": {
+    "tests": 416,
+    "passed": 411,
+    "failed": 0,
+    "skipped": 5
+  },
+  "unityCompilationExit": 0
+}

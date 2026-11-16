@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "secondary learned passives, primary-only bonuses and level invariance",
+      "command": ["node", "--test", "server/secondary-passive-correction.test.mjs"]
+    },
+    {
       "name": "scout-specific passage and military privilege separation",
       "command": ["node", "--test", "server/scout-pass-access.test.mjs"]
     },

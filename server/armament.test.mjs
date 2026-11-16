@@ -84,14 +84,13 @@ test('armaments cannot change while the commander is deployed and cannot be worn
   assert.throws(() => World.fromSave(wrong), /armament/);
 });
 
-test('a companion adds a small share and cannot serve twice or replace the primary', () => {
+test('an unskilled companion adds no level stats and cannot serve twice or replace the primary', () => {
   const { w, p } = setup();
   ownCommander(p, 'warden');
   const alone = w.stats(p).maxHealth;
   cmd(w, p, 'pair-commander', 'warden');
   assert.equal(p.secondaryCommanderId, 'warden');
-  assert.ok(w.stats(p).maxHealth > alone);
-  assert.ok(w.stats(p).maxHealth < alone * 1.02);
+  assert.equal(w.stats(p).maxHealth, alone);
   assert.throws(() => cmd(w, p, 'pair-commander', 'captain'), /primary/);
   assert.throws(() => cmd(w, p, 'commander', 'warden'), /companion/);
   p.cityLevel = 2; p.reserveTroops = 5; p.reserveUnits.infantry = 5;
