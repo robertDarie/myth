@@ -3,6 +3,7 @@ import { COMMANDERS } from './content.mjs';
 import { armyList } from './progression.mjs';
 import { RELICS } from './city-content.mjs';
 import { randomUUID } from 'node:crypto';
+import { scoutRoute } from './navigation.mjs';
 
 // Original v0.45 tuning. These depths are not a verified Rise of Kingdoms table.
 // Duration locks when the watch begins. The depth is read again when the watch ends.
@@ -134,7 +135,7 @@ export function beginRecon(w, p, c, fail) {
     if (kind === 'march') fail('That march cannot be read. It may be home, protected, allied, or no longer in the field.');
     fail('No enemy garrison holds that place.');
   }
-  if (!w.canEnter(p, live)) fail('Scouts need alliance access through the corresponding Divine Gate.');
+  if (!scoutRoute(w,{ownerId:p.id,x:p.homeX,z:p.homeZ},live)) fail('No physical scout route to that target.');
   return { recon, x: live.x, z: live.z, army: live.army };
 }
 

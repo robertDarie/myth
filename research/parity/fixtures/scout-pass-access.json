@@ -1,0 +1,7 @@
+{
+  "classification": "Local unchanged scout inputs and authorization acceptance; not reference numerical parity",
+  "origin": {"x": 20, "z": 20},
+  "closedPassDestination": {"x": 50, "z": 20},
+  "level1Speed": 7,
+  "maxStepSeconds": 0.25
+}

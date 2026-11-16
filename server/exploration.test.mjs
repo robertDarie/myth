@@ -69,7 +69,8 @@ test('fog excludes hidden armies, camp state, enemy orders, garrisons and global
 test('recall, gate loss and restart retain scouts safely without replaying rewards or completed reports',()=>{
  const {w,sessions,players:[p]}=setup();gates(w,p);cmd(w,p,'scout-send',{x:65,z:65});advance(w,1);
  let restored=World.fromSave(w.toSave()),q=restored.authenticate(sessions[0].token);assert.equal(q.scouts.length,1);assert.deepEqual(q.explored,p.explored);
- for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scouts[0].phase,'Returning');advance(restored,10);assert.equal(q.scouts.length,0);assert.equal(q.scoutReports.length,0);
+ for(const s of restored.sites.filter(s=>s.kind==='gate'))s.allianceId='';advance(restored,0.1);assert.equal(q.scouts[0].phase,'Outbound');
+ cmd(restored,q,'scout-recall',{targetId:q.scouts[0].id});advance(restored,20);assert.equal(q.scouts.length,0);assert.equal(q.scoutReports.length,0);
  cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scouts[0].id});advance(restored,0.1);assert.equal(q.scouts.length,0);
  for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scouts=[{id:'bad'}],p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
  const old=w.toSave();legacyMap(old);old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scouts;delete p.scoutReports;delete p.autoExplore;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,27);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);assert.equal(restored.authenticate(sessions[0].token).buildings.scoutcamp,1);

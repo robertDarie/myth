@@ -21,7 +21,10 @@ test('a city reading is private, timed, and limited to the real depth', () => {
   assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /cannot be read/);
   w.command(b, { type: 'alliance-leave' });
   b.homeX = 55; b.homeZ = 20;
-  assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /Divine Gate/);
+  w.command(a, { type: 'recon-city', targetId: b.id });
+  assert.equal(a.scouts[0].phase, 'Outbound');
+  w.command(a, { type: 'scout-recall', targetId: a.scouts[0].id });advance(w, 20);
+  assert.equal(a.reconReports.length, 0);
   b.homeX = 8.5; b.homeZ = 5;
   w.command(a, { type: 'recon-city', targetId: b.id });
   assert.throws(() => w.command(a, { type: 'recon-city', targetId: b.id }), /already deployed/);

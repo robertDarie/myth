@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## 2026-11-16 recovery B server correction
+
+A safety checkpoint de42f6c remote-confirmed35checks. Implemented independent scout physical routing across locked/enemy passes for send/redirect/auto/investigation/recon/recall; military policy unchanged. Red0/4→green4/4 plus fifth scenario; focused41/41; full409tests404pass/0fail/5skips; HTTP22/22. No schema/numeric changes, full scout numerical/native parity unverified. Plan36checks. See current recovery/migration reports and matrix; historic Task4 evidence retained. C secondary effects, D native map, E progression research and full A frontier objectives still open.
+
 ## 2026-11-16 recovery A safety subset
 
 After publishedTask4 bd1b157, implemented fail-closed military corridors and complete-route admission in production commands. Five originaltests red2pass/3fail→green5/5; expandedfocused24/24; full404tests399pass/0fail/5skips; freshHTTP20/20. No balance/migration changes. Full RecoveryA **incomplete**: two frontier crossings are contained/closed until real researched capturable passes exist. Scouts/secondary effects remain unresolved. See `docs/qa/CRITICAL_GAMEPLAY_RECOVERY.md`, migration/native acceptance and reference blocker documents. Current matrix/coverage10-031 updated; historical Task4 evidence retained. User authorizes remaining Tasks6–11, but their missing prerequisites and unsupported reference values cannot be treated as completion.

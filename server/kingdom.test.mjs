@@ -9,12 +9,14 @@ function setup(){let now=Date.UTC(2026,10,7,12);const w=legacySpawns(new World({
 const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
 function prepare(e){const {w,p}=e;recordKingdomContribution(w,p,'gather',400);recordKingdomContribution(w,p,'trained',10);p.cityLevel=2;for(let i=0;i<4;i++)recordKingdomVictory(w,'camps');recordKingdomContribution(w,p,'camps',4);tickKingdom(w);}
 
-test('new kingdoms seal gates and sanctuary at every entry point, while starting shrines remain available',()=>{
+test('new kingdoms seal military gates and sanctuary while scouts retain physical passage',()=>{
  const {w,p}=setup();cmd(w,p,'alliance-create',{name:'Dawn'});p.cityLevel=2;p.buildings.oathhall=1;
  assert.equal(siteIsOpen(w,'shrine-dawn'),true);assert.equal(siteIsOpen(w,'gate-east'),false);
  assert.throws(()=>cmd(w,p,'capture',{targetId:'gate-east'}),/sealed/);
  const gate=w.sites.find(s=>s.id==='gate-east');gate.allianceId='enemy';assert.throws(()=>cmd(w,p,'rally-create',{targetId:gate.id}),/sealed/);gate.allianceId=p.allianceId;
- assert.equal(w.canEnter(p,{x:50,z:20}),false);assert.throws(()=>cmd(w,p,'move',{x:50,z:20}),/Gate/);assert.throws(()=>cmd(w,p,'scout-send',{x:50,z:20}),/Gate/);assert.throws(()=>cmd(w,p,'garrison-join',{targetId:gate.id}),/held/);
+ assert.equal(w.canEnter(p,{x:50,z:20}),false);assert.throws(()=>cmd(w,p,'move',{x:50,z:20}),/Gate/);
+ cmd(w,p,'scout-send',{x:50,z:20});assert.equal(p.scouts[0].phase,'Outbound');
+ assert.throws(()=>cmd(w,p,'garrison-join',{targetId:gate.id}),/held/);
  const snapshot=w.snapshot(p.id);assert.equal(snapshot.sites.find(s=>s.id==='gate-east').locked,true);
 });
 

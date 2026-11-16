@@ -52,6 +52,14 @@ for(const backend of ['json','sqlite']){
   await check(backend+'.transfer-replay-and-conservation',async()=>{const beforeA=own(await snap(sessions[0]),sessions[0]),beforeB=own(await snap(sessions[1]),sessions[1]);const body={type:'resource-transfer',targetId:sessions[1].playerId,name:'gold',count:100,jobId:'1-task4-transfer'};assert.equal((await command(sessions[0],body)).status,200);assert.equal((await command(sessions[0],body)).status,200);const afterA=own(await snap(sessions[0]),sessions[0]),afterB=own(await snap(sessions[1]),sessions[1]);assert.equal(afterA.gold,beforeA.gold-110);assert.equal(afterB.gold,beforeB.gold+100);});
   if(backend==='sqlite')await check('sqlite.concurrent-idempotent-training',async()=>{const s=sessions[4],before=own(await snap(s),s);const replies=await Promise.all([command(s,{type:'train',targetId:'infantry'},'task4_train_once'),command(s,{type:'train',targetId:'infantry'},'task4_train_once')]);assert.ok(replies.every(r=>r.status===200));const after=own(await snap(s),s);assert.equal(after.food,before.food-5000);assert.equal(after.wood,before.wood-5000);assert.equal(after.trainingQueue.length,1);assert.equal((await command(s,{type:'train',targetId:'archers'},'task4_train_once')).status,409);});
   await check(backend+'.own-movement-and-foreign-recon-privacy',async()=>{for(const s of sessions){const view=await snap(s),p=own(view,s);for(const other of view.players.filter(p=>p.id!==s.playerId)){assert.equal(other.inventory,undefined);assert.equal(other.heroRecords,undefined);assert.equal(other.trainingQueue,undefined);}assert.equal((await command(s,{type:'move',x:p.homeX+1,z:p.homeZ})).status,200);}await control('advance',{seconds:2});for(const s of sessions)assert.equal((await command(s,{type:'return'})).status,200);await control('advance',{seconds:3});});
+  await check(backend+'.scout-pass-exemption-and-private-control',async()=>{
+   const s=sessions[2],p=own(await snap(s),s),target=p.homeX<=40&&p.homeZ<=40?{x:128,z:128}:{x:20,z:20};
+   assert.equal((await command(s,{type:'move',...target})).status,400);
+   assert.equal((await command(s,{type:'scout-send',...target})).status,200);
+   const mission=(await snap(s)).exploration.scouts.find(v=>v.ownerId===s.playerId&&!v.id.startsWith('idle:'));assert.ok(mission);
+   assert.equal((await command(sessions[1],{type:'scout-redirect',targetId:mission.id,x:60,z:60})).status,400);
+   assert.equal((await command(s,{type:'scout-recall',targetId:mission.id})).status,200);
+  });
   await check(backend+'.legal-root-beacon-and-garrison',async()=>{
    const p=own(await snap(sessions[0]),sessions[0]);
    assert.equal((await command(sessions[0],{type:'flag',x:p.homeX,z:p.homeZ})).status,200);

@@ -1,6 +1,6 @@
 # Critical gameplay recovery — executed checkpoints
 
-Initial recovery baseline: `bd1b157c2db54f81049b1b74a1b131cfe63d7288` (published Task4 QA), following clean gameplay audit `f5c0cdf75af286c33a9c116f46139ee40c8fbce1`. Date: 2026-11-16. **Recovery A safety subset implemented; full A–F NOT COMPLETE.** This is not certification of Tasks6–11.
+Initial recovery baseline: `bd1b157c2db54f81049b1b74a1b131cfe63d7288` (published Task4 QA), following clean gameplay audit `f5c0cdf75af286c33a9c116f46139ee40c8fbce1`. Date: 2026-11-16. **Recovery A safety subset and B server authorization implemented; full A–F NOT COMPLETE.** This is not certification of Tasks6–11.
 
 ## A — military routing safety subset
 
@@ -23,9 +23,19 @@ New permanent `server/military-route-safety.test.mjs` tests rejected frontier mo
 
 Research/plan and source limitations: [military-route-safety](../../research/parity/features/military-route-safety.md). The subset is registered IMPLEMENTED; full Recovery A is not. Reference pass defenders/opening tables are UNKNOWN for a versioned baseline; no invented statistics substituted. Native post-fix pass play NOT TESTED. No full strategic-world parity claim.
 
-## B–F status and remaining task dependencies
+## B — scout authorization correction
 
-- **B scout access: unfinished.** Existing scout military gate restriction remains; route containment also closes unknown corridor edges for scouts until a separate explicit scout routing policy is implemented. This is recorded as unresolved, not silently hidden by the military fix.
+A safety subset published and independently remote-confirmed at `de42f6cf29cf524ba87d3313a4db15abac64e5f5`,35 publication checks. Continued B independently of missing new military pass objectives; no new defender or timer values needed.
+
+Root cause: scout dispatch, automatic target choice, investigation, reconnaissance, ETA and ongoing travel reused military access checks. Added separate internal `scoutRoute`/`scoutTravel`, sharing physical corridor shortest-path/movement code but omitting alliance military ownership. All ordinary military APIs retain fail-closed policy, and client payloads cannot request the exemption. Scouts no longer cancel merely because an alliance loses a gate. Bounds, capacity, mission ownership, target protection, private recon, discovery duration and travel speed remain unchanged.
+
+Original four new regressions: **0PASS/4FAIL red→4PASS/0FAIL green**. Added cross-pass cave discovery/investigation/one-time claim and private reconnaissance case afterward. Focused scout/findings/recon/exploration/military suites **41/41PASS**. Full server **409tests,404PASS,0FAIL,5platform skips**,31,776.7884ms. Extended fresh JSON/SQLite HTTP flow **22/22PASS**, including unaffiliated military denial, successful scout dispatch, foreign mission redirect denial and recall. No HTTP credentials/saves published.
+
+Corrected old assertions that scouts must return on gate loss or be rejected by a closed kingdom gate; retained military denial and explicit manual recall/no-reward checks. The unchanged historical Task4 matrix/diagnostics remain dated under its evidence folder. Current matrix separates post-fix server proof from native NOTTESTED. Native cross-pass interaction and full4096-cell legal exploration remain unverified; local scout numerical parity is not certified. Research/expected unchanged inputs: [scout passage record](../../research/parity/features/scout-pass-access.md).
+
+## C–F status and remaining task dependencies
+
+- **B scout access: server functional scope verified**, native interaction and full reference numerical equivalence NOTTESTED/UNKNOWN. Scout send/redirect/auto/investigate/recon/recall no longer need military ownership.
 - **C secondary skills: unfinished.** Both skill contribution and blanket level multiplier defects remain. Must verify active timing, passive families, primary-only talent/gear effects and save compatibility before changing them.
 - **D native map/camera: unfinished.** Legacy minimap overlay assumptions and reported Windows wheel issue remain. UI tool detected user input; no exclusive native control result. No new client build was made for this server-only patch; protocol unchanged.
 - **E progression design: unfinished.** Building table observations exist but complete prerequisites, output/power/capacity, all research, modifiers and deterministic old-age migration are not yet independently established. Copying650 costs/times alone would produce an incompatible system.

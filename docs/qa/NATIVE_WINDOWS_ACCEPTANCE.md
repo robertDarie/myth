@@ -10,7 +10,7 @@ For each step record: expected result, observed result, source/build SHA, time, 
 2. City/world transitions preserve correct camera limits; click all four minimap corners and compare world/fog cells with server64×64 data. Hidden enemy military details remain hidden.
 3. Unaffiliated army cannot cross Dawn→Outer or Ashen→Outer. Existing ordinary local movement remains possible. Missing frontier passes must be described as closed/incomplete rather than appearing capturable when absent.
 4. Legitimately capture the relevant pass, march two consecutive boundaries, test outsider refusal, revoke during travel, then recall stranded troops home without losing units. **Full new frontier pass implementation prerequisite missing.**
-5. Scout send/redirect/automatic search/investigate/recon/recall across closed or enemy passes, while ordinary armies remain denied. **Scout policy fix missing.**
+5. Scout send/redirect/automatic search/investigate/recon/recall across closed or enemy passes, while ordinary armies remain denied. **Scout server correction verified; native retest outstanding.**
 6. Recruit/unlock a commander, pair as secondary, upgrade each supported passive/active family and verify actual server events plus matching visual feedback. Check primary-only talents/equipment and remove/reload. **Secondary correction missing.**
 7. Complete actual training, research, PvE/report/reward, hospital/heal, cooperative fort rally and garrison. Record natural vs simulation-clock waits. No max-state fixture is organic progression.
 8. Disconnect/restart client and disposable server; resume same city, queues, scouts, inventory, troops and alliance. Task4 HTTP worker restart passed, native equivalent remains unobserved.

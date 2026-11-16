@@ -5,7 +5,7 @@ import { recordActivity } from './activity.mjs';
 import { recordEvent } from './events.mjs';
 import { journeyMetric } from './chapters.mjs';
 import { randomUUID } from 'node:crypto';
-import { route, travel } from './navigation.mjs';
+import { scoutRoute as route, scoutTravel as travel } from './navigation.mjs';
 import { scoutCampCard, scoutProfile } from './scout-camp.mjs';
 import { revealFindings, completeInvestigation, journalFor, prepareInvestigation, findingById } from './findings.mjs';
 import { beginRecon, trackRecon, finishRecon, reconDepth, reconSeconds, initializeRecon, validateRecon, visibleMarch } from './recon.mjs';
@@ -99,7 +99,7 @@ export function nextAutoTarget(w, p, from, profile) {
     const reach = Math.max(Math.abs(x - ox), Math.abs(z - oz));
     if (reach > profile.autoSectors) continue;
     const center = cellCenter(index);
-    if (!point(center) || !w.canEnter(p, center) || !route(w,{ownerId:p.id,x:from.x,z:from.z},center)) continue;
+    if (!point(center) || !route(w,{ownerId:p.id,x:from.x,z:from.z},center)) continue;
     const rank = reach * 1000 + dist(from, center);
     if (rank < bestRank) { bestRank = rank; best = center; }
   }
@@ -162,7 +162,6 @@ export function explorationTick(w, dt) {
     const keep = [];
     for (const s of p.scouts) {
       trackRecon(w, p, s);
-      if (s.phase === 'Outbound' && !w.canEnter(p, { x: s.targetX, z: s.targetZ })) { s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; s.recon = null; }
       if (s.phase === 'Exploring') {
         s.surveyRemaining = Math.max(0, s.surveyRemaining - dt);
         if (s.surveyRemaining > 0.00001) { keep.push(s); continue; }
@@ -217,7 +216,7 @@ export function explorationCommand(w, p, c, fail) {
     const place = prepareInvestigation(p, c.targetId, fail);
     if (profile.scouts <= 0) fail('Raise the Outlook of the Horizon before sending scouts.');
     if (p.scouts.length >= profile.scouts) fail('All scouts are already deployed. Recall one or raise the Outlook of the Horizon.');
-    if (!w.canEnter(p, place)) fail('Scouts need alliance access through the corresponding Divine Gate.');
+    if (!route(w,{ownerId:p.id,x:p.homeX,z:p.homeZ},place)) fail('No physical route to that investigation.');
     if (regionBusy(p, place.x, place.z)) fail('A scout is already working on that region.');
     const s = createScout(p, place.x, place.z);
     s.investigationId = place.id;
@@ -227,7 +226,6 @@ export function explorationCommand(w, p, c, fail) {
     if (!point(c)) fail('Choose a scouting destination inside the map bounds.');
     if (profile.scouts <= 0) fail('Raise the Outlook of the Horizon before sending scouts.');
     if (p.scouts.length >= profile.scouts) fail(profile.scouts === 1 ? 'Your scout is already deployed. Recall it or wait for its return.' : 'All scouts are already deployed. Recall one or raise the Outlook of the Horizon.');
-    if (!w.canEnter(p, c)) fail('Scouts need alliance access through the corresponding Divine Gate.');
     if (regionBusy(p, c.x, c.z)) fail('A scout is already working on that region.');
     if(!route(w,{ownerId:p.id,x:p.homeX,z:p.homeZ},c))fail('No open route from this city to the scouting destination.');
     p.scouts.push(createScout(p, c.x, c.z)); return true;
@@ -236,7 +234,6 @@ export function explorationCommand(w, p, c, fail) {
     const s = p.scouts.find(s => s.id === c.targetId);
     if (!s) fail('That scout mission is no longer active.');
     if (!point(c)) fail('Choose a scouting destination inside the map bounds.');
-    if (!w.canEnter(p, c)) fail('Scouts need alliance access through the corresponding Divine Gate.');
     if (regionBusy(p, c.x, c.z, s.id)) fail('A scout is already working on that region.');
     if ((s.phase === 'Outbound' || s.phase === 'Exploring') && cellIndex({ x: s.targetX, z: s.targetZ }) === cellIndex(c)) fail('That scout is already assigned to this region.');
     if(!route(w,s,c))fail('No open route from this scout to that destination.');

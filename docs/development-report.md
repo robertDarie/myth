@@ -1,5 +1,9 @@
 # Development report — 2026-11-16
 
+## Recovery B — separate scout passage
+
+After remote-confirmed A safety checkpoint de42f6cf29cf524ba87d3313a4db15abac64e5f5 (35checks), corrected actual scout routes independently of missing frontier pass objectives. Dedicated scout route/travel policy preserves physical corridors, bounds, speed, capacity and privacy without military ownership. Applies to send/redirect/auto/investigate/recon/ETA/ongoing travel/recall. Originalfour regressions0pass/4fail→4/4green; additional legitimate cave discovery/investigation/claim and private recon test; focused41/41; full409tests404pass/0fail/5skips; real JSON/SQLite HTTP22/22 including foreign scout denial and ordinary military refusal. No schema/numeric/client change; native NOTTESTED. Existing obsolete scout-gate expectations replaced with required positive passage and explicit manual-recall assertions. Mandatory plan36checks, registered evidence/fixture. Full A–F and Tasks6–11 remain incomplete; no fabricated parity/timing claim.
+
 ## Recovery A — military route safety subset
 
 Task4 published/remote-confirmed `bd1b157c2db54f81049b1b74a1b131cfe63d7288`,34 checks. New user instruction authorizes continuing through Task11; none of those later milestones is falsely marked complete. Implemented actual route containment: missing gate IDs deny ordinary crossings; move/PvE/gather/capture/PvP/rally admission validates full routes. Originalfive tests red2pass/3fail, then samefive green; expanded route/exploration/map focused24/24; full404tests399pass/0fail/5platform skips; freshHTTP20/20. Preserved home recall and saved troops/positions, no schema/protocol/balance changes. Full frontier pass construction remains incomplete, not replaced with guessed defender values.
