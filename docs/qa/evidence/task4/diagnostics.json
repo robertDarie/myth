@@ -1,0 +1,64 @@
+{
+  "commit": "f5c0cdf75af286c33a9c116f46139ee40c8fbce1",
+  "referenceBuild": "UNKNOWN",
+  "fogWidth": 64,
+  "gateSites": 2,
+  "ungatedCorridors": [
+    "dawn-outer",
+    "ashen-outer"
+  ],
+  "freshRestart": {
+    "playerCount": 1,
+    "positionPreserved": true
+  },
+  "probes": [
+    {
+      "id": "military-frontier",
+      "expected": "Reject unauthorized cross-zone move",
+      "accepted": true,
+      "error": "",
+      "path": [
+        {
+          "x": 128,
+          "z": 79
+        },
+        {
+          "x": 128,
+          "z": 81
+        },
+        {
+          "x": 128,
+          "z": 128
+        }
+      ],
+      "ticks": 98,
+      "arrived": true,
+      "verdict": "FAIL",
+      "fixture": "Coordinates prepared; production command and ticks"
+    },
+    {
+      "id": "scout-pass",
+      "expected": "Accept scout through physical corridor without pass ownership",
+      "error": "Scouts need alliance access through the corresponding Divine Gate.",
+      "verdict": "FAIL",
+      "fixture": "Coordinates prepared; production command"
+    },
+    {
+      "id": "secondary-passive",
+      "expected": "Secondary offensive passive rank affects army damage",
+      "before": 3156.0480000000002,
+      "after": 3156.0480000000002,
+      "verdict": "FAIL",
+      "fixture": "Prepared ownership/stars/skill ranks; actual pair command and stat calculation; not an organic skill purchase"
+    },
+    {
+      "id": "secondary-level",
+      "expected": "No blanket skill-independent companion-level damage multiplier",
+      "level1": 3156.0480000000002,
+      "level60": 4999.68,
+      "ratio": 1.5841584158415842,
+      "verdict": "FAIL",
+      "fixture": "Prepared levels; production stats"
+    }
+  ]
+}

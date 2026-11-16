@@ -2,6 +2,14 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "Task4 dated QA evidence integrity (red readiness retained)",
+      "command": ["python", "-X", "utf8", "scripts/check-task4-qa.py"]
+    },
+    {
+      "name": "fresh production HTTP cooperation, authority and process restart smoke",
+      "command": ["node", "scripts/task4-functional-qa.mjs", "--soak-seconds", "2", "--output", "work/task4/publication-smoke.json"]
+    },
+    {
       "name": "full parity audit inventory, source tables and legal progression evidence",
       "command": ["python", "-X", "utf8", "scripts/check-parity-audit-scope.py"]
     },

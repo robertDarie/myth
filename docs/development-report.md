@@ -1,5 +1,17 @@
 # Development report — 2026-11-16
 
+## Task 4 — executed playable-alpha QA
+
+Tested clean gameplay/client `f5c0cdf75af286c33a9c116f46139ee40c8fbce1`. **NOT READY — BLOCKERS REMAIN.** Delivered the four required reports, a 41-row evidence-axis matrix and sanitized reproducible evidence under `docs/qa/`. All three supplied independent retest reports reviewed; prior Linux results remain attributed, not silently re-certified.
+
+Built Windows client-only Unity6000.3.0f1, exit0; package verified145 files/protocol17/clean identity. Actual Windows guest/civilization/city entry, own-city camera, paid Citadel2 completion, 100-infantry queue/debit and world switch observed. Further native input blocked by tool detecting user input; controlled zoom, other resolutions, training completion, combat, native recovery/FPS/audio remain NOT TESTED. One native client, zero remote friends. Isolated native QA process/world left under user control; real saves and port8091 untouched.
+
+New fresh HTTP runner passed20/20 checks for JSON3 players and SQLite10: roles/chat/help/trade, foreign army/realm authority, replay/concurrent training, legal root garrison, actual process shutdown/restart/resume. Setup109 accelerated production seconds explicitly labeled. SQLite120.80-second movement/poll soak:10 clients,0 battles, snapshot p95 74.27ms, command p95 144.23ms, peak sampled RSS205234176bytes. Separate prepared large-world benchmark measures4 concurrent battles with10 HTTP clients and32/128/256 registered cities; no256-active-player or legitimate-progression claim.
+
+Production progression tool ran independently through827 accepted commands and six save-round-tripped milestones: Citadel3 at30 simulated minutes,4 atone hour,5 later; later offline reconnect policy is explicitly distinguished from combat. Four critical recovery probes still FAIL. Full server regression:398 tests,393pass,0fail,5platform skips,53712.57ms. No production gameplay source, schema, protocol or balance changed. Only test/documentation tools added, plus optional progression output argument. No game bug is claimed fixed. Updated existing TM-001/TM-057 evidence without rewriting historical audit data.
+
+Publication plan extended from32 to34 required checks: dated QA evidence integrity plus a short fresh HTTP restart smoke. Research gate and guarded publisher must pass and remote SHA must be confirmed. QA completion does not certify numerical or functional RoK parity. Stop at Task4; Recovery A has not started.
+
 ## Resumed Task3 execution
 
 Audited HEAD/origin main `384d023030fa42922f62ed56175147e48b75fb4e`. Expanded the actual audit files:124 behavior groups/17 subsystems,44 source modules,784 register dispositions,1,859 exported numeric fields,258 function records,650 published building-level observations,150 City Hall comparison rows, a10-sheet workbook and production-command progression/purchase evidence through local maxima and infantryT5. References are partial and source confidence/unknowns are explicit. No exact live-game version, hidden formula, native client or remote-player claim is made.

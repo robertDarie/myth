@@ -1,0 +1,31 @@
+{
+  "version": "0.45.0",
+  "commit": "f5c0cdf75af286c33a9c116f46139ee40c8fbce1",
+  "unity": "6000.3.0f1",
+  "platform": "windows-client-only-x86_64",
+  "protocol": 17,
+  "dirty": false,
+  "dateChecked": "2026-11-16",
+  "buildExit": 0,
+  "packageVerifier": "PASS",
+  "payloadFiles": 145,
+  "zipBytes": 87198472,
+  "zipSha256": "eeb059cb44b3ca0080c08dd47c48a9e9ecdfd0d1865bd8b8bfb7a2ba1a00c1b9",
+  "inputs": [
+    {
+      "name": "BUGS_FOR_CODEX.md",
+      "sha256": "6ddb9504f5ebf23b76d89c7fb9bca2bb88d9c5fceb6b1a864e1c13f983612139",
+      "scope": "Supplied independent retest input; not a newly executed native Linux test"
+    },
+    {
+      "name": "FEATURE_COVERAGE_MATRIX.csv",
+      "sha256": "82d023e3400cf930f61996314020d9d4904fe7063586a2d12d81ecbf0d72a5f4",
+      "scope": "Supplied independent retest input; not a newly executed native Linux test"
+    },
+    {
+      "name": "INDEPENDENT_RETEST_REPORT.md",
+      "sha256": "7d0e92d2dc39a6525a60f96237222329d94f6ca001e2aa020822b6094af8d698",
+      "scope": "Supplied independent retest input; not a newly executed native Linux test"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+[
+  {
+    "label": "native-infantry-queued",
+    "observedAt": "2026-11-16T20:30:02.104Z",
+    "testedCommit": "f5c0cdf75af286c33a9c116f46139ee40c8fbce1",
+    "schema": 27,
+    "cityLevel": 2,
+    "buildings": {
+      "oracle": 0,
+      "academy": 0,
+      "barracks": 1,
+      "menagerie": 0,
+      "farm": 1,
+      "lumber": 1,
+      "quarry": 0,
+      "mint": 0,
+      "well": 0,
+      "infirmary": 1,
+      "vault": 1,
+      "market": 0,
+      "oathhall": 0,
+      "forge": 0,
+      "builders": 0,
+      "scoutcamp": 1
+    },
+    "resources": {
+      "food": 5060,
+      "wood": 4960,
+      "stone": 110,
+      "gold": 925,
+      "mana": 30,
+      "aether": 0
+    },
+    "troops": 900,
+    "reserveTroops": 0,
+    "training": [
+      {
+        "type": "train",
+        "targetId": "infantry",
+        "amount": 100,
+        "duration": 1500,
+        "remaining": 1442.9501421999992,
+        "cost": {
+          "food": 5000,
+          "wood": 5000
+        }
+      }
+    ],
+    "construction": null,
+    "position": {
+      "x": 147.7779861749643,
+      "z": 23.072805231218055,
+      "homeX": 147.7779861749643,
+      "homeZ": 23.072805231218055
+    },
+    "scouts": 0,
+    "exploredCells": 19,
+    "kills": 0,
+    "commanderXP": 0
+  },
+  {
+    "label": "native-last-read-only-observation",
+    "observedAt": "2026-11-16T20:35:34.711Z",
+    "testedCommit": "f5c0cdf75af286c33a9c116f46139ee40c8fbce1",
+    "schema": 27,
+    "cityLevel": 2,
+    "buildings": {
+      "oracle": 0,
+      "academy": 0,
+      "barracks": 1,
+      "menagerie": 0,
+      "farm": 1,
+      "lumber": 1,
+      "quarry": 0,
+      "mint": 0,
+      "well": 0,
+      "infirmary": 1,
+      "vault": 1,
+      "market": 0,
+      "oathhall": 0,
+      "forge": 0,
+      "builders": 0,
+      "scoutcamp": 1
+    },
+    "resources": {
+      "food": 5192,
+      "wood": 5092,
+      "stone": 110,
+      "gold": 925,
+      "mana": 30,
+      "aether": 0
+    },
+    "troops": 900,
+    "reserveTroops": 0,
+    "training": [
+      {
+        "type": "train",
+        "targetId": "infantry",
+        "amount": 100,
+        "duration": 1500,
+        "remaining": 1111.7484342999956,
+        "cost": {
+          "food": 5000,
+          "wood": 5000
+        }
+      }
+    ],
+    "construction": null,
+    "position": {
+      "x": 147.7779861749643,
+      "z": 23.072805231218055,
+      "homeX": 147.7779861749643,
+      "homeZ": 23.072805231218055
+    },
+    "scouts": 0,
+    "exploredCells": 131,
+    "kills": 0,
+    "commanderXP": 0
+  }
+]

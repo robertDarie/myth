@@ -1,5 +1,11 @@
 # V1 functional backlog
 
+## 2026-11-16 Task4 QA delivered — alpha NOT READY
+
+User authorized Task4 after reviewing published Task3 audit at f5c0cdf75af286c33a9c116f46139ee40c8fbce1. Executed actual clean Windows build/native guest-city-upgrade-training checks, fresh3/10-player production HTTP scenarios, process restart/save checks,120.80-second loopback soak and prepared large-world performance measurements. Full server suite393pass/0fail/5skips outof398. See `docs/qa/ALPHA_READINESS_REPORT.md` and its41-row matrix for exact axes and NOTTESTED native/remote cases. This is delivered QA, not a queued application job.
+
+All four critical gameplay requirements still FAIL: military frontier ownership, scouts crossing passes, secondary passives and arbitrary secondary-level scaling. No numerical/gameplay correction in this task. Real saves preserved; no migration. Existing TM-001/TM-057 evidence updated conservatively. Dated QA validator plus fresh short HTTP smoke now required by publication plan (34 checks). Full RoK parity remains NOTCERTIFIED. Task4 ends after verified publication; next milestone is Critical Recovery A, **not started**.
+
 ## 2026-11-16 resumed Task3 execution
 
 Executed the expanded audit against `384d023030fa42922f62ed56175147e48b75fb4e`:124 behavior groups across17 subsystems; all44 server modules and784 mixed register rows inventoried/reconciled;1,859 exported numeric fields;650 published building levels;150 City Hall comparison rows; and a10-sheet workbook. Six production-clock milestones reach local maximum5 and paid infantryT1–T5 without injected progress. See `research/parity/audits/full-rok-audit/FULL_PARITY_AUDIT.md` for exact scope, artifacts and unresolved reference evidence. Full parity remains NOT CERTIFIED, and full numerical reference verification is incomplete.

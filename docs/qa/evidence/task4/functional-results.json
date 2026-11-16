@@ -1,0 +1,153 @@
+{
+  "testedCommit": "f5c0cdf75af286c33a9c116f46139ee40c8fbce1",
+  "node": "v24.18.0",
+  "scope": "Actual HTTP and fresh production state; accelerated setup clocks explicitly separate from real wall-clock soak; no native or remote-human certification",
+  "checks": [
+    {
+      "id": "json.readiness-and-invitation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.distinct-random-homes-and-protocol",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.army-authority-and-invalid-input",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.three-player-alliance-chat-and-roles",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.paid-construction-and-alliance-help",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.transfer-replay-and-conservation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.own-movement-and-foreign-recon-privacy",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.legal-root-beacon-and-garrison",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.actual-process-restart-and-resume",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.readiness-and-invitation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.distinct-random-homes-and-protocol",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.army-authority-and-invalid-input",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.three-player-alliance-chat-and-roles",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.paid-construction-and-alliance-help",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.transfer-replay-and-conservation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.concurrent-idempotent-training",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.own-movement-and-foreign-recon-privacy",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.legal-root-beacon-and-garrison",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.actual-process-restart-and-resume",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.idempotency-survives-process-restart",
+      "verdict": "PASS"
+    }
+  ],
+  "backends": [
+    {
+      "backend": "json",
+      "players": 3,
+      "startupMs": 323.1943,
+      "requests": {
+        "snapshot": {
+          "samples": 27,
+          "p50Ms": 15.75890000000004,
+          "p95Ms": 34.49650000000008,
+          "maxMs": 37.42029999999977
+        },
+        "command": {
+          "samples": 28,
+          "p50Ms": 38.87069999999994,
+          "p95Ms": 48.51200000000017,
+          "maxMs": 49.03610000000003
+        }
+      },
+      "soak": null,
+      "clock": "Production auto ticks plus explicitly accelerated 109 seconds of setup through production tick(.25); no injected progression"
+    },
+    {
+      "backend": "sqlite",
+      "players": 10,
+      "startupMs": 297.0738999999994,
+      "requests": {
+        "snapshot": {
+          "samples": 1070,
+          "p50Ms": 35.130799999999,
+          "p95Ms": 74.2676999999967,
+          "maxMs": 197.39569999999367
+        },
+        "command": {
+          "samples": 1056,
+          "p50Ms": 94.09420000000682,
+          "p95Ms": 144.2334000000119,
+          "maxMs": 231.6863000000012
+        }
+      },
+      "soak": {
+        "wallSeconds": 120.79985749999999,
+        "cycles": 101,
+        "authenticatedClients": 10,
+        "registeredAlphaPlayers": 10,
+        "simultaneousBattles": 0,
+        "cpuUserSeconds": 13.735,
+        "cpuSystemSeconds": 3.172,
+        "maxRssBytes": 205234176,
+        "tick": {
+          "samples": 2180,
+          "p50Ms": 1.978000000002794,
+          "p95Ms": 5.8070000000006985,
+          "maxMs": 22.99330000000191
+        },
+        "save": {
+          "samples": 1196,
+          "p50Ms": 5.4879000000073574,
+          "p95Ms": 31.835899999990943,
+          "maxMs": 52.52030000000377
+        },
+        "scope": "Ten real loopback HTTP sessions; movement and polling; no remote PCs or ten-battle claim"
+      },
+      "clock": "Production auto ticks plus explicitly accelerated 109 seconds of setup through production tick(.25); no injected progression"
+    }
+  ]
+}
