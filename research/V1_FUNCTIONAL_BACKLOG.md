@@ -1,5 +1,11 @@
 # V1 functional backlog
 
+## 2026-11-16 resumed Task3 execution
+
+Executed the expanded audit against `384d023030fa42922f62ed56175147e48b75fb4e`:124 behavior groups across17 subsystems; all44 server modules and784 mixed register rows inventoried/reconciled;1,859 exported numeric fields;650 published building levels;150 City Hall comparison rows; and a10-sheet workbook. Six production-clock milestones reach local maximum5 and paid infantryT1–T5 without injected progress. See `research/parity/audits/full-rok-audit/FULL_PARITY_AUDIT.md` for exact scope, artifacts and unresolved reference evidence. Full parity remains NOT CERTIFIED, and full numerical reference verification is incomplete.
+
+The only server-file change is a deterministic spawn fixture in the kingdom HTTP test, retaining the gate-privacy assertion after a random valid near-gate spawn exposed flakiness. Complete post-correction server run:393 pass /0 fail /5 existing platform skips,398 tests. Production gameplay, real saves and schema/protocol are unchanged. AP evidence now explicitly records conflicting published caps/recovery intervals. Application jobs were not created for Tasks4–11; their prompts remain future work subject to the stated order and independent review.
+
 ## 2026-11-16 audit/recovery ordering
 
 User decision: complete Task 3 (full RoK audit), then Task 4 (playable-alpha QA), before recovery checkpoints A–F. Task 3 is IN PROGRESS at main `1e345c6347f0d8673a541b68768eb5450742656c`; see `research/parity/audits/full-rok-audit/FULL_PARITY_AUDIT.md`. Initial extraction: 1,187 parameter/level rows, 10 narrowly source-supported comparison rows (seven distinct quantities), 1,177 UNKNOWN reference rows. Full workbook, feature inventory and remaining subsystem research are incomplete.

@@ -78,9 +78,9 @@ for(const [parameter,value] of Object.entries(infantryReference)) {
   row.conditions+='; generic T1 infantry only; secondary table checked 2026-11-16; live build UNKNOWN';
 }
 for(const row of rows.filter(r=>r.subsystem==='Commanders'&&r.parameter==='talent capacity'&&r.level===60)) {
-  row.rok_value=74;row.source_url='https://rokhub.app/faq/talents';row.evidence_class='VERIFIED';
+  row.rok_value=74;row.source_url='https://rokhub.app/faq/talents;https://riseofkingdomsguides.com/talent-tree/';row.evidence_class='CORROBORATED';
   row.absolute_difference=row.tom_value-74;row.percentage_difference=(row.tom_value-74)/74*100;
-  row.parity='NUMERICAL MISMATCH';row.conditions+='; single community source checked 2026-11-16; live build UNKNOWN; full award schedule unverified';
+  row.parity='NUMERICAL MISMATCH';row.conditions+='; two independently published community guides checked 2026-11-16; live build UNKNOWN; full award schedule unverified';
 }
 
 // Reconstructed independent defect probes. A matching defect is FAIL, never gameplay PASS.

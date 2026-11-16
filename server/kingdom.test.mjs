@@ -52,6 +52,10 @@ test('migration preserves owned-gate access without retroactive rewards and malf
 
 test('authenticated milestone claims enforce ownership and snapshot eligibility without exposing private claim lists',async testContext=>{
  const {createGameServer}=await import('./testing/legacy-services.mjs');const {server,world:w}=createGameServer();
+ // The visibility assertion below needs cities outside gate vision. Production
+ // random spawns may legitimately start beside a gate; use the same explicit
+ // legacy spawn fixture as the other milestone tests, before either HTTP join.
+ legacySpawns(w);
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});testContext.after(()=>new Promise(resolve=>{server.close(resolve);server.closeIdleConnections();}));
  const base='http://127.0.0.1:'+server.address().port,sessions=await Promise.all(['HTTP Contributor','HTTP Observer'].map(async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json())),[p,q]=sessions.map(s=>w.authenticate(s.token));
  const post=(i,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+sessions[i].token},body:JSON.stringify(body)}),get=async i=>(await fetch(base+'/world',{headers:{Authorization:'Bearer '+sessions[i].token}})).json();

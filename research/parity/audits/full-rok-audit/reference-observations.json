@@ -1,0 +1,49 @@
+{
+  "checked":"2026-11-16",
+  "live_build":"UNKNOWN",
+  "city_hall":{
+    "url":"https://app.rokstats.online/buildings/city-hall",
+    "classification":"VERIFIED",
+    "evidence_type":"Accessible secondary table claiming client extraction; current client build and independent extraction provenance not established",
+    "columns":["level","food","wood","stone","seconds","published_power"],
+    "power_caution":"Published power is not independently established as incremental versus cumulative. Do not substitute it into power calculations.",
+    "rows":[
+      [1,1800,1800,0,1,7],
+      [2,3500,3500,0,2,21],
+      [3,6500,6500,0,300,59],
+      [4,11800,11800,0,1200,154],
+      [5,21300,21300,0,3600,383],
+      [6,36300,36300,12000,7200,852],
+      [7,54400,54400,19200,18000,1847],
+      [8,81800,81800,30800,36000,3706],
+      [9,122800,122800,49200,54000,6504],
+      [10,184300,184300,78700,86400,10933],
+      [11,277500,277500,120000,108000,16723],
+      [12,417500,417500,180000,144000,24693],
+      [13,627500,627500,270000,180000,35213],
+      [14,942500,942500,405000,216000,48838],
+      [15,1415000,1415000,607500,252000,66400],
+      [16,2122500,2122500,912500,345600,91451],
+      [17,3185000,3185000,1370000,417600,125005],
+      [18,4800000,4800000,2075000,504000,170590],
+      [19,7200000,7200000,3125000,604800,232957],
+      [20,10800000,10800000,4700000,712800,318769],
+      [21,16200000,16200000,7050000,950400,442735],
+      [22,24300000,24300000,10575000,1479600,630860],
+      [23,36450000,36450000,15875000,2070000,907085],
+      [24,54750000,54750000,24000000,3106800,1322485],
+      [25,82250000,82250000,36000000,10897200,2195485]
+    ]
+  },
+  "talent_endpoint":{
+    "level":60,"points":74,"classification":"CORROBORATED",
+    "urls":["https://rokhub.app/faq/talents","https://riseofkingdomsguides.com/talent-tree/"],
+    "limitation":"Agreement of separately published community guides; not a live client measurement or a complete point-award schedule"
+  },
+  "secondary_active_conflict":{
+    "classification":"CONFLICTING",
+    "negative_source":"https://rokhub.app/faq/troops",
+    "positive_sources":["https://br1greenhouse.github.io/SentinelGameAcademy/games/rise-of-kingdoms/08-comandanti-base.html?lang=en","https://riseofkingdoms.fandom.com/wiki/Category%3ASkill"],
+    "decision":"Do not implement from the negative FAQ claim. Resolve using current controlled reference skill casts and primary skill/talent text. General secondary active contribution is supported by independent guide and indexed skill descriptions; exact timing remains unmeasured."
+  }
+}

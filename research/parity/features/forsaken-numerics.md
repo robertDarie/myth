@@ -75,9 +75,9 @@
     },
     {
       "quantity": "AP1500 cap and36-second point recovery",
-      "reference": "https://prokingdoms.com/blog/mastering-barbarian-chaining-in-rise-of-kingdoms-the-ultimate-ap-efficiency-guide",
-      "classification": "VERIFIED",
-      "treatment": "Direct secondary community guide, not official evidence; earlier sources differ by age/modifiers. Adopted requested baseline."
+      "reference": "https://prokingdoms.com/blog/mastering-barbarian-chaining-in-rise-of-kingdoms-the-ultimate-ap-efficiency-guide versus https://riseofkingdoms.fandom.com/wiki/Resources and https://riseofkingdomsguides.com/faq/; reviewed2026-11-16",
+      "classification": "CONFLICTING",
+      "treatment": "Existing requested baseline remains unchanged. Other sources describe1000 and approximately45seconds unmodified. Version, VIP/bonus and regen-cap versus item-overflow distinctions are not resolved; do not call1500/36 universal verified parity. Requires controlled current-client observations before correction."
     },
     {
       "quantity": "City Hall capacity and published commander capacity rows",
@@ -258,3 +258,5 @@ Registered checks in metadata verify independent expected level tables, real tra
 ## Implementation status
 
 IMPLEMENTED, Partial parity. At7225d88:392 server passes, five platform skips;27 publication checks;16757 portable C# assertions; Unity compilation exit0. Recorded recommended25/25 wins and half-count0/25 wins are ToM measurements. Native rendering and real remote players are not player-verified. This policy record was added later to index/classify existing evidence; it is not falsely dated as a new pre-implementation record.
+
+2026-11-16 audit update: the AP baseline now has an explicit CONFLICTING classification after additional source review. Historical implementation and its deterministic fixture are preserved; this evidence correction changes no AP values, timers, saves or rewards. See `../audits/full-rok-audit/ROK_SOURCES.md` for access limits and the unresolved base/modifier/cap questions.

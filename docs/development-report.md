@@ -1,5 +1,21 @@
 # Development report — 2026-11-16
 
+## Resumed Task3 execution
+
+Audited HEAD/origin main `384d023030fa42922f62ed56175147e48b75fb4e`. Expanded the actual audit files:124 behavior groups/17 subsystems,44 source modules,784 register dispositions,1,859 exported numeric fields,258 function records,650 published building-level observations,150 City Hall comparison rows, a10-sheet workbook and production-command progression/purchase evidence through local maxima and infantryT5. References are partial and source confidence/unknowns are explicit. No exact live-game version, hidden formula, native client or remote-player claim is made.
+
+Executed `scripts/parity-audit-inventory.py`, `parity-audit-parameters.mjs`, `parity-audit-buildings.py`, `parity-audit-reference.mjs`, refreshed `parity-audit-baseline.mjs`, and `parity-audit-progression.mjs`. The progression run uses production quarter-second ticks for the first hour and production offline city catch-up thereafter; six milestones restart safely. Captured actual costs/timers, observed100T1 completion and paid training throughT5. It is not offline field combat or a native playthrough.
+
+Found a genuinely flaky existing kingdom HTTP privacy test: random cities could validly see the gate that the test assumed was hidden. Fixed only its spawn fixture; retained its assertions and all production validation. Red full run:392 pass/1 fail/5 skips. Focused green:7/7. Full green:393 pass/0 fail/5 existing platform skips,398 tests,24,172.8278ms. No production source, schema, protocol or real-save migration changed.
+
+`check-parity-audit.py` and new `check-parity-audit-scope.py` validate all canonical data and all expanded workbook views. Formula error scan found no matches; all new sheets and the changed cover were rendered/visually inspected, with clipped feature-gap columns corrected. Source/table consistency caught a level23 timer transcription error before publication. AP evidence was corrected to CONFLICTING after investigating competing published baselines; AP code was not changed.
+
+The mandatory plan now includes32 checks. The pre-publication run passed all32, including16,757 portable C# contracts and the research gate's three bound numerical checks. Both dataset validators pass again after the final all-resource comparison update. Guarded publication reruns the plan and must independently confirm the remote SHA before publication is reported complete. Full reference verification remains incomplete, with the exact current-client and independent evidence requirements enumerated in the audit. No later implementation task was started, and no application job was created for the previously supplied prompts.
+
+---
+
+## Earlier initial checkpoint
+
 Status: **Task 3 IN PROGRESS; Task 4 and recovery A–F queued. Verified initial audit/fixture-maintenance checkpoint.**
 
 User clarified that the full RoK audit and playable-alpha QA must precede the new recovery implementation. Fetched origin/main and confirmed local main at `1e345c6347f0d8673a541b68768eb5450742656c`. No gameplay source or real save has been edited.

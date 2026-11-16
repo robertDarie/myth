@@ -1,0 +1,158 @@
+[
+  {
+    "url": "https://app.rokstats.online/buildings/academy",
+    "status": "READ",
+    "sha256": "ad96142bb54f3fab6efb782b6b7f6ad7dc069e0cb02d896291cc11d3bff1a5b7",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/alliance-center",
+    "status": "READ",
+    "sha256": "dd7e3abe29ad2652914d2b3f52423a093e28499b6b2ad8b34f43c7a9b096ed8f",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/archery-range",
+    "status": "READ",
+    "sha256": "8c788f1d4f39200a6d89e3a5b28a4b51388de915be049bb164ec370d7b9ecfd2",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/barracks",
+    "status": "READ",
+    "sha256": "00902ba48d1954db265d70c5089a4ab21c5cf0349bff5b6d270086dea9ee6cfe",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/castle",
+    "status": "READ",
+    "sha256": "0e1782ef8dd9ab370ee9baa85769e54842cc48a234c01f41e22064beced823d9",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/city-hall",
+    "status": "READ",
+    "sha256": "982d095c31182fe20aae25c968d068182222536185d9c385c8b646552b15369a",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/crystal-mine",
+    "status": "READ",
+    "sha256": "6e6b8a7927249e53c159aaa9c96b4c9fc205bbbc64aaf23f115c1f0ab45a25cc",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/crystal-research-center",
+    "status": "READ",
+    "sha256": "7760562c51cfeb00ce0fad1f91c996d9ae950c778d463fb1bb232163f892d45e",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/farm",
+    "status": "READ",
+    "sha256": "bd7ba1a1afba4f0a06313f57578db77c09de2c178959e27483e9c8a6a1fad7ba",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/goldmine",
+    "status": "READ",
+    "sha256": "bf7af16a89ed654677aa6992ebe27945a6a7c97ffa4e2e47551f0c9268369a3e",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/heliamber-mine-extra",
+    "status": "READ",
+    "sha256": "5ca899080e19074c09cffd13b6107608691d065075fefad1c4b859f42fe1955e",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/heliamber-mine-i",
+    "status": "READ",
+    "sha256": "195df5f7ee051e0ad76b6133b59762f4b455399a750a00135a41106e7ddec412",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/heliamber-mine-ii",
+    "status": "READ",
+    "sha256": "56e27691557b79795312d1f2aa9b448ce76e263298ca24ea66c0162ed612e849",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/heliamber-mine-iii",
+    "status": "READ",
+    "sha256": "4ebb04e5b46c74309ead145ce644d01c53c5b8b8f0163390596b978a1c3c7b66",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/hospital",
+    "status": "READ",
+    "sha256": "856e1afe9e259b8c8bff78eac417da75ae56869275f2b54664060affc9bf96b6",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/lumber-mill",
+    "status": "READ",
+    "sha256": "005bceb564cb5dca5e45bd1016e23c5a0c3e2a8cd06d9f9a5d1af8b1126b5257",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/quarry",
+    "status": "READ",
+    "sha256": "c49d78c70e612743e2117c78761d6b3806a21d094b396be9222e12b01502af87",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/scout-camp",
+    "status": "READ",
+    "sha256": "949bf0774f49b49b3e3aa59d60adaa9edfe42d13252bfbcc374bcd8655bde355",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/siege-workshop",
+    "status": "READ",
+    "sha256": "dc10ef94976266d8aac823033568f45024405acd9610397b4deca083dd79df86",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/stable",
+    "status": "READ",
+    "sha256": "0fc0545496bc24499af15662bfadf1df3f632969227943291351b20b83a91cda",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/state-forum",
+    "status": "READ",
+    "sha256": "c0b85d3a18d62bff46f16641e060976846b5de230632a54d68a72e6009a982b0",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/storehouse",
+    "status": "READ",
+    "sha256": "9d1640face4c615c7ba8967ccaf9a18800e32a3b533d018779fb1303de3585d4",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/tavern",
+    "status": "READ",
+    "sha256": "2626ba254091bb28946568c8c8af220e84e94963afc0bbe7349a0b2a51b1199b",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/trading-post",
+    "status": "READ",
+    "sha256": "d4820f42947193485afcb81c404c9c8f537517481657cafb2de5574d84ca8506",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/wall",
+    "status": "READ",
+    "sha256": "989810257a486d42211598ae681f90f12f55016845f12d4a577a4d53e413e3f5",
+    "levels": 25
+  },
+  {
+    "url": "https://app.rokstats.online/buildings/watchtower",
+    "status": "READ",
+    "sha256": "e0f2e3ffa12e3b45f12db760e8a7883253fe54564755920c5accba6cc8986408",
+    "levels": 25
+  }
+]

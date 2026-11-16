@@ -20,3 +20,11 @@ This is an initial blocker list, not a claim that every numerical subsystem has 
 - Scouting: all camp levels, counts, speed, discovery/investigation rewards, recon privacy and pass exceptions. Need measured route/queue behavior plus persistent fog tests.
 
 Task 3 still requires the full feature inventory, remaining matrices, simulations, workbook and independent review. Task 4 will supply functional observations but cannot manufacture missing RoK reference evidence.
+
+## Superseding execution update, 2026-11-16
+
+The expanded feature inventory, module/register reconciliation, numeric/function indexes,650 building-level observations,25-level City Hall comparison, legal production-command progression and10-sheet workbook are now produced. The paragraph above records the earlier checkpoint's unfinished artifacts; those files now exist and are validated. Independent reference verification remains incomplete.
+
+New consequential conflicts are explicit: AP1500/36 versus1000/approximately45 under unresolved conditions; and a FAQ denying secondary active skills versus sources that describe secondary active contribution. The existing AP evidence was downgraded to CONFLICTING without changing code. The74-point endpoint is independently published by two guides, but that does not establish the whole point schedule/tree.
+
+The live reference build/current account conditions and direct controlled measurements are unavailable. To close exact-version gaps, obtain versioned in-game screenshots/recordings or independently corroborated client tables with extraction provenance, then verify base values and each modifier independently. To close hidden combat/drop/patrol gaps, use controlled repeated observations with input/output logs and measured uncertainty; a finite matching sample still does not prove an unpublished internal equation.
