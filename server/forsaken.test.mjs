@@ -7,9 +7,25 @@ import { ensureHero, xpAtLevel } from './progression.mjs';
 import { ensureArmaments } from './city.mjs';
 import { openRealm } from './realms.mjs';
 import { unitTotal } from './troops.mjs';
-const setup=()=>{const w=new World({random:()=>.25,now:()=>Date.UTC(2026,10,14)}),s=w.join('Hunter'),p=w.authenticate(s.token),c=w.camps[0];p.buildings.lumber=0;p.x=p.z=c.x=c.z=22;p.deployed=true;return {w,s,p,c};};
+import { provinceAt } from './world-map.mjs';
+const setup=()=>{const w=new World({random:()=>.25,now:()=>Date.UTC(2026,10,14)}),s=w.join('Hunter'),p=w.authenticate(s.token),c=w.camps[0];p.buildings.lumber=0;p.x=p.z=c.x=c.z=22;
+  // This is an authored combat fixture, not a natural spawn. Move the entire
+  // patrol frame together so restart tests do not serialize an impossible camp.
+  c.anchorX=c.anchorZ=c.patrolX=c.patrolZ=22;c.provinceId=provinceAt(c).id;
+  p.deployed=true;return {w,s,p,c};};
 const attack=(w,p,c)=>w.command(p,{type:'attack',targetId:c.id});
 const settle=(w,p,c)=>{for(let i=0;i<2400&&!p.coreReports.some(r=>r.encounterCycle===c.cycle&&r.encounterId===c.id);i++)w.tick(.25);return p.coreReports.find(r=>r.encounterCycle===c.cycle&&r.encounterId===c.id);};
+
+test('authored combat patrol round-trips, while an impossible live camp remains rejected',()=>{
+  const {w,s,c}=setup(),save=w.toSave();
+  const restored=World.fromSave(save,{now:w.now,random:w.random});
+  assert.equal(restored.authenticate(s.token).id,s.playerId);
+  const camp=restored.camps.find(row=>row.id===c.id);
+  assert.deepEqual([camp.x,camp.z,camp.anchorX,camp.anchorZ],[22,22,22,22]);
+  const malformed=structuredClone(save),bad=malformed.world.camps.find(row=>row.id===c.id);
+  bad.x=bad.anchorX+4;
+  assert.throws(()=>World.fromSave(malformed,{now:w.now,random:w.random}),/Invalid saved Forsaken patrol/);
+});
 test('175 real engine battles measure recommendations, lower counts, higher counts, commanders, tiers and research',()=>{
   const measured=runCalibration();assert.equal(measured.rows.length,175);
   for(let level=1;level<=25;level++){

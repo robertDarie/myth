@@ -1,5 +1,13 @@
 # V1 functional backlog
 
+## 2026-11-16 audit/recovery ordering
+
+User decision: complete Task 3 (full RoK audit), then Task 4 (playable-alpha QA), before recovery checkpoints A–F. Task 3 is IN PROGRESS at main `1e345c6347f0d8673a541b68768eb5450742656c`; see `research/parity/audits/full-rok-audit/FULL_PARITY_AUDIT.md`. Initial extraction: 1,187 parameter/level rows, 10 narrowly source-supported comparison rows (seven distinct quantities), 1,177 UNKNOWN reference rows. Full workbook, feature inventory and remaining subsystem research are incomplete.
+
+Current production-engine diagnostics reproduce unauthorized frontier crossing, blocked scouts, inert secondary passive and arbitrary secondary-level scaling. All four are gameplay FAIL, not passing feature verification. Fresh save/reload smoke passes; full server baseline is 388 pass / 4 fail / 5 existing platform skips out of 397. All four failures reject authored Forsaken patrol state during restore. No live-save corruption is established by those fixture failures. Publication is not verified; Task 4 and gameplay recovery have not started. No balance changes are authorized by this audit entry.
+
+The fixture-only repair moves its patrol frame with its authored camp and adds malformed-save rejection coverage. Post-repair: 393 pass / 0 fail / 5 existing platform skips out of 398; focused Forsaken 8/8; mandatory publication plan 31/31. Initial three-sheet workbook is exported and visually inspected, with 1,187 rows reconciled against CSV/JSON. Full Task 3 remains incomplete; this is a verified baseline checkpoint, not a gameplay recovery or full audit completion.
+
 This is the working order for functional completeness. It is not a line-by-line audit of the coverage register. Most register rows still say `NOT AUDITED` even where server tests already exist. A passing test is not treated as proof that a whole system is finished. Future 3D, randomized inscriptions, and unapproved premium commerce stay out of this list.
 
 ## Done in this package

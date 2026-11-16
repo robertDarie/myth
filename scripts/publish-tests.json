@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "initial parity audit dataset consistency (not completeness or source certification)",
+      "command": ["python", "-X", "utf8", "scripts/check-parity-audit.py"]
+    },
+    {
       "name": "research publication gate offline contracts",
       "command": [
         "python",
