@@ -2,6 +2,10 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "legal full-map scout commands and fog persistence (not full automatic parity)",
+      "command": ["node", "scripts/check-natural-exploration.mjs"]
+    },
+    {
       "name": "full Windows archive integrity and privacy offline fixtures",
       "command": ["python", "-X", "utf8", "scripts/test_windows_package.py"]
     },

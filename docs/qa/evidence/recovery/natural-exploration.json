@@ -1,0 +1,2686 @@
+{
+  "testedParent": "3c99fa65a3ced900ceb6054297346f66a4b52fe6",
+  "scope": "Fresh production city, default scout level/capacity, actual commands and tick(.25); accelerated simulation clock, no resources/XP/coordinates/fog injected; manual phase follows automatic test if incomplete; full-map automatic reference behavior UNKNOWN",
+  "automatic": {
+    "cells": 759,
+    "seconds": 310.25,
+    "activeScouts": 0,
+    "verdict": "FAIL incomplete automatic exploration"
+  },
+  "finalCells": 4096,
+  "simulationSeconds": 1315.25,
+  "wallSeconds": 15.7844956,
+  "manualCommands": 380,
+  "restartCells": 4096,
+  "actions": [
+    {
+      "seconds": 0,
+      "type": "scout-auto",
+      "enabled": true
+    },
+    {
+      "seconds": 310.25,
+      "type": "scout-auto",
+      "enabled": false
+    },
+    {
+      "seconds": 310.25,
+      "type": "scout-send",
+      "x": 50,
+      "z": 110
+    },
+    {
+      "seconds": 312,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 42,
+      "z": 102
+    },
+    {
+      "seconds": 313.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 34,
+      "z": 94
+    },
+    {
+      "seconds": 315.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 42,
+      "z": 86
+    },
+    {
+      "seconds": 317.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 34,
+      "z": 78
+    },
+    {
+      "seconds": 323,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 42,
+      "z": 70
+    },
+    {
+      "seconds": 327.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 50,
+      "z": 78
+    },
+    {
+      "seconds": 329.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 58,
+      "z": 70
+    },
+    {
+      "seconds": 331,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 66,
+      "z": 62
+    },
+    {
+      "seconds": 332.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 58,
+      "z": 54
+    },
+    {
+      "seconds": 334.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 50,
+      "z": 46
+    },
+    {
+      "seconds": 336.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 42,
+      "z": 38
+    },
+    {
+      "seconds": 340.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 34,
+      "z": 30
+    },
+    {
+      "seconds": 345.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 26,
+      "z": 22
+    },
+    {
+      "seconds": 347,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 42
+    },
+    {
+      "seconds": 351.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 38,
+      "z": 50
+    },
+    {
+      "seconds": 353,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 58
+    },
+    {
+      "seconds": 354.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 30
+    },
+    {
+      "seconds": 362,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 22
+    },
+    {
+      "seconds": 363.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 30
+    },
+    {
+      "seconds": 365.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 38
+    },
+    {
+      "seconds": 367.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 30
+    },
+    {
+      "seconds": 371.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 22
+    },
+    {
+      "seconds": 373.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 30
+    },
+    {
+      "seconds": 375.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 22
+    },
+    {
+      "seconds": 377,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 30
+    },
+    {
+      "seconds": 378.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 22
+    },
+    {
+      "seconds": 380.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 30
+    },
+    {
+      "seconds": 382.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 22
+    },
+    {
+      "seconds": 384,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 30
+    },
+    {
+      "seconds": 385.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 22
+    },
+    {
+      "seconds": 387.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 30
+    },
+    {
+      "seconds": 389.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 22
+    },
+    {
+      "seconds": 391,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 30
+    },
+    {
+      "seconds": 392.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 22
+    },
+    {
+      "seconds": 394.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 202,
+      "z": 22
+    },
+    {
+      "seconds": 396.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 38
+    },
+    {
+      "seconds": 399.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 46
+    },
+    {
+      "seconds": 401,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 54
+    },
+    {
+      "seconds": 402.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 62
+    },
+    {
+      "seconds": 404.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 70
+    },
+    {
+      "seconds": 406.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 62
+    },
+    {
+      "seconds": 408,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 70
+    },
+    {
+      "seconds": 409.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 78
+    },
+    {
+      "seconds": 411.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 86
+    },
+    {
+      "seconds": 419.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 94
+    },
+    {
+      "seconds": 421,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 102
+    },
+    {
+      "seconds": 422.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 110
+    },
+    {
+      "seconds": 424.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 118
+    },
+    {
+      "seconds": 426.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 126
+    },
+    {
+      "seconds": 428,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 134
+    },
+    {
+      "seconds": 429.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 142
+    },
+    {
+      "seconds": 431.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 150
+    },
+    {
+      "seconds": 433.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 142
+    },
+    {
+      "seconds": 439,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 150
+    },
+    {
+      "seconds": 440.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 142
+    },
+    {
+      "seconds": 442.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 150
+    },
+    {
+      "seconds": 444.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 46,
+      "z": 142
+    },
+    {
+      "seconds": 446,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 38,
+      "z": 150
+    },
+    {
+      "seconds": 447.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 142
+    },
+    {
+      "seconds": 449.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 22,
+      "z": 134
+    },
+    {
+      "seconds": 451.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 14,
+      "z": 126
+    },
+    {
+      "seconds": 453,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 6,
+      "z": 118
+    },
+    {
+      "seconds": 454.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 6,
+      "z": 106
+    },
+    {
+      "seconds": 456.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 130
+    },
+    {
+      "seconds": 460,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 10,
+      "z": 138
+    },
+    {
+      "seconds": 461.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 146
+    },
+    {
+      "seconds": 463.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 10,
+      "z": 154
+    },
+    {
+      "seconds": 465.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 18,
+      "z": 146
+    },
+    {
+      "seconds": 467,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 26,
+      "z": 154
+    },
+    {
+      "seconds": 468.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 18,
+      "z": 162
+    },
+    {
+      "seconds": 470.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 10,
+      "z": 170
+    },
+    {
+      "seconds": 472.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 162
+    },
+    {
+      "seconds": 474,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 178
+    },
+    {
+      "seconds": 476.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 10,
+      "z": 186
+    },
+    {
+      "seconds": 478.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 18,
+      "z": 178
+    },
+    {
+      "seconds": 480,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 26,
+      "z": 170
+    },
+    {
+      "seconds": 481.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 34,
+      "z": 162
+    },
+    {
+      "seconds": 483.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 42,
+      "z": 170
+    },
+    {
+      "seconds": 485.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 50,
+      "z": 162
+    },
+    {
+      "seconds": 487,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 58,
+      "z": 170
+    },
+    {
+      "seconds": 488.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 66,
+      "z": 162
+    },
+    {
+      "seconds": 490.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 74,
+      "z": 170
+    },
+    {
+      "seconds": 492.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 82,
+      "z": 162
+    },
+    {
+      "seconds": 503.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 90,
+      "z": 170
+    },
+    {
+      "seconds": 505.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 98,
+      "z": 162
+    },
+    {
+      "seconds": 507,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 106,
+      "z": 154
+    },
+    {
+      "seconds": 508.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 114,
+      "z": 146
+    },
+    {
+      "seconds": 510.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 122,
+      "z": 138
+    },
+    {
+      "seconds": 512.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 130,
+      "z": 130
+    },
+    {
+      "seconds": 514,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 138,
+      "z": 122
+    },
+    {
+      "seconds": 515.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 146,
+      "z": 114
+    },
+    {
+      "seconds": 517.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 154,
+      "z": 106
+    },
+    {
+      "seconds": 519.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 162,
+      "z": 98
+    },
+    {
+      "seconds": 521,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 170,
+      "z": 90
+    },
+    {
+      "seconds": 522.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 178,
+      "z": 82
+    },
+    {
+      "seconds": 524.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 186,
+      "z": 90
+    },
+    {
+      "seconds": 526.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 194,
+      "z": 82
+    },
+    {
+      "seconds": 528,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 202,
+      "z": 74
+    },
+    {
+      "seconds": 548.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 210,
+      "z": 66
+    },
+    {
+      "seconds": 550.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 218,
+      "z": 58
+    },
+    {
+      "seconds": 552,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 226,
+      "z": 50
+    },
+    {
+      "seconds": 553.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 234,
+      "z": 42
+    },
+    {
+      "seconds": 555.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 226,
+      "z": 34
+    },
+    {
+      "seconds": 557.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 234,
+      "z": 26
+    },
+    {
+      "seconds": 559,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 242,
+      "z": 34
+    },
+    {
+      "seconds": 560.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 250,
+      "z": 26
+    },
+    {
+      "seconds": 562.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 38
+    },
+    {
+      "seconds": 564.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 46
+    },
+    {
+      "seconds": 566.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 54
+    },
+    {
+      "seconds": 568,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 62
+    },
+    {
+      "seconds": 569.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 70
+    },
+    {
+      "seconds": 571.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 78
+    },
+    {
+      "seconds": 573.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 86
+    },
+    {
+      "seconds": 597,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 94
+    },
+    {
+      "seconds": 598.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 86
+    },
+    {
+      "seconds": 600.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 78
+    },
+    {
+      "seconds": 629,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 70
+    },
+    {
+      "seconds": 630.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 62
+    },
+    {
+      "seconds": 632.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 54
+    },
+    {
+      "seconds": 634.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 70
+    },
+    {
+      "seconds": 636.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 78
+    },
+    {
+      "seconds": 638.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 86
+    },
+    {
+      "seconds": 671.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 94
+    },
+    {
+      "seconds": 673.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 86
+    },
+    {
+      "seconds": 675,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 102
+    },
+    {
+      "seconds": 677.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 110
+    },
+    {
+      "seconds": 679.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 102
+    },
+    {
+      "seconds": 681,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 110
+    },
+    {
+      "seconds": 682.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 102
+    },
+    {
+      "seconds": 684.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 110
+    },
+    {
+      "seconds": 686.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 102
+    },
+    {
+      "seconds": 688,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 110
+    },
+    {
+      "seconds": 689.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 102
+    },
+    {
+      "seconds": 691.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 110
+    },
+    {
+      "seconds": 693.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 102
+    },
+    {
+      "seconds": 695,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 110
+    },
+    {
+      "seconds": 696.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 118
+    },
+    {
+      "seconds": 698.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 126
+    },
+    {
+      "seconds": 700.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 134
+    },
+    {
+      "seconds": 702,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 142
+    },
+    {
+      "seconds": 703.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 150
+    },
+    {
+      "seconds": 705.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 158
+    },
+    {
+      "seconds": 707.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 166
+    },
+    {
+      "seconds": 709,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 174
+    },
+    {
+      "seconds": 710.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 182
+    },
+    {
+      "seconds": 712.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 190
+    },
+    {
+      "seconds": 714.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 182
+    },
+    {
+      "seconds": 731.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 190
+    },
+    {
+      "seconds": 733,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 182
+    },
+    {
+      "seconds": 734.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 190
+    },
+    {
+      "seconds": 736.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 46,
+      "z": 182
+    },
+    {
+      "seconds": 738.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 38,
+      "z": 190
+    },
+    {
+      "seconds": 740,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 182
+    },
+    {
+      "seconds": 741.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 22,
+      "z": 190
+    },
+    {
+      "seconds": 743.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 14,
+      "z": 198
+    },
+    {
+      "seconds": 745.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 6,
+      "z": 206
+    },
+    {
+      "seconds": 747,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 14,
+      "z": 214
+    },
+    {
+      "seconds": 748.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 22,
+      "z": 206
+    },
+    {
+      "seconds": 750.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 198
+    },
+    {
+      "seconds": 752.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 38,
+      "z": 206
+    },
+    {
+      "seconds": 754,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 46,
+      "z": 198
+    },
+    {
+      "seconds": 755.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 206
+    },
+    {
+      "seconds": 757.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 198
+    },
+    {
+      "seconds": 759.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 206
+    },
+    {
+      "seconds": 761,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 198
+    },
+    {
+      "seconds": 762.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 206
+    },
+    {
+      "seconds": 784.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 214
+    },
+    {
+      "seconds": 808,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 222
+    },
+    {
+      "seconds": 809.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 214
+    },
+    {
+      "seconds": 811.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 222
+    },
+    {
+      "seconds": 813.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 46,
+      "z": 214
+    },
+    {
+      "seconds": 815,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 38,
+      "z": 222
+    },
+    {
+      "seconds": 816.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 214
+    },
+    {
+      "seconds": 818.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 22,
+      "z": 222
+    },
+    {
+      "seconds": 820.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 14,
+      "z": 230
+    },
+    {
+      "seconds": 822,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 6,
+      "z": 222
+    },
+    {
+      "seconds": 823.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 234
+    },
+    {
+      "seconds": 825.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 10,
+      "z": 242
+    },
+    {
+      "seconds": 827.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 250
+    },
+    {
+      "seconds": 829.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 14,
+      "z": 254
+    },
+    {
+      "seconds": 831.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 22,
+      "z": 246
+    },
+    {
+      "seconds": 833,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 238
+    },
+    {
+      "seconds": 834.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 38,
+      "z": 246
+    },
+    {
+      "seconds": 836.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 46,
+      "z": 238
+    },
+    {
+      "seconds": 838.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 246
+    },
+    {
+      "seconds": 840,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 238
+    },
+    {
+      "seconds": 841.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 246
+    },
+    {
+      "seconds": 843.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 238
+    },
+    {
+      "seconds": 845.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 230
+    },
+    {
+      "seconds": 876,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 238
+    },
+    {
+      "seconds": 877.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 230
+    },
+    {
+      "seconds": 879.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 222
+    },
+    {
+      "seconds": 881.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 214
+    },
+    {
+      "seconds": 883,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 206
+    },
+    {
+      "seconds": 884.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 198
+    },
+    {
+      "seconds": 886.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 190
+    },
+    {
+      "seconds": 888.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 182
+    },
+    {
+      "seconds": 890,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 174
+    },
+    {
+      "seconds": 891.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 166
+    },
+    {
+      "seconds": 893.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 158
+    },
+    {
+      "seconds": 895.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 150
+    },
+    {
+      "seconds": 897,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 142
+    },
+    {
+      "seconds": 898.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 134
+    },
+    {
+      "seconds": 900.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 126
+    },
+    {
+      "seconds": 902.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 134
+    },
+    {
+      "seconds": 904,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 126
+    },
+    {
+      "seconds": 905.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 134
+    },
+    {
+      "seconds": 907.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 126
+    },
+    {
+      "seconds": 909.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 134
+    },
+    {
+      "seconds": 911,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 126
+    },
+    {
+      "seconds": 912.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 134
+    },
+    {
+      "seconds": 914.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 126
+    },
+    {
+      "seconds": 916.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 134
+    },
+    {
+      "seconds": 918,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 126
+    },
+    {
+      "seconds": 919.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 142
+    },
+    {
+      "seconds": 922.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 150
+    },
+    {
+      "seconds": 924,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 142
+    },
+    {
+      "seconds": 925.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 150
+    },
+    {
+      "seconds": 927.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 142
+    },
+    {
+      "seconds": 929.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 150
+    },
+    {
+      "seconds": 931,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 142
+    },
+    {
+      "seconds": 932.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 150
+    },
+    {
+      "seconds": 934.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 142
+    },
+    {
+      "seconds": 936.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 150
+    },
+    {
+      "seconds": 938,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 142
+    },
+    {
+      "seconds": 939.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 150
+    },
+    {
+      "seconds": 941.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 158
+    },
+    {
+      "seconds": 943.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 166
+    },
+    {
+      "seconds": 945,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 174
+    },
+    {
+      "seconds": 946.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 182
+    },
+    {
+      "seconds": 948.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 190
+    },
+    {
+      "seconds": 950.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 198
+    },
+    {
+      "seconds": 952,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 206
+    },
+    {
+      "seconds": 953.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 198
+    },
+    {
+      "seconds": 955.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 190
+    },
+    {
+      "seconds": 957.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 182
+    },
+    {
+      "seconds": 959,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 174
+    },
+    {
+      "seconds": 960.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 166
+    },
+    {
+      "seconds": 962.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 158
+    },
+    {
+      "seconds": 964.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 166
+    },
+    {
+      "seconds": 966,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 158
+    },
+    {
+      "seconds": 967.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 166
+    },
+    {
+      "seconds": 969.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 158
+    },
+    {
+      "seconds": 971.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 166
+    },
+    {
+      "seconds": 973,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 158
+    },
+    {
+      "seconds": 974.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 166
+    },
+    {
+      "seconds": 976.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 158
+    },
+    {
+      "seconds": 978.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 166
+    },
+    {
+      "seconds": 980,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 158
+    },
+    {
+      "seconds": 981.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 174
+    },
+    {
+      "seconds": 984.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 182
+    },
+    {
+      "seconds": 986,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 174
+    },
+    {
+      "seconds": 987.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 182
+    },
+    {
+      "seconds": 989.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 174
+    },
+    {
+      "seconds": 991.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 182
+    },
+    {
+      "seconds": 993,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 174
+    },
+    {
+      "seconds": 994.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 182
+    },
+    {
+      "seconds": 996.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 174
+    },
+    {
+      "seconds": 998.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 182
+    },
+    {
+      "seconds": 1000,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 174
+    },
+    {
+      "seconds": 1001.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 182
+    },
+    {
+      "seconds": 1003.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 190
+    },
+    {
+      "seconds": 1005.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 198
+    },
+    {
+      "seconds": 1007,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 206
+    },
+    {
+      "seconds": 1008.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 214
+    },
+    {
+      "seconds": 1010.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 222
+    },
+    {
+      "seconds": 1012.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 214
+    },
+    {
+      "seconds": 1014,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 230
+    },
+    {
+      "seconds": 1016.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 238
+    },
+    {
+      "seconds": 1018.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 246
+    },
+    {
+      "seconds": 1020,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 254
+    },
+    {
+      "seconds": 1021.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 246
+    },
+    {
+      "seconds": 1023.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 254
+    },
+    {
+      "seconds": 1058.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 254
+    },
+    {
+      "seconds": 1061.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 46,
+      "z": 254
+    },
+    {
+      "seconds": 1063.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 30,
+      "z": 254
+    },
+    {
+      "seconds": 1066.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 2,
+      "z": 194
+    },
+    {
+      "seconds": 1075.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 114
+    },
+    {
+      "seconds": 1090.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 106
+    },
+    {
+      "seconds": 1092,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 98
+    },
+    {
+      "seconds": 1093.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 54,
+      "z": 90
+    },
+    {
+      "seconds": 1095.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 62,
+      "z": 82
+    },
+    {
+      "seconds": 1097.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 70,
+      "z": 74
+    },
+    {
+      "seconds": 1099.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 66
+    },
+    {
+      "seconds": 1101.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 58
+    },
+    {
+      "seconds": 1103.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 50
+    },
+    {
+      "seconds": 1105.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 90,
+      "z": 46
+    },
+    {
+      "seconds": 1110,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 98,
+      "z": 54
+    },
+    {
+      "seconds": 1111.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 106,
+      "z": 46
+    },
+    {
+      "seconds": 1113.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 114,
+      "z": 54
+    },
+    {
+      "seconds": 1115.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 122,
+      "z": 46
+    },
+    {
+      "seconds": 1117,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 130,
+      "z": 54
+    },
+    {
+      "seconds": 1118.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 138,
+      "z": 46
+    },
+    {
+      "seconds": 1120.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 146,
+      "z": 54
+    },
+    {
+      "seconds": 1122.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 154,
+      "z": 46
+    },
+    {
+      "seconds": 1124,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 42
+    },
+    {
+      "seconds": 1126,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 138,
+      "z": 62
+    },
+    {
+      "seconds": 1131,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 66
+    },
+    {
+      "seconds": 1133,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 74
+    },
+    {
+      "seconds": 1134.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 66
+    },
+    {
+      "seconds": 1136.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 74
+    },
+    {
+      "seconds": 1138.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 66
+    },
+    {
+      "seconds": 1140,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 74
+    },
+    {
+      "seconds": 1141.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 78,
+      "z": 82
+    },
+    {
+      "seconds": 1151,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 86,
+      "z": 90
+    },
+    {
+      "seconds": 1163.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 82
+    },
+    {
+      "seconds": 1165,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 102,
+      "z": 90
+    },
+    {
+      "seconds": 1166.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 82
+    },
+    {
+      "seconds": 1168.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 94,
+      "z": 98
+    },
+    {
+      "seconds": 1171.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 190
+    },
+    {
+      "seconds": 1189.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 198
+    },
+    {
+      "seconds": 1191,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 206
+    },
+    {
+      "seconds": 1192.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 214
+    },
+    {
+      "seconds": 1194.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 222
+    },
+    {
+      "seconds": 1196.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 230
+    },
+    {
+      "seconds": 1198,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 238
+    },
+    {
+      "seconds": 1199.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 118,
+      "z": 246
+    },
+    {
+      "seconds": 1201.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 110,
+      "z": 254
+    },
+    {
+      "seconds": 1203.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 126,
+      "z": 254
+    },
+    {
+      "seconds": 1205.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 134,
+      "z": 246
+    },
+    {
+      "seconds": 1207.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 238
+    },
+    {
+      "seconds": 1209.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 230
+    },
+    {
+      "seconds": 1211,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 222
+    },
+    {
+      "seconds": 1212.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 214
+    },
+    {
+      "seconds": 1214.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 206
+    },
+    {
+      "seconds": 1216.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 198
+    },
+    {
+      "seconds": 1218,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 190
+    },
+    {
+      "seconds": 1219.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 198
+    },
+    {
+      "seconds": 1221.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 190
+    },
+    {
+      "seconds": 1223.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 198
+    },
+    {
+      "seconds": 1225,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 190
+    },
+    {
+      "seconds": 1226.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 198
+    },
+    {
+      "seconds": 1228.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 190
+    },
+    {
+      "seconds": 1230.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 198
+    },
+    {
+      "seconds": 1232,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 190
+    },
+    {
+      "seconds": 1233.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 206
+    },
+    {
+      "seconds": 1236.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 214
+    },
+    {
+      "seconds": 1238,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 206
+    },
+    {
+      "seconds": 1239.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 214
+    },
+    {
+      "seconds": 1241.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 206
+    },
+    {
+      "seconds": 1243.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 214
+    },
+    {
+      "seconds": 1245,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 206
+    },
+    {
+      "seconds": 1246.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 214
+    },
+    {
+      "seconds": 1248.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 206
+    },
+    {
+      "seconds": 1250.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 214
+    },
+    {
+      "seconds": 1252,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 222
+    },
+    {
+      "seconds": 1253.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 230
+    },
+    {
+      "seconds": 1255.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 238
+    },
+    {
+      "seconds": 1257.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 150,
+      "z": 246
+    },
+    {
+      "seconds": 1259,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 142,
+      "z": 254
+    },
+    {
+      "seconds": 1260.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 158,
+      "z": 254
+    },
+    {
+      "seconds": 1263.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 166,
+      "z": 246
+    },
+    {
+      "seconds": 1265,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 238
+    },
+    {
+      "seconds": 1266.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 230
+    },
+    {
+      "seconds": 1268.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 222
+    },
+    {
+      "seconds": 1270.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 230
+    },
+    {
+      "seconds": 1272,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 222
+    },
+    {
+      "seconds": 1273.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 230
+    },
+    {
+      "seconds": 1275.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 222
+    },
+    {
+      "seconds": 1277.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 230
+    },
+    {
+      "seconds": 1279,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 222
+    },
+    {
+      "seconds": 1280.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 230
+    },
+    {
+      "seconds": 1282.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 222
+    },
+    {
+      "seconds": 1284.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 238
+    },
+    {
+      "seconds": 1286.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 246,
+      "z": 246
+    },
+    {
+      "seconds": 1288.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 238
+    },
+    {
+      "seconds": 1290.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 230,
+      "z": 246
+    },
+    {
+      "seconds": 1292,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 238
+    },
+    {
+      "seconds": 1293.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 214,
+      "z": 246
+    },
+    {
+      "seconds": 1295.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 238
+    },
+    {
+      "seconds": 1297.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 198,
+      "z": 246
+    },
+    {
+      "seconds": 1299,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 238
+    },
+    {
+      "seconds": 1300.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 182,
+      "z": 246
+    },
+    {
+      "seconds": 1302.5,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 174,
+      "z": 254
+    },
+    {
+      "seconds": 1304.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 190,
+      "z": 254
+    },
+    {
+      "seconds": 1306.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 206,
+      "z": 254
+    },
+    {
+      "seconds": 1309.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 222,
+      "z": 254
+    },
+    {
+      "seconds": 1311.75,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 238,
+      "z": 254
+    },
+    {
+      "seconds": 1314.25,
+      "type": "scout-redirect",
+      "targetId": "072ac065-0ad6-4841-8d8e-b1b40cd13337",
+      "x": 254,
+      "z": 254
+    }
+  ]
+}

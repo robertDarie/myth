@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## 2026-11-17 E/F evidence checkpoint
+
+E progression design is PLANNED/essentialreferenceblocked, no isolatednumericalrewrite. F fresh legal fullmap scouting4096/4096with380manualsend/redirect commands,1315.25simsec,Worldroundtrip; automaticlocalarea759cells andfullautoUNKNOWN remains explicit. Fresh productionpolicy827commands/sixmilestones still3at30m,4at1h,5later andpaidinfantryT5, notRoKendgame. Current41matrix updated withscope distinctions; source unchanged. See RECOVERY_E_F_VERIFICATION.md and registered recovery-e-progression-design.md. Plan40checks required. No fullRecoveryA–F or Tasks6–11 completion claim.
+
 ## 2026-11-16 recovery D source/geometry checkpoint
 
 Clean05ab132Windows artifacts built/verified:145-file recoveryclient and193-file fullbundle, dirtyfalse/protocol17. PackagedactualNode/server9/9 production checks,3fresh identities,20.08actual seconds paid Citadel2 andrestart; no artificialclock. Existingtwo open clients preserved. FullZIPverifier plus3offlinearchive tests added; plan39checks. NativeupdatedGUI stillNOTTESTED; no fullD/alpha/parity claim.

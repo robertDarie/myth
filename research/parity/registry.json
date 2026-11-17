@@ -1,6 +1,7 @@
 {
   "version": 1,
   "features": [
+    "research/parity/features/recovery-e-progression-design.md",
     "research/parity/features/secondary-passive-correction.md",
     "research/parity/features/scout-pass-access.md",
     "research/parity/features/military-route-safety.md",
