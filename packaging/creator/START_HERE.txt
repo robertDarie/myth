@@ -1,0 +1,31 @@
+THRONES OF MYTH — PRIVATE CREATOR PREVIEW 0.45.0
+Original mythology strategy game. Work in progress, not a finished release or certified Rise of Kingdoms equivalent.
+
+START IN THREE STEPS
+1. Download the one Windows ZIP. Right-click it > Extract All. Choose a normal folder, such as Documents\Thrones of Myth Creator Preview. Extract everything, not just the EXE. Windows 64-bit required.
+2. Double-click START THRONES OF MYTH.cmd inside the extracted folder. No Unity, Node installation, Git, source access or Administrator rights needed. Keep the small launcher window open while playing. This unsigned private preview may show a Windows publisher warning: verify the sender and ZIP hash before choosing whether to run it. Do not disable antivirus or firewall protections.
+3. Type a commander name. Choose Greek, Egyptian, Norse, Chinese or Japanese; each has its own city silhouette and mythic identity. Click Enter your kingdom. This creates a city in a random starting region. Use the same name next time to resume that city.
+
+THE QUICK CREATIVE TOUR
+Open CREATOR_PACK\index.html in a browser for an offline, read-only image/audio index. It has no connection to the game and cannot change your kingdom. See CREATOR_FEEDBACK.md for a10–15-minute tour and feedback form. Some images are earlier asset-review renders; labels distinguish these from native gameplay. An image of a creature/commander does not unlock it in the game.
+
+CITY AND KINGDOM
+- The city scene shows your institutions. Select a building or use the district list. Q/E orbit the city; inspect the Citadel and Hall of Spears. Completed/locked/construction appearances differ.
+- Click Return to kingdom to enter the map. City [C] returns to the city. Home [H] focuses your home on the map; Space focuses the selected army when keyboard focus is not in a text field. If you initially see unexplored fog, press H.
+- On free map ground use the mouse wheel to zoom, arrow/WASD keys to pan, or middle-button drag. Lower-left + and - also zoom. Click the lower-right minimap to focus. Left-click objects to inspect; right-click empty ground issues an army move. Avoid accidental attack clicks on enemy models.
+
+TROOPS, COMMANDERS AND SCOUTS
+- Click Marches for formations/training. Open Training or the Hall of Spears in your city; choose an unlocked troop type and a quantity you can afford, then the train action. Training takes real time and debits resources. Starting infantry can be inspected immediately; archers/cavalry and higher tiers may require training/research. Do not wait for a long queue just to review the art: use the offline index instead.
+- Click Commanders to inspect the actual roster, portraits, available model preview and skills. Locked commanders are not owned or freely deployable. This preview does not grant unlocks.
+- Marches > Scouting: scroll to the X/Z coordinate fields and click Send scout to coordinates. Start near your actual home; await the return and open its report. Scouts reveal terrain across passes even when military access is blocked. Discovered terrain remains known; current enemy intelligence still depends on vision.
+- Explore revealed ground for Forsaken enemies. Prefer an actual level1 camp with a healthy starting army; inspect the recommendation and AP before March & attack. Higher levels can defeat you. Watch the battle, then Marches > Reports. Recall [R] returns troops home. No victory is guaranteed.
+- Click a known pass or sacred structure to read its owner, opening/access and defender-intelligence status. A pass may require milestones, an alliance, connected territory and a rally. Military units cannot freely cross an uncontrolled border. Viewing a pass does not authorize crossing. Pass capture is not a10-minute starter promise.
+
+QUIT AND RESUME
+Close the game with its window X. Leave the launcher open until it reports that the kingdom was saved and closes the owned server. Launch the same package again and use the same commander name. Do not end the launcher/server from Task Manager during a save.
+Creator kingdoms are separate from ordinary game saves: %LOCALAPPDATA%\ThronesOfMyth\CreatorPreview\0.45.0. Do not delete that folder if you want to keep progress. Moving the extracted game folder does not erase your preview kingdom. Copying the ZIP to another person does not share your save.
+
+IF SOMETHING GOES WRONG
+Extract the entire ZIP again if files are missing or changed. If another preview is already running, switch to it or close it normally. A busy local port is not reused: the launcher explains the problem without stopping another server. No public server or firewall rule is created. Do not change your normal game saves to solve a preview problem.
+Logs are in the preview profile's Logs folder. Send a screenshot and a redacted relevant error excerpt to the project owner. Do not share world.json, backups, reconnect/session tokens or account data. This package needs no real account or password.
+Read KNOWN_LIMITATIONS.md before reporting parity or unavailable content as a newly introduced bug.

@@ -1,0 +1,237 @@
+{
+  "civilizations": [
+    {
+      "id": "greek",
+      "name": "Greek",
+      "mythic": "Minotaur"
+    },
+    {
+      "id": "egyptian",
+      "name": "Egyptian",
+      "mythic": "Sphinx Guardian"
+    },
+    {
+      "id": "norse",
+      "name": "Norse",
+      "mythic": "Frost Giant"
+    },
+    {
+      "id": "chinese",
+      "name": "Chinese",
+      "mythic": "Qilin Guardian"
+    },
+    {
+      "id": "japanese",
+      "name": "Japanese",
+      "mythic": "Tengu"
+    }
+  ],
+  "commanders": [
+    {
+      "id": "warden",
+      "name": "Sanctuary Warden"
+    },
+    {
+      "id": "rune-seer",
+      "name": "Rune Seer"
+    },
+    {
+      "id": "mulan",
+      "name": "Hua Mulan"
+    },
+    {
+      "id": "tomoe",
+      "name": "Tomoe Gozen"
+    },
+    {
+      "id": "sigurd",
+      "name": "Sigurd"
+    },
+    {
+      "id": "wukong",
+      "name": "Sun Wukong"
+    },
+    {
+      "id": "horus-champion",
+      "name": "Champion of Horus"
+    },
+    {
+      "id": "captain",
+      "name": "Frontier Captain"
+    },
+    {
+      "id": "scout",
+      "name": "Pathfinder"
+    },
+    {
+      "id": "atalanta",
+      "name": "Atalanta"
+    },
+    {
+      "id": "heracles",
+      "name": "Heracles"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "citadel",
+      "name": "Citadel of Mortals"
+    },
+    {
+      "id": "oracle",
+      "name": "Temple of Echoes"
+    },
+    {
+      "id": "academy",
+      "name": "Athenaeum of Ages"
+    },
+    {
+      "id": "barracks",
+      "name": "Hall of Spears"
+    },
+    {
+      "id": "menagerie",
+      "name": "Sanctuary of Beasts"
+    },
+    {
+      "id": "farm",
+      "name": "Blessed Fields"
+    },
+    {
+      "id": "lumber",
+      "name": "Sacred Grove"
+    },
+    {
+      "id": "quarry",
+      "name": "Titan Stoneworks"
+    },
+    {
+      "id": "mint",
+      "name": "Treasury of Crowns"
+    },
+    {
+      "id": "well",
+      "name": "Mana Well"
+    },
+    {
+      "id": "infirmary",
+      "name": "House of Renewal"
+    },
+    {
+      "id": "vault",
+      "name": "Vault of Ages"
+    },
+    {
+      "id": "market",
+      "name": "Agora of Fates"
+    },
+    {
+      "id": "oathhall",
+      "name": "Oathbound Hall"
+    },
+    {
+      "id": "forge",
+      "name": "Forge of Dawn"
+    },
+    {
+      "id": "builders",
+      "name": "Lodge of the First Builders"
+    },
+    {
+      "id": "scoutcamp",
+      "name": "Outlook of the Horizon"
+    }
+  ],
+  "zones": [
+    {
+      "id": "first-frontier",
+      "name": "First Frontier"
+    },
+    {
+      "id": "legacy-east",
+      "name": "Sunward Province"
+    },
+    {
+      "id": "legacy-north",
+      "name": "Runic Province"
+    },
+    {
+      "id": "legacy-crown",
+      "name": "First Throne"
+    },
+    {
+      "id": "dawn-reach",
+      "name": "Dawn Reach"
+    },
+    {
+      "id": "ashen-fields",
+      "name": "Ashen Fields"
+    },
+    {
+      "id": "outer-marches",
+      "name": "Outer Marches"
+    }
+  ],
+  "passes": [
+    {
+      "id": "gate-east",
+      "name": "Eastern Divine Gate",
+      "x": 39,
+      "z": 20
+    },
+    {
+      "id": "gate-crown-west",
+      "name": "Gate of the Norn Crown",
+      "x": 39,
+      "z": 60
+    },
+    {
+      "id": "gate-north",
+      "name": "Northern Divine Gate",
+      "x": 20,
+      "z": 39
+    },
+    {
+      "id": "gate-crown-south",
+      "name": "Gate of the Sun Oath",
+      "x": 60,
+      "z": 39
+    },
+    {
+      "id": "gate-dawn-low",
+      "name": "Gate of Eos",
+      "x": 79,
+      "z": 20
+    },
+    {
+      "id": "gate-dawn-high",
+      "name": "Gate of the Dawn Throne",
+      "x": 79,
+      "z": 60
+    },
+    {
+      "id": "gate-ashen-low",
+      "name": "Gate of the Ashen Oath",
+      "x": 20,
+      "z": 79
+    },
+    {
+      "id": "gate-ashen-high",
+      "name": "Gate of the Ember Crown",
+      "x": 60,
+      "z": 79
+    },
+    {
+      "id": "gate-outer-south",
+      "name": "Gate of the Starward March",
+      "x": 128,
+      "z": 79
+    },
+    {
+      "id": "gate-outer-west",
+      "name": "Gate of the Worldroot",
+      "x": 79,
+      "z": 128
+    }
+  ]
+}

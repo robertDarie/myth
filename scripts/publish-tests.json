@@ -2,6 +2,23 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "creator local launcher actual production-server isolation and persistence",
+      "command": [
+        "node",
+        "--test",
+        "scripts/test_creator_launcher.cjs"
+      ]
+    },
+    {
+      "name": "creator archive public inventory privacy hashes and offline index",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/test_creator_preview.py"
+      ]
+    },
+    {
       "name": "actual baseline-code schema27 synthetic save conservation (32 seeds)",
       "command": [
         "node",
