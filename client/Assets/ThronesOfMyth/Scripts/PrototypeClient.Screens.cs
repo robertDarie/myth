@@ -576,20 +576,22 @@ namespace ThronesOfMyth
             if(camp!=null&&!string.IsNullOrEmpty(camp.lockedReason)){enabled=false;action="Level locked";subtitle=camp.lockedReason;}
             theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
             theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
-            theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);
+            bool passContext=site?.kind=="gate";
+            if(passContext)theme.Text(new Rect(r.x+68,r.y+46,r.width-92,InterfaceLayout.ContextDescriptionHeight(true)),subtitle,theme.Small);
+            else theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);
             if(camp!=null)theme.Hint(new Rect(r.x+68,r.y+46,r.width-92,37),camp.enemyTroops.ToString("N0")+" enemy mortals · T"+camp.enemyTier+" · "+camp.health.ToString("N0")+" / "+camp.maxHealth.ToString("N0")+" health. Recommendations vary with commanders, talents and research.");
-            if (health >= 0) theme.Bar(new Rect(r.x + 68, r.y + 78, 220, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
+            if (health >= 0) theme.Bar(new Rect(r.x + 68, r.y + InterfaceLayout.ContextHealthY(passContext), 220, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
             bool readMarch = army != null && army.ownerId != playerId && (string.IsNullOrEmpty(me.allianceId) || army.allianceId != me.allianceId) && army.deployed && !army.protectedField;
             bool readGarrison = (site != null || beacon != null) && (string.IsNullOrEmpty(me.allianceId) || (site != null ? site.allianceId : beacon.allianceId) != me.allianceId) && (site == null || !site.unknown && !site.locked);
-            if ((city == null || city.id != playerId) && !readMarch && !readGarrison) theme.OneLine(new Rect(r.x + 18, r.y + 100, 370, 24), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
+            if ((city == null || city.id != playerId) && !readMarch && !readGarrison) theme.OneLine(new Rect(r.x + 18, r.y + r.height-38, 370, 24), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
             if (theme.Button(new Rect(r.xMax - 38, r.y + 7, 28, 27), "×")) { selectedId = ""; map.selectedId = ""; }
             if (city != null && city.id == playerId)
             {
                 if (theme.Button(new Rect(r.x + 18, r.y + 94, 140, 32), "Prepare march")) PrepareCityMarch();
             }
             if (readMarch && theme.Button(new Rect(r.x + 18, r.y + 94, 150, 32), "Read this march")) Send(new GameCommand { type = "recon-march", targetId = army.id });
-            if (readGarrison && theme.Button(new Rect(r.x + 18, r.y + 94, 160, 32), "Read the garrison")) Send(new GameCommand { type = "recon-garrison", targetId = site != null ? site.id : beacon.id });
-            if (theme.Button(new Rect(r.xMax - 208, r.y + 91, 190, 35), action, true, enabled)) perform?.Invoke();
+            if (readGarrison && theme.Button(new Rect(r.x + 18, r.y + r.height-44, 160, 32), "Read the garrison")) Send(new GameCommand { type = "recon-garrison", targetId = site != null ? site.id : beacon.id });
+            if (theme.Button(new Rect(r.xMax - 208, r.y + InterfaceLayout.ContextActionY(passContext), 190, 35), action, true, enabled)) perform?.Invoke();
         }
     }
 }

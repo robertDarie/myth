@@ -24,6 +24,13 @@ static class InterfacePolishContracts
   Check(InterfaceLayout.Scale(1024,768,1)>.64f,"Small display text receives larger physical scale");
   Check(InterfaceLayout.Duration(61)=="1m 1s"&&InterfaceLayout.Duration(3601)=="1h 0m","Duration format");Check(InterfaceLayout.Duration(-1)=="0s","Duration clamp");
   Check(InterfaceLayout.Countdown(2,4)==0&&InterfaceLayout.Countdown(10,100)==7,"Countdown must not extrapolate beyond short snapshot window");
+  Check(InterfaceLayout.ContextHeight(false)==138&&InterfaceLayout.ContextHeight(true)>=280,"Multi-line pass intelligence needs an expanded card, ordinary cards keep their footprint");
+  foreach(bool pass in new[]{false,true}){
+   float card=InterfaceLayout.ContextHeight(pass);
+   Check(46+InterfaceLayout.ContextDescriptionHeight(pass)<InterfaceLayout.ContextHealthY(pass),"Pass details and fortification health must not overlap");
+   Check(InterfaceLayout.ContextHealthY(pass)+5<InterfaceLayout.ContextActionY(pass)&&InterfaceLayout.ContextActionY(pass)+35<=card-10,"Context actions must sit below intelligence and health and inside their panel");
+  }
+  Check(InterfaceLayout.ContextDescriptionHeight(true)>=8*18,"Pass owner, opening, access, adjacent zones and defender lines have room to wrap");
   Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==17,"Release identity advances with the expanded-map protocol");
   foreach(var size in new[]{(1024f,768f),(1280f,800f),(1920f,1080f)})
   {

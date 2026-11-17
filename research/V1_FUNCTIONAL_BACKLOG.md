@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Native pass encounter and card readability correction
+
+Actual Windows rally captured Gate of Eos and the same formerly rejected ground click crossed into Sunward. Additional kingdom/beacon/discovery prerequisites were prepared separately with51 production commands / accelerated ticks, ten neutral passes retained; no native organic progression claim. NA-001 corrected caption1631/409639.8% observed. NA-002 found existing five-line pass subtitle clipped by one-line card; pass-only wrapped284px correction plus six geometry regressions; all16782 C# contracts and rerun Unity actual objects passed. Updated-card native and post-capture restart still pending. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md. Tasks7–10 untouched.
+
 ## 2026-11-17 native QA display correction checkpoint
 
 Supported Windows capture now works. Actual native Greek creation, city/world controls, unauthorized army rejection, scout crossing/return, alliance creation and initial legal progression observed. Found obsolete400-sector scouting caption/bar on64x64 map; display-only correction plus seven C# regressions (16,776 total passed), no gameplay/save/balance change. Native corrected-binary and remaining capture/restart acceptance still in progress. Added isolated bundled-Node QA launcher, actual empty-world launch/shutdown smoke exit0. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md. Tasks7–10 untouched.

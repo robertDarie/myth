@@ -1,0 +1,392 @@
+{
+  "checked": "2026-11-17T15:17:30.352Z",
+  "scope": "SCRIPTED PRODUCTION-COMMAND PREPARATION ONLY; not native progression or native capture proof",
+  "source": "645e0dfba6d04270a38c9b40a106b10e806f0738",
+  "clock": "Accelerated World.tick(.25); fixed wall clock during preparation; not elapsed human/native time",
+  "rng": "LCG seed3 for simulation; fixed .1 only for ordinary helper-city spawn",
+  "originalSaveSha256": "18f3f0c039892f5baeb0e6d42c87d9bb24e158895b9c24c9d817fc8e0b7a25ce",
+  "before": {
+    "time": 1850.3750249000136,
+    "x": 145.97122426244647,
+    "z": 37.1517908468271,
+    "homeX": 145.97122426244647,
+    "homeZ": 37.1517908468271,
+    "units": {
+      "infantry": 900,
+      "archers": 0,
+      "cavalry": 0
+    },
+    "camps": 1
+  },
+  "after": {
+    "time": 2880.6250249000136,
+    "x": 145.97122426244647,
+    "z": 37.1517908468271,
+    "homeX": 145.97122426244647,
+    "homeZ": 37.1517908468271,
+    "units": {
+      "infantry": 900,
+      "archers": 0,
+      "cavalry": 0
+    },
+    "camps": 4,
+    "trainingQueue": 0,
+    "opening": [
+      "foundations",
+      "gates"
+    ],
+    "beacons": 8,
+    "passesNeutral": 10
+  },
+  "helper": {
+    "name": "Command setup helper",
+    "homeX": 15.597334262446449,
+    "homeZ": 13.648916810278429
+  },
+  "commands": [
+    {
+      "actor": "Command setup helper",
+      "type": "scout-send",
+      "x": 20,
+      "z": 20,
+      "seconds": 1850.3750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "move",
+      "x": 10,
+      "z": 10,
+      "seconds": 1853.6250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "scout-send",
+      "x": 10,
+      "z": 10,
+      "seconds": 1855.3750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "move",
+      "x": 30,
+      "z": 10,
+      "seconds": 1858.1250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "scout-send",
+      "x": 30,
+      "z": 10,
+      "seconds": 1863.1250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "attack",
+      "targetId": "forsaken-3",
+      "seconds": 1868.3750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "return",
+      "seconds": 1896.8750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "move",
+      "x": 10,
+      "z": 30,
+      "seconds": 1909.1250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "scout-send",
+      "x": 10,
+      "z": 30,
+      "seconds": 1913.6250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "attack",
+      "targetId": "forsaken-2",
+      "seconds": 1919.3750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "return",
+      "seconds": 1946.6250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "move",
+      "x": 10,
+      "z": 10,
+      "seconds": 1959.8750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "scout-send",
+      "x": 10,
+      "z": 10,
+      "seconds": 1961.6250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "move",
+      "x": 30,
+      "z": 10,
+      "seconds": 1964.3750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "scout-send",
+      "x": 30,
+      "z": 10,
+      "seconds": 1969.3750249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "attack",
+      "targetId": "forsaken-pool-107",
+      "seconds": 1974.6250249000136
+    },
+    {
+      "actor": "Command setup helper",
+      "type": "return",
+      "seconds": 2002.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "return",
+      "seconds": 2014.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 145.97122426244647,
+      "z": 37.1517908468271,
+      "seconds": 2014.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 145.97122426244647,
+      "z": 37.1517908468271,
+      "seconds": 2014.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 136,
+      "z": 34,
+      "seconds": 2044.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 136,
+      "z": 34,
+      "seconds": 2047.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 126,
+      "z": 32,
+      "seconds": 2057.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 126,
+      "z": 32,
+      "seconds": 2060.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 116,
+      "z": 30,
+      "seconds": 2070.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 116,
+      "z": 30,
+      "seconds": 2072.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 106,
+      "z": 28,
+      "seconds": 2082.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 106,
+      "z": 28,
+      "seconds": 2085.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 96,
+      "z": 26,
+      "seconds": 2095.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 96,
+      "z": 26,
+      "seconds": 2098.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 86,
+      "z": 24,
+      "seconds": 2108.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 86,
+      "z": 24,
+      "seconds": 2111.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "move",
+      "x": 83,
+      "z": 20,
+      "seconds": 2121.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "flag",
+      "x": 83,
+      "z": 20,
+      "seconds": 2122.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "return",
+      "seconds": 2132.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 20,
+      "z": 20,
+      "seconds": 2148.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 20,
+      "z": 60,
+      "seconds": 2186.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 60,
+      "z": 60,
+      "seconds": 2300.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 168,
+      "z": 40,
+      "seconds": 2327.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 40,
+      "z": 168,
+      "seconds": 2356.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 168,
+      "z": 168,
+      "seconds": 2439.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 39,
+      "z": 20,
+      "seconds": 2537.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 20,
+      "z": 39,
+      "seconds": 2592.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 39,
+      "z": 60,
+      "seconds": 2631.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 60,
+      "z": 39,
+      "seconds": 2664.6250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 79,
+      "z": 20,
+      "seconds": 2702.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 79,
+      "z": 60,
+      "seconds": 2722.8750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 20,
+      "z": 79,
+      "seconds": 2744.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 60,
+      "z": 79,
+      "seconds": 2784.3750249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 128,
+      "z": 79,
+      "seconds": 2813.1250249000136
+    },
+    {
+      "actor": "NativePassQA17A",
+      "type": "scout-send",
+      "x": 79,
+      "z": 128,
+      "seconds": 2827.3750249000136
+    }
+  ]
+}

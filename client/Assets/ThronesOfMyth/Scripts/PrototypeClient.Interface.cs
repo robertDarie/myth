@@ -20,7 +20,8 @@ namespace ThronesOfMyth
         private float ViewHeight => Screen.height / Mathf.Max(0.01f, InterfaceScale);
         private Rect WindowRect => new Rect((ViewWidth - Mathf.Min(1320, ViewWidth - 72)) / 2, 112, Mathf.Min(1320, ViewWidth - 72), ViewHeight - 204);
         private Rect MinimapRect => new Rect(ViewWidth - 202, ViewHeight-94-InterfaceLayout.MinimapHeight(ViewHeight),184,InterfaceLayout.MinimapHeight(ViewHeight));
-        private Rect ContextRect => new Rect((ViewWidth - 620) / 2, ViewHeight - 228, 620, 138);
+        private bool PassContext => world!=null&&!string.IsNullOrEmpty(selectedId)&&KnownSite(selectedId)?.kind=="gate";
+        private Rect ContextRect => new Rect((ViewWidth - 620) / 2, ViewHeight - 90 - InterfaceLayout.ContextHeight(PassContext), 620, InterfaceLayout.ContextHeight(PassContext));
         private Rect QuestRect => new Rect(18,150,242,Opening==null?142:200);
         private Rect ActivityRect => new Rect(18,112,242,28);
         private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);

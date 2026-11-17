@@ -13,10 +13,11 @@
     {
       "kind": "bug-fix",
       "paths": [
-        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs",
-        "client/Assets/ThronesOfMyth/Scripts/ScoutInterfaceCopy.cs"
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs"
       ],
-      "reason": "Native QA reproduced an obsolete hardcoded400-sector denominator on the authoritative64x64 grid. Presentation-only restoration: derive total and percentage from snapshot width; no server mechanics, balance, rewards, fog permissions or save fields change. Seven production C# display regressions; docs/qa/RECOVERY_A_NATIVE_WINDOWS.md."
+      "reason": "Native NA-002: existing five-line pass intelligence was sent to a23px one-line label, clipping owner/opening/access. Expand only pass cards and position description, health and existing controls without overlap. Presentation-only, no gameplay rules, numerical balance, visibility permissions or save fields changed. Six added geometry regressions; native corrected-binary retest required."
     }
   ]
 }

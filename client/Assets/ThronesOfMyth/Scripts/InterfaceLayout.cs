@@ -26,6 +26,10 @@ namespace ThronesOfMyth
         }
         public static bool ShowItem(InventoryItem item,string category,bool catalogue)=>item!=null&&(catalogue||item.count>0)&&(string.IsNullOrEmpty(category)||item.category==category);
         public const float HudHeight=104,RailWidth=214,MarchTop=142,MarchStep=70;
+        public static float ContextHeight(bool pass)=>pass?284:138;
+        public static float ContextDescriptionHeight(bool pass)=>pass?168:23;
+        public static float ContextHealthY(bool pass)=>ContextHeight(pass)-60;
+        public static float ContextActionY(bool pass)=>ContextHeight(pass)-47;
         public static float MinimapHeight(float viewHeight)=>viewHeight<800?132:152;
         public static int TabColumns(float logicalWidth,int count)=>Math.Max(1,Math.Min(count,(int)(logicalWidth/150)));
         public static string Duration(float seconds)
