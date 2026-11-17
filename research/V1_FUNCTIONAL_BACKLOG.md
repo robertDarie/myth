@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## 2026-11-17 native QA display correction checkpoint
+
+Supported Windows capture now works. Actual native Greek creation, city/world controls, unauthorized army rejection, scout crossing/return, alliance creation and initial legal progression observed. Found obsolete400-sector scouting caption/bar on64x64 map; display-only correction plus seven C# regressions (16,776 total passed), no gameplay/save/balance change. Native corrected-binary and remaining capture/restart acceptance still in progress. Added isolated bundled-Node QA launcher, actual empty-world launch/shutdown smoke exit0. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md. Tasks7–10 untouched.
+
 ## 2026-11-17 Windows artifact verification checkpoint
 
 Source checkpoint `f6cb144db0fc0ff1472b7f0d122274e3203c5506` was published with all 49 required checks passing and independently verified on origin/main. Both actual Unity Windows builds exited zero from that clean source: client ZIP 145 verified files / 87,201,157 bytes; full ZIP 193 verified files / 121,944,847 bytes, protocol17. Isolated package names contain `Passes-f6cb144`; all three pre-existing archives remain byte-identical. Generated packages remain local and untracked.

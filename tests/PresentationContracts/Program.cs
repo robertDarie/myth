@@ -81,6 +81,13 @@ class Program
         var camp=new ScoutCampCard{scouts=1,speed=7,radius=9,surveySeconds=.8f,autoSectors=2,hasNext=true,nextScouts=1,nextSpeed=8.5f,nextRadius=10,nextSurveySeconds=.7f,nextAutoSectors=3};
         Check(ScoutInterfaceCopy.Line(1,7,9,.8f,2).Contains("1 scout")&&ScoutInterfaceCopy.Delta(camp).Contains("faster travel"),"Outlook copy must describe current and next scout benefits");
         Check(ScoutInterfaceCopy.Phase("Outbound")=="Traveling"&&ScoutInterfaceCopy.Phase("Exploring")=="Exploring","Scout status names stay readable");
+        Check(ScoutInterfaceCopy.ExplorationProgress(21,64)=="Explored land stays clear. 21 / 4096 sectors · 0.5%","Native current-grid discovery must not use the obsolete400-sector denominator");
+        Check(ScoutInterfaceCopy.ExplorationProgress(156,64).Contains("3.8%"),"Native percentage must agree with the server's64-column snapshot");
+        Check(ScoutInterfaceCopy.ExplorationProgress(400,20).Contains("400 / 400 sectors · 100.0%"),"An explicit legacy grid remains supported");
+        Check(ScoutInterfaceCopy.ExplorationProgress(4096,64).Contains("100.0%"),"Complete current grid reaches100 percent");
+        Check(ScoutInterfaceCopy.ExplorationFraction(2048,64)==.5f,"Progress bar uses the same authoritative total");
+        Check(ScoutInterfaceCopy.ExplorationFraction(21,0)==0&&ScoutInterfaceCopy.ExplorationProgress(21,0)=="Waiting for the kingdom map.","Missing grid must not invent a denominator");
+        Check(ScoutInterfaceCopy.ExplorationFraction(9999,64)==1&&ScoutInterfaceCopy.ExplorationFraction(-1,64)==0,"Invalid display counts cannot overflow the progress bar");
         var journalRows=new[]{new FindingData{id="hidden",known=false,state="known"},new FindingData{id="cave",known=true,requiresInvestigation=true,state="known"},new FindingData{id="hearth",known=true,state="known",reward=new FindingReward{food=80,wood=60,gold=25,xp=40}}};
         Check(DiscoveryJournal.Hidden(journalRows)==1&&DiscoveryJournal.NextUnclaimed(journalRows)=="hearth","Journal skips hidden places and uninvestigated caves");
         Check(DiscoveryJournal.RewardLine(journalRows[2].reward).Contains("80 food")&&DiscoveryJournal.RewardLine(journalRows[2].reward).Contains("commander experience"),"Claimed discovery copy names the granted gift");

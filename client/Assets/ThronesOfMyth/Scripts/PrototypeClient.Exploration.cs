@@ -78,8 +78,8 @@ namespace ThronesOfMyth
             if(explorationTab==1){DrawDiscoveryJournal(fog);return;}
             if(explorationTab==2){DrawSurveyArchive(fog);return;}
             int found = fog.explored.Length;
-            GUILayout.Label("Explored land stays clear. " + found + " / 400 sectors · " + (found / 4f).ToString("0.0") + "%", sectionStyle);
-            theme.Bar(GUILayoutUtility.GetRect(80, 14, GUILayout.ExpandWidth(true)), found / 400f, MythInterfaceTheme.Teal);
+            GUILayout.Label(ScoutInterfaceCopy.ExplorationProgress(found, fog.width), sectionStyle);
+            theme.Bar(GUILayoutUtility.GetRect(80, 14, GUILayout.ExpandWidth(true)), ScoutInterfaceCopy.ExplorationFraction(found, fog.width), MythInterfaceTheme.Teal);
             GUILayout.Label("Explored land stays clear. A veil reading is a private historical report. Enemy stores, home hosts and garrison details are not published on the ordinary map.", noteStyle);
             if (fog.recon != null) GUILayout.Label(ReconCopy.Depth(fog.recon.depth) + " Watch " + fog.recon.seconds + "s once the scout arrives. " + ReconCopy.Stale, noteStyle);
             GUILayout.Label((fog.visible == null ? 0 : fog.visible.Length) + " sectors are in current allied sight.", theme.Small);

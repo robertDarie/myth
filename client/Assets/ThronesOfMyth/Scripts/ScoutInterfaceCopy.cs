@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 namespace ThronesOfMyth
@@ -5,6 +6,18 @@ namespace ThronesOfMyth
     public static class ScoutInterfaceCopy
     {
         static string Num(float value, string format) => value.ToString(format, CultureInfo.InvariantCulture);
+        private static int SectorTotal(int width) => width > 0 && width <= 256 ? width * width : 0;
+        public static float ExplorationFraction(int found, int width)
+        {
+            int total = SectorTotal(width);
+            return total == 0 ? 0 : Math.Max(0, Math.Min(total, found)) / (float)total;
+        }
+        public static string ExplorationProgress(int found, int width)
+        {
+            int total = SectorTotal(width);
+            if (total == 0) return "Waiting for the kingdom map.";
+            return "Explored land stays clear. " + Math.Max(0, Math.Min(total, found)) + " / " + total + " sectors · " + Num(ExplorationFraction(found, width) * 100, "0.0") + "%";
+        }
         public static string Phase(string phase) => phase == "Outbound" ? "Traveling" : string.IsNullOrEmpty(phase) ? "Idle" : phase;
         public static string Line(int scouts, float speed, float radius, float surveySeconds, int autoSectors)
         {
