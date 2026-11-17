@@ -1,0 +1,141 @@
+{
+  "checked": "2026-11-17",
+  "status": "PARTIAL",
+  "sourceCommit": "89a4b967eda719200fc163e00215d6728a14136f",
+  "archive": {
+    "commit": "89a4b967eda719200fc163e00215d6728a14136f",
+    "version": "0.45.0",
+    "protocol": 17,
+    "files": 216,
+    "bytes": 131443936,
+    "sha256": "9d22646f7a0f320609b0146c1c261fe1f6411e02b3a018ef8ad600475636a5a8",
+    "privacy": "PASS: every member read; runtime/public allowlist, forbidden paths, hashes and credential-pattern checks",
+    "limitations": "Pattern scans cannot prove absence of every possible secret; only explicitly selected source inputs are packaged",
+    "zip": "dist/Thrones-of-Myth-Creator-Preview-0.45.0-Windows-89a4b967.zip"
+  },
+  "health": {
+    "game": "thrones-of-myth",
+    "version": 17,
+    "build": {
+      "version": "0.45.0",
+      "commit": "89a4b967eda719200fc163e00215d6728a14136f",
+      "serverDigest": "990df2b5faf6fef4f538fb4c303cebcc33972f1c17f2b5665b147a051aa941be"
+    }
+  },
+  "cases": [
+    {
+      "id": 1,
+      "scenario": "One-click CMD launcher starts",
+      "result": "PASS",
+      "observation": "Actual packaged CMD invoked without launcher arguments from newly extracted folder with spaces; child-only LOCALAPPDATA redirected to QA sandbox."
+    },
+    {
+      "id": 2,
+      "scenario": "Matching local server ready",
+      "result": "PASS",
+      "observation": "Launcher stdout and actual /health match source89a4b967,version0.45.0,protocol17 and unchanged server digest."
+    },
+    {
+      "id": 3,
+      "scenario": "Unity game opens",
+      "result": "PASS",
+      "observation": "Actual extracted native entry screen screenshot01."
+    },
+    {
+      "id": 4,
+      "scenario": "New Greek city",
+      "result": "PASS",
+      "observation": "Actual native name entry,Greek selection and Enter your kingdom; no gameplay API orders/grants."
+    },
+    {
+      "id": 5,
+      "scenario": "City rendering",
+      "result": "PASS",
+      "observation": "Actual native Greek city screenshot02."
+    },
+    {
+      "id": 6,
+      "scenario": "City/world navigation",
+      "result": "NOT TESTED",
+      "observation": "User ended further native interaction after Windows focus/input interference."
+    },
+    {
+      "id": 7,
+      "scenario": "Wheel/camera controls",
+      "result": "NOT TESTED",
+      "observation": "Not exercised on final extracted creator ZIP; prior Recovery A evidence remains separately attributed."
+    },
+    {
+      "id": 8,
+      "scenario": "Scouts",
+      "result": "NOT TESTED",
+      "observation": "Not exercised on final extracted creator ZIP."
+    },
+    {
+      "id": 9,
+      "scenario": "Troop preparation",
+      "result": "NOT TESTED",
+      "observation": "900 starting infantry corroborated on read-only restore; no final-ZIP native formation/training interaction."
+    },
+    {
+      "id": 10,
+      "scenario": "Combat",
+      "result": "NOT TESTED",
+      "observation": "Not exercised on final extracted creator ZIP; earlier native combat stills are labeled historical/prepared references."
+    },
+    {
+      "id": 11,
+      "scenario": "Pass and zone rendering",
+      "result": "NOT TESTED",
+      "observation": "Not exercised on final extracted creator ZIP; offline contact sheets/native stills are not a new native pass."
+    },
+    {
+      "id": 12,
+      "scenario": "Normal exit save",
+      "result": "NOT TESTED",
+      "observation": "User ended input before normal X/exit. Owned QA client intentionally process-terminated for cleanup; production launcher cleanup persisted a valid world, which is not native normal-exit proof."
+    },
+    {
+      "id": 13,
+      "scenario": "Reopen same native city",
+      "result": "NOT TESTED",
+      "observation": "No further GUI launch after user requested finishing. Separate production-server launcher regression proves infrastructure save/resume only."
+    },
+    {
+      "id": 14,
+      "scenario": "Normal game close stops only owned authority",
+      "result": "NOT TESTED",
+      "observation": "Normal window close not executed. Non-native cleanup verified no extracted-package Node/game processes left; duplicate/busy-port/owned cleanup infrastructure tests pass."
+    },
+    {
+      "id": 15,
+      "scenario": "Final ZIP inventory/hashes/privacy",
+      "result": "PASS",
+      "observation": "All216 payload files plus manifest read and checked; offline references resolve, forbidden private paths/patterns rejected."
+    }
+  ],
+  "nativeInputTermination": "User explicitly requested: Finish with remaining native cases marked NOT TESTED. No further game input was sent.",
+  "qaCleanup": "Only exact owned extracted game process terminated; owned launcher closed its own server; error-pause CMD closed after no owned runtime remained. Original non-credential display-name preference restored byte-for-byte.",
+  "readOnlySavedWorldCheck": {
+    "scope": "Production World.fromSave read-only; NOT native reopen",
+    "schema": 28,
+    "players": 1,
+    "name": "CreatorPreviewQA1117",
+    "civilization": "greek",
+    "cityLevel": 1,
+    "infantry": 900
+  },
+  "runtimeLog": {
+    "serializationDepthWarnings": 2,
+    "exceptionLines": 0
+  },
+  "absentDocuments": [
+    "Thrones_of_Myth_Creator_Asset_Tracker.xlsx",
+    "Thrones_of_Myth_Creator_Brief.md"
+  ],
+  "notStarted": [
+    "Tasks7-10",
+    "gameplay balance changes",
+    "public hosting"
+  ]
+}

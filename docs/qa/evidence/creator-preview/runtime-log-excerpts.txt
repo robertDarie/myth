@@ -1,0 +1,4 @@
+Actual final-ZIP native Player log. Relevant sanitized excerpts only; no credentials/private profile paths.
+Serialization depth limit 10 exceeded at 'ThronesOfMyth::ArmyData.cargo'. There may be an object composition cycle in one or more of your serialized classes. Consider rearranging data or use `[SerializeReference]`.
+
+Cleanup note: game process intentionally terminated after user ended native input. Launcher correctly reported unexpected game closure and retained the saved QA world; this was not an observed spontaneous crash or native normal-close PASS.

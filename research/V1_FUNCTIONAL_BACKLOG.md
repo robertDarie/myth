@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Private creator preview delivered —2026-11-17
+
+Clean source89a4b967,0.45.0/protocol17, actual Unity exit0; versioned131443936-byte ZIP with216hashed payload files, privacy/static-link audit PASS.51required source checks, five launcher/production-server and five archive regressions PASS. Actual extracted CMD ready/game/Greek creation/city render PASS. User ended further native input; nine remaining cases explicitly NOT TESTED, no backend-as-native substitution. Read-only synthetic save restore/owned cleanup verified; original name preference and saves/releases preserved. Offline7image/11effect creator pack/proposed backlog included; two owner tracker/brief files absent and NOT INCLUDED. See docs/creator-preview-release.md. Tasks7–10 untouched.
+
 ## Private creator preview packaging preparation —2026-11-17
 
 Added creator-only isolated owned-server launcher, public guides/proposed art/audio production brief, content-derived identity roster, offline read-only reference index assembly and strict archive/privacy validation. Five launcher regressions and five archive tests passed. Actual clean Unity build/final ZIP/native QA remain pending; docs/creator-preview-release.md records acceptance. Missing owner tracker/brief explicitly NOT INCLUDED. No gameplay source, balance, real save or Tasks7–10 changes.
