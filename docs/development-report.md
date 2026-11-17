@@ -1,5 +1,14 @@
 # Development report — 2026-11-16
 
+## 2026-11-17 Windows artifact verification checkpoint
+
+Source checkpoint `f6cb144db0fc0ff1472b7f0d122274e3203c5506` was published with all 49 required checks passing and independently verified on origin/main. Both actual Unity Windows builds exited zero from that clean source: client ZIP 145 verified files / 87,201,157 bytes; full ZIP 193 verified files / 121,944,847 bytes, protocol17. Isolated package names contain `Passes-f6cb144`; all three pre-existing archives remain byte-identical. Generated packages remain local and untracked.
+
+Actual bundled Windows Node and Server/index.mjs passed nine runtime checks: matching build, unauthorized rejection, three fresh authenticated cities, military denial/scout exemption, foreign-army rejection, paid training, real 20.10-second Citadel construction, process restart preserving identities/city/job, and graceful shutdown. This is independent of the accelerated legal expedition.
+
+Native gameplay interaction is **NOT TESTED**. The new executable launched against a private loopback QA world, but the UI tool failed to capture its selected window reliably. After refresh and the exposed Raise action, it reported no screenshot target. No gameplay input was sent; an unrelated foreground screenshot was not retained. Only the owned QA client/host were closed. This does not certify native pass visibility, clicking, readable labels, camera comfort or FPS. See `docs/qa/evidence/recovery-a/windows-package-verification.json`. Numerical parity remains UNVERIFIED; no Tasks7–10 started.
+
+
 ## 2026-11-17 Recovery A functional source checkpoint
 
 Seven original zones, ten distinct persistent adjacent passes, no missing or distant shared pass links. User explicitly approved unchanged original Divine Gate encounter/opening compatibility; numerical parity UNVERIFIED. Six initial topology/recall cases red0/6→green6/6; expanded19 scenarios include20 production conquests/two sides, enemy recapture/cargo-safe recall, garrisons, route previews, all borders/corners and32 seeded starter worlds. Separate fresh default-profile56-command expedition opens the real milestone, captures two passes and crosses both borders in2009.75simulated seconds; outsider denied, scout completes. No state grants.

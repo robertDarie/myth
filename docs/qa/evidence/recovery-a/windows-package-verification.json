@@ -1,0 +1,58 @@
+{
+  "checked": "2026-11-17",
+  "packages": [
+    {
+      "folder": "dist/WindowsClient-Passes-f6cb144",
+      "archive": "dist/Thrones-of-Myth-WindowsClient-Passes-f6cb144.zip",
+      "commit": "f6cb144db0fc0ff1472b7f0d122274e3203c5506",
+      "dirty": false,
+      "protocol": 17,
+      "verified_files": 145,
+      "zip_bytes": 87201157,
+      "zip_sha256": "a197ee66b6763d13749fb4dfb732f000472f9644a1380016f7fc1608bc2f8d77"
+    },
+    {
+      "folder": "dist/Windows-Passes-f6cb144",
+      "archive": "dist/Thrones-of-Myth-Windows-Passes-f6cb144.zip",
+      "commit": "f6cb144db0fc0ff1472b7f0d122274e3203c5506",
+      "dirty": false,
+      "protocol": 17,
+      "verified_files": 193,
+      "zip_bytes": 121944847,
+      "zip_sha256": "422fbccd19f90ebaaf82d9cbe4aed1e9ab2a7cefa072a973c04955aedb050003"
+    }
+  ],
+  "packaged_runtime": {
+    "testedPackageCommit": "f6cb144db0fc0ff1472b7f0d122274e3203c5506",
+    "protocol": 17,
+    "scope": "Actual bundled Windows Node and Server/index.mjs; fresh JSON and real wall-clock construction; no native graphics or remote PCs",
+    "checks": [
+      "PASS matching packaged build readiness",
+      "PASS unauthenticated request rejected",
+      "PASS three authenticated fresh cities",
+      "PASS military denial with scout exemption",
+      "PASS foreign army control rejected",
+      "PASS paid production training queue",
+      "PASS Citadel2 completion on real production clock",
+      "PASS new packaged process preserves three identities, city and paid job",
+      "PASS both graceful packaged process shutdowns"
+    ],
+    "startupMs": 3262.5555000000004,
+    "actualConstructionWallSeconds": 20.0995613
+  },
+  "preserved_archive_sha256": {
+    "dist/Thrones-of-Myth-Windows.zip": "ea6e47a75a603365aa047b5c0dfba50ff32e92265aeb920b282fe0e61ca197f4",
+    "dist/Thrones-of-Myth-Windows-Client.zip": "eeb059cb44b3ca0080c08dd47c48a9e9ecdfd0d1865bd8b8bfb7a2ba1a00c1b9",
+    "dist/Thrones-of-Myth-WindowsClient-Recovery.zip": "c8ffd477fbebf86764ce7ef7357537fd3fb293bb26cead9a11937b38da67bdcc"
+  },
+  "preservation": "PASS all three pre-existing archives byte-identical; isolated outputs used",
+  "native_status": "NOT TESTED",
+  "native_attempt": {
+    "client_launched": true,
+    "source_commit": "f6cb144db0fc0ff1472b7f0d122274e3203c5506",
+    "input_sent": false,
+    "disposable_host": "127.0.0.1 dynamic port; private copy of fresh legal expedition save; no real world accessed",
+    "blocker": "CUA selected Thrones of Myth window but accessibility initially unavailable; screenshot showed unrelated foreground application. Refreshed same discovered window, got title-bar AX, invoked exposed Raise action; target capture failed: no screenshot targets found for process:<QA ThronesOfMyth.exe>. No coordinates/input sent to unrelated window. No unrelated screenshot retained.",
+    "cleanup": "Only recorded QA client PID with verified package path closed; QA host terminated. No gameplay join or name preference changed. No real save/default launcher used."
+  }
+}

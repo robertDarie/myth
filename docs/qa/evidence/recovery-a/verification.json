@@ -56,5 +56,8 @@
     "json",
     "sqlite"
   ],
-  "bidirectional_matrix_conquests": 20
+  "bidirectional_matrix_conquests": 20,
+  "published_source_commit": "f6cb144db0fc0ff1472b7f0d122274e3203c5506",
+  "windows_evidence": "windows-package-verification.json",
+  "native_blocker": "CUA selected Thrones of Myth window but accessibility initially unavailable; screenshot showed unrelated foreground application. Refreshed same discovered window, got title-bar AX, invoked exposed Raise action; target capture failed: no screenshot targets found for process:<QA ThronesOfMyth.exe>. No coordinates/input sent to unrelated window. No unrelated screenshot retained."
 }
