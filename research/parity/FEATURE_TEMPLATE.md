@@ -97,3 +97,7 @@ Deterministic formula assertions, representative real gameplay simulations, nega
 ## Implementation status
 
 PLANNED / IN_PROGRESS / IMPLEMENTED, separate parity status, measured results, commands actually run, remaining work and honest native/player verification.
+
+## Versioned contract binding
+
+Identify contract feature IDs, exact version/mode and essential numeric rows. Update publication_scope.json with affected paths. Record all unresolved dependencies, owner-approved deviations and deterministic acceptance command names. A legacy parity label is not full certification.

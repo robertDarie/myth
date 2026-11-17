@@ -6,6 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 import check_parity
+import check_rok_contract
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "scripts" / "publish-tests.json"
@@ -115,6 +116,7 @@ def push_main(cwd=ROOT):
     if (Path(cwd) / "AGENTS.md").exists() or (Path(cwd) / "research/parity").exists():
         try:
             check_parity.validate_repo(cwd, run_checks=False)
+            check_rok_contract.validate_repo(cwd)
         except (ValueError, KeyError, TypeError, OSError) as error:
             raise RuntimeError("Research gate failed; not pushing: " + str(error)) from error
     if head == remote:
@@ -150,6 +152,7 @@ def main(argv=None):
     try:
         tests = load_plan(args.plan)
         research = check_parity.validate_repo(ROOT)
+        check_rok_contract.validate_repo(ROOT)
         print("Research gate passed: " + json.dumps(research))
     except (RuntimeError, ValueError, KeyError, TypeError, OSError) as error:
         print(error, file=sys.stderr)

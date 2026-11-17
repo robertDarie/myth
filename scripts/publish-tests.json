@@ -2,44 +2,119 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "versioned RoK contract structural and changed-scope gate",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_rok_contract.py"
+      ]
+    },
+    {
+      "name": "contract source flattening and deterministic local values",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/build_rok_contract.py",
+        "--check"
+      ]
+    },
+    {
+      "name": "versioned RoK contract offline failure cases",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/test_rok_contract.py"
+      ]
+    },
+    {
       "name": "legal full-map scout commands and fog persistence (not full automatic parity)",
-      "command": ["node", "scripts/check-natural-exploration.mjs"]
+      "command": [
+        "node",
+        "scripts/check-natural-exploration.mjs"
+      ]
     },
     {
       "name": "full Windows archive integrity and privacy offline fixtures",
-      "command": ["python", "-X", "utf8", "scripts/test_windows_package.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/test_windows_package.py"
+      ]
     },
     {
       "name": "source-bound actual Unity map/camera geometry evidence (not native certification)",
-      "command": ["python", "-X", "utf8", "scripts/check-map-camera-evidence.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-map-camera-evidence.py"
+      ]
     },
     {
       "name": "secondary learned passives, primary-only bonuses and level invariance",
-      "command": ["node", "--test", "server/secondary-passive-correction.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/secondary-passive-correction.test.mjs"
+      ]
     },
     {
       "name": "scout-specific passage and military privilege separation",
-      "command": ["node", "--test", "server/scout-pass-access.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/scout-pass-access.test.mjs"
+      ]
     },
     {
       "name": "military route authority and safe recall regression",
-      "command": ["node", "--test", "server/military-route-safety.test.mjs"]
+      "command": [
+        "node",
+        "--test",
+        "server/military-route-safety.test.mjs"
+      ]
     },
     {
       "name": "Task4 dated QA evidence integrity (red readiness retained)",
-      "command": ["python", "-X", "utf8", "scripts/check-task4-qa.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-task4-qa.py"
+      ]
     },
     {
       "name": "fresh production HTTP cooperation, authority and process restart smoke",
-      "command": ["node", "scripts/task4-functional-qa.mjs", "--soak-seconds", "2", "--output", "work/task4/publication-smoke.json"]
+      "command": [
+        "node",
+        "scripts/task4-functional-qa.mjs",
+        "--soak-seconds",
+        "2",
+        "--output",
+        "work/task4/publication-smoke.json"
+      ]
     },
     {
       "name": "full parity audit inventory, source tables and legal progression evidence",
-      "command": ["python", "-X", "utf8", "scripts/check-parity-audit-scope.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-parity-audit-scope.py"
+      ]
     },
     {
       "name": "initial parity audit dataset consistency (not completeness or source certification)",
-      "command": ["python", "-X", "utf8", "scripts/check-parity-audit.py"]
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-parity-audit.py"
+      ]
     },
     {
       "name": "research publication gate offline contracts",

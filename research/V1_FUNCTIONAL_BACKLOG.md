@@ -1,5 +1,10 @@
 # V1 functional backlog
 
+## 2026-11-17 versioned reference contract checkpoint
+
+Task6 policy/tooling checkpoint:206 discovered scopes,7130 numerical rows,3260 published source observations,0 current-version-bound rows; whole reference denominator UNKNOWN. Permanent zero-unapproved-deviations policy and fail-closed scoped publication gate added. Historical prototype choices retained as history, not automatic exceptions. Eleven offline gate cases pass; full certification intentionally blocked. Full server416 tests/411 pass/0 fail/5 skipped; required publication plan43 checks passed. No gameplay or save/schema changes; Tasks7–10 essential reference/migration requirements remain open. See research/parity/ROK_FULL_SCOPE_ROADMAP.md.
+
+
 ## 2026-11-17 E/F evidence checkpoint
 
 E progression design is PLANNED/essentialreferenceblocked, no isolatednumericalrewrite. F fresh legal fullmap scouting4096/4096with380manualsend/redirect commands,1315.25simsec,Worldroundtrip; automaticlocalarea759cells andfullautoUNKNOWN remains explicit. Fresh productionpolicy827commands/sixmilestones still3at30m,4at1h,5later andpaidinfantryT5, notRoKendgame. Current41matrix updated withscope distinctions; source unchanged. See RECOVERY_E_F_VERIFICATION.md and registered recovery-e-progression-design.md. Plan40checks required. No fullRecoveryA–F or Tasks6–11 completion claim.

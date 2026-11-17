@@ -1,5 +1,10 @@
 # Development report — 2026-11-16
 
+## 2026-11-17 versioned reference contract checkpoint
+
+Task6 policy/tooling checkpoint:206 discovered scopes,7130 numerical rows,3260 published source observations,0 current-version-bound rows; whole reference denominator UNKNOWN. Permanent zero-unapproved-deviations policy and fail-closed scoped publication gate added. Historical prototype choices retained as history, not automatic exceptions. Eleven offline gate cases pass; full certification intentionally blocked. Full server416 tests/411 pass/0 fail/5 skipped; required publication plan43 checks passed. No gameplay or save/schema changes; Tasks7–10 essential reference/migration requirements remain open. See research/parity/ROK_FULL_SCOPE_ROADMAP.md.
+
+
 ## 2026-11-17 recovery E/F research and legal verification
 
 Baseline remote3c99fa65a3ced900ceb6054297346f66a4b52fe6/39checks. E detailed coupled progression/migration plan registeredPLANNED with essential unknowns, no unsupported25level/74point/siege rewrite. F new fresh legal scout proof: auto queuedrange759cells/310.25simsec thenstops; fullauto referenceUNKNOWN. Manual380send/redirect commands finish4096/4096at1315.25simsec,15.7845wallseconds; productionWorldroundtrip retainsall, no resourcesXPpositionsfog injected. No claim native/normalelapsed/completeautomaticparity. Source research describes camp-dependentqueuedareas, so no speculative global scheduler change. Current production progression rerun827actions reaches3at30m,4at1h,5later/T5infantry; all six roundtrips. Exact milestones/ledger/current41rowmatrix updated conservatively. Plan40checks; no gameplay change. Full A pass objectives/C active/native/Tasks6–11 remain unfinished pending real reference dependencies, not application jobs.

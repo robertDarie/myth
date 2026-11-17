@@ -53,3 +53,18 @@ The published numeric foundation and ordinary Forsaken combat are **Partial pari
 The unpublished population/patrol/search draft is **Not yet verified**. Its [research/acceptance record](features/forsaken-population.md) identifies the remaining pre-finalization work. Exact hidden spawn probabilities/patrol radii are not essential reference constants in the earlier user brief; tunable ToM rules are allowed only as recorded deviations, with real visibility, movement, bounds, density, restart and performance tests. Special encounters require separate type-specific research; ordinary levels cannot stand in for fort/keep/guardian/event evidence.
 
 Permanent sequence: RESEARCH → VERIFY → COMPARE → DESIGN → TEST EXPECTED FORMULAS → IMPLEMENT → VALIDATE → UPDATE REFERENCE DOCUMENT → COMMIT → PUSH origin/main → VERIFY REMOTE SHA.
+
+
+## 2026-11-17 versioned contract amendment (Task 6)
+
+**ZERO UNAPPROVED MECHANICAL OR NUMERICAL DEVIATIONS FROM THE VERSIONED ROK REFERENCE SPECIFICATION.**
+
+This amendment supersedes permissive historical prototype deviations. Preserve creative identities/assets and currency names, not arbitrary mechanical differences. New deviations require explicit owner approval identifying scope, reason and impact. Historical “Different by design” records remain historical evidence; they are not permanent parity waivers or new implementation authorization. Pending approval remains a gap.
+
+Canonical contract statuses: FULLY VERIFIED PARITY; PARTIAL PARITY; MISMATCH; MISSING; REFERENCE UNVERIFIED; BLOCKED BY DEPENDENCY; NOT APPLICABLE ONLY WITH DOCUMENTED PROOF. Legacy feature-document labels remain accepted for compatibility, never sufficient for certification. Current prototype work is not retroactively verified.
+
+The generated ROK_COMPLETE_FEATURE_CONTRACT.csv is an open discovered inventory, not the complete live-game denominator. ROK_NUMERICAL_REFERENCE.csv links existing published observations and actual local probes. The current App Store version does not establish the version of older tables. Missing values remain blank with explicit UNKNOWN/CONFLICTING treatment. No unpublished combat formula or unobserved probability becomes exact through disclosure.
+
+Before a gameplay publication, update publication_scope.json with feature_id/paths bindings. Each covered contract feature must have complete version/mode-bound reference and numeric evidence, no essential unknowns or unapproved deviations, and registered acceptance checks. The existing detailed feature document, fixtures, tests and migration requirements still apply. Explained unrelated bug/security/infrastructure/presentation fixes retain the existing changed-registry exemption. Empty bindings authorize no gameplay changes.
+
+check_rok_contract.py runs unconditionally in the publisher even with a custom plan, and again immediately before push. Structural traceability can pass with honest unknowns; --require-full deliberately fails until the reference denominator and every requirement are established. Generator --check compares published flattening and current deterministic local probes; neither program validates an external source's truth. Independent evidence review remains essential.

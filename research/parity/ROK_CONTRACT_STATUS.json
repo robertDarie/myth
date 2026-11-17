@@ -1,0 +1,23 @@
+{
+  "checked": "2026-11-17",
+  "reference_scope_complete": false,
+  "complete_reference_denominator": "UNKNOWN",
+  "discovered_required_scopes": 206,
+  "numeric_rows": 7130,
+  "published_source_value_rows": 3260,
+  "current_version_bound_rows": 0,
+  "fully_verified_features": 0,
+  "global_parity_percentage": null,
+  "candidate_reference_version": "US iOS 1.1.13.79 observed 2026-11-16; older table bindings UNKNOWN",
+  "feature_status_counts": {
+    "MISMATCH": 14,
+    "REFERENCE UNVERIFIED": 181,
+    "MISSING": 11
+  },
+  "numeric_evidence_counts": {
+    "VERIFIED": 3256,
+    "CORROBORATED": 4,
+    "UNKNOWN": 3868,
+    "CONFLICTING": 2
+  }
+}

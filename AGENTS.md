@@ -2,6 +2,8 @@
 
 **NO NEW GAMEPLAY FEATURE OR NUMERICAL BALANCE CHANGE WITHOUT REFERENCE RESEARCH, EVIDENCE CLASSIFICATION, AND A DOCUMENTED IMPLEMENTATION PLAN.**
 
+**ZERO UNAPPROVED MECHANICAL OR NUMERICAL DEVIATIONS FROM THE VERSIONED ROK REFERENCE SPECIFICATION.**
+
 - Follow the authoritative [research-first policy](research/parity/README.md), effective 2026-11-14. Rise of Kingdoms is the primary mechanical/numerical reference; keep Call of Dragons evidence separate.
 - Before relevant implementation: identify the equivalent, verify sources, compare actual values/dependencies, document decisions/migrations and define expected formulas/tests in `research/parity/features/` using `FEATURE_TEMPLATE.md`.
 - Classify every researched quantity as VERIFIED, CORROBORATED, ESTIMATED, UNKNOWN or CONFLICTING, with exact URLs/date. Never present an unpublished formula or unsupported drop rate as exact parity. Report essential unverified requirements before substituting speculation.

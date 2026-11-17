@@ -1,3 +1,9 @@
+# 2026-11-17 superseding decision
+
+Task 6 requires zero unapproved mechanical/numerical deviations from the versioned RoK reference. See research/parity/README.md for the authoritative policy. Historical “Different by design” choices below are not current waivers. Existing mechanics are not retroactively verified; the open contract records missing evidence and mismatches. This documentation checkpoint performs no historic rebalance.
+
+---
+
 # Active policy update — 14 November 2026
 
 The user replaced the prototype-first numerical approach with the [research-first engineering policy](../research/parity/README.md), enforced by [AGENTS.md](../AGENTS.md). Rise of Kingdoms is now the primary numerical/mechanical reference; Call of Dragons evidence stays separate. Verified relevant values default to numerical/behavioral parity after a coupled-system comparison, documented plan, expected-formula tests and safe migration. Original identities, assets/UI, currencies and deliberate product decisions remain.
