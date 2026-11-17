@@ -1,0 +1,197 @@
+{
+  "checked": "2026-11-17",
+  "status": "PARTIAL",
+  "native_api": "Supported Windows @oai/sky",
+  "resolution": "1600x900 client /1602x932 captured window",
+  "packages": [
+    {
+      "package": "Windows-Passes-f6cb144",
+      "commit": "f6cb144db0fc0ff1472b7f0d122274e3203c5506",
+      "version": "0.45.0",
+      "protocol": 17,
+      "dirty": false,
+      "files": 193,
+      "serverDigest": "990df2b5faf6fef4f538fb4c303cebcc33972f1c17f2b5665b147a051aa941be",
+      "executableSha256": "40adc76c08a72722c42921f51052c36de1b8e8c75eb8f76d9007d9e5714ee84f"
+    },
+    {
+      "package": "Windows-NativeQA-645e0df",
+      "commit": "645e0dfba6d04270a38c9b40a106b10e806f0738",
+      "version": "0.45.0",
+      "protocol": 17,
+      "dirty": false,
+      "files": 193,
+      "serverDigest": "990df2b5faf6fef4f538fb4c303cebcc33972f1c17f2b5665b147a051aa941be",
+      "executableSha256": "40adc76c08a72722c42921f51052c36de1b8e8c75eb8f76d9007d9e5714ee84f"
+    },
+    {
+      "package": "Windows-NativeQA-d8e91a6",
+      "commit": "d8e91a68c8f85ab2a0817ca3009d093da73b9d66",
+      "version": "0.45.0",
+      "protocol": 17,
+      "dirty": false,
+      "files": 193,
+      "serverDigest": "990df2b5faf6fef4f538fb4c303cebcc33972f1c17f2b5665b147a051aa941be",
+      "executableSha256": "40adc76c08a72722c42921f51052c36de1b8e8c75eb8f76d9007d9e5714ee84f"
+    },
+    {
+      "package": "Windows-NativeQA-74185be",
+      "commit": "74185be9d2b5c80b5e1bfeb8503d98f42183e38a",
+      "version": "0.45.0",
+      "protocol": 17,
+      "dirty": false,
+      "files": 193,
+      "serverDigest": "990df2b5faf6fef4f538fb4c303cebcc33972f1c17f2b5665b147a051aa941be",
+      "executableSha256": "40adc76c08a72722c42921f51052c36de1b8e8c75eb8f76d9007d9e5714ee84f"
+    }
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "scenario": "Greek city creation",
+      "result": "PASS",
+      "observed": "Actual fresh native Greek NativePassQA17A; random Dawn Reach home."
+    },
+    {
+      "id": 2,
+      "scenario": "Enter world map",
+      "result": "PASS",
+      "observed": "City/world navigation; initial unfamiliar/fog focus observation requires isolated retest; Home works."
+    },
+    {
+      "id": 3,
+      "scenario": "Mouse-wheel zoom",
+      "result": "PASS bounded",
+      "observed": "Actual wheel both directions on free terrain; no exhaustive UI-wheel isolation or resolution matrix."
+    },
+    {
+      "id": 4,
+      "scenario": "Pan and cursor-centered zoom",
+      "result": "PARTIAL",
+      "observed": "Keyboard pan and qualitative gold-node cursor anchor observed; middle-button drag NOT TESTED."
+    },
+    {
+      "id": 5,
+      "scenario": "All seven zones and ten pass models visually",
+      "result": "PARTIAL",
+      "observed": "Native discovered overview and ten named rally targets; every label/model not individually certified."
+    },
+    {
+      "id": 6,
+      "scenario": "Select and inspect pass",
+      "result": "PASS",
+      "observed": "Gate of Eos native selection; final74185be full deployed card readable, screenshot36."
+    },
+    {
+      "id": 7,
+      "scenario": "Opening requirements and ownership",
+      "result": "PASS bounded",
+      "observed": "Sealed opening milestone navigation; open/captured owner and outsider access cards observed."
+    },
+    {
+      "id": 8,
+      "scenario": "Create alliance",
+      "result": "PASS",
+      "observed": "Native Dawnkeepers creation;50gold debit."
+    },
+    {
+      "id": 9,
+      "scenario": "Army preparation and approach",
+      "result": "PASS bounded",
+      "observed": "Actual900infantry panel and local approach. Additional territory/unlock prerequisites separately scripted."
+    },
+    {
+      "id": 10,
+      "scenario": "Unauthorized army crossing",
+      "result": "PASS",
+      "observed": "Actual native neutral/open border ground order rejected; screenshot26."
+    },
+    {
+      "id": 11,
+      "scenario": "Capture neutral pass",
+      "result": "PASS prepared scenario",
+      "observed": "Actual native Plan pass rally / ASSEMBLE RALLY / Fighting / victory, screenshots28-31; scripted prerequisites disclosed."
+    },
+    {
+      "id": 12,
+      "scenario": "Cross controlled pass",
+      "result": "PASS prepared scenario",
+      "observed": "Same previously rejected ground destination accepted after actual native capture; screenshot32."
+    },
+    {
+      "id": 13,
+      "scenario": "Outsider same passage",
+      "result": "PARTIAL",
+      "observed": "Actual second native account sees same Eos BLOCKED CROSSING, rejected destination west of pass; screenshots37-38. Starts Outer Marches, so not a single-border isolation."
+    },
+    {
+      "id": 14,
+      "scenario": "Scout uncontrolled pass",
+      "result": "PASS bounded",
+      "observed": "Actual native scout20,20 completed across two uncontrolled sealed passes; further20,60 return. Scripted16 discovery missions excluded."
+    },
+    {
+      "id": 15,
+      "scenario": "Ownership and troop location restart",
+      "result": "PASS bounded",
+      "observed": "Actual packaged process/client restart, same identity, owner,900infantry/100reserves, exact field location; before/after JSON."
+    },
+    {
+      "id": 16,
+      "scenario": "Minimap and every boundary",
+      "result": "PARTIAL",
+      "observed": "Native minimap focuses Eos and northwest fog, bounded overview; exhaustive four edges/cells and zoom limits NOT TESTED."
+    }
+  ],
+  "original_archive_integrity": "PASS all three preserved byte-identical",
+  "cleanup": "Only owned QA clients/server closed; original display-name preference restored and verified byte-for-byte; private QA saves retained ignored",
+  "unresolved": [
+    "Native all seven zone labels/all ten pass models individually",
+    "Isolated adjacent-zone outsider single-pass route",
+    "Middle-button drag",
+    "All four minimap edges/cells and resolution matrix",
+    "Initial city/world focus observation not isolated",
+    "Unity recursive ArmyData.homeFormations serialization-depth warnings; no observed associated state loss"
+  ],
+  "screenshots": {
+    "01-fresh-greek-city.jpg": "782a3cf6f548af3efd158d66d872befd02fe91721ac19c0fe1451b5e506ac61e",
+    "02-world-map.jpg": "d93af859ab8824ae1afaa68abd63808b4ed1be60f7b107fe927a68bf0babb117",
+    "03-wheel-out.jpg": "348ecb7d69d036d16142fa668bbc2f9ffb3ea88ad39a69dad8ea90f69b910b99",
+    "04-cursor-zoom-in.jpg": "942421ca0e5a7b1c987497d7ff6a30640894b2b8df3c3bd3bb79ee01be21fc0e",
+    "05-kingdom-overview.jpg": "9f4fb1a2b7312ba3748d490049529840c127112fc2746a71a26b5136d692726d",
+    "06-pass-sealed-card.jpg": "d558425f426a174daa910d8909a5d6498d7378d3de260d3f0419ac56a4002b38",
+    "07-opening-requirements.jpg": "036993e40c15bc1fa2861a2d3819deb476fca7ca4828badf08b19f38dbb812ed",
+    "08-alliance-created.jpg": "8e8c9f6ac3a93ae9dc5e615fe668fd65264ec0acfa9211a9a9459b0d0ca614de",
+    "09-army-ready.jpg": "e8c0a91ccbf9dae1e8f85823650f253227e7fddadce94fcfdf66dfdb3b971d87",
+    "10-scout-native-dispatched.jpg": "4aaeb8aa6a88d31f3b79e328d693be652541b614971fec4aaa806208de1a0b66",
+    "11-scout-revealed-pass-and-zone.jpg": "f43914370c372c627d25bb202b6db7f811c203a17048dc50ff6199e76855f739",
+    "12-army-crossing-rejected.jpg": "f36ec91c82b217c646bcf17d7052e7a0aa06c7bd19e1b425aed89e101e0f550c",
+    "13-keyboard-pan.jpg": "bc078ee8ae357e1dfc74f129c6490f86163a9b2ff301b9ec6a9581cf58c8482f",
+    "14-paid-training.jpg": "701b001aa2c5e80a14d7f380227e9ff9d062b093679ff4114ee56be74edf7cc1",
+    "15-native-gathering.jpg": "3168d8a8b60db612fc4847c25fe1cf3f1336d23f87ba401b6d18ee0f56b8701d",
+    "16-first-camp-combat.jpg": "0cef896e746e477939d78515861327c2f36c89e8d8855302dd0b98274e95fab5",
+    "17-hall-preparation.jpg": "b1c21c0212d02e6fd0af1bfd8aee1c953e04c0be76007c8bac6ea83542e1f769",
+    "18-discovery-count-bug.jpg": "517c62bd1cc339486f19de78d03631d9b6591d37e2197d3d243bebdadfcbf3b7",
+    "19-native-victory-report-list.jpg": "5f11e6ecda5f035e8d69791674a51f3cc71de5ee3e26e2dcd004b6c6be75a123",
+    "20-runic-survey-native.jpg": "b6c21e6715bf4b1f7d8932ef8670ca7279d1345d71aa849900b2c21c1157dae8",
+    "21-corrected-build-title.jpg": "597c540c81bcc2da9c512dfa4129748459392db1124689e2adf8a92b54517b35",
+    "22-discovery-count-corrected-native.jpg": "2c88eeef70adce735a240d52d6911d7ba8664cf7ea093ad7561a93b800cc84e0",
+    "23-neutral-pass-model.jpg": "636ba9e61ad8ff812b9f5f70927cb046fdb945ae2382e2883ced0df9cbd2d05f",
+    "24-pass-information-clipping.jpg": "4516997682d84706a222e510738f50f674fb4d9c7e5990ca8fbfecb28c75e50b",
+    "25-native-pass-approach-arrived.jpg": "4516997682d84706a222e510738f50f674fb4d9c7e5990ca8fbfecb28c75e50b",
+    "26-open-neutral-crossing-rejected.jpg": "3862a57943749b06cf33998b916e52a6cc43092d3da7bbf3eb4a28ed52e9c87c",
+    "27-native-ten-pass-targets.jpg": "13c0843039b6c3d0128fb4b79db2ae612f6e067a12e1b469df5f8cec4dcd480f",
+    "28-native-rally-accepted.jpg": "f465c9ce046297cfa74eb5ff89f9867ddf8ddedde0c011920ae3bfd0bb146065",
+    "29-native-rally-fighting.jpg": "6a09b8b1e79f0163d91a65c615d2c9ca61bda327da28c836c85b9b0e96f887e7",
+    "30-native-rally-world-combat.jpg": "fbef6a931533951e8fbd7b917c08281564856d759d752968d19b214c3ea7ef2b",
+    "31-native-pass-capture-result.jpg": "ddb53657c4693c907c6477c8a7ce22b3f7e109faa179a48c063617864ff026eb",
+    "32-native-crossing-after-capture.jpg": "d27d1c09a9f5a454ed16d95ff4bd0e04cec1f801775f1a12092aa073d5fc6998",
+    "33-native-restart-army-and-pass.jpg": "3af107c8570acf676a6e8816dfb5e30633e5dfffa6bcf773a29788e2fc9fbd11",
+    "34-pass-information-ribbon-overlap.jpg": "fbb7aeae8ef29ddb2239fc74f61c325cbd03da94d31717b67d8008fc82a82e39",
+    "36-final-pass-card-native.jpg": "56f1324d2379bec86967ec3a570616713e6c8ac9294b8234c48e3a3c36fc8004",
+    "37-outsider-route-rejected-native.jpg": "6c84a391185967d861225e35e0de0ec291160112afc0f97c9169ce13be4ab314",
+    "38-outsider-pass-details-native.jpg": "42d254c22dc70808d7c67c213b6a8be03ec4cfa8b2f4fc577c43e1a4e6d1aa9c",
+    "39-native-map-overview.jpg": "b3ff2350939893dc79c2bb75e4d792e06b9263b63c67bf864ce7af9cf49306d6",
+    "40-northwest-unexplored-boundary.jpg": "8e82f0900275bbed5463e97c9c0de8e35a0a9d1b54adf1bc5b7f11445836a2c3"
+  }
+}

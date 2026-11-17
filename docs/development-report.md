@@ -1,5 +1,9 @@
 # Development report — 2026-11-16
 
+## Native Windows verification final bounded result —2026-11-17
+
+Actual native Greek creation, wheel/keyboard controls, neutral army denial, scout crossing/return, alliance, pass rally capture, owning-alliance crossing and process/client restart executed.900troops/100reserves, exact field position/alliance/pass ownership survived. Final74185be pass card native PASS after fixing clipped details and deployed-ribbon overlap; obsolete scouting denominator fixed/native PASS. Each correction passed49 required publication checks;16784 C# contracts. Outsider sees the same pass blocked and native distant-route denial; sole-border isolation remains NOT TESTED. Full7labels/10models visual inspection, middle-drag and exhaustive boundaries/resolutions remain partial/NOT TESTED.51-command accelerated preparation explicitly excluded from native organic progression proof. Unity serialization-depth warning recorded without unproved loss claim. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md and manual checklist. Original saves/packages preserved; Tasks7–10 untouched; numerical parity UNVERIFIED.
+
 ## Native deployed pass-card overlap follow-up
 
 Actual packaged client/server restart preserved native capture, field position,900troops/100reserves and alliance. The first expanded-card native retest found the deployed order ribbon still overlaying lower intelligence lines; correction moves that existing ribbon above the context card. Two additional geometry cases;16784 C# contracts passed. Native readability not called PASS before corrected binary retest. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md.

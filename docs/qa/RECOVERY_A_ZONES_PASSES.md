@@ -1,5 +1,7 @@
 # Recovery A — functional zones, passes and military access
 
+> 2026-11-17 native follow-up supersedes old capture-blocked statements below: actual Sky capture, native rally/crossing/restart and final readable card verified with explicit limits. See [native results](RECOVERY_A_NATIVE_WINDOWS.md) and [manual checklist](RECOVERY_A_MANUAL_WINDOWS_CHECKLIST.md). Full native acceptance remains PARTIAL; old notes are checkpoint history.
+
 Starting published source: `69c58ea6e55b7bfe0c0cba0c2a0ea096e32a6d81`. Checked 2026-11-17. **Functional compatibility implementation; numerical RoK parity UNVERIFIED.** The owner explicitly approved: “Reuse existing rules; clearly mark numerical parity unverified.” The decision is recorded in `research/parity/approvals/recovery-a-divine-gate-compatibility.json` and the pre-implementation feature record.
 
 ## Authoritative inventory

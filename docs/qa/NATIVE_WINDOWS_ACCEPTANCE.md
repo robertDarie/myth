@@ -1,5 +1,7 @@
 # Recovery A source checkpoint — 2026-11-17
 
+> 2026-11-17 native follow-up supersedes old capture-blocked statements below: actual Sky capture, native rally/crossing/restart and final readable card verified with explicit limits. See [native results](RECOVERY_A_NATIVE_WINDOWS.md) and [manual checklist](RECOVERY_A_MANUAL_WINDOWS_CHECKLIST.md). Full native acceptance remains PARTIAL; old notes are checkpoint history.
+
 New map/UI source displays the full7-zone/10-pass graph, ownership/opening/access, mountain borders, pass rally and selected-pass garrison controls. Actual source-bound Unity validation instantiated10 correctly positioned original pass models,7 labels and10 crossing objects; this is not native usability. Clean source f6cb144 client/full Windows packages now pass artifact verification and nine actual bundled-runtime checks. Native launch was attempted on2026-11-17; the selected QA window could not be captured reliably after refresh/Raise, so no gameplay input was sent and updated native usability remains NOT TESTED. Exact blocker and cleanup are in evidence/recovery-a/windows-package-verification.json. Existing Windows folders/archives are preserved using isolated client/full-package names. Earlier native attempts below remain dated history, not evidence that the current desktop is unavailable or the new binary has been tested.
 
 ---

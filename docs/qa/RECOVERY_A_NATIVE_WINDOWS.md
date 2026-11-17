@@ -2,6 +2,43 @@
 
 Starting main: `23bea5c7409de303dc0f8b81eb825d738a9e8a28`. Native package: clean0.45.0 / source `f6cb144db0fc0ff1472b7f0d122274e3203c5506` / protocol17. The full ZIP passed193 file hashes; the client ZIP passed145. Executable SHA256 `40adc76c08a72722c42921f51052c36de1b8e8c75eb8f76d9007d9e5714ee84f`.
 
+## Final bounded outcome — supersedes checkpoint-pending notes below
+
+**PARTIAL native acceptance; full parity NOT CERTIFIED.** Supported Windows capture worked. The initial clean f6cb144 binary was tested, then three clean source correction checkpoints were built and exercised:645e0df, d8e91a6 and74185be. Final executable is `dist/Windows-NativeQA-74185be/Game/ThronesOfMyth.exe`, version0.45.0 / protocol17. Its full ZIP passed193 manifest hashes,121945145bytes; matching live server health reported74185be and unchanged server digest. Exact full identities/executable hashes and16 case verdicts are in `evidence/recovery-a-native/native-results.json`.
+
+1. **Greek city creation: PASS.** Actual fresh native Greek NativePassQA17A; random Dawn Reach home.
+2. **Enter world map: PASS.** City/world navigation; initial unfamiliar/fog focus observation requires isolated retest; Home works.
+3. **Mouse-wheel zoom: PASS bounded.** Actual wheel both directions on free terrain; no exhaustive UI-wheel isolation or resolution matrix.
+4. **Pan and cursor-centered zoom: PARTIAL.** Keyboard pan and qualitative gold-node cursor anchor observed; middle-button drag NOT TESTED.
+5. **All seven zones and ten pass models visually: PARTIAL.** Native discovered overview and ten named rally targets; every label/model not individually certified.
+6. **Select and inspect pass: PASS.** Gate of Eos native selection; final74185be full deployed card readable, screenshot36.
+7. **Opening requirements and ownership: PASS bounded.** Sealed opening milestone navigation; open/captured owner and outsider access cards observed.
+8. **Create alliance: PASS.** Native Dawnkeepers creation;50gold debit.
+9. **Army preparation and approach: PASS bounded.** Actual900infantry panel and local approach. Additional territory/unlock prerequisites separately scripted.
+10. **Unauthorized army crossing: PASS.** Actual native neutral/open border ground order rejected; screenshot26.
+11. **Capture neutral pass: PASS prepared scenario.** Actual native Plan pass rally / ASSEMBLE RALLY / Fighting / victory, screenshots28-31; scripted prerequisites disclosed.
+12. **Cross controlled pass: PASS prepared scenario.** Same previously rejected ground destination accepted after actual native capture; screenshot32.
+13. **Outsider same passage: PARTIAL.** Actual second native account sees same Eos BLOCKED CROSSING, rejected destination west of pass; screenshots37-38. Starts Outer Marches, so not a single-border isolation.
+14. **Scout uncontrolled pass: PASS bounded.** Actual native scout20,20 completed across two uncontrolled sealed passes; further20,60 return. Scripted16 discovery missions excluded.
+15. **Ownership and troop location restart: PASS bounded.** Actual packaged process/client restart, same identity, owner,900infantry/100reserves, exact field location; before/after JSON.
+16. **Minimap and every boundary: PARTIAL.** Native minimap focuses Eos and northwest fog, bounded overview; exhaustive four edges/cells and zoom limits NOT TESTED.
+
+Pass visibility/usability: Gate of Eos was physically visible, selectable, capturable and traversable by its owning alliance. On the final native binary all five intelligence lines, health, footer action and separate deployed-order ribbon are readable (screenshot36). The outsider sees the same pass red/BLOCKED CROSSING, owner Dawnkeepers, hidden defender intelligence and a native route-denial toast (37–38). Because the outsider's home is Outer Marches, its distant route can involve other blocked borders: the isolated adjacent-zone comparison remains NOT TESTED. Native overview39 shows discovered mountain/pass geography, but does not certify every zone label/model individually.
+
+Camera/zoom: bounded wheel, plus/minus, keyboard response and minimap focus worked. Qualitative cursor anchor only; no instrumented pixel-error/ergonomic claim. Middle-button drag, all resolution variants and exhaustive boundaries remain NOT TESTED. Northwest minimap corner correctly focused an unexplored fog region (40); fog is not proof of absent geography. Initial fresh-city world focus required Home in an observation; this needs a controlled repeat before calling it a reproducible defect.
+
+Failures and fixes: NA-001 obsolete exploration denominator fixed in645e0df; native caption1631/4096=39.8% confirmed. NA-002 clipped pass card fixed in d8e91a6; that native retest found deployed-ribbon overlap, fixed in74185be and actually retested PASS in36. Regression counts16776→16782→16784 production C# contracts; actual Unity compilation/topology reran, and each correction passed49 required publication checks. No server/balance/save-schema changes. The screenshot formerly named34-pass-information-corrected-native is renamed34-pass-information-ribbon-overlap because it shows the intermediate failure, not a pass. A failed earlier outsider input hit a camp; it is not route-denial evidence and screenshot35 is excluded from published proofs.
+
+Logs: actual native Player logs and build/publication logs are retained privately under `work/recovery-a/`. Sanitized relevant excerpts are in `evidence/recovery-a-native/runtime-log-summary.txt`. Unity emitted serialization-depth warnings around recursive ArmyData.homeFormations in both final clients; no crash or associated troop/ownership loss was observed. This warning is recorded for investigation, not silently labeled a clean log or repaired by changing DTO/save behavior in this presentation checkpoint.
+
+Capture diagnosis: the earlier CUA wrapper could not target Unity; the supported Windows Sky alternative captured actual Unity successfully. With two same-executable windows, a snapshot could initially show the other foreground client; explicit activation and fresh observation resolved it. Input guards requested refresh; later unsolicited window changes prompted a handoff question, and the user explicitly authorized resuming QA control. No guarded action was bypassed. Some extra outsider scout/camp activity is not attributed to the agent's acceptance sequence. Final native route denial was independently observed after refresh.
+
+Safety: only dynamically allocated loopback QA kingdoms were used. Original fresh native checkpoint preserved separately; the focused capture scenario used a copy plus the explicitly labeled51-command production preparation below. Actual native capture, crossing and process restart followed. Both final QA clients and owned server closed; synthetic display-name preference restored byte-for-byte. All three original distribution archives remain byte-identical. No real saves, existing sessions, credentials or private tokens were committed.
+
+Manual continuation: [complete16-case Windows checklist](RECOVERY_A_MANUAL_WINDOWS_CHECKLIST.md) includes the exact isolated launcher/resume commands, buttons, expected results, evidence and seven-zone/ten-pass inventory. Passing local server tests does not upgrade any native NOT TESTED result. **STOP at this checkpoint; Tasks7–10 untouched.**
+
+## Historical execution notes
+
 ## Execution method and scope
 
 The supported Windows `@oai/sky` API successfully activated and captured the actual Unity window. This resolves the earlier wrapper capture blocker for this run. An initial input call reported detected user input and requested a new observation; fresh observation followed before input resumed. No user-stop event occurred. Only QA game windows were controlled. Screenshots in `evidence/recovery-a-native/` show actual native rendering and mouse/keyboard actions; Unity object counts and backend tests are not used as native PASS.
@@ -54,4 +91,4 @@ After actual native capture/crossing, the real packaged server and client were c
 
 The d8e91a6 native card retest revealed an additional overlap: owner/opening/access lines are now readable, but the existing deployed-march order ribbon remained at its old fixed vertical coordinate and covered the lower defender/instruction lines. Thus NA-002 was NOT yet a native readability PASS. Follow-up moves that same ribbon above the entire context card; its ordinary-card placement is unchanged. Two further geometry assertions pass; total16,784 production C# contracts. Corrected deployed-card native retest remains required. No balance or save change.
 
-The restarted authority scenario declares a fixed.3 QA random generator solely to obtain an ordinary Dawn Reach outsider spawn through the normal spawn algorithm; no home/location fields are assigned and no random-distribution parity claim is made. The real native-captured pass state is loaded intact. A private initial Windows `--import` absolute-path attempt failed before server startup; converted to a standard file URL, then the owned server started successfully. No gameplay failure is attributed to that tooling-path error.
+A tooling attempt set Math.random=.3, but the production World uses crypto-based secureRandom, so this did NOT select Dawn Reach. The actual native outsider spawned ordinarily in Outer Marches(161.38580617496433,234.82957120685228). No home/location fields were assigned. The attempted seed is not evidence of a controlled spawn or an isolated single-pass comparison. The real native-captured pass state is loaded intact. A private initial Windows `--import` absolute-path attempt failed before server startup; converted to a standard file URL, then the owned server started successfully. No gameplay failure is attributed to that tooling-path error.

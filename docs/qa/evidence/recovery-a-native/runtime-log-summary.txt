@@ -1,0 +1,16 @@
+Actual Windows Player log excerpts/counts; no credentials or private filesystem paths.
+
+native-resume-player.log: 2 serialization-depth warning lines; 0 Exception: lines.
+Serialization depth limit 10 exceeded at 'ThronesOfMyth::ArmyData.cargo'. There may be an object composition cycle in one or more of your serialized classes. Consider rearranging data or use `[SerializeReference]`.
+
+native-fixed-player.log: 2 serialization-depth warning lines; 0 Exception: lines.
+Serialization depth limit 10 exceeded at 'ThronesOfMyth::ArmyData.cargo'. There may be an object composition cycle in one or more of your serialized classes. Consider rearranging data or use `[SerializeReference]`.
+
+native-card-player.log: 2 serialization-depth warning lines; 0 Exception: lines.
+Serialization depth limit 10 exceeded at 'ThronesOfMyth::ArmyData.cargo'. There may be an object composition cycle in one or more of your serialized classes. Consider rearranging data or use `[SerializeReference]`.
+
+native-final-player.log: 2 serialization-depth warning lines; 0 Exception: lines.
+Serialization depth limit 10 exceeded at 'ThronesOfMyth::ArmyData.cargo'. There may be an object composition cycle in one or more of your serialized classes. Consider rearranging data or use `[SerializeReference]`.
+
+native-final-outsider.log: 2 serialization-depth warning lines; 0 Exception: lines.
+Serialization depth limit 10 exceeded at 'ThronesOfMyth::ArmyData.cargo'. There may be an object composition cycle in one or more of your serialized classes. Consider rearranging data or use `[SerializeReference]`.

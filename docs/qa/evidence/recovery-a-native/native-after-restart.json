@@ -1,0 +1,112 @@
+{
+  "checked": "2026-11-17T15:31:58.135Z",
+  "stage": "after-restart",
+  "name": "NativePassQA17A",
+  "player": {
+    "id": "9bca64c4-ac4b-4b1e-a542-5471767d71e7",
+    "name": "NativePassQA17A",
+    "cityLevel": 2,
+    "homeX": 145.97122426244647,
+    "homeZ": 37.1517908468271,
+    "x": 74.3809585571289,
+    "z": 16.892929077148438,
+    "state": "Paused",
+    "units": {
+      "infantry": 900,
+      "archers": 0,
+      "cavalry": 0
+    },
+    "reserveTroops": 100,
+    "health": 113400,
+    "maxHealth": 113400,
+    "commanderId": "captain",
+    "allianceId": "496f3981-b81a-47dc-95a1-05ad3b8c5d5d"
+  },
+  "passes": [
+    {
+      "id": "gate-east",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-crown-west",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-north",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-crown-south",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-dawn-low",
+      "allianceId": "496f3981-b81a-47dc-95a1-05ad3b8c5d5d",
+      "militaryAccess": true,
+      "locked": false,
+      "health": 450000,
+      "defendersKnown": true
+    },
+    {
+      "id": "gate-dawn-high",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-ashen-low",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-ashen-high",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-outer-south",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    },
+    {
+      "id": "gate-outer-west",
+      "allianceId": "",
+      "militaryAccess": false,
+      "locked": false,
+      "health": 0,
+      "defendersKnown": false
+    }
+  ],
+  "exploration": {
+    "width": 64,
+    "count": 1633,
+    "percent": 39.9
+  }
+}
