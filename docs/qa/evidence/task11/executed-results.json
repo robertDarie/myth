@@ -1,0 +1,133 @@
+{
+  "checked": "2026-11-17",
+  "source_commit": "9dde97903e70e62509d2454785b695e2d7f15750",
+  "environment": {
+    "platform": "Windows",
+    "node": "v24.18.0",
+    "unity": "6000.3.0f1",
+    "save_schema": 27,
+    "protocol": 17
+  },
+  "full_server": {
+    "tests": 416,
+    "pass": 411,
+    "fail": 0,
+    "skipped": 5
+  },
+  "full_server_command": "cd server; node --test --test-concurrency=4",
+  "full_server_duration_ms": 29346.0796,
+  "http_command": "node scripts/task4-functional-qa.mjs --soak-seconds 2 --output work/task4/publication-smoke.json",
+  "http_checks": [
+    {
+      "id": "json.readiness-and-invitation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.distinct-random-homes-and-protocol",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.army-authority-and-invalid-input",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.three-player-alliance-chat-and-roles",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.paid-construction-and-alliance-help",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.transfer-replay-and-conservation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.own-movement-and-foreign-recon-privacy",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.scout-pass-exemption-and-private-control",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.legal-root-beacon-and-garrison",
+      "verdict": "PASS"
+    },
+    {
+      "id": "json.actual-process-restart-and-resume",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.readiness-and-invitation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.distinct-random-homes-and-protocol",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.army-authority-and-invalid-input",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.three-player-alliance-chat-and-roles",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.paid-construction-and-alliance-help",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.transfer-replay-and-conservation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.concurrent-idempotent-training",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.own-movement-and-foreign-recon-privacy",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.scout-pass-exemption-and-private-control",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.legal-root-beacon-and-garrison",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.actual-process-restart-and-resume",
+      "verdict": "PASS"
+    },
+    {
+      "id": "sqlite.idempotency-survives-process-restart",
+      "verdict": "PASS"
+    }
+  ],
+  "http_scope": "Actual HTTP and fresh production state; accelerated setup clocks explicitly separate from real wall-clock soak; no native or remote-human certification",
+  "http_tested_commit": "9dde97903e70e62509d2454785b695e2d7f15750",
+  "fixture_tests": "Route/pass/paired commander tests explicitly prepare ownership, coordinates or skills; not legitimate organic progression",
+  "packaged_source_commit": "05ab132928f4eb4d148f189ef09c29592598421e",
+  "tracked_gameplay_file_count": 133,
+  "tracked_gameplay_sha256": "b74ed516fabee29dc0ff3563ec23929daaf0e88d2bc8fa7e9d94fb4ab6fa17c8",
+  "gameplay_differences_from_package": [],
+  "full_certification_check": {
+    "command": "python -X utf8 scripts/check_rok_contract.py --require-full",
+    "expected_exit": 1,
+    "observed_exit": 1,
+    "observed_output": "RoK contract gate: Full reference denominator UNKNOWN; completeness certification blocked"
+  },
+  "native_updated_binary": "NOT TESTED",
+  "linux_native": "NOT TESTED",
+  "remote_human_multiplayer": "NOT TESTED",
+  "complete_reference_denominator": "UNKNOWN",
+  "fully_verified_discovered_features": 0,
+  "discovered_scopes": 206,
+  "global_parity_percentage": null,
+  "contract_gate_offline_tests": 13,
+  "prepublication_required_checks": 44,
+  "full_server_provenance": "Executed before contract commit; tracked gameplay is byte-identical to the audited source/package. No source gameplay changed during this assessment."
+}

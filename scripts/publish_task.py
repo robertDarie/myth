@@ -152,7 +152,7 @@ def main(argv=None):
     try:
         tests = load_plan(args.plan)
         research = check_parity.validate_repo(ROOT)
-        check_rok_contract.validate_repo(ROOT)
+        check_rok_contract.validate_repo(ROOT, run_checks=True)
         print("Research gate passed: " + json.dumps(research))
     except (RuntimeError, ValueError, KeyError, TypeError, OSError) as error:
         print(error, file=sys.stderr)

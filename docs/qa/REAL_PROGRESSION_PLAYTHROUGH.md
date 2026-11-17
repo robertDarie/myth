@@ -1,0 +1,11 @@
+# Legitimate progression — PARTIAL, reference endgame blocked
+
+Fresh legal server policy: `node scripts/parity-audit-progression.mjs work/task4/current-progression.json`. Published evidence/recovery/current-progression.json and 827-row action ledger records accepted command, game time, quoted costs and balances. No XP/resource/position/fog assignment. Accelerated production simulation clock, not a human native session. This earlier executed run remains applicable because gameplay bytes are unchanged.
+
+Milestones: fresh Citadel 1;30 simulated minutes 3;one hour 4;day/week/month 5. Two ordinary local camps defeated, paid infantry I–V trained. Six milestone World serialization/load round-trips. After first hour the policy uses five-minute production offline catch-up intervals; no offline combat invented. Local building/research maxima are prototype maxima, not reference 25/endgame.
+
+Current repeat: `node scripts/check-natural-exploration.mjs` reached 759 automatic cells by 310.25 simulated seconds and stopped; then 380 legal manual send/redirect commands completed 4096/4096 by 1315.25 seconds.382 total commands;4096 retained after World round-trip. No direct fog injection. The latest publication run repeats this proof; wall time varies and is not reference travel-time parity. Manual completion is not full automatic exploration.
+
+First-account production HTTP run covers fresh Greek joins, legitimate paid construction/training, alliance creation/join, help/chat/trade, movement/scouts and unauthorized-control rejection with 109 explicit production setup seconds. Native original f5c0cdf build observed city entry, paid Citadel 1→2 completion, training debit/queue and world rendering only. First camp battles/research are server-simulation evidence. Full rally/pass capture/later-zone/major-objective organic journey remains NOT TESTED/BLOCKED; fixture rally tests do not replace it.
+
+Unreached required endpoints:Citadel 25, every reference building/research rank, four troop classes, all 15 existing unit types organically, all commanders 60/six stars/max skills/equipment/talents, full march/capacity chain, all PvE/season tiers and genuine KvK. Siege absent; five-level city design makes 25 impossible. No maximum-state fixture is claimed as progression proof. Stop condition is missing implementation/reference data, not fabricated waiting time.

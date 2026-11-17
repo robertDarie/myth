@@ -3,6 +3,8 @@ import argparse
 import csv
 import fnmatch
 import json
+import subprocess
+import sys
 from pathlib import Path
 import check_parity
 
@@ -64,7 +66,7 @@ def ready(feature, numbers):
                 raise ValueError(fid + ': essential version-bound number unresolved')
 
 
-def validate_repo(root=ROOT, require_full=False):
+def validate_repo(root=ROOT, require_full=False, run_checks=False):
     root = Path(root)
     agents = root / 'AGENTS.md'
     if not agents.exists() or POLICY not in agents.read_text(encoding='utf-8'):
@@ -84,7 +86,8 @@ def validate_repo(root=ROOT, require_full=False):
     scoped = scope.get('features', [])
     if candidates and scope_path not in changed:
         raise ValueError('Gameplay publication requires an updated publication_scope.json')
-    checks = {t['name'] for t in json.loads((root / 'scripts/publish-tests.json').read_text(encoding='utf-8'))['tests']}
+    checks = {t['name']: t['command'] for t in json.loads((root / 'scripts/publish-tests.json').read_text(encoding='utf-8'))['tests']}
+    required_checks = set()
     for path in candidates:
         matched = [binding for binding in scoped if any(fnmatch.fnmatchcase(path, pattern) for pattern in binding.get('paths', []))]
         if not matched:
@@ -97,12 +100,22 @@ def validate_repo(root=ROOT, require_full=False):
             ready(feature, numbers)
             if any(c not in checks for c in feature['acceptance_checks'].split(';')):
                 raise ValueError(fid + ': acceptance check absent from publication plan')
+            required_checks.update(feature['acceptance_checks'].split(';'))
     if require_full:
         status = json.loads((root / BASE / 'ROK_CONTRACT_STATUS.json').read_text(encoding='utf-8'))
         if not status.get('reference_scope_complete'):
             raise ValueError('Full reference denominator UNKNOWN; completeness certification blocked')
         for feature in features:
             ready(feature, numbers)
+    if run_checks:
+        if subprocess.run([sys.executable, '-X', 'utf8', str(root / 'scripts/build_rok_contract.py'), '--check'], cwd=root).returncode:
+            raise ValueError('Contract numeric fixtures/local observations differ; publication denied')
+        for name in sorted(required_checks):
+            command = checks[name]
+            if any(Path(str(arg)).name in {'check_rok_contract.py', 'check_parity.py', 'publish_task.py'} for arg in command):
+                raise ValueError('Recursive contract acceptance check refused: ' + name)
+            if subprocess.run(command, cwd=root).returncode:
+                raise ValueError('Contract acceptance check failed: ' + name)
     return {'discovered_scopes': len(features), 'numeric_rows': len(numbers), 'gameplay_candidates': len(candidates), 'full_parity_certified': False}
 
 

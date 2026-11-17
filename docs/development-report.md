@@ -1,5 +1,11 @@
 # Development report — 2026-11-16
 
+## 2026-11-17 cross-feature assessment and independent handoff
+
+Published contract checkpoint9dde979:43 required checks passed, remote verified. Final assessment covers all206 discovered contract scopes with independent implemented/server/native/progression/numerical/mechanical/persistence/multiplayer/reference verdicts. Complete server416 tests/411 pass/0 fail/5 platform skips; fresh JSON3/SQLite10 HTTP identities22/22 checks. Source comparison confirms133 tracked gameplay files match clean Windows artifact05ab132. Final publication plan adds source-bound report consistency; all44 required checks passed before publication. Contract gate now13 offline cases; deterministic regeneration/scoped acceptance execute even with a custom plan.
+
+NOT CERTIFIED. Full reference denominator UNKNOWN; no global percentage. Tasks7–10 full implementations remain NOT COMPLETED, and complete Task6 discovery is open. Missing current-version reference data and coherent migration remain prerequisites; no speculative gameplay changes. Updated native GUI, Linux native and remote-human multiplayer NOT TESTED. See docs/qa/CHATGPT_DEVELOPMENT_HANDOFF.md and TASK7_10_READINESS.csv. This interim Task11 assessment is not successful completion of blocked acceptance scenarios. Next corrective milestone remains full RecoveryA functional passes.
+
 ## 2026-11-17 versioned reference contract checkpoint
 
 Task6 policy/tooling checkpoint:206 discovered scopes,7130 numerical rows,3260 published source observations,0 current-version-bound rows; whole reference denominator UNKNOWN. Permanent zero-unapproved-deviations policy and fail-closed scoped publication gate added. Historical prototype choices retained as history, not automatic exceptions. Eleven offline gate cases pass; full certification intentionally blocked. Full server416 tests/411 pass/0 fail/5 skipped; required publication plan43 checks passed. No gameplay or save/schema changes; Tasks7–10 essential reference/migration requirements remain open. See research/parity/ROK_FULL_SCOPE_ROADMAP.md.

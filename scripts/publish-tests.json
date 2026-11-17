@@ -2,6 +2,15 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "dated cross-feature QA evidence and source identity (not parity certification)",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_final_assessment.py"
+      ]
+    },
+    {
       "name": "versioned RoK contract structural and changed-scope gate",
       "command": [
         "python",

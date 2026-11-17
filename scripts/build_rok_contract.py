@@ -281,6 +281,7 @@ def build():
                 number(f'STAR.{rarity}.{star}.{parameter}','ROK-COMMANDER-STARS',rarity+' '+parameter,star)
     for parameter in ['unbuffed_cap','base_regeneration_seconds','consumable_overflow','refund_cap','commander_reduction','vip_modifier']:
         number('AP.'+parameter,'ROK-PVE-AP',parameter,'all applicable modes',classification='CONFLICTING' if parameter in {'unbuffed_cap','base_regeneration_seconds'} else 'UNKNOWN',
+               source='https://prokingdoms.com/blog/mastering-barbarian-chaining-in-rise-of-kingdoms-the-ultimate-ap-efficiency-guide;https://riseofkingdoms.fandom.com/wiki/Resources;https://riseofkingdomsguides.com/faq/',
                notes='1000/45 vs1500/36 published baselines; actual version/VIP/overflow/refund context unresolved; never choose the convenient local value')
     for mode in ['home','pre-kvk','kvk1','kvk2','kvk3','soc']:
         for parameter in ['ordinary_max_level','ordinary_level_stats_rewards','fort_tiers_stats_rewards','pass_opening_tiers_defenders','event_schedule_rewards']:
