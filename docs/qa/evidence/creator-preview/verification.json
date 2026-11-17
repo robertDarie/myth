@@ -51,7 +51,7 @@
       "id": 5,
       "scenario": "City rendering",
       "result": "PASS",
-      "observation": "Actual native Greek city screenshot02."
+      "observation": "Actual Greek city rendering observed in the native tool response in this chat. Standalone city image NOT RETAINED: export helper saved a stale duplicate entry frame, identified by identical SHA256 and visual inspection; misleading duplicate removed. No recapture after user ended input."
     },
     {
       "id": 6,
@@ -137,5 +137,9 @@
     "Tasks7-10",
     "gameplay balance changes",
     "public hosting"
-  ]
+  ],
+  "screenshotArtifacts": [
+    "01-fresh-entry.jpg"
+  ],
+  "evidenceCorrection": "A duplicate entry image was mislabeled02-fresh-greek-city.jpg in the first evidence checkpoint. It is removed; no claim of an independently retained final-ZIP city screenshot. Native city observation remains an executed visual observation, not a backend inference."
 }
