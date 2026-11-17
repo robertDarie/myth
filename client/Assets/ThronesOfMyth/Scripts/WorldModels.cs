@@ -120,8 +120,9 @@ namespace ThronesOfMyth
     [Serializable] public sealed class CargoSource { public string nodeId,name,resource; public float x,z; public int amount; }
     [Serializable] public sealed class CampData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name,lockedReason; public int level, health, maxHealth, respawn,enemyPower,enemyTroops,enemyTier,recommendedTroops,recommendedTier,commanderXP,apCost; public float x, z; }
     [Serializable] public sealed class NodeData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name, resource; public float x, z; public int remaining, capacity; }
-    [Serializable] public sealed class ProvinceData { public string id,name; public float minX,maxX,minZ,maxZ; public string[] gates; }
-    [Serializable] public sealed class SiteData { public bool lastKnown, terrainExplored; public float observedAt; public bool unknown, locked; public string id, name, kind, description, allianceId, challengerId; public float x, z, progress, health, maxHealth; }
+    [Serializable] public sealed class ProvinceData { public string id,name,category; public float minX,maxX,minZ,maxZ; public string[] gates; }
+    [Serializable] public sealed class CorridorData { public string id,gateId; public RoutePoint a,b; }
+    [Serializable] public sealed class SiteData { public bool lastKnown, terrainExplored; public float observedAt; public bool unknown, locked,defendersKnown,approachAccessible,militaryAccess; public string id, name, kind, description, allianceId, challengerId,corridorId,openingStage,encounter,accessExplanation; public string[] zoneIds; public int tier,garrisonMarches; public float x, z, progress, health, maxHealth; }
     [Serializable] public sealed class FlagData { public bool lastKnown, terrainExplored; public float observedAt; public string id, allianceId; public float x, z, health, maxHealth, buildRemaining; public bool isRoot, connected; }
     [Serializable] public sealed class AllianceData { public string id, name, leaderId; public int members; public string[] officers; }
     [Serializable] public sealed class CommanderData { public string id, name, rarity, color, description, skillKind; }
@@ -233,6 +234,8 @@ namespace ThronesOfMyth
         public NodeData[] nodes;
         public SiteData[] sites;
         public ProvinceData[] provinces;
+        public CorridorData[] corridors;
+        public SiteData[] passes;
         public FlagData[] flags;
         public TerritoryRules territoryRules;
         public AllianceData[] alliances;

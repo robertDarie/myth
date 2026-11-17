@@ -1,3 +1,9 @@
+# Recovery A update — 2026-11-17
+
+The earlier safety-only A description below is historical. The functional original-map pass system now has7 zones/10 distinct persistent local passes, approved original Divine Gate encounters, actual production conquest/travel and schema27→28 migration. See [current Recovery A report](RECOVERY_A_ZONES_PASSES.md). Numeric RoK parity remains UNVERIFIED; updated native binary verification is a separate checkpoint. No Tasks7–10 implementation is implied. Historical red evidence and earlier limitations below are retained with their dates.
+
+---
+
 # Critical gameplay recovery — executed checkpoints
 
 Initial recovery baseline: `bd1b157c2db54f81049b1b74a1b131cfe63d7288` (published Task4 QA), following clean gameplay audit `f5c0cdf75af286c33a9c116f46139ee40c8fbce1`. Date: 2026-11-16. **Recovery A safety subset and B server authorization implemented; full A–F NOT COMPLETE.** This is not certification of Tasks6–11.

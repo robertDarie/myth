@@ -13,7 +13,7 @@ import { join } from 'node:path';
 const seeded=()=>{let n=179;return ()=>((n=(1664525*n+1013904223)>>>0)/2**32);};
 test('256-square map has populated frontier hubs, sacred sites and strongholds in all new provinces',()=>{
   const w=new World();assert.equal(WORLD_SIZE,256);assert.equal(FOG_WIDTH,64);
-  assert.equal(w.nodes.length,293);assert.equal(w.camps.length,62);assert.equal(w.sites.length,11);assert.equal(w.strongholds.length,8);
+  assert.equal(w.nodes.length,293);assert.equal(w.camps.length,62);assert.equal(w.sites.length,19);assert.equal(w.strongholds.length,8);
   for(const h of FRONTIER_HUBS){assert.equal(w.nodes.filter(n=>n.id.startsWith(h.id+'-')).length,5);assert.ok(w.camps.some(c=>c.id===h.id+'-camp'));}
   for(const p of PROVINCES.filter(p=>p.minX>=80||p.minZ>=80))assert.ok(w.sites.some(s=>s.x>p.minX&&s.x<p.maxX&&s.z>p.minZ&&s.z<p.maxZ));
 });
@@ -26,25 +26,25 @@ test('schema 25 fog migrates coordinates rather than row numbers, retaining hist
   for(const index of [0,19,64,1235])assert.ok(q.explored.includes(index));
   assert.ok(!q.explored.includes(20)); // Would falsely discover land at x=82.
   for(const key of ['gold','food','wood','aether','troops','ownedCommanders','inventory','loginStreak','kingdomClaims'])assert.deepEqual(q[key],p[key]);
-  assert.equal(r.toSave().schema,27);assert.equal(r.snapshot(q.id).version,17);
+  assert.equal(r.toSave().schema,28);assert.equal(r.snapshot(q.id).version,17);
   const restarted=World.fromSave(r.toSave());assert.deepEqual(restarted.authenticate(s.token).explored,q.explored);
   const bad=structuredClone(original);bad.world.players[0].explored=[400];assert.throws(()=>World.fromSave(bad),/exploration/);
 });
 test('JSON migration archives the exact schema-25 input before rotating saves',()=>{
   const dir=mkdtempSync(join(tmpdir(),'myth-map-migration-'));
-  try{const w=new World();w.join('Archive');const old=legacyMap(w.toSave());old.schema=25;const bytes=JSON.stringify(old),path=join(dir,'world.json');writeFileSync(path,bytes);const store=new WorldStore(path),r=store.load();store.save(r);assert.equal(readFileSync(path+'.schema25.bak','utf8'),bytes);assert.equal(store.load().toSave().schema,27);}finally{rmSync(dir,{recursive:true,force:true});}
+  try{const w=new World();w.join('Archive');const old=legacyMap(w.toSave());old.schema=25;const bytes=JSON.stringify(old),path=join(dir,'world.json');writeFileSync(path,bytes);const store=new WorldStore(path),r=store.load();store.save(r);assert.equal(readFileSync(path+'.schema25.bak','utf8'),bytes);assert.equal(store.load().toSave().schema,28);}finally{rmSync(dir,{recursive:true,force:true});}
 });
 test('frontier travel cannot enter or detour through locked legacy provinces, and recall remains legal',()=>{
-  const w=openKingdom(new World()),s=w.join('Routes'),p=w.authenticate(s.token);p.x=128;p.z=128;
+  const w=openKingdom(new World()),s=w.join('Routes'),p=w.authenticate(s.token);p.homeX=p.x=128;p.homeZ=p.z=128;
   for(const target of [{x:50,z:20},{x:20,z:50},{x:60,z:60},{x:20,z:20}])assert.equal(route(w,p,target),null);
   assert.equal(route(w,p,{x:180,z:24}),null); // Missing frontier pass must not become free access.
   const target={x:180,z:128};assert.ok(route(w,p,target));const before={x:p.x,z:p.z};travel(w,p,target,4,.1);assert.ok(Math.hypot(p.x-before.x,p.z-before.z)<=.40001);
   // Separate explicit Ashen-side fixture tests the existing controlled legacy connections.
-  p.x=30;p.z=128;
-  p.gold=1000;w.command(p,{type:'alliance-create',name:'Road owners'});w.sites.find(s=>s.id==='gate-north').allianceId=p.allianceId;
+  p.homeX=p.x=30;p.homeZ=p.z=128;
+  p.gold=1000;w.command(p,{type:'alliance-create',name:'Road owners'});w.sites.find(s=>s.id==='gate-north').allianceId=p.allianceId;w.sites.find(s=>s.id==='gate-ashen-low').allianceId=p.allianceId;
   const path=route(w,p,{x:20,z:20});assert.ok(path);assert.ok(path.every(t=>w.canEnter(p,t)));
-  assert.equal(route(w,p,{x:60,z:60}),null);w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;assert.ok(route(w,p,{x:60,z:60}));
-  p.x=55;p.z=20;w.sites.find(s=>s.id==='gate-east').allianceId='';assert.equal(route(w,p,{x:20,z:20}),null);assert.ok(route(w,p,{x:20,z:20},true));
+  assert.equal(route(w,p,{x:60,z:60}),null);w.sites.find(s=>s.id==='gate-east').allianceId=p.allianceId;assert.equal(route(w,p,{x:60,z:60}),null);w.sites.find(s=>s.id==='gate-crown-west').allianceId=p.allianceId;assert.ok(route(w,p,{x:60,z:60}));
+  p.x=55;p.z=20;w.sites.find(s=>s.id==='gate-east').allianceId='';assert.equal(route(w,p,{x:20,z:20}),null);assert.ok(route(w,p,{x:p.homeX,z:p.homeZ},true));
 });
 test('256 registered cities persist distinct identities; default operational cap stays 32',()=>{
   const w=new World({cityCapacity:256,random:seeded()}),sessions=[];

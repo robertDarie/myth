@@ -5,6 +5,7 @@ import fnmatch
 import json
 import subprocess
 import sys
+import re
 from pathlib import Path
 import check_parity
 
@@ -66,6 +67,33 @@ def ready(feature, numbers):
                 raise ValueError(fid + ': essential version-bound number unresolved')
 
 
+def load_scope(root):
+    return json.loads((root / BASE / 'publication_scope.json').read_text(encoding='utf-8'))
+
+
+def approved_compatibility(root, binding, path, registry, checks):
+    """An explicit owner decision authorizes bounded partial work, never parity."""
+    approval = json.loads(check_parity.local_file(root, binding['approved_compatibility']).read_text(encoding='utf-8'))
+    check_parity.checked_date(approval.get('approved_on'))
+    if approval.get('status') != 'OWNER_APPROVED' or approval.get('reference_parity') != 'UNVERIFIED' or len(approval.get('authority', '')) < 20 or len(approval.get('owner_decision', '')) < 20:
+        raise ValueError('Compatibility scope lacks explicit owner approval/disclosure')
+    if binding['feature_id'] not in approval.get('feature_ids', []) or not any(fnmatch.fnmatchcase(path, pattern) for pattern in approval.get('paths', [])):
+        raise ValueError('Change exceeds the owner-approved compatibility scope: ' + path)
+    evidence = approval.get('evidence_document')
+    if evidence not in registry['features']:
+        raise ValueError('Approved compatibility evidence is not registered')
+    content = check_parity.local_file(root, evidence).read_text(encoding='utf-8')
+    match = re.search(r'<!--\s*parity\s*\n(.*?)\n\s*-->', content, re.S)
+    meta = json.loads(match.group(1)) if match else {}
+    if meta.get('status') != 'IMPLEMENTED' or meta.get('parity') not in check_parity.PARITY-{'Verified parity'} or meta.get('essential_unknowns') or not any(approval['owner_decision'] in d.get('authority', '') for d in meta.get('deviations', [])):
+        raise ValueError('Approved compatibility needs implemented, explicitly partial scoped evidence')
+    functional = approval.get('functional_checks', [])
+    numeric = approval.get('unchanged_numeric_checks', [])
+    if not functional or not numeric or any(name not in checks for name in functional + numeric):
+        raise ValueError('Approved compatibility needs registered functional and unchanged-numeric checks')
+    return set(functional + numeric)
+
+
 def validate_repo(root=ROOT, require_full=False, run_checks=False):
     root = Path(root)
     agents = root / 'AGENTS.md'
@@ -82,7 +110,7 @@ def validate_repo(root=ROOT, require_full=False, run_checks=False):
             if exemption.get('kind') in {'bug-fix', 'formatting', 'security', 'infrastructure'} and len(exemption.get('reason', '')) >= 20:
                 candidates = {p for p in candidates if not any(fnmatch.fnmatchcase(p, pattern) for pattern in exemption.get('paths', []))}
     scope_path = BASE + 'publication_scope.json'
-    scope = json.loads((root / scope_path).read_text(encoding='utf-8'))
+    scope = load_scope(root)
     scoped = scope.get('features', [])
     if candidates and scope_path not in changed:
         raise ValueError('Gameplay publication requires an updated publication_scope.json')
@@ -97,6 +125,9 @@ def validate_repo(root=ROOT, require_full=False, run_checks=False):
             if fid not in ids:
                 raise ValueError('Unknown scoped feature: ' + str(fid))
             feature = next(f for f in features if f['feature_id'] == fid)
+            if binding.get('approved_compatibility'):
+                required_checks.update(approved_compatibility(root, binding, path, registry, checks))
+                continue
             ready(feature, numbers)
             if any(c not in checks for c in feature['acceptance_checks'].split(';')):
                 raise ValueError(fid + ': acceptance check absent from publication plan')

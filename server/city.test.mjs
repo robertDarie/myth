@@ -177,7 +177,7 @@ test('schema-1 saves migrate once without losing queues, resources, commanders o
   const migrated = World.fromSave(old), city = migrated.authenticate(s.token);
   assert.equal(city.gold, 1234); assert.equal(city.trainingQueue.length, 1); assert.equal(city.mythic, 1);
   assert.equal(city.buildings.menagerie, 1); assert.equal(city.stone, 150); assert.equal(city.sigils, 3);
-  assert.equal(migrated.nodes.length, 293); assert.equal(migrated.toSave().schema,27);
+  assert.equal(migrated.nodes.length, 293); assert.equal(migrated.toSave().schema,28);
   city.sigils = 0; const again = World.fromSave(migrated.toSave()); assert.equal(again.authenticate(s.token).sigils, 0);
 });
 
@@ -203,7 +203,7 @@ test('Blessed Fields pay a five-second cycle after 100 ms ticks, and a finished 
   const mine = p.food; advance(w, 5);
   assert.equal(p.food, mine + 4); assert.equal(other.food, 2);
   const loaded = World.fromSave(w.toSave()), q = loaded.authenticate(s.token);
-  assert.equal(q.food, p.food); assert.equal(q.buildings.farm, 2); assert.equal(loaded.toSave().schema, 27);
+  assert.equal(q.food, p.food); assert.equal(q.buildings.farm, 2); assert.equal(loaded.toSave().schema, 28);
 });
 
 test('the city card quotes the same five-second yield the server adds', () => {
@@ -227,5 +227,5 @@ test('eight hours of downtime fills the stockpile and another hour does not', ()
   assert.equal(p.food, cap); assert.equal(p.wood, cap); assert.equal(p.stone, stone);
   advanceDowntime(w, at + OFFLINE_PRODUCTION_CAP * 1000, at + (OFFLINE_PRODUCTION_CAP + 3600) * 1000);
   assert.equal(p.food, cap); assert.equal(p.wood, cap); assert.equal(p.stone, stone);
-  assert.equal(w.toSave().schema, 27);
+  assert.equal(w.toSave().schema, 28);
 });

@@ -40,14 +40,14 @@ test('gather, site capture, PvP and rally admission cannot replace routing with 
  const site=w.sites.find(s=>s.x>80&&s.z>80);assert.ok(site);
  assert.throws(()=>w.command(p,{type:'capture',targetId:site.id}),/authorized gate route/i);
  const resources={wood:p.wood,gold:p.gold};p.homeZ=p.z=79;
- assert.throws(()=>w.command(p,{type:'flag',x:128,z:81}),/authorized gate route/i);
+ assert.throws(()=>w.command(p,{type:'flag',x:128,z:81}),/authorized gate route|accessible province/i);
  assert.deepEqual({wood:p.wood,gold:p.gold},resources);assert.equal(w.flags.length,0);p.homeZ=30;
  const session=w.join('Opponent'),q=w.authenticate(session.token);
  p.cityLevel=q.cityLevel=2;p.x=128;p.z=79;q.homeX=140;q.homeZ=30;q.x=128;q.z=81;
  p.deployed=q.deployed=true;
  // Reveal this real enemy with an explicit own-city sight fixture; no private command bypass.
  p.homeX=128;p.homeZ=70;
- assert.throws(()=>w.command(p,{type:'attack-player',targetId:q.id}),/authorized gate route/i);
+ assert.throws(()=>w.command(p,{type:'attack-player',targetId:q.id}),/authorized gate route|locked Divine Gate/i);
  p.x=p.homeX;p.z=p.homeZ;p.target=null;p.buildings.oathhall=1;
  const target=w.strongholds.find(t=>t.x>80&&t.z>80);assert.ok(target);
  assert.throws(()=>w.command(p,{type:'rally-create',targetId:target.id,count:10}),/authorized gate route/i);
@@ -56,7 +56,7 @@ test('two consecutive existing pass boundaries require both open allied gates an
  const {w,p}=fixture(20,20);w.command(p,{type:'alliance-create',name:'Route owners'});
  // Explicit stage/ownership fixtures; pass capture is not being certified by these tests.
  w.kingdom.completed=KINGDOM_STAGES.slice(0,2).map(s=>({id:s.id,atMs:w.activityClockMs,legacy:true,eligible:[]}));
- const east=w.sites.find(s=>s.id==='gate-east'),north=w.sites.find(s=>s.id==='gate-north');
+ const east=w.sites.find(s=>s.id==='gate-east'),north=w.sites.find(s=>s.id==='gate-crown-south');
  east.allianceId=p.allianceId;
  assert.equal(route(w,p,{x:60,z:60}),null);
  north.allianceId=p.allianceId;

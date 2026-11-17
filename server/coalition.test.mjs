@@ -106,7 +106,7 @@ test('coalition invites expire, reject a fourth member, and schema 23 keeps the 
   delete saved.world.coalitions;
   delete saved.world.coalitionInvites;
   const migrated = World.fromSave(saved, { now: () => Date.UTC(2026, 0, 6, 12) });
-  assert.equal(migrated.toSave().schema, 27);
+  assert.equal(migrated.toSave().schema, 28);
   assert.equal(migrated.coalitions.length, 0);
   assert.equal(migrated.diplomacy.pacts.length, 1);
   assert.equal(migrated.alliances.size, w.alliances.size);

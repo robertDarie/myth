@@ -225,7 +225,12 @@ def build():
                 status='MISMATCH'
             if (group=='KVK' and slug in {'lost-kingdom-access','kvk1','kvk2','kvk3','season-of-conquest'}) or (group=='ITEM' and slug=='vip'):
                 status='MISSING'
+            if group=='WORLD' and slug in {'zone-graph','military-access','pass-objectives','pass-ownership','safe-recall'}:
+                status='PARTIAL PARITY'
             feature('ROK-'+group+'-'+slug.upper(),group,behavior,actual+' (related local modules only; full equivalent not established)',deps,status)
+            if status=='PARTIAL PARITY':
+                features[-1]['scope_note']='RecoveryA functional infrastructure implemented; explicit owner-approved original Divine Gate numerical compatibility, NOT full reference parity. See features/recovery-a-functional-passes.md'
+                features[-1]['deviation_status']='OWNER-APPROVED bounded compatibility; exact reference numerics remain UNVERIFIED'
     for kind in ['infantry','archers','cavalry','siege']:
         for tier in range(1,6):
             feature(f'ROK-TROOP-{kind.upper()}-T{tier}','TROOP',f'{kind}T{tier}: exact unlock/building/training/promotion/combat/load/healing/power behavior',

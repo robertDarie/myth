@@ -388,6 +388,7 @@ namespace ThronesOfMyth
             }
             foreach (var boss in world.strongholds) Dot(mapArea, boss.x, boss.z, MythInterfaceTheme.Red, 6);
             foreach (var site in world.sites) Dot(mapArea, site.x, site.z, site.kind=="gate"?MythInterfaceTheme.Gold:new Color(0.85f, 0.72f, 0.95f), site.kind=="gate"?7:5);
+            foreach(var pass in world.passes??Array.Empty<SiteData>())Dot(mapArea,pass.x,pass.z,pass.locked?Color.gray:pass.militaryAccess?MythInterfaceTheme.Teal:MythInterfaceTheme.Red,7);
             foreach (var army in world.armies) Dot(mapArea, army.x, army.z, army.ownerId==playerId?MythInterfaceTheme.Teal:!string.IsNullOrEmpty(me.allianceId)&&army.allianceId==me.allianceId?new Color(.4f,.85f,.6f):MythInterfaceTheme.Red, army.id == ActiveArmy.id ? 6 : 3);
             Dot(mapArea, me.homeX, me.homeZ, Color.white, 5);
             if(cameraControl!=null)Dot(mapArea,cameraControl.FocusPoint.x,cameraControl.FocusPoint.z,MythInterfaceTheme.Gold,3);

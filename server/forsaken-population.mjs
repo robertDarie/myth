@@ -53,7 +53,7 @@ function suitable(w,region,p,context,eyes,except=null){
 }
 function selectLevel(w,r){
   const existing=aliveForsaken(w).filter(c=>c.provinceId===r.id),province=PROVINCES.find(p=>p.id===r.id);
-  if(!province.gates.length&&existing.filter(c=>c.level===1).length<Math.ceil(r.target/3))return 1;
+  if(province.category==='starting'&&existing.filter(c=>c.level===1).length<Math.ceil(r.target/3))return 1;
   const high=Math.min(r.maxLevel,kingdomForsakenLevel(w)),low=Math.min(r.minLevel,high);
   return low+w.chooseIndex(high-low+1);
 }

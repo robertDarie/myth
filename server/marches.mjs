@@ -42,22 +42,21 @@ export function marchCommand(world, p, c, fail) {
   if(['configure-march','commander','pair-commander','unpair-commander','reinforce','disband-march','equip-relic','unequip-relic'].includes(c.type)&&cargoTotal(a))fail('Return home and deliver cargo before changing this formation.');
   switch (c.type) {
     case 'move':
-      if (!point(c)) fail('Destination must be inside the map (1–79).');
-      if (!world.canEnter(p, c)) fail('Your alliance must capture the corresponding Divine Gate first.');
+      if (!point(c)) fail(`Destination must be inside the map (1–${WORLD_SIZE-1}).`);
       requireRoute(c);
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
       const camp = world.camps.find(e => e.id === c.targetId);
       const seen=camp&&camp.spawned!==false&&visible(world,p,camp);
       const known=seen?camp:p.discovery.find(r=>r.kind==='camps'&&r.value.id===c.targetId)?.value;
-      if (!camp||!known || (seen&&camp.health<=0)||!world.canEnter(p, known)) fail('Camp unavailable or behind a locked gate.');
+      if (!camp||!known || (seen&&camp.health<=0)) fail('Camp unavailable or behind a locked gate.');
       if(p.numericVersion===1){const reason=forsakenReason(world,p,known);if(reason)fail(reason);}
       requireRoute(known);
       a.target = { type: 'attack', id: camp.id,x:known.x,z:known.z,cycle:known.cycle??0 }; break;
     }
     case 'gather': {
       const node = world.nodes.find(n => n.id === c.targetId);
-      if (!node || (!visible(world,p,node)&&!p.discovery.some(r=>r.kind==='nodes'&&r.value.id===node.id))||!world.canEnter(p, node)) fail('Resource unavailable.');
+      if (!node || (!visible(world,p,node)&&!p.discovery.some(r=>r.kind==='nodes'&&r.value.id===node.id))) fail('Resource unavailable.');
       requireRoute(node);
       a.target = { type: 'gather', id: node.id }; a.gatherClock = 0; break;
     }
@@ -139,7 +138,6 @@ export function marchCommand(world, p, c, fail) {
       if (!site || !p.allianceId) fail('Join an alliance to capture a site.');
       if (!siteIsOpen(world,site.id)) fail('This sacred site is sealed until its kingdom milestone opens.');
       if (site.allianceId && site.allianceId !== p.allianceId) fail('An enemy-held site must be defeated with a rally.');
-      if (!world.canEnter(p, site)) fail('Capture the necessary gates first.');
       requireRoute(site);
       if (!territoryNear(world, p.allianceId, site)) fail(`Extend alliance beacons to within ${TERRITORY_RULES.supplyRadius} units of this site.`);
       a.target = { type: 'capture', id: site.id }; break;

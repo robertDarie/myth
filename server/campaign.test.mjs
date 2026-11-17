@@ -81,7 +81,8 @@ test('a root beacon destruction disconnects branches; unfinished or disconnected
  const friendly={id:'root-a',allianceId:a.allianceId,x:25,z:20};initializeFortification(friendly);friendly.isRoot=true;w.flags.push(friendly);refreshBeacons(w);
  supply.health=1;cmd(w,a,'rally-create',supply.id);until(w,()=>!w.flags.some(f=>f.id===supply.id));
  assert.equal(branch.connected,false);assert.equal(census(a),20);assert.ok(a.groupReports[0].structureDamage>=1&&a.groupReports[0].structureDamage<=250);
- assert.throws(()=>cmd(w,a,'capture','gate-north'),/beacons/);
+ cmd(w,a,'return');until(w,()=>w.atHome(a)&&!a.target);
+ assert.throws(()=>cmd(w,a,'capture','gate-north'),/territory disconnected/);
  assert.equal(w.sites.find(s=>s.id==='gate-east').allianceId,c.allianceId);
 });
 
@@ -116,7 +117,7 @@ test('assembly can be canceled and saved/migrated without creating contributions
  cmd(w,a,'rally-leave');assert.equal(w.rallies.length,0);assert.equal(census(a),20);assert.equal(census(b),20);
  const old=w.toSave();legacyMap(old);old.schema=5;delete old.world.rallies;delete old.world.garrisons;delete old.world.sieges;
  for(const p of old.world.players)delete p.groupReports;
- const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,27);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
+ const migrated=World.fromSave(old);assert.equal(migrated.toSave().schema,28);assert.equal(migrated.players.get(a.id).groupReports.length,0);assert.ok(migrated.sites[0].health>0);
 });
 
 test('surviving attackers can garrison their captured gate without being healed or duplicating units',()=>{

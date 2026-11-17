@@ -1,4 +1,26 @@
 {
-  "description": "Research/tooling checkpoint only; empty scope authorizes no gameplay changes.",
-  "features": []
+  "description": "Owner-approved bounded RecoveryA functional compatibility, numerical parity unverified; no other gameplay scope authorized.",
+  "features": [
+    {
+      "feature_id": "ROK-WORLD-PASS-OBJECTIVES",
+      "paths": [
+        "server/world-map.mjs",
+        "server/navigation.mjs",
+        "server/world.mjs",
+        "server/kingdom.mjs",
+        "server/campaign.mjs",
+        "server/marches.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldView.Environment.cs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldView.Territory.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+        "server/forsaken-population.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldView.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Warfare.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/recovery-a-divine-gate-compatibility.json"
+    }
+  ]
 }

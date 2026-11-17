@@ -1,7 +1,7 @@
 import { LIMITS } from './world-map.mjs';
 export const KINGDOM_STAGES=[
  {id:'foundations',name:'Embers Become Cities',description:'Gather 400 resources and train 10 mortal troops across the kingdom.',afterSeconds:0,minScore:1,reward:{wood:100,food:100,gold:50,stone:50}},
- {id:'gates',name:'The Divine Gates Awaken',description:'Defeat four camps and raise at least one Citadel to level 2. Opens both Divine Gates for contest.',afterSeconds:600,minScore:5,reward:{wood:150,food:150,gold:100,stone:100}},
+ {id:'gates',name:'The Divine Gates Awaken',description:'Defeat four camps and raise at least one Citadel to level 2. Opens the Divine Gate passes for contest.',afterSeconds:600,minScore:5,reward:{wood:150,food:150,gold:100,stone:100}},
  {id:'sanctuary',name:'The Road to the First Throne',description:'Defeat two strongholds and occupy both Divine Gates. Opens the First Sanctuary for contest.',afterSeconds:1800,minScore:10,reward:{gold:150,food:150,stone:150,mana:15,sigils:1}},
  {id:'secured',name:'An Oath Holds the Throne',description:'One alliance must hold the sanctuary continuously for five minutes.',afterSeconds:2100,minScore:15,reward:{gold:250,wood:200,food:200,mana:30,sigils:3}}
 ];
@@ -20,12 +20,12 @@ export function recordKingdomContribution(w,p,key,amount){
  if(!['camps','strongholds'].includes(key))k.metrics[key]=Math.min(1000000000,k.metrics[key]+amount);
 }
 export function recordKingdomVictory(w,key){if(w.kingdom&&['camps','strongholds'].includes(key))w.kingdom.metrics[key]=Math.min(1000000000,w.kingdom.metrics[key]+1);}
-export const siteIsOpen=(w,id)=>!['gate-east','gate-north','first-sanctuary'].includes(id)||w.kingdom.completed.some(s=>s.id===(id==='first-sanctuary'?'sanctuary':'gates'));
+export const siteIsOpen=(w,id)=>{const pass=w.sites.find(s=>s.id===id&&s.kind==='gate');return !pass&&id!=='first-sanctuary'||w.kingdom.completed.some(s=>s.id===(id==='first-sanctuary'?'sanctuary':'gates'));};
 function goals(w,id){
  const k=w.kingdom,m=k.metrics;
  if(id==='foundations')return [{name:'Resources gathered',progress:m.gather,goal:400},{name:'Mortal troops trained',progress:m.trained,goal:10}];
  if(id==='gates')return [{name:'Camp victories',progress:m.camps,goal:4},{name:'Cities at Citadel 2+',progress:[...w.players.values()].filter(p=>p.cityLevel>=2).length,goal:1}];
- if(id==='sanctuary')return [{name:'Stronghold victories',progress:m.strongholds,goal:2},{name:'Divine Gates occupied',progress:w.sites.filter(s=>s.kind==='gate'&&s.allianceId).length,goal:2}];
+ if(id==='sanctuary')return [{name:'Stronghold victories',progress:m.strongholds,goal:2},{name:'Original Divine Gates occupied',progress:w.sites.filter(s=>['gate-east','gate-north'].includes(s.id)&&s.allianceId).length,goal:2}];
  return [{name:'Continuous sanctuary hold (seconds)',progress:k.holdAllianceId?Math.max(0,Math.floor((w.activityClockMs-k.holdSinceMs)/1000)):0,goal:300}];
 }
 export function tickKingdom(w){

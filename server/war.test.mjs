@@ -91,7 +91,7 @@ test('active combats are sealed on restore, treatment persists and malformed hos
 test('schema-4 migrates an empty hospital and troop counters are a bounded mixed-composition modifier', () => {
   const {w,a}=setup(),old=structuredClone(w.toSave());legacyMap(old);old.schema=4;delete old.world.battles;
   for(const p of old.world.players)for(const k of['wounded','woundedMythic','healing','battleReports'])delete p[k];
-  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,27);
+  const restored=World.fromSave(old);assert.equal(restored.players.get(a.id).wounded.infantry,0);assert.equal(restored.toSave().schema,28);
   const infantry={troops:10,units:{infantry:10,archers:0,cavalry:0}},cavalry={troops:10,units:{infantry:0,archers:0,cavalry:10}};
   assert.equal(counterMultiplier(infantry,cavalry),1.15);assert.equal(counterMultiplier(cavalry,infantry),0.85);
 });
@@ -102,6 +102,8 @@ test('PvP and hospital commands work over authenticated HTTP without exposing re
   const base='http://127.0.0.1:'+server.address().port;
   const join=async name=>(await fetch(base+'/join',{method:'POST',body:JSON.stringify({name})})).json();
   const sessions=await Promise.all(['HTTP A','HTTP B','HTTP C'].map(join));const [a,b]=sessions.map(s=>world.authenticate(s.token));
+  // Explicit local-combat fixture: random distant homes must not supply hidden pass privileges.
+  a.homeX=10;a.homeZ=10;b.homeX=12;b.homeZ=10;
   a.cityLevel=b.cityLevel=2;a.x=20;a.z=15;b.x=21.5;b.z=15;b.health=1;b.gold=b.food=1000;
   const post=(s,body)=>fetch(base+'/command',{method:'POST',headers:{Authorization:'Bearer '+s.token},body:JSON.stringify(body)});
   assert.equal((await post(sessions[0],{type:'attack-player',targetId:b.id})).status,200);world.tick(0.1);

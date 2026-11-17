@@ -1,3 +1,9 @@
+# Current Recovery A update — 2026-11-17
+
+Since the audited69c58ea baseline, the original map now has7 zones and10 persistent adjacent pass objectives, production rally capture from either side, graph-based military authority, separate scouts, cargo-safe revocation/recall and schema27→28 append migration. The owner approved original Divine Gate rules as a temporary compatibility baseline; numerical RoK parity remains UNVERIFIED. See [current Recovery A report](RECOVERY_A_ZONES_PASSES.md) and source-bound evidence. Updated standalone build/native verification is a separate checkpoint. Tasks7–10 were not started. The detailed older assessment below is retained as historical9dde979 evidence; its missing-functional-pass conclusion is superseded by the new bounded implementation, not promoted to full parity.
+
+---
+
 # THRONES OF MYTH — COMPLETE DEVELOPMENT HANDOFF FOR CHATGPT
 
 Assessment: 17 November 2026. Repository: robertDarie/myth, branch main. Audited published baseline: `9dde97903e70e62509d2454785b695e2d7f15750`. Obtain this report's publication SHA with `git log -1 --format=%H -- docs/qa/CHATGPT_DEVELOPMENT_HANDOFF.md`; compare HEAD with `git ls-remote origin refs/heads/main`. A commit cannot contain its own final hash. The owner's final response supplies the verified remote publication SHA.

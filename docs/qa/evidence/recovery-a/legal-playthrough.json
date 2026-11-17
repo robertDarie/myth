@@ -1,0 +1,1071 @@
+{
+  "scope": "Fresh default city; legal production commands, accelerated tick(.25), owner-visible target selection; no direct progression grants or ownership mutation",
+  "numericParity": "UNVERIFIED; owner-approved original Divine Gate encounter/opening baseline",
+  "seed": 3,
+  "seconds": 2009.75,
+  "cityLevel": 2,
+  "campVictories": 4,
+  "opened": [
+    "foundations",
+    "gates"
+  ],
+  "passes": [
+    {
+      "id": "gate-east",
+      "name": "Eastern Divine Gate",
+      "zoneIds": [
+        "first-frontier",
+        "legacy-east"
+      ],
+      "health": 450000,
+      "maxHealth": 450000,
+      "owned": true
+    },
+    {
+      "id": "gate-crown-south",
+      "name": "Gate of the Sun Oath",
+      "zoneIds": [
+        "legacy-east",
+        "legacy-crown"
+      ],
+      "health": 349500,
+      "maxHealth": 450000,
+      "owned": true
+    }
+  ],
+  "firstCrossing": {
+    "x": 50,
+    "z": 20
+  },
+  "secondCrossing": {
+    "x": 65,
+    "z": 60
+  },
+  "outsideMilitary": "production move DENIED",
+  "outsideScout": "ARRIVED, explored target cell and returned",
+  "restart": "World serialization/load preserves both owners and audited player state",
+  "commands": 56,
+  "actions": [
+    {
+      "seconds": 0,
+      "type": "inventory-supplies",
+      "before": {
+        "food": 10000,
+        "wood": 10000,
+        "gold": 1000,
+        "stone": 150
+      },
+      "after": {
+        "food": 10000,
+        "wood": 10000,
+        "gold": 1000,
+        "stone": 150
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 0,
+      "type": "building-upgrade",
+      "targetId": "citadel",
+      "before": {
+        "food": 10000,
+        "wood": 10000,
+        "gold": 1000,
+        "stone": 150
+      },
+      "after": {
+        "food": 10000,
+        "wood": 9900,
+        "gold": 925,
+        "stone": 110
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 20,
+      "type": "building-upgrade",
+      "targetId": "oathhall",
+      "before": {
+        "food": 10008,
+        "wood": 9908,
+        "gold": 925,
+        "stone": 110
+      },
+      "after": {
+        "food": 10008,
+        "wood": 9838,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 32,
+      "type": "train",
+      "targetId": "infantry",
+      "before": {
+        "food": 10012,
+        "wood": 9842,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5012,
+        "wood": 4842,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 32,
+      "type": "gather",
+      "targetId": "resource-6",
+      "before": {
+        "food": 5012,
+        "wood": 4842,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5012,
+        "wood": 4842,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 38.5,
+      "type": "return",
+      "before": {
+        "food": 5014,
+        "wood": 4844,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5014,
+        "wood": 4844,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 22.75479648081574,
+      "z": 24.43492230358645
+    },
+    {
+      "seconds": 40.25,
+      "type": "scout-send",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5016,
+        "wood": 5246,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5016,
+        "wood": 5246,
+        "gold": 885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 41.5,
+      "type": "move",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5016,
+        "wood": 5246,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5016,
+        "wood": 5246,
+        "gold": 885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 44.75,
+      "type": "scout-send",
+      "x": 10,
+      "z": 10,
+      "before": {
+        "food": 5016,
+        "wood": 5246,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5016,
+        "wood": 5246,
+        "gold": 885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 49.5,
+      "type": "attack",
+      "targetId": "forsaken-1",
+      "before": {
+        "food": 5018,
+        "wood": 5248,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5018,
+        "wood": 5248,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 10,
+      "z": 10
+    },
+    {
+      "seconds": 79,
+      "type": "return",
+      "before": {
+        "food": 5030,
+        "wood": 7260,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5030,
+        "wood": 7260,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 15.790530198294787,
+      "z": 11.365014589732786
+    },
+    {
+      "seconds": 90,
+      "type": "move",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5036,
+        "wood": 7266,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5036,
+        "wood": 7266,
+        "gold": 885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 94,
+      "type": "scout-send",
+      "x": 30,
+      "z": 30,
+      "before": {
+        "food": 5036,
+        "wood": 7266,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5036,
+        "wood": 7266,
+        "gold": 885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 99.25,
+      "type": "attack",
+      "targetId": "forsaken-2",
+      "before": {
+        "food": 5038,
+        "wood": 7268,
+        "gold": 885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5038,
+        "wood": 7268,
+        "gold": 885,
+        "stone": 60
+      },
+      "x": 30,
+      "z": 30
+    },
+    {
+      "seconds": 126.75,
+      "type": "return",
+      "before": {
+        "food": 5050,
+        "wood": 7280,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5050,
+        "wood": 7280,
+        "gold": 1885,
+        "stone": 60
+      },
+      "x": 31.146204506215856,
+      "z": 29.24747226050585
+    },
+    {
+      "seconds": 139.5,
+      "type": "move",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5054,
+        "wood": 7284,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5054,
+        "wood": 7284,
+        "gold": 1885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 140,
+      "type": "scout-send",
+      "x": 20,
+      "z": 20,
+      "before": {
+        "food": 5056,
+        "wood": 7286,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5056,
+        "wood": 7286,
+        "gold": 1885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 141.25,
+      "type": "move",
+      "x": 20,
+      "z": 20,
+      "before": {
+        "food": 5056,
+        "wood": 7286,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5056,
+        "wood": 7286,
+        "gold": 1885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 145,
+      "type": "scout-send",
+      "x": 10,
+      "z": 10,
+      "before": {
+        "food": 5058,
+        "wood": 7288,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5058,
+        "wood": 7288,
+        "gold": 1885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 149.75,
+      "type": "move",
+      "x": 10,
+      "z": 10,
+      "before": {
+        "food": 5058,
+        "wood": 7288,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5058,
+        "wood": 7288,
+        "gold": 1885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 154.75,
+      "type": "scout-send",
+      "x": 30,
+      "z": 10,
+      "before": {
+        "food": 5060,
+        "wood": 7290,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5060,
+        "wood": 7290,
+        "gold": 1885,
+        "stone": 60
+      }
+    },
+    {
+      "seconds": 160,
+      "type": "attack",
+      "targetId": "forsaken-3",
+      "before": {
+        "food": 5064,
+        "wood": 7294,
+        "gold": 1885,
+        "stone": 60
+      },
+      "after": {
+        "food": 5064,
+        "wood": 7294,
+        "gold": 1885,
+        "stone": 60
+      },
+      "x": 30,
+      "z": 10
+    },
+    {
+      "seconds": 193.75,
+      "type": "return",
+      "before": {
+        "food": 5076,
+        "wood": 7306,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5076,
+        "wood": 7306,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "x": 10.188155827984756,
+      "z": 27.424815671038775
+    },
+    {
+      "seconds": 205.5,
+      "type": "move",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5082,
+        "wood": 7312,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5082,
+        "wood": 7312,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 209,
+      "type": "scout-send",
+      "x": 10,
+      "z": 30,
+      "before": {
+        "food": 5082,
+        "wood": 7312,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5082,
+        "wood": 7312,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 213.75,
+      "type": "move",
+      "x": 10,
+      "z": 30,
+      "before": {
+        "food": 5084,
+        "wood": 7314,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5084,
+        "wood": 7314,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 217.5,
+      "type": "scout-send",
+      "x": 20,
+      "z": 20,
+      "before": {
+        "food": 5086,
+        "wood": 7316,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5086,
+        "wood": 7316,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 218.75,
+      "type": "move",
+      "x": 20,
+      "z": 20,
+      "before": {
+        "food": 5086,
+        "wood": 7316,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5086,
+        "wood": 7316,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 222.5,
+      "type": "scout-send",
+      "x": 10,
+      "z": 10,
+      "before": {
+        "food": 5088,
+        "wood": 7318,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5088,
+        "wood": 7318,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 227.25,
+      "type": "move",
+      "x": 10,
+      "z": 10,
+      "before": {
+        "food": 5090,
+        "wood": 7320,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5090,
+        "wood": 7320,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 232.25,
+      "type": "scout-send",
+      "x": 30,
+      "z": 10,
+      "before": {
+        "food": 5092,
+        "wood": 7322,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5092,
+        "wood": 7322,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 237.5,
+      "type": "move",
+      "x": 30,
+      "z": 10,
+      "before": {
+        "food": 5094,
+        "wood": 7324,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5094,
+        "wood": 7324,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 242.5,
+      "type": "scout-send",
+      "x": 30,
+      "z": 30,
+      "before": {
+        "food": 5096,
+        "wood": 7326,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5096,
+        "wood": 7326,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 247.75,
+      "type": "move",
+      "x": 30,
+      "z": 30,
+      "before": {
+        "food": 5098,
+        "wood": 7328,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5098,
+        "wood": 7328,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 252.75,
+      "type": "scout-send",
+      "x": 10,
+      "z": 30,
+      "before": {
+        "food": 5100,
+        "wood": 7330,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5100,
+        "wood": 7330,
+        "gold": 1885,
+        "stone": 1560
+      }
+    },
+    {
+      "seconds": 257.5,
+      "type": "attack",
+      "targetId": "forsaken-1",
+      "before": {
+        "food": 5102,
+        "wood": 7332,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "after": {
+        "food": 5102,
+        "wood": 7332,
+        "gold": 1885,
+        "stone": 1560
+      },
+      "x": 10,
+      "z": 30
+    },
+    {
+      "seconds": 285,
+      "type": "return",
+      "before": {
+        "food": 5114,
+        "wood": 7344,
+        "gold": 1885,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5114,
+        "wood": 7344,
+        "gold": 1885,
+        "stone": 3060
+      },
+      "x": 8.858890693267362,
+      "z": 29.498951198470433
+    },
+    {
+      "seconds": 1532,
+      "type": "alliance-create",
+      "name": "Oath of the Crossing",
+      "before": {
+        "food": 5612,
+        "wood": 7842,
+        "gold": 1885,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5612,
+        "wood": 7842,
+        "gold": 1835,
+        "stone": 3060
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 1532,
+      "type": "move",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5612,
+        "wood": 7842,
+        "gold": 1835,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5612,
+        "wood": 7842,
+        "gold": 1835,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1532.25,
+      "type": "flag",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5612,
+        "wood": 7842,
+        "gold": 1835,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5612,
+        "wood": 7782,
+        "gold": 1815,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1562.25,
+      "type": "move",
+      "x": 18.77168849910167,
+      "z": 19.428613400226364,
+      "before": {
+        "food": 5624,
+        "wood": 7794,
+        "gold": 1815,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5624,
+        "wood": 7794,
+        "gold": 1815,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1564.25,
+      "type": "flag",
+      "x": 26,
+      "z": 20,
+      "before": {
+        "food": 5624,
+        "wood": 7794,
+        "gold": 1815,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5624,
+        "wood": 7734,
+        "gold": 1795,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1574.25,
+      "type": "move",
+      "x": 26,
+      "z": 20,
+      "before": {
+        "food": 5628,
+        "wood": 7738,
+        "gold": 1795,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5628,
+        "wood": 7738,
+        "gold": 1795,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1576.25,
+      "type": "flag",
+      "x": 34,
+      "z": 20,
+      "before": {
+        "food": 5630,
+        "wood": 7740,
+        "gold": 1795,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5630,
+        "wood": 7680,
+        "gold": 1775,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1586.25,
+      "type": "return",
+      "before": {
+        "food": 5634,
+        "wood": 7684,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5634,
+        "wood": 7684,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "x": 34,
+      "z": 20
+    },
+    {
+      "seconds": 1590.25,
+      "type": "rally-create",
+      "targetId": "gate-east",
+      "count": 10,
+      "before": {
+        "food": 5636,
+        "wood": 7686,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5636,
+        "wood": 7686,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 1740.25,
+      "type": "move",
+      "x": 39,
+      "z": 20,
+      "before": {
+        "food": 5696,
+        "wood": 7746,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5696,
+        "wood": 7746,
+        "gold": 1775,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1743,
+      "type": "move",
+      "x": 50,
+      "z": 20,
+      "before": {
+        "food": 5696,
+        "wood": 7746,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5696,
+        "wood": 7746,
+        "gold": 1775,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1744.75,
+      "type": "flag",
+      "x": 43,
+      "z": 20,
+      "before": {
+        "food": 5696,
+        "wood": 7746,
+        "gold": 1775,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5696,
+        "wood": 7686,
+        "gold": 1755,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1754.75,
+      "type": "move",
+      "x": 43,
+      "z": 20,
+      "before": {
+        "food": 5700,
+        "wood": 7690,
+        "gold": 1755,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5700,
+        "wood": 7690,
+        "gold": 1755,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1757,
+      "type": "flag",
+      "x": 51,
+      "z": 24,
+      "before": {
+        "food": 5702,
+        "wood": 7692,
+        "gold": 1755,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5702,
+        "wood": 7632,
+        "gold": 1735,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1767,
+      "type": "move",
+      "x": 51,
+      "z": 24,
+      "before": {
+        "food": 5706,
+        "wood": 7636,
+        "gold": 1735,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5706,
+        "wood": 7636,
+        "gold": 1735,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1769.5,
+      "type": "flag",
+      "x": 58.999999999999986,
+      "z": 29.999999999999986,
+      "before": {
+        "food": 5706,
+        "wood": 7636,
+        "gold": 1735,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5706,
+        "wood": 7576,
+        "gold": 1715,
+        "stone": 3060
+      }
+    },
+    {
+      "seconds": 1779.5,
+      "type": "return",
+      "before": {
+        "food": 5710,
+        "wood": 7580,
+        "gold": 1715,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5710,
+        "wood": 7580,
+        "gold": 1715,
+        "stone": 3060
+      },
+      "x": 58.999999999999986,
+      "z": 29.999999999999986
+    },
+    {
+      "seconds": 1790.25,
+      "type": "rally-create",
+      "targetId": "gate-crown-south",
+      "count": 10,
+      "before": {
+        "food": 5716,
+        "wood": 7586,
+        "gold": 1715,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5716,
+        "wood": 7586,
+        "gold": 1715,
+        "stone": 3060
+      },
+      "x": 18.77168849910167,
+      "z": 19.428613400226364
+    },
+    {
+      "seconds": 1947.5,
+      "type": "move",
+      "x": 60,
+      "z": 39,
+      "before": {
+        "food": 5778,
+        "wood": 7648,
+        "gold": 1715,
+        "stone": 3060
+      },
+      "after": {
+        "food": 5778,
+        "wood": 7648,
+        "gold": 1715,
+        "stone": 3060
+      }
+    }
+  ]
+}

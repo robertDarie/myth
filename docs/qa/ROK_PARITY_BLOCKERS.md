@@ -1,3 +1,9 @@
+# Recovery A functional update — 2026-11-17
+
+The prior containment-only frontier gap is resolved at functional compatibility scope:all10 borders have real persistent pass encounters, source-authorized travel and production capture tests. The owner approved existing original Divine Gate rules. Exact RoK defender rosters, per-tier opening/protection schedules and numerical parity remain UNVERIFIED; no invented neutral troop roster or first-capture loot. See [current Recovery A evidence](RECOVERY_A_ZONES_PASSES.md). Other historical blockers below remain unless separately evidenced.
+
+---
+
 # Reference and dependency blockers
 
 2026-11-16. **Full RoK parity NOT CERTIFIED; Tasks6–11 not complete.** This file records concrete missing prerequisites, not permission to replace them with prototype estimates. Earlier research workbook/table names are leads, not independent proof.

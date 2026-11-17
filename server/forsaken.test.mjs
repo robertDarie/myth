@@ -8,7 +8,7 @@ import { ensureArmaments } from './city.mjs';
 import { openRealm } from './realms.mjs';
 import { unitTotal } from './troops.mjs';
 import { provinceAt } from './world-map.mjs';
-const setup=()=>{const w=new World({random:()=>.25,now:()=>Date.UTC(2026,10,14)}),s=w.join('Hunter'),p=w.authenticate(s.token),c=w.camps[0];p.buildings.lumber=0;p.x=p.z=c.x=c.z=22;
+const setup=()=>{const w=new World({random:()=>.25,now:()=>Date.UTC(2026,10,14)}),s=w.join('Hunter'),p=w.authenticate(s.token),c=w.camps[0];p.buildings.lumber=0;p.homeX=p.homeZ=p.x=p.z=c.x=c.z=22;
   // This is an authored combat fixture, not a natural spawn. Move the entire
   // patrol frame together so restart tests do not serialize an impossible camp.
   c.anchorX=c.anchorZ=c.patrolX=c.patrolZ=22;c.provinceId=provinceAt(c).id;

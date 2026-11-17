@@ -1,6 +1,6 @@
 import { initializePopulation, prepareSavedPopulation, restorePopulation, populationTick, populationCommand, campDestination, publicForsakenProgress } from './forsaken-population.mjs';
 import { configureForsaken, forsakenCard, initializeForsakenPlayer, restoreForsaken, fightForsaken, forsakenReason } from './forsaken.mjs';
-import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
+import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, PASS_DEFINITIONS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
 import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
 import { migrateNumericWorld } from './numeric-migration.mjs';
 import { chooseCitySpawn } from './spawning.mjs';
@@ -16,7 +16,7 @@ import { ensureDiplomacy, diplomacyCommand, diplomacySnapshot, validateDiplomacy
 import { ensureSeason, seasonSnapshot, validateSeason, seasonCommand } from './season.mjs';
 import { createStrongholds, tickStrongholds, STRONGHOLD_RULES, validateStrongholds } from './strongholds.mjs';
 import { initializeJourney, refreshJourney, journeyMetric, journeyCommand, journeySnapshot, validateJourney, legacyHeroReward } from './chapters.mjs';
-import { route, travel } from './navigation.mjs';
+import { route, travel, reachableRegions, objectiveRoute } from './navigation.mjs';
 import { initializeExploration, migrateScouting, explorationTick, explorationCommand, filterFog, visible, visionContext, validateExploration } from './exploration.mjs';
 import { initializeFindings, validateFindings, findingCommand } from './findings.mjs';
 import { initializeRecon, validateRecon } from './recon.mjs';
@@ -63,7 +63,7 @@ export class World {
     if(referenceScale(this))for(const n of this.nodes){n.remaining*=100;n.capacity*=100;}
     this.camps.push(...frontierCamps());
     if(referenceScale(this))for(const c of this.camps){const r=referenceCamp(c.level);c.health=c.maxHealth=r.maxHealth;configureForsaken(c);}
-    this.sites = [...siteDefinitions,...frontierSites()].map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
+    this.sites = [...siteDefinitions.filter(s=>s.kind!=='gate'),...PASS_DEFINITIONS,...frontierSites()].map(s => ({ ...s, allianceId: '', challengerId: '', progress: 0 }));
     this.flags = []; for (const site of this.sites) initializeFortification(site, site.kind,this); initializeKingdom(this);initializePopulation(this,true);
   }
   event(message) { this.events.unshift({ time: Math.round(this.time), message }); this.events.length = Math.min(this.events.length, 12); }
@@ -128,7 +128,7 @@ export class World {
   canEnter(p, destination) {
     p = this.owner(p);
     const province=provinceAt(destination);
-    return !!province&&province.gates.every(id=>p.allianceId&&this.sites.some(s=>s.id===id&&s.allianceId===p.allianceId)&&siteIsOpen(this,id));
+    return !!province&&reachableRegions(this,p).has(province.id);
   }
   normalizeDeployment(){for(const a of this.armies())if(a.target||!this.atHome(a))a.deployed=true;}
   command(p, c) {
@@ -309,6 +309,7 @@ export class World {
     }
   }
   captureTick(site, dt) {
+    if(site.kind==='gate'){for(const a of this.armies())if(a.target?.type==='capture'&&a.target.id===site.id){a.target=null;a.state='Pass requires a rally encounter';}return;}
     if (!siteIsOpen(this, site.id)) { for (const a of this.armies()) if (a.target?.type==='capture'&&a.target.id===site.id) { a.target=null;a.state='Kingdom stage locked'; } return; }
     const contenders = new Set(this.armies().filter(p => p.target?.type === 'capture' && p.target.id === site.id && p.health > 0 && p.recovery === 0 && distance(p, site) <= 2.001 && this.owner(p).allianceId && this.canEnter(p, site) && (!site.allianceId || site.allianceId === this.owner(p).allianceId) && territoryNear(this, this.owner(p).allianceId, site)).map(p => this.owner(p).allianceId));
     if (contenders.size !== 1) { if (contenders.size === 0) site.progress = Math.max(0, site.progress - dt); return; }
@@ -354,7 +355,7 @@ export class World {
       flags: this.flags, strongholds: this.strongholds, rallies: this.rallies, garrisons: this.garrisons, sieges: this.sieges, messages: this.messages, markers: this.markers, battles: [...this.battles.values()], time: this.time, events: this.events } };
   }
   static fromSave(data, options = {}) {
-    if(!Number.isInteger(data?.schema)||data.schema<1||data.schema>27)throw new Error('Unsupported or damaged save format.');
+    if(!Number.isInteger(data?.schema)||data.schema<1||data.schema>WORLD_SCHEMA)throw new Error('Unsupported or damaged save format.');
     if(data?.schema>=27&&data?.world?.numericVersion===undefined)throw new Error('Missing saved numeric profile.');
     if(data?.world && data.world.numericVersion===undefined){
       const original=structuredClone(data);original.world.numericVersion=0;
@@ -365,12 +366,14 @@ export class World {
     if(data?.schema<15)data=migrateEconomy(data);
     data = migrateMap(data);
     const w = structuredClone(data?.world);
-    if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27].includes(data?.schema) || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
+    if (!Number.isInteger(data?.schema)||data.schema<1||data.schema>WORLD_SCHEMA || !w || !['players', 'sessions', 'alliances', 'camps', 'nodes', 'sites', 'flags', 'events'].every(k => Array.isArray(w[k]))) throw new Error('Unsupported or damaged save format.');
     if (w.players.length > LIMITS.maxCities || !Number.isFinite(w.time) || w.time < 0) throw new Error('Invalid saved world.');
     const world = new World({...options,numericVersion:w.numericVersion,cityCapacity:options.cityCapacity??w.cityCapacity??LIMITS.defaultCities});
     if(w.pveVersion!==undefined&&![0,1].includes(w.pveVersion))throw new Error('Unsupported saved PvE version.');
     prepareSavedPopulation(w,world);
     world.numericMigration=w.numericMigration??null;world.pveVersion=w.pveVersion??0;
+    if(data.schema<28)for(const pass of world.sites.filter(s=>s.kind==='gate'))if(!w.sites.some(s=>s.id===pass.id))w.sites.push(structuredClone(pass));
+    for(const pass of PASS_DEFINITIONS){const saved=w.sites.find(s=>s.id===pass.id);if(!saved)continue;if(saved.kind!=='gate'||saved.x!==pass.x||saved.z!==pass.z||data.schema>=28&&(saved.corridorId!==pass.corridorId||JSON.stringify(saved.zoneIds)!==JSON.stringify(pass.zoneIds)))throw new Error('Invalid saved pass topology.');Object.assign(saved,{corridorId:pass.corridorId,zoneIds:[...pass.zoneIds],openingStage:pass.openingStage,tier:pass.tier,encounter:pass.encounter});}
     if(data.schema<26&&Array.isArray(w.strongholds))for(const t of world.strongholds.filter(t=>t.id.startsWith('frontier-')))if(!w.strongholds.some(old=>old.id===t.id))w.strongholds.push(structuredClone(t));
     if (data.schema >= 10) {if(!Number.isSafeInteger(w.activityClockMs)||w.activityClockMs<0)throw new Error('Invalid saved activity clock.');world.activityClockMs = w.activityClockMs;}
     if (data.schema === 1) for (const node of resourceNodes) if (!w.nodes.some(n => n.id === node.id)) w.nodes.push({ ...node });
@@ -511,7 +514,8 @@ export class World {
     const p = this.owner(a);
     const destination = campaignDestination(this, a) ?? (a.target?.type === 'pvp' ? this.army(a.target.id) : a.target?.type==='attack'?campDestination(this,a):a.target?.id ? [...this.camps, ...this.nodes, ...this.sites].find(item => item.id === a.target.id) : a.target);
     const assignment = campaignFor(this, a.id);
-    const path = destination ? route(this, a, destination, a.target?.type === 'return') : [];
+    const pass=assignment&&(assignment.kind==='garrison'||assignment.group.phase!=='Assembling')?this.sites.find(s=>s.id===assignment.group.targetId&&s.kind==='gate'):null;
+    const path = pass?objectiveRoute(this,a,pass):destination ? route(this, a, destination, a.target?.type === 'return') : [];
     return { protectedField:p.cityLevel<2||this.atHome(a)||a.recovery>0,deployed:a.deployed,cargo:{...a.cargo},carryCapacity:carryCapacity(this,a), route: path || [], assignmentKind: assignment?.kind || '', assignmentId: assignment ? (assignment.group.id || assignment.group.targetId) : '', id: a.id, ownerId: p.id, civilization: p.civilization, attackSequence: a.attackSequence ?? 0, attackX: a.attackX ?? a.x, attackZ: a.attackZ ?? a.z, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
       units: { ...a.units }, skillKind: activeKind(a.commanderId), commanderId: a.commanderId, secondaryCommanderId: a.secondaryCommanderId || '', equippedRelic: a.equippedRelic, formationActive: formationOf(a.units).active, formationName: FORMATION.name, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
       troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), recovery: a.recovery, rage: Math.floor(a.rage), shield: Math.ceil(a.shield), lastSkill: a.lastSkill, skillCasts: a.skillCasts,
@@ -541,6 +545,9 @@ export class World {
       alliances: [...this.alliances.values()].map(({weekly,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
       commanders: COMMANDERS.map(c => ({ ...c, skillKind: activeKind(c.id) })), civilizations: CIVILIZATIONS, events: this.events.map(e => ({ ...e })) };
     const result=viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId),vision) : snapshot;
+    const reachable=viewer?reachableRegions(this,viewer):null;
+    // Public strategic control, never hidden enemy troop/garrison intelligence.
+    result.passes=this.sites.filter(s=>s.kind==='gate').map(s=>{const locked=!siteIsOpen(this,s.id),own=!!viewer?.allianceId&&s.allianceId===viewer.allianceId,known=!viewer||own||vision.seen(s),approachAccessible=!reachable||s.zoneIds.some(id=>reachable.has(id));return {...s,locked,health:known?s.health:0,maxHealth:known?s.maxHealth:0,defendersKnown:known,garrisonMarches:own?this.garrisons.find(g=>g.targetId===s.id)?.armyIds.length??0:-1,approachAccessible,militaryAccess:!locked&&own,accessExplanation:locked?'Sealed until The Divine Gates Awaken':own?'Your alliance controls this crossing':!viewer?.allianceId?'Join an alliance; scouts may pass':!approachAccessible?'Secure the earlier passes before approaching':!territoryNear(this,viewer.allianceId,s)?'Extend connected alliance territory to this pass':'Rally from an accessible side to defeat the pass fortification'};});
     if(referenceScale(this)&&viewer)for(const c of result.camps)c.lockedReason=forsakenReason(this,viewer,c);
     return result;
   }

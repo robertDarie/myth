@@ -89,12 +89,12 @@ test('malformed stronghold state, generations and reward ledgers are rejected ra
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad),/stronghold/);
  }
  until(w,()=>t.respawn>0);for(const mutate of[r=>r.rewards[0].resources.gold++,r=>r.rewards[0].xp++,r=>r.guardHealthAfter=1]){const bad=structuredClone(w.toSave());mutate(bad.world.players[0].groupReports[0]);assert.throws(()=>World.fromSave(bad),/stronghold/);}
- const old=structuredClone(w.toSave());legacyMap(old);old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,8);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,27);
+ const old=structuredClone(w.toSave());legacyMap(old);old.schema=8;delete old.world.strongholds;for(const p of old.world.players){delete p.strongholdVictories;p.groupReports=[];}const restored=World.fromSave(old);assert.equal(restored.strongholds.length,8);assert.equal(restored.players.get(a.id).strongholdVictories,0);assert.equal(restored.toSave().schema,28);
 });
 
 test('ordinary members can lead PvE rallies, while higher tiers enforce gate access and stronger armies',()=>{
  const {w,a,b,t}=setup();cmd(w,b,'rally-create',t.id);cmd(w,a,'rally-join',w.rallies[0].id);cmd(w,b,'rally-leave');advance(w,5);
- const tier2=w.strongholds.find(t=>t.tier===2);assert.throws(()=>cmd(w,a,'rally-create',tier2.id),/route locked/);
+ const tier2=w.strongholds.find(t=>t.tier===2);assert.throws(()=>cmd(w,a,'rally-create',tier2.id),/route locked|authorized gate route/);
  for(const s of w.sites.filter(s=>s.kind==='gate'))s.allianceId=a.allianceId;
  // A larger formation demonstrates that tier 2 is winnable rather than just a larger UI number.
  for(const p of[a,b]){p.units.infantry=40;p.troops=40;p.health=w.stats(p).maxHealth;}

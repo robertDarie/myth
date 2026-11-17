@@ -104,8 +104,14 @@ namespace ThronesOfMyth
                 if(!n.lastKnown)piece.resource?.Observe(n.remaining,n.capacity);
             }
             foreach(var army in world.armies)if(army.state=="Gathering"&&pieces.TryGetValue(army.targetId??"",out var target)&&target.resource!=null)pieces[army.id].actor.GatheringColor(target.color);
+            foreach(var pass in world.passes??System.Array.Empty<SiteData>())
+            {
+                string label=pass.name+" · "+(pass.locked?"SEALED":pass.militaryAccess?"ALLIANCE ACCESS":"BLOCKED CROSSING");
+                Put(seen,pass.id,"site",pass.x,pass.z,pass.militaryAccess?blue:pass.locked?Color.gray:string.IsNullOrEmpty(pass.allianceId)?gold:red,label,pass.defendersKnown?pass.health/Mathf.Max(1,pass.maxHealth):-1,"gate");
+            }
             foreach (var s in world.sites)
             {
+                if(s.kind=="gate"&&world.passes!=null)continue;
                 if(s.lastKnown && !LandmarkCopy.ShowRemembered(s.terrainExplored))continue;
                 string siteLabel = s.lastKnown ? LandmarkCopy.MapLabel(s.terrainExplored, s.name) : s.name + (s.locked ? " · Sealed" : "") + (s.unknown ? " · Unsurveyed" : "") + (s.progress > 0 ? " · " + Mathf.FloorToInt(s.progress / 15 * 100) + "%" : "");
                 Put(seen, s.id, "site", s.x, s.z, string.IsNullOrEmpty(s.allianceId) ? new Color(0.65f, 0.55f, 0.8f) : s.allianceId == allianceId ? blue : red, siteLabel, s.lastKnown ? -1 : s.health / Mathf.Max(1, s.maxHealth), s.kind);
@@ -147,6 +153,7 @@ namespace ThronesOfMyth
             }
             foreach (var id in removed) pieces.Remove(id);synchronizedAt=Time.unscaledTime;
             DrawSupply(world, allianceId);
+            DrawPassTopology(world);
         }
         private void StampRecord(string id){if(pieces.TryGetValue(id,out var piece)){piece.health=-1;piece.healthTrace.Observe(-1,Time.unscaledTime);}}
         private void Update()
@@ -216,6 +223,7 @@ namespace ThronesOfMyth
         public void Clear()
         {
             foreach (var piece in pieces.Values) Destroy(piece.root); pieces.Clear();synchronizedAt=-100;fogGrid.Reset();reportGuard.Reset();ClearInteraction();ClearSupply();
+            topologySignature="";if(topologyRoot!=null)Destroy(topologyRoot.gameObject);topologyRoot=null;
         }
         private void OnDestroy()
         {

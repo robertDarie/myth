@@ -11,13 +11,15 @@
   "candidate_reference_version": "US iOS 1.1.13.79 observed 2026-11-16; older table bindings UNKNOWN",
   "feature_status_counts": {
     "MISMATCH": 14,
-    "REFERENCE UNVERIFIED": 181,
-    "MISSING": 11
+    "REFERENCE UNVERIFIED": 176,
+    "MISSING": 11,
+    "PARTIAL PARITY": 5
   },
   "numeric_evidence_counts": {
     "VERIFIED": 3256,
     "CORROBORATED": 4,
     "UNKNOWN": 3868,
     "CONFLICTING": 2
-  }
+  },
+  "latest_functional_scope": "RecoveryA original Divine Gate compatibility, owner approved2026-11-17; no whole-feature numerical parity certified"
 }

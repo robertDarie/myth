@@ -61,7 +61,7 @@ test('production engine settles ordinary combat and PvP with actual large armies
   for(let i=0;i<300&&c.health>0&&p.recovery===0;i++){p.cooldown=0;w.battle(p,c,w.stats(p));}
   assert.equal(c.health,0);assert.equal(p.ap,1450);assert.equal(p.heroRecords.captain.xp,100);assert.ok(p.health>0);assert.equal(p.troops,900);
   const resources=p.food,revision=w.logisticsRevision;w.tick(.1);assert.equal(p.food,resources);assert.ok(w.logisticsRevision>=revision);
-  const q=w.authenticate(w.join('Second').token);p.target=null;p.cityLevel=q.cityLevel=2;p.x=q.x=20;p.z=20;q.z=21;p.deployed=q.deployed=true;
+  const q=w.authenticate(w.join('Second').token);p.target=null;p.cityLevel=q.cityLevel=2;p.homeX=q.homeX=10;p.homeZ=q.homeZ=10;p.x=q.x=20;p.z=20;q.z=21;p.deployed=q.deployed=true;
   q.units.infantry=q.troops=450;p.health=w.stats(p).maxHealth;q.health=w.stats(q).maxHealth;p.target={type:'pvp',id:q.id};
   const total=count(p)+count(q);
   for(let i=0;i<500&&(p.target?.type==='pvp'||w.battles.size);i++){w.time++;p.cooldown=q.cooldown=0;tickBattle(w,p,q);}

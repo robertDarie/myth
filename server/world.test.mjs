@@ -16,7 +16,7 @@ test('movement enforces speed, finite bounds and locked provinces', () => {
   const w = testWorld(), p = player(w), start = p.x;
   cmd(w, p, 'move', { x: 14, z: p.z }); w.tick(0.25); assert.equal(p.x, start + 1);
   for (const x of [-1, 80, null, '10', NaN]) assert.throws(() => cmd(w, p, 'move', { x, z: 4 }));
-  assert.throws(() => cmd(w, p, 'move', { x: 50, z: 20 }), /Gate/);
+  assert.throws(() => cmd(w, p, 'move', { x: 50, z: 20 }), /gate/i);
   advance(w, 5); assert.equal(p.x, 14); assert.equal(p.target, null);
 });
 test('five civilizations provide distinct functional bonuses; four commander rarities exist', () => {
@@ -53,7 +53,7 @@ test('a completed camp cycle does not pay a stale or overlapping order again', (
   assert.equal(p.target, null); assert.equal(p.state, 'Target unavailable');
   assert.equal(p.kills, 1); assert.equal(p.gold, gold); assert.equal(p.sigils, sigils); assert.ok(p.ap >= ap);
   const loaded = World.fromSave(w.toSave()), restored = loaded.authenticate(joined.token), camp = loaded.camps[0];
-  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 27);
+  assert.equal(restored.kills, 1); assert.equal(restored.gold, gold); assert.equal(camp.health, 0); assert.equal(loaded.toSave().schema, 28);
   camp.respawn = 0.05; loaded.tick(0.1);
   assert.equal(camp.cycle, 2); assert.equal(camp.health, camp.maxHealth); assert.deepEqual(camp.contributors, {});
   restored.x = camp.x; restored.z = camp.z;
@@ -182,9 +182,9 @@ test('opposing occupiers contest captures and defenders reverse progress', () =>
   cmd(w, b, 'stop'); advance(w, 6); assert.equal(w.sites[0].progress, 0);
 });
 test('gates grant access; losing access cancels orders but return home remains possible', () => {
-  const w = testWorld(), p = player(w); rich(p); const id = alliance(w, p);
+  const w = testWorld(), p = player(w); rich(p); const id = alliance(w, p);p.cityLevel=2;p.buildings.oathhall=1;
   w.flags.push({ health: 250, maxHealth: 250, buildRemaining: 0, isRoot: true, connected: true, id: 'near-gate', allianceId: id, x: 33, z: 20 }); p.x = 37; p.z = 20;
-  cmd(w, p, 'capture', { targetId: 'gate-east' }); advance(w, 16);
+  cmd(w,p,'return');advance(w,30);cmd(w, p, 'capture', { targetId: 'gate-east' }); advance(w, 100);
   assert.equal(w.sites.find(s => s.id === 'gate-east').allianceId, id);
   cmd(w, p, 'move', { x: 55, z: 20 }); advance(w, 2); assert.ok(p.x > 40);
   assert.throws(() => cmd(w, p, 'move', { x: 65, z: 65 }));
@@ -233,7 +233,7 @@ test('economic and territory campaign reaches the sanctuary with opened-stage fi
   }
   cmd(w, p, 'return'); advance(w, 30);
   cmd(w, p, 'upgrade'); advance(w, 21);
-  for (const id of ['oracle', 'academy', 'menagerie']) { cmd(w, p, 'building-upgrade', { targetId: id }); advance(w, 13); }
+  for (const id of ['oracle', 'academy', 'menagerie', 'oathhall']) { cmd(w, p, 'building-upgrade', { targetId: id }); advance(w, 13); }
   cmd(w, p, 'recruit'); advance(w, 21);
   for (let i = 0; i < 4; i++) { cmd(w, p, 'train'); advance(w, 9); }
   cmd(w, p, 'reinforce');
@@ -241,13 +241,13 @@ test('economic and territory campaign reaches the sanctuary with opened-stage fi
   cmd(w,p,'quest');cmd(w, p, 'commander', { targetId: 'atalanta' });
   const id = alliance(w, p);
   const build = (x, z) => { cmd(w, p, 'move', { x, z }); advance(w, 30); cmd(w, p, 'flag', { x, z }); advance(w, w.flags.at(-1).buildRemaining + 0.1); };
-  const capture = targetId => { cmd(w, p, 'capture', { targetId }); advance(w, 30); assert.equal(w.sites.find(s => s.id === targetId).allianceId, id); };
+  const capture = targetId => { const gate=w.sites.find(s=>s.id===targetId).kind==='gate';if(gate){cmd(w,p,'return');advance(w,80);}cmd(w, p, 'capture', { targetId }); advance(w, gate?200:30); assert.equal(w.sites.find(s => s.id === targetId).allianceId, id); };
   build(5, 5); build(13, 12); build(20, 20); capture('shrine-dawn');
   build(30, 20); capture('gate-east'); build(40, 20);
   build(20, 30); capture('gate-north');
-  build(40, 30); build(50, 30); build(50, 40); build(50, 50); capture('shrine-life');
+  build(40, 30); build(50, 30);build(60,30);capture('gate-crown-south');build(50, 40); build(50, 50); capture('shrine-life');
   build(60, 50); build(60, 60); capture('first-sanctuary');
-  assert.equal(w.sites.filter(s => s.allianceId === id).length, 5);
+  assert.equal(w.sites.filter(s => s.allianceId === id).length, 6);
   assert.equal(p.cityLevel, 2); assert.equal(p.mythic, 1); assert.equal(p.troops, 40);
   assert.ok(w.stats(p).gather > 1); assert.ok(p.gold >= 0 && p.wood >= 0 && p.food >= 0);
 });

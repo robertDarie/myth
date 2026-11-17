@@ -193,7 +193,7 @@ test('idempotency, schema 25, older saves, SQLite accounts and legacy mode stay 
   const world = new World(); const saved = world.join('Schema'); world.command(world.authenticate(saved.token), { type: 'chat-send', name: 'Schema note' });
   new WorldStore(jsonPath).save(world);
   const raw = JSON.parse(readFileSync(jsonPath, 'utf8'));
-  assert.equal(raw.schema, 27);
+  assert.equal(raw.schema, 28);
   const current = openRealm({ id: 'local', name: 'Local Kingdom', savePath: jsonPath });
   assert.equal(current.world.authenticate(saved.token).name, 'Schema');
   current.close();

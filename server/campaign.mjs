@@ -3,7 +3,7 @@ import { WORLD_SIZE } from './world-map.mjs';
 import { economyRules, ECONOMY, refreshEconomy } from './economy.mjs';
 import { siteIsOpen } from './kingdom.mjs';
 import { isStronghold, STRONGHOLD_RULES, initStrongholdReport, strongholdRound, rewardStronghold, resetStronghold, validateStrongholdReport } from './strongholds.mjs';
-import { route, travel } from './navigation.mjs';
+import { route, travel, objectiveRoute, objectiveTravel } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { allianceRole } from './social.mjs';
 import { protectionReason } from './diplomacy.mjs';
@@ -94,16 +94,18 @@ function targetReason(w,rally) {
   if(t&&!siteIsOpen(w,t.id))return 'This sacred site is sealed by its kingdom milestone';
   if(!t||t.health<=0)return 'Target unavailable or ownership changed';
   const p=w.players.get(rally.leaderId);
-  if(!p||p.allianceId!==rally.allianceId||!w.canEnter(p,t))return 'Leader unavailable or route locked';
+  if(!p||p.allianceId!==rally.allianceId)return 'Leader unavailable or route locked';
   const leader=w.army(rally.leaderArmyId);
-  if(!leader||!route(w,leader,t))return 'No authorized gate route to the rally target';
+  if(!leader||!objectiveRoute(w,leader,t))return 'No authorized gate route to the rally target';
   if(isStronghold(t))return t.respawn>0||rally.targetCycle!==t.cycle?'Stronghold is unavailable or has respawned':'';
-  if(t.allianceId!==rally.defendingAllianceId||!t.allianceId||t.allianceId===rally.allianceId)return 'Target unavailable or ownership changed';
+  if(t.allianceId!==rally.defendingAllianceId||!t.allianceId&&t.kind!=='gate'||t.allianceId===rally.allianceId)return 'Target unavailable or ownership changed';
   const treaty=protectionReason(w,rally.allianceId,t.allianceId);if(treaty)return treaty;
   if(!territoryNear(w,rally.allianceId,t))return 'Alliance territory disconnected';
   return '';
 }
 export function campaignCommand(w,p,c,fail) {
+  // A neutral pass is a real fortification encounter, not a free occupation channel.
+  if(c.type==='capture'&&w.sites.some(s=>s.id===c.targetId&&s.kind==='gate'))c={...c,type:'rally-create'};
   refreshBeacons(w);
   if(['alliance-leave','alliance-kick'].includes(c.type)) {
     const member=c.type==='alliance-leave'?p:w.players.get(c.targetId);
@@ -147,9 +149,8 @@ export function campaignCommand(w,p,c,fail) {
   if(c.type==='garrison-join') {
     const t=fortification(w,c.targetId);
     if(!t||!siteIsOpen(w,t.id)||!p.allianceId||t.allianceId!==p.allianceId||t.health<=0||(t.buildRemaining||0)>0)fail('Choose a completed structure held by your alliance.');
-    if(!w.canEnter(p,t))fail('The garrison is behind a locked gate.');
     const a=ownMarch(w,p,c,fail);readyMarch(w,p,a,fail,false);
-    if(!route(w,a,t))fail('No open gate route from this march to the garrison. Return home first.');
+    if(!objectiveRoute(w,a,t))fail('No open gate route from this march to the garrison. Return home first.');
     let g=w.garrisons.find(g=>g.targetId===t.id);
     const ids=g?.armyIds||[], siege=siegeFor(w,t.id);
     if(ids.length>=CAMPAIGN_LIMITS.garrisonMarches||totalLoad(w,ids)+load(a)>campaignLimits(w).garrisonLoad)fail('Garrison march or troop capacity reached.');
@@ -233,15 +234,16 @@ export function tickCampaign(w,dt) {
   for(const g of [...w.garrisons]) {
     const t=fortification(w,g.targetId);
     for(const id of [...g.armyIds]) {
-      const a=w.army(id);if(!a||!t||w.owner(a).allianceId!==g.allianceId||t.allianceId!==g.allianceId||!route(w,a,t)){removeMember(w,{kind:'garrison',group:g},id,'Withdrawn');continue;}
-      if(travel(w,a,t,w.stats(a).speed,dt,1.6)){a.state='Garrisoned';if(!siegeFor(w,t.id))setOrder(a,'garrison',t.id,t,'Garrisoned');}else a.state='Garrison approaching';
+      const a=w.army(id);if(!a||!t||w.owner(a).allianceId!==g.allianceId||t.allianceId!==g.allianceId||!objectiveRoute(w,a,t)){removeMember(w,{kind:'garrison',group:g},id,'Withdrawn');continue;}
+      if(objectiveTravel(w,a,t,w.stats(a).speed,dt,1.6)){a.state='Garrisoned';if(!siegeFor(w,t.id))setOrder(a,'garrison',t.id,t,'Garrisoned');}else a.state='Garrison approaching';
     }
   }
   for(const r of [...w.rallies]) {
     const reason=targetReason(w,r);if(reason){removeRally(w,r,reason);continue;}
-    for(const id of [...r.armyIds])if(!w.army(id)||w.owner(w.army(id)).allianceId!==r.allianceId)removeMember(w,{kind:'rally',group:r},id,'Withdrawn');
+    const t=fortification(w,r.targetId);
+    for(const id of [...r.armyIds]){const a=w.army(id);if(!a||w.owner(a).allianceId!==r.allianceId||!(r.phase==='Assembling'?route(w,a,{x:r.meetX,z:r.meetZ}):objectiveRoute(w,a,t)))removeMember(w,{kind:'rally',group:r},id,'Withdrawn');}
     if(!r.armyIds.includes(r.leaderArmyId)){removeRally(w,r,'Rally leader unavailable');continue;}
-    const t=fortification(w,r.targetId),meeting={x:r.meetX,z:r.meetZ};
+    const meeting={x:r.meetX,z:r.meetZ};
     if(r.phase==='Assembling') {
       for(const a of actors(w,r.armyIds))travel(w,a,meeting,w.stats(a).speed,dt,0.6);
       if(w.time<r.assemblyEnds)continue;
@@ -252,8 +254,9 @@ export function tickCampaign(w,dt) {
     }
     if(r.phase==='Marching'&&isStronghold(t)&&r.armyIds.length<STRONGHOLD_RULES.minMarches){removeRally(w,r,'Stronghold rally fell below two marches');continue;}
     if(r.phase==='Marching') {
-      const before={x:r.x,z:r.z},speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));r.ownerId=r.leaderId;const arrived=travel(w,r,t,speed,dt,1.2);
-      for(const a of actors(w,r.armyIds)){a.x=Math.max(1,Math.min(WORLD_SIZE-1,a.x+r.x-before.x));a.z=Math.max(1,Math.min(WORLD_SIZE-1,a.z+r.z-before.z));setOrder(a,'rally',r.id,t,'Rally marching');}
+      const speed=Math.min(...actors(w,r.armyIds).map(a=>w.stats(a).speed));let arrived=true;
+      for(const a of actors(w,r.armyIds)){if(!objectiveTravel(w,a,t,speed,dt,1.2))arrived=false;setOrder(a,'rally',r.id,t,'Rally marching');}
+      const leader=w.army(r.leaderArmyId);r.x=leader.x;r.z=leader.z;
       if(!arrived)continue;
       if(isStronghold(t)){
        const members=[...new Set(actors(w,r.armyIds).map(a=>w.owner(a)))];for(const p of members)refreshEconomy(w,p);

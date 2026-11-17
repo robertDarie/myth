@@ -480,7 +480,7 @@ namespace ThronesOfMyth
             var boss = Array.Find(world.strongholds, t => t.id == selectedId);
             var camp = Array.Find(world.camps, c => c.id == selectedId);
             var node = Array.Find(world.nodes, n => n.id == selectedId);
-            var site = Array.Find(world.sites, s => s.id == selectedId);
+            var site = KnownSite(selectedId);
             var army = OwnMarches().Find(a => a.id == selectedId) ?? Array.Find(world.armies, a => a.id == selectedId);
             var beacon = Array.Find(world.flags, f => f.id == selectedId);
             var pin = Array.Find(world.markers, m => m.id == selectedId);
@@ -506,13 +506,24 @@ namespace ThronesOfMyth
             else if (site != null)
             {
                 title = site.name; subtitle = "HELD BY · " + AllianceName(site.allianceId); emblem = "temple";
-                bool routeOpen = (site.x <= 40 || Array.Exists(world.sites, s => s.id == "gate-east" && !string.IsNullOrEmpty(me.allianceId) && s.allianceId == me.allianceId)) && (site.z <= 40 || Array.Exists(world.sites, s => s.id == "gate-north" && !string.IsNullOrEmpty(me.allianceId) && s.allianceId == me.allianceId));
+                bool routeOpen = site.kind!="gate"||site.approachAccessible;
                 bool connected = TerritoryReach.AllianceCovers(world, me.allianceId, site.x, site.z);
                 health = site.health / Mathf.Max(1, site.maxHealth);
                 bool own = !string.IsNullOrEmpty(me.allianceId) && site.allianceId == me.allianceId;
                 bool hostile = !string.IsNullOrEmpty(site.allianceId) && !own;
                 action = string.IsNullOrEmpty(me.allianceId) ? "Join an alliance" : hostile ? "Plan rally" : own ? "Garrison / defend" : !routeOpen ? "Plan a route" : !connected ? "Extend territory" : "March & capture";
                 perform = () => { if (string.IsNullOrEmpty(me.allianceId) || (!hostile && !own && (!connected || !routeOpen))) OpenInterface(InterfacePage.Alliance); else if (hostile || own) OpenWarfare(site.id); else Send("capture", site.id); };
+                if(site.kind=="gate")
+                {
+                    subtitle=AllianceName(site.allianceId)+" · "+(site.locked?"SEALED":"OPEN FOR CONTEST")+"\n"+site.accessExplanation;
+                    if(site.zoneIds!=null&&site.zoneIds.Length==2)subtitle+="\n"+ZoneName(site.zoneIds[0])+" ↔ "+ZoneName(site.zoneIds[1]);
+                    subtitle+="\n"+(site.defendersKnown?"Fortification "+Mathf.CeilToInt(site.health)+" / "+Mathf.CeilToInt(site.maxHealth):"Scout the pass for defender intelligence");
+                    if(site.garrisonMarches>=0)subtitle+=" · "+site.garrisonMarches+" allied garrison marches";
+                    subtitle+="\nDefeat the fortification to capture; allied marches can garrison it";
+                    health=site.defendersKnown?site.health/Mathf.Max(1,site.maxHealth):-1;
+                    action=string.IsNullOrEmpty(me.allianceId)?"Join an alliance":own?"Garrison / defend":"Plan pass rally";
+                    perform=()=>{if(string.IsNullOrEmpty(me.allianceId))OpenInterface(InterfacePage.Alliance);else OpenWarfare(site.id);};
+                }
                 if (site.unknown) { subtitle = "UNSURVEYED LANDMARK · SEND A SCOUT"; action = "Scout this area"; perform = () => ScoutAt(site.x, site.z); health = -1; }
                 if (site.locked) { subtitle = "SEALED BY THE KINGDOM CHRONICLE"; action = "View opening milestone"; perform = () => GuidePage(InterfacePage.Kingdom); health = -1; }
             }

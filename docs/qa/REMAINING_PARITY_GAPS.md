@@ -1,3 +1,9 @@
+# Recovery A status amendment — 2026-11-17
+
+The missing physical-pass implementation described in the historical assessment below is now functionally delivered under the owner's explicit original-rule compatibility approval:7 zones/10 distinct local passes, actual capture/travel, scouts and schema28 migration. Exact reference defender/opening tables and full numerical parity remain UNVERIFIED. New native verification is separate. See [Recovery A](RECOVERY_A_ZONES_PASSES.md); other progression/combat/season gaps remain open. Do not redo the completed functional source checkpoint from this old gap list.
+
+---
+
 # Remaining gaps and task state
 
 Task 3 audit and Task 4 QA are published; alpha readiness failed. Recovery A route safety is delivered, but real frontier pass objectives remain missing. B scout separation is delivered. C passive/secondary-level correction is delivered, but secondary active casting is unresolved. D source/math/build repairs are delivered, but updated native acceptance is NOT TESTED. E progression design is PLANNED with essential reference/migration gaps. F proves legal manual full-map exploration and current prototype progression, not complete reference gameplay.

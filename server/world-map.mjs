@@ -1,9 +1,9 @@
 export const WORLD_SIZE=256, CELL_SIZE=4, FOG_WIDTH=WORLD_SIZE/CELL_SIZE;
-export const WORLD_SCHEMA=27, PROTOCOL=17;
+export const WORLD_SCHEMA=28, PROTOCOL=17;
 export const LIMITS=Object.freeze({defaultCities:32,maxCities:256,allianceMembers:100});
 export function cityLimit(value=LIMITS.defaultCities){if(!Number.isInteger(value)||value<1||value>LIMITS.maxCities)throw new Error('City capacity must be an integer from 1 to 256.');return value;}
 // The legacy four provinces keep their exact boundaries and Divine Gates.
-// Frontier provinces wrap their north/east edges; their own land is gate-free.
+// Province interiors remain unchanged; every shared-border crossing has a pass.
 export const PROVINCES=Object.freeze([
  {id:'first-frontier',name:'First Frontier',minX:0,maxX:40,minZ:0,maxZ:40,gates:[]},
  {id:'legacy-east',name:'Sunward Province',minX:40,maxX:80,minZ:0,maxZ:40,gates:['gate-east']},
@@ -13,20 +13,24 @@ export const PROVINCES=Object.freeze([
  {id:'ashen-fields',name:'Ashen Fields',minX:0,maxX:80,minZ:80,maxZ:256,gates:[]},
  {id:'outer-marches',name:'Outer Marches',minX:80,maxX:256,minZ:80,maxZ:256,gates:[]}
 ]);
-export function provinceAt(p){return PROVINCES.find(r=>p.x>r.minX&&p.x<=r.maxX&&p.z>r.minZ&&p.z<=r.maxZ);}
+export function provinceAt(p){return p&&Number.isFinite(p.x)&&Number.isFinite(p.z)&&p.x>=0&&p.x<=WORLD_SIZE&&p.z>=0&&p.z<=WORLD_SIZE?PROVINCES.find(r=>(p.x>r.minX||p.x===0&&r.minX===0)&&p.x<=r.maxX&&(p.z>r.minZ||p.z===0&&r.minZ===0)&&p.z<=r.maxZ):undefined;}
 export const STARTING_REGIONS=PROVINCES.filter(r=>r.gates.length===0).map(r=>({...r,minX:r.minX+3,maxX:r.maxX-3,minZ:r.minZ+3,maxZ:r.maxZ-3}));
 export const MAP_CORRIDORS=Object.freeze([
  {id:'east-low',gateId:'gate-east',a:{x:39,z:20},b:{x:41,z:20}},
- {id:'east-high',gateId:'gate-east',a:{x:39,z:60},b:{x:41,z:60}},
+ {id:'east-high',gateId:'gate-crown-west',a:{x:39,z:60},b:{x:41,z:60}},
  {id:'north-west',gateId:'gate-north',a:{x:20,z:39},b:{x:20,z:41}},
- {id:'north-east',gateId:'gate-north',a:{x:60,z:39},b:{x:60,z:41}},
- {id:'dawn-road',gateId:'gate-east',a:{x:79,z:20},b:{x:81,z:20}},
- {id:'crown-dawn',gateId:'gate-east',a:{x:79,z:60},b:{x:81,z:60}},
- {id:'ashen-road',gateId:'gate-north',a:{x:20,z:79},b:{x:20,z:81}},
- {id:'crown-ashen',gateId:'gate-north',a:{x:60,z:79},b:{x:60,z:81}},
- {id:'dawn-outer',gateId:'',a:{x:128,z:79},b:{x:128,z:81}},
- {id:'ashen-outer',gateId:'',a:{x:79,z:128},b:{x:81,z:128}}
+ {id:'north-east',gateId:'gate-crown-south',a:{x:60,z:39},b:{x:60,z:41}},
+ {id:'dawn-road',gateId:'gate-dawn-low',a:{x:79,z:20},b:{x:81,z:20}},
+ {id:'crown-dawn',gateId:'gate-dawn-high',a:{x:79,z:60},b:{x:81,z:60}},
+ {id:'ashen-road',gateId:'gate-ashen-low',a:{x:20,z:79},b:{x:20,z:81}},
+ {id:'crown-ashen',gateId:'gate-ashen-high',a:{x:60,z:79},b:{x:60,z:81}},
+ {id:'dawn-outer',gateId:'gate-outer-south',a:{x:128,z:79},b:{x:128,z:81}},
+ {id:'ashen-outer',gateId:'gate-outer-west',a:{x:79,z:128},b:{x:81,z:128}}
 ]);
+const PASS_NAMES=['Eastern Divine Gate','Gate of the Norn Crown','Northern Divine Gate','Gate of the Sun Oath','Gate of Eos','Gate of the Dawn Throne','Gate of the Ashen Oath','Gate of the Ember Crown','Gate of the Starward March','Gate of the Worldroot'];
+export const PASS_DEFINITIONS=Object.freeze(MAP_CORRIDORS.map((c,i)=>Object.freeze({id:c.gateId,name:PASS_NAMES[i],kind:'gate',x:c.a.x,z:c.a.z,corridorId:c.id,zoneIds:Object.freeze([provinceAt(c.a).id,provinceAt(c.b).id]),openingStage:'gates',tier:c.id.includes('crown')||c.id==='east-high'||c.id==='north-east'?3:c.id.includes('outer')?1:2,encounter:'original-divine-gate',description:'Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified.'})));
+for(const zone of PROVINCES){zone.category=STARTING_REGIONS.some(s=>s.id===zone.id)?'starting':zone.id==='legacy-crown'?'central':'intermediate';zone.gates=PASS_DEFINITIONS.filter(p=>p.zoneIds.includes(zone.id)).map(p=>p.id);Object.freeze(zone.gates);Object.freeze(zone);}
+for(const corridor of MAP_CORRIDORS){Object.freeze(corridor.a);Object.freeze(corridor.b);Object.freeze(corridor);}
 export const FRONTIER_HUBS=[];
 for(let z=16;z<256;z+=32)for(let x=16;x<256;x+=32)if(x>80||z>80)FRONTIER_HUBS.push({id:`frontier-${x}-${z}`,x,z});
 export const frontierNodes=()=>FRONTIER_HUBS.flatMap(h=>['wood','food','gold','stone','mana'].map((resource,i)=>({id:h.id+'-'+resource,name:['Suncrest Grove','Frontier Fields','Amber Vein','Oathstone Quarry','Starwell Spring'][i],resource,x:h.x+[-5,5,0,-8,8][i],z:h.z+[3,3,-5,-8,-8][i],remaining:600,capacity:600,refill:0})));

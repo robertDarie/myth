@@ -2,6 +2,47 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "actual baseline-code schema27 synthetic save conservation (32 seeds)",
+      "command": [
+        "node",
+        "scripts/check-recovery-a-legacy-saves.mjs"
+      ]
+    },
+    {
+      "name": "source-bound RecoveryA topology, legal expedition and actual Unity object evidence",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check_recovery_a_evidence.py"
+      ]
+    },
+    {
+      "name": "functional adjacent passes, capture, revocation and save migration",
+      "command": [
+        "node",
+        "--test",
+        "server/functional-passes.test.mjs"
+      ]
+    },
+    {
+      "name": "fresh legal two-pass expedition and outsider/scout separation",
+      "command": [
+        "node",
+        "scripts/recovery-a-playthrough.mjs"
+      ]
+    },
+    {
+      "name": "original Divine Gate numerical compatibility baseline",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "approved original numerical",
+        "server/functional-passes.test.mjs"
+      ]
+    },
+    {
       "name": "dated cross-feature QA evidence and source identity (not parity certification)",
       "command": [
         "python",

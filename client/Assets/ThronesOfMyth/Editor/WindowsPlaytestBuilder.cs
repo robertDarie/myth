@@ -83,6 +83,14 @@ namespace ThronesOfMyth.Editor
             if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64))
                 throw new BuildFailedException("Install Windows Build Support for this editor through Unity Hub.");
             string repository = Directory.GetParent(Application.dataPath).Parent.FullName;
+            string packageName="Windows";
+            var buildArguments=Environment.GetCommandLineArgs();int packageArgument=Array.IndexOf(buildArguments,"-thronesFullPackage");
+            if(packageArgument>=0)
+            {
+                if(packageArgument+1>=buildArguments.Length)throw new BuildFailedException("Missing full package folder name.");
+                packageName=buildArguments[packageArgument+1];
+                if(!System.Text.RegularExpressions.Regex.IsMatch(packageName,@"\A[A-Za-z0-9][A-Za-z0-9_-]{0,63}\z"))throw new BuildFailedException("Full package must be a simple folder name inside dist.");
+            }
             string packaging = Path.Combine(repository, "packaging", "windows");
             if (!Directory.Exists(packaging)) throw new BuildFailedException("The packaging/windows folder is missing. Pull the latest main branch.");
             string node = FindTool("node.exe");
@@ -109,13 +117,14 @@ namespace ThronesOfMyth.Editor
 
             using var identity=new PlaytestIdentity(repository,"windows-x86_64");
             string dist = Path.Combine(repository, "dist");
-            string package = Path.Combine(dist, "Windows");
+            string package = Path.GetFullPath(Path.Combine(dist, packageName));
+            if(!package.StartsWith(Path.GetFullPath(dist)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new BuildFailedException("Full output must remain inside dist.");
             // Rebuild only our generated output folder, never project sources.
             if (Directory.Exists(package)) Directory.Delete(package, true);
             Directory.CreateDirectory(Path.Combine(package, "Game"));
             string installer = Path.Combine(dist, "Thrones-of-Myth-Setup.exe");
             // Do not leave an installer from an older successful build beside new output.
-            if (File.Exists(installer)) File.Delete(installer);
+            if (packageName=="Windows"&&File.Exists(installer)) File.Delete(installer);
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
                 scenes = new[] { ScenePath },
@@ -135,12 +144,12 @@ namespace ThronesOfMyth.Editor
             foreach (string file in new[] { "Launcher.ps1", "Start Thrones of Myth.cmd", "README.txt" })
                 File.Copy(Path.Combine(packaging, file), Path.Combine(package, file), true);
             identity.WriteManifest(package);
-            string zip = Path.Combine(dist, "Thrones-of-Myth-Windows.zip");
+            string zip = Path.Combine(dist, "Thrones-of-Myth-"+packageName+".zip");
             if (File.Exists(zip)) File.Delete(zip);
             ZipFile.CreateFromDirectory(package, zip, System.IO.Compression.CompressionLevel.Optimal, false);
             Debug.Log("Portable playtest created: " + zip);
 
-            string compiler = FindInnoSetup();
+            string compiler = packageName=="Windows"?FindInnoSetup():null;
             if (compiler != null)
             {
                 // Failure here leaves a usable portable ZIP and is reported clearly.

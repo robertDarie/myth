@@ -1,0 +1,385 @@
+{
+  "zones": [
+    {
+      "id": "first-frontier",
+      "name": "First Frontier",
+      "minX": 0,
+      "maxX": 40,
+      "minZ": 0,
+      "maxZ": 40,
+      "gates": [
+        "gate-east",
+        "gate-north"
+      ],
+      "category": "starting"
+    },
+    {
+      "id": "legacy-east",
+      "name": "Sunward Province",
+      "minX": 40,
+      "maxX": 80,
+      "minZ": 0,
+      "maxZ": 40,
+      "gates": [
+        "gate-east",
+        "gate-crown-south",
+        "gate-dawn-low"
+      ],
+      "category": "intermediate"
+    },
+    {
+      "id": "legacy-north",
+      "name": "Runic Province",
+      "minX": 0,
+      "maxX": 40,
+      "minZ": 40,
+      "maxZ": 80,
+      "gates": [
+        "gate-crown-west",
+        "gate-north",
+        "gate-ashen-low"
+      ],
+      "category": "intermediate"
+    },
+    {
+      "id": "legacy-crown",
+      "name": "First Throne",
+      "minX": 40,
+      "maxX": 80,
+      "minZ": 40,
+      "maxZ": 80,
+      "gates": [
+        "gate-crown-west",
+        "gate-crown-south",
+        "gate-dawn-high",
+        "gate-ashen-high"
+      ],
+      "category": "central"
+    },
+    {
+      "id": "dawn-reach",
+      "name": "Dawn Reach",
+      "minX": 80,
+      "maxX": 256,
+      "minZ": 0,
+      "maxZ": 80,
+      "gates": [
+        "gate-dawn-low",
+        "gate-dawn-high",
+        "gate-outer-south"
+      ],
+      "category": "starting"
+    },
+    {
+      "id": "ashen-fields",
+      "name": "Ashen Fields",
+      "minX": 0,
+      "maxX": 80,
+      "minZ": 80,
+      "maxZ": 256,
+      "gates": [
+        "gate-ashen-low",
+        "gate-ashen-high",
+        "gate-outer-west"
+      ],
+      "category": "starting"
+    },
+    {
+      "id": "outer-marches",
+      "name": "Outer Marches",
+      "minX": 80,
+      "maxX": 256,
+      "minZ": 80,
+      "maxZ": 256,
+      "gates": [
+        "gate-outer-south",
+        "gate-outer-west"
+      ],
+      "category": "starting"
+    }
+  ],
+  "corridors": [
+    {
+      "id": "east-low",
+      "gateId": "gate-east",
+      "a": {
+        "x": 39,
+        "z": 20
+      },
+      "b": {
+        "x": 41,
+        "z": 20
+      }
+    },
+    {
+      "id": "east-high",
+      "gateId": "gate-crown-west",
+      "a": {
+        "x": 39,
+        "z": 60
+      },
+      "b": {
+        "x": 41,
+        "z": 60
+      }
+    },
+    {
+      "id": "north-west",
+      "gateId": "gate-north",
+      "a": {
+        "x": 20,
+        "z": 39
+      },
+      "b": {
+        "x": 20,
+        "z": 41
+      }
+    },
+    {
+      "id": "north-east",
+      "gateId": "gate-crown-south",
+      "a": {
+        "x": 60,
+        "z": 39
+      },
+      "b": {
+        "x": 60,
+        "z": 41
+      }
+    },
+    {
+      "id": "dawn-road",
+      "gateId": "gate-dawn-low",
+      "a": {
+        "x": 79,
+        "z": 20
+      },
+      "b": {
+        "x": 81,
+        "z": 20
+      }
+    },
+    {
+      "id": "crown-dawn",
+      "gateId": "gate-dawn-high",
+      "a": {
+        "x": 79,
+        "z": 60
+      },
+      "b": {
+        "x": 81,
+        "z": 60
+      }
+    },
+    {
+      "id": "ashen-road",
+      "gateId": "gate-ashen-low",
+      "a": {
+        "x": 20,
+        "z": 79
+      },
+      "b": {
+        "x": 20,
+        "z": 81
+      }
+    },
+    {
+      "id": "crown-ashen",
+      "gateId": "gate-ashen-high",
+      "a": {
+        "x": 60,
+        "z": 79
+      },
+      "b": {
+        "x": 60,
+        "z": 81
+      }
+    },
+    {
+      "id": "dawn-outer",
+      "gateId": "gate-outer-south",
+      "a": {
+        "x": 128,
+        "z": 79
+      },
+      "b": {
+        "x": 128,
+        "z": 81
+      }
+    },
+    {
+      "id": "ashen-outer",
+      "gateId": "gate-outer-west",
+      "a": {
+        "x": 79,
+        "z": 128
+      },
+      "b": {
+        "x": 81,
+        "z": 128
+      }
+    }
+  ],
+  "passes": [
+    {
+      "id": "gate-east",
+      "name": "Eastern Divine Gate",
+      "kind": "gate",
+      "x": 39,
+      "z": 20,
+      "corridorId": "east-low",
+      "zoneIds": [
+        "first-frontier",
+        "legacy-east"
+      ],
+      "openingStage": "gates",
+      "tier": 2,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-crown-west",
+      "name": "Gate of the Norn Crown",
+      "kind": "gate",
+      "x": 39,
+      "z": 60,
+      "corridorId": "east-high",
+      "zoneIds": [
+        "legacy-north",
+        "legacy-crown"
+      ],
+      "openingStage": "gates",
+      "tier": 3,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-north",
+      "name": "Northern Divine Gate",
+      "kind": "gate",
+      "x": 20,
+      "z": 39,
+      "corridorId": "north-west",
+      "zoneIds": [
+        "first-frontier",
+        "legacy-north"
+      ],
+      "openingStage": "gates",
+      "tier": 2,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-crown-south",
+      "name": "Gate of the Sun Oath",
+      "kind": "gate",
+      "x": 60,
+      "z": 39,
+      "corridorId": "north-east",
+      "zoneIds": [
+        "legacy-east",
+        "legacy-crown"
+      ],
+      "openingStage": "gates",
+      "tier": 3,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-dawn-low",
+      "name": "Gate of Eos",
+      "kind": "gate",
+      "x": 79,
+      "z": 20,
+      "corridorId": "dawn-road",
+      "zoneIds": [
+        "legacy-east",
+        "dawn-reach"
+      ],
+      "openingStage": "gates",
+      "tier": 2,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-dawn-high",
+      "name": "Gate of the Dawn Throne",
+      "kind": "gate",
+      "x": 79,
+      "z": 60,
+      "corridorId": "crown-dawn",
+      "zoneIds": [
+        "legacy-crown",
+        "dawn-reach"
+      ],
+      "openingStage": "gates",
+      "tier": 3,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-ashen-low",
+      "name": "Gate of the Ashen Oath",
+      "kind": "gate",
+      "x": 20,
+      "z": 79,
+      "corridorId": "ashen-road",
+      "zoneIds": [
+        "legacy-north",
+        "ashen-fields"
+      ],
+      "openingStage": "gates",
+      "tier": 2,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-ashen-high",
+      "name": "Gate of the Ember Crown",
+      "kind": "gate",
+      "x": 60,
+      "z": 79,
+      "corridorId": "crown-ashen",
+      "zoneIds": [
+        "legacy-crown",
+        "ashen-fields"
+      ],
+      "openingStage": "gates",
+      "tier": 3,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-outer-south",
+      "name": "Gate of the Starward March",
+      "kind": "gate",
+      "x": 128,
+      "z": 79,
+      "corridorId": "dawn-outer",
+      "zoneIds": [
+        "dawn-reach",
+        "outer-marches"
+      ],
+      "openingStage": "gates",
+      "tier": 1,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    },
+    {
+      "id": "gate-outer-west",
+      "name": "Gate of the Worldroot",
+      "kind": "gate",
+      "x": 79,
+      "z": 128,
+      "corridorId": "ashen-outer",
+      "zoneIds": [
+        "ashen-fields",
+        "outer-marches"
+      ],
+      "openingStage": "gates",
+      "tier": 1,
+      "encounter": "original-divine-gate",
+      "description": "Control this adjacent mountain crossing. Original Divine Gate encounter; numerical RoK parity unverified."
+    }
+  ]
+}

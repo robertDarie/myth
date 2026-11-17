@@ -1,0 +1,10 @@
+{
+  "baseline": "69c58ea6e55b7bfe0c0cba0c2a0ea096e32a6d81",
+  "syntheticSaves": 32,
+  "paidConstructionQueues": 32,
+  "sourceSchema": 27,
+  "resultSchema": 28,
+  "addedPassesPerSave": 8,
+  "unchanged": "Players, commanders, paid jobs, resources, sessions, alliances, nodes, camps, existing sites, flags, strongholds, rallies, garrisons, sieges and kingdom state; normal offline presence flag excepted",
+  "scope": "Actual baseline-code synthetic saves, not maximum-state fixtures or real user saves; no extra Git worktree"
+}

@@ -6,7 +6,7 @@ Task7: all25-level building prerequisites/power/independent roles, base resource
 
 Task8: all four troop classes/five tiers (siege absent locally), costs/time/stat/capacity chain, commander full XP/star/talent/skill/equipment datasets, active timing/rage, observed combat/casualties. Proprietary hidden formulas are UNKNOWN and cannot be claimed exact.
 
-Task9: complete authoritative military zone topology and every physical pass objective/opening/capture/reinforcement/ownership transition, alliance technology/territory capacities/timers and wars. Current closed unsupported frontier links are a safety repair, not completed passes. Multiplayer tests do not establish reference mechanics.
+Task9: complete authoritative military zone topology and every physical pass objective/opening/capture/reinforcement/ownership transition, alliance technology/territory capacities/timers and wars. RecoveryA now supplies all10 functional adjacent pass objectives using owner-approved original Divine Gate compatibility; exact defender/opening/protection reference tables remain unverified. Multiplayer tests do not establish reference mechanics.
 
 Task10: AP conflict, mode-specific ordinary/fort/guardian/boss levels/rewards, exact distributions, event schedules/scoring, VIP, home/pre-KvK/KvK1/2/3/SoC travel/progression/research/settlement. Local short seasons are not genuine KvK.
 

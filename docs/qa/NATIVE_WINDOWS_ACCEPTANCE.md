@@ -1,3 +1,9 @@
+# Recovery A source checkpoint — 2026-11-17
+
+New map/UI source displays the full7-zone/10-pass graph, ownership/opening/access, mountain borders, pass rally and selected-pass garrison controls. Actual source-bound Unity validation instantiated10 correctly positioned original pass models,7 labels and10 crossing objects; this is not native usability. Standalone updated build/input verification is pending its separate checkpoint. Existing Windows folders/archives are preserved using isolated client/full-package names. Earlier native attempts below remain dated history, not evidence that the current desktop is unavailable or the new binary has been tested.
+
+---
+
 # Native Windows recovery acceptance
 
 **Post-recovery verification NOT TESTED.** Actual clean f5c0cdf Windows build was launched in Task4; city creation, Greek choice, Citadel2 paid completion, infantry queue/debit and city/world rendering have captured evidence. Further UI automation was first blocked by user-input detection; later the desktop tool could not obtain a foreground process ID. D now has actual Unity ray/geometry and minimap-helper proof, which is not native wheel/HUD proof. Backend tests are not substituted for these remaining native steps.

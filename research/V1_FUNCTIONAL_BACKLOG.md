@@ -1,5 +1,13 @@
 # V1 functional backlog
 
+## 2026-11-17 Recovery A functional source checkpoint
+
+Seven original zones, ten distinct persistent adjacent passes, no missing or distant shared pass links. User explicitly approved unchanged original Divine Gate encounter/opening compatibility; numerical parity UNVERIFIED. Six initial topology/recall cases red0/6→green6/6; expanded19 scenarios include20 production conquests/two sides, enemy recapture/cargo-safe recall, garrisons, route previews, all borders/corners and32 seeded starter worlds. Separate fresh default-profile56-command expedition opens the real milestone, captures two passes and crosses both borders in2009.75simulated seconds; outsider denied, scout completes. No state grants.
+
+Schema28 appends eight pass objects; original IDs/cities/armies/commanders/alliances preserved. Real hosted JSON/SQLite migration/two starts per backend preserve control and archive schema27 input byte-for-byte. Full server435 tests/430 pass/0 fail/5 existing platform skips. Actual Unity scene-object validation:7 zone labels,10 pass models/10 crossings,447 mountain mesh renderers, exit0. Portable C#16769 and contract gate19 cases passed. Source-bound report/fixture check added; publication plan49 required. Native updated-binary usability pending the separate build/verification checkpoint; no compile-as-native claim. Existing Windows packages preserved; isolated full-package output supported. See docs/qa/RECOVERY_A_ZONES_PASSES.md.
+
+Removed stale prior-camera publication exemptions; all15 changed gameplay paths are covered by the current implemented evidence and exact owner-approved scope. Historical Task11 source assessment stays bound to9dde979 rather than being relabeled current. Five contract scopes now PARTIAL, whole reference parity still NOT CERTIFIED. Tasks7–10 not started.
+
 ## 2026-11-17 cross-feature assessment and independent handoff
 
 Published contract checkpoint9dde979:43 required checks passed, remote verified. Final assessment covers all206 discovered contract scopes with independent implemented/server/native/progression/numerical/mechanical/persistence/multiplayer/reference verdicts. Complete server416 tests/411 pass/0 fail/5 platform skips; fresh JSON3/SQLite10 HTTP identities22/22 checks. Source comparison confirms133 tracked gameplay files match clean Windows artifact05ab132. Final publication plan adds source-bound report consistency; all44 required checks passed before publication. Contract gate now13 offline cases; deterministic regeneration/scoped acceptance execute even with a custom plan.

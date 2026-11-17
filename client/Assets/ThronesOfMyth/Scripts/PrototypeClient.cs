@@ -517,9 +517,11 @@ namespace ThronesOfMyth
             if (selectedKind == "stronghold") OpenWarfare(selectedId);
             if (selectedKind == "camp") Send("attack", selectedId);
             if (selectedKind == "node") Send("gather", selectedId);
-            if (selectedKind == "site") { var site = Array.Find(world.sites, s => s.id == selectedId); if (site != null && site.locked) GuidePage(InterfacePage.Kingdom); else if (site != null && site.unknown) ScoutAt(site.x, site.z); else Send("capture", selectedId); }
+            if (selectedKind == "site") { var site = KnownSite(selectedId); if (site != null && site.locked) GuidePage(InterfacePage.Kingdom); else if (site != null && site.unknown) ScoutAt(site.x, site.z); else if(site!=null&&site.kind=="gate")OpenWarfare(site.id);else Send("capture", selectedId); }
             if (selectedId == "city-" + playerId) Send("return");
         }
+        private SiteData KnownSite(string id) => world==null?null:Array.Find(world.passes??Array.Empty<SiteData>(),s=>s.id==id)??Array.Find(world.sites,s=>s.id==id);
+        private string ZoneName(string id) => Array.Find(world.provinces??Array.Empty<ProvinceData>(),p=>p.id==id)?.name??id;
         private string AllianceName(string id)
         {
             if (world != null) foreach (var a in world.alliances) if (a.id == id) return a.name;

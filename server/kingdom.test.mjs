@@ -14,7 +14,7 @@ test('new kingdoms seal military gates and sanctuary while scouts retain physica
  assert.equal(siteIsOpen(w,'shrine-dawn'),true);assert.equal(siteIsOpen(w,'gate-east'),false);
  assert.throws(()=>cmd(w,p,'capture',{targetId:'gate-east'}),/sealed/);
  const gate=w.sites.find(s=>s.id==='gate-east');gate.allianceId='enemy';assert.throws(()=>cmd(w,p,'rally-create',{targetId:gate.id}),/sealed/);gate.allianceId=p.allianceId;
- assert.equal(w.canEnter(p,{x:50,z:20}),false);assert.throws(()=>cmd(w,p,'move',{x:50,z:20}),/Gate/);
+ assert.equal(w.canEnter(p,{x:50,z:20}),false);assert.throws(()=>cmd(w,p,'move',{x:50,z:20}),/gate/i);
  cmd(w,p,'scout-send',{x:50,z:20});assert.equal(p.scouts[0].phase,'Outbound');
  assert.throws(()=>cmd(w,p,'garrison-join',{targetId:gate.id}),/held/);
  const snapshot=w.snapshot(p.id);assert.equal(snapshot.sites.find(s=>s.id==='gate-east').locked,true);

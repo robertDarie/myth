@@ -72,13 +72,8 @@ namespace ThronesOfMyth
                     art.EnvironmentModel(scenery, pine ? "PineTree" : "OakTree", new Vector3(p.x,TerrainHeight(p),p.y), 0.75f + (float)random.NextDouble()*0.40f, tint, (float)random.NextDouble()*360);
                 }
             }
-            for (int i = 4; i < 80; i += 4)
-            {
-                if (Mathf.Abs(i-20)<5 || Mathf.Abs(i-60)<5) continue;
-                // Layered outcrops follow the existing province barriers; gate openings remain clear.
-                art.ProvinceRidge(scenery,new Vector3(40,0,i),0,i);
-                if(i!=40)art.ProvinceRidge(scenery,new Vector3(i,0,40),90,i);
-            }
+            // Strategic mountain boundaries are built from the server zone graph
+            // after the first snapshot, not from the obsolete 80-unit map.
             // Low vegetation punctuates meadows, without filling paths or site clearings.
             for(int i=0;i<480;i++)
             {

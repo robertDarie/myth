@@ -1,0 +1,17 @@
+{
+  "scope": "Owner-approved original Divine Gate compatibility; NOT verified RoK numerical parity",
+  "gateBaseHealth": 450,
+  "numericProfileScale": {
+    "0": 1,
+    "1": 1000
+  },
+  "gateOpeningSeconds": 600,
+  "zoneCount": 7,
+  "passCount": 10,
+  "schemaBefore": 27,
+  "schemaAfter": 28,
+  "originalGateIds": [
+    "gate-east",
+    "gate-north"
+  ]
+}

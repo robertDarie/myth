@@ -24,7 +24,7 @@ test('gate routes cross province walls only at controlled corridors and do not s
 test('losing gates stops outward orders while a stranded army returns through corridors at legal speed',()=>{
  const {w,players:[p]}=setup();gates(w,p);p.x=65;p.z=65;
  for(const s of w.sites.filter(s=>s.kind==='gate'))s.allianceId='';
- assert.throws(()=>cmd(w,p,'move',{x:60,z:60}),/Gate/);cmd(w,p,'return');
+ assert.throws(()=>cmd(w,p,'move',{x:60,z:60}),/gate/i);cmd(w,p,'return');
  let last={x:p.x,z:p.z};for(let i=0;i<1000&&p.target;i++){w.tick(0.1);assert.ok(Math.hypot(p.x-last.x,p.z-last.z)<=w.stats(p).speed*0.1+0.0001);last={x:p.x,z:p.z};}
  assert.equal(p.target,null);assert.equal(p.x,p.homeX);assert.equal(p.z,p.homeZ);
 });
@@ -73,7 +73,7 @@ test('recall, gate loss and restart retain scouts safely without replaying rewar
  cmd(restored,q,'scout-recall',{targetId:q.scouts[0].id});advance(restored,20);assert.equal(q.scouts.length,0);assert.equal(q.scoutReports.length,0);
  cmd(restored,q,'scout-send',{x:30,z:30});cmd(restored,q,'scout-recall',{targetId:q.scouts[0].id});advance(restored,0.1);assert.equal(q.scouts.length,0);
  for(const mutate of [p=>p.explored=[-1],p=>p.explored=[1,1],p=>p.scouts=[{id:'bad'}],p=>p.scoutReports=[{}]]){const bad=w.toSave();mutate(bad.world.players[0]);assert.throws(()=>World.fromSave(bad),/scout|exploration/);}
- const old=w.toSave();legacyMap(old);old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scouts;delete p.scoutReports;delete p.autoExplore;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,27);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);assert.equal(restored.authenticate(sessions[0].token).buildings.scoutcamp,1);
+ const old=w.toSave();legacyMap(old);old.schema=6;for(const p of old.world.players){delete p.explored;delete p.scout;delete p.scouts;delete p.scoutReports;delete p.autoExplore;}restored=World.fromSave(old);assert.equal(restored.toSave().schema,28);assert.ok(restored.authenticate(sessions[0].token).explored.length>0);assert.equal(restored.authenticate(sessions[0].token).buildings.scoutcamp,1);
 });
 
 test('garrisons and rally centers obey the same gate corridors as ordinary marches',()=>{
@@ -108,7 +108,7 @@ test('authenticated HTTP does not expose hidden troops or another city scouting 
 
 test('a stranded march cannot silently wait on an unreachable friendly garrison route',()=>{
  const {w,players:[p]}=setup();p.cityLevel=2;gates(w,p);const shrine=w.sites.find(s=>s.id==='shrine-dawn');shrine.allianceId=p.allianceId;
- p.x=55;p.z=20;w.sites.find(s=>s.id==='gate-east').allianceId='';
+ p.x=55;p.z=20;for(const gate of w.sites.filter(s=>s.kind==='gate'))gate.allianceId='';
  assert.throws(()=>cmd(w,p,'garrison-join',{targetId:shrine.id}),/route/);
  assert.throws(()=>cmd(w,p,'move',{x:20,z:20}),/route/);assert.equal(p.target,null);
  cmd(w,p,'return');advance(w,40);assert.ok(w.atHome(p));
@@ -124,7 +124,7 @@ test('remembered camps and distant cities stay stale, and an enemy march leaves 
  let memory=w.snapshot(p.id).camps.find(c=>c.id===camp.id);
  assert.equal(memory.lastKnown,true);assert.equal(memory.health,health);assert.ok(p.explored.includes(cellIndex(camp)));
  const loaded=World.fromSave(w.toSave()),q=loaded.authenticate(sessions[0].token);
- assert.equal(loaded.toSave().schema,27);
+ assert.equal(loaded.toSave().schema,28);
  assert.equal(loaded.snapshot(q.id).camps.find(c=>c.id===camp.id).health,health);
  assert.equal(loaded.snapshot(q.id).camps.find(c=>c.id===camp.id).lastKnown,true);
  let far;
