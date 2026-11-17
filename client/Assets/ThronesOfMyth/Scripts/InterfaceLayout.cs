@@ -30,6 +30,7 @@ namespace ThronesOfMyth
         public static float ContextDescriptionHeight(bool pass)=>pass?168:23;
         public static float ContextHealthY(bool pass)=>ContextHeight(pass)-60;
         public static float ContextActionY(bool pass)=>ContextHeight(pass)-47;
+        public static float MarchOrdersTop(float viewHeight,bool pass)=>viewHeight-90-ContextHeight(pass)-56;
         public static float MinimapHeight(float viewHeight)=>viewHeight<800?132:152;
         public static int TabColumns(float logicalWidth,int count)=>Math.Max(1,Math.Min(count,(int)(logicalWidth/150)));
         public static string Duration(float seconds)

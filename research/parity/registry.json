@@ -13,11 +13,10 @@
     {
       "kind": "bug-fix",
       "paths": [
-        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
-        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
-        "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs"
+        "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.HudPolish.cs"
       ],
-      "reason": "Native NA-002: existing five-line pass intelligence was sent to a23px one-line label, clipping owner/opening/access. Expand only pass cards and position description, health and existing controls without overlap. Presentation-only, no gameplay rules, numerical balance, visibility permissions or save fields changed. Six added geometry regressions; native corrected-binary retest required."
+      "reason": "NA-002 deployed-army native retest found the march-order ribbon still at its old fixed position, covering expanded pass details. Move the same existing ribbon above the context card using shared geometry; ordinary layout unchanged. Two geometry regressions; no gameplay, balance, fog authorization or save changes."
     }
   ]
 }

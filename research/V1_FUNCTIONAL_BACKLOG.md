@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Native deployed pass-card overlap follow-up
+
+Actual packaged client/server restart preserved native capture, field position,900troops/100reserves and alliance. The first expanded-card native retest found the deployed order ribbon still overlaying lower intelligence lines; correction moves that existing ribbon above the context card. Two additional geometry cases;16784 C# contracts passed. Native readability not called PASS before corrected binary retest. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md.
+
 ## Native pass encounter and card readability correction
 
 Actual Windows rally captured Gate of Eos and the same formerly rejected ground click crossed into Sunward. Additional kingdom/beacon/discovery prerequisites were prepared separately with51 production commands / accelerated ticks, ten neutral passes retained; no native organic progression claim. NA-001 corrected caption1631/409639.8% observed. NA-002 found existing five-line pass subtitle clipped by one-line card; pass-only wrapped284px correction plus six geometry regressions; all16782 C# contracts and rerun Unity actual objects passed. Updated-card native and post-capture restart still pending. See docs/qa/RECOVERY_A_NATIVE_WINDOWS.md. Tasks7–10 untouched.

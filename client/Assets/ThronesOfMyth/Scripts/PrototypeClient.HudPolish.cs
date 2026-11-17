@@ -22,7 +22,7 @@ namespace ThronesOfMyth
             theme.Hint(r,details);if(GUI.Button(r,GUIContent.none,GUIStyle.none))OpenInterface(InterfacePage.Inventory);
             float x=r.xMax-196;foreach(var buff in e.buffs)if(buff.remaining>0){var badge=new Rect(x,r.y,94,22);theme.Panel(badge,false,true);theme.OneLine(new Rect(x+5,r.y,84,22),(buff.kind=="attack"?"ATK":"DEF")+" +"+(buff.percent*100).ToString("F0")+"%",theme.Eyebrow);theme.Hint(badge,buff.kind+" oath · "+InterfaceLayout.Duration(buff.remaining));x+=100;}
         }
-        private Rect MarchOrdersRect=>new Rect((ViewWidth-620)/2,ViewHeight-284,620,46);
+        private Rect MarchOrdersRect=>new Rect((ViewWidth-620)/2,InterfaceLayout.MarchOrdersTop(ViewHeight,PassContext),620,46);
         private void DrawMarchOrders()
         {
             var a=ActiveArmy;if(a==null||!a.deployed)return;var r=MarchOrdersRect;theme.Panel(r,false,true);

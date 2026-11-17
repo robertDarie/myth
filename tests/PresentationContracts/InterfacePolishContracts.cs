@@ -31,6 +31,7 @@ static class InterfacePolishContracts
    Check(InterfaceLayout.ContextHealthY(pass)+5<InterfaceLayout.ContextActionY(pass)&&InterfaceLayout.ContextActionY(pass)+35<=card-10,"Context actions must sit below intelligence and health and inside their panel");
   }
   Check(InterfaceLayout.ContextDescriptionHeight(true)>=8*18,"Pass owner, opening, access, adjacent zones and defender lines have room to wrap");
+  foreach(bool pass in new[]{false,true})Check(InterfaceLayout.MarchOrdersTop(900,pass)+46<=900-90-InterfaceLayout.ContextHeight(pass)-10,"Deployed-march controls must stay above the entire context card, including expanded pass intelligence");
   Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==17,"Release identity advances with the expanded-map protocol");
   foreach(var size in new[]{(1024f,768f),(1280f,800f),(1920f,1080f)})
   {

@@ -20,7 +20,7 @@
   "full_server_duration_ms": 45697.3698,
   "full_server_command": "cd server; node --test --test-concurrency=4",
   "offline_contract_gate_tests": 19,
-  "portable_csharp_contracts": 16782,
+  "portable_csharp_contracts": 16784,
   "save_schema_before": 27,
   "save_schema_after": 28,
   "protocol": 17,
@@ -49,9 +49,10 @@
     "client/Assets/ThronesOfMyth/Editor/PassReview.cs": "0f3c5a36c7435cd8f48abcb23cc2670fd8534fa9dc70a4b4d65c8e89f039ced3",
     "scripts/recovery-a-playthrough.mjs": "e297d979a549c1d913eae973fc03951e518cb3bf5680db352736c3ce4539f145",
     "scripts/check_recovery_a_evidence.py": "6a59a22f3ed521ab2d7833fc7a4771bbbd12fefe4d60fb6e0931062d5170c90f",
-    "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs": "93f6df61909bcec57d2122494047f2c576973c4ffaaaca84da79bfa5230525c8",
+    "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs": "8f1a949fd0b757b4f33893447e245722e5a7f7c45870386da4c6a14ef0302d44",
     "client/Assets/ThronesOfMyth/Scripts/ScoutInterfaceCopy.cs": "e1990bf0385c01a0eec5509f061775c44aaa9aef88cb3a7835f4722ccde6a771",
-    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs": "510d6a46c88fe630880bdb74121ad38eadf2aa5665ccb1a3bfd2911d69fbb5d8"
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs": "510d6a46c88fe630880bdb74121ad38eadf2aa5665ccb1a3bfd2911d69fbb5d8",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.HudPolish.cs": "89dc60ae576d9a0d26ed202c6a5a58fc34c4f75e7b6c3a478dfaefc23ca39b2d"
   },
   "historical_baseline_saves": 32,
   "historical_paid_construction_queues": 32,
