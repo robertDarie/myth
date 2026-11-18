@@ -37,7 +37,7 @@ namespace ThronesOfMyth
             }
             lastScoutReportId = id;
             var journal = world?.exploration?.journal;
-            if (journal == null) {GUILayout.Label("Waiting for your discovery journal.",noteStyle);return;}
+            if (journal == null) return;
             if (seenFindingClaims < 0) { seenFindingClaims = journal.claimed; return; }
             if (journal.claimed > seenFindingClaims)
             {
@@ -91,9 +91,9 @@ namespace ThronesOfMyth
             }
             GUILayout.Space(8);
             bool auto = fog.autoExplore;
-            if (theme.Action(auto ? "Stop auto explore" : "Auto explore nearby fog", !processing && pendingOrder == null, pendingOrder != null ? "Confirm your previous order first." : "Sending your order…"))
+            if (theme.Action(auto ? "Stop auto explore" : "Auto explore", !processing && pendingOrder == null, pendingOrder != null ? "Confirm your previous order first." : "Sending your order…"))
                 Send(new GameCommand { type = "scout-auto", enabled = !auto });
-            GUILayout.Label(auto ? "Idle scouts survey nearby unexplored land, then continue until that local range is clear." : "Auto explore sends spare scouts to nearby fog and chains the next sector without returning home.", noteStyle);
+            GUILayout.Label(auto ? "Scouts prefer nearby unexplored land, then continue to the nearest reachable fog until none remains." : "Auto explore sends each free scout toward reachable fog. Nearby sectors come first.", noteStyle);
             GUILayout.Space(10);
             GUILayout.Label("SCOUTS", theme.Eyebrow);
             var scouts = fog.scouts ?? Array.Empty<ScoutData>();

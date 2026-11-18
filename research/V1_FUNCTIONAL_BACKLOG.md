@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Cursor overnight 1 — scouting, fog and discovery
+
+Fresh legal automatic exploration reached 4096/4096 fog cells in 1079 simulated seconds and the same 4096 cells reloaded. Scout camp speeds and slot counts were not changed. Reference Scout Camp costs for 25 levels were fetched and not applied because scout capacity and speed were absent and city construction is outside this checkpoint. Native scouting clicks remain NOT TESTED. Partial parity only.
+
 ## Task7 official reference follow-up and traceability repair
 
 Verified official Lilith public patch posts1.1.09 and1.0.90;11historical patch-bound facts supplement the70table observations. Current complete VIP/building/tax profiles remain unresolved; no numeric gameplay enablement. First B0 publication correctly refused to push for missing new-module audit coverage. Added dated hashed supplement instead of rewriting historical Task3 audit; required checks rerun. Blank CH3 prerequisite cells now explicitly UNKNOWN. research/parity/task7/README.md.

@@ -1,0 +1,22 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Owner overnight instruction for isolated local Cursor task 1, before this gameplay correction",
+  "owner_decision": "Overnight task 1 authorizes legal automatic exploration of every reachable fog cell while the existing scout camp numbers stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-EXPLORATION-FULL-MAP"],
+  "paths": [
+    "server/exploration.mjs",
+    "server/city-content.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
+  ],
+  "evidence_document": "research/parity/features/scouting-exploration.md",
+  "functional_checks": [
+    "legal automatic exploration of every reachable fog cell"
+  ],
+  "unchanged_numeric_checks": [
+    "scout camp capacity and speed stay on the existing local table"
+  ]
+}

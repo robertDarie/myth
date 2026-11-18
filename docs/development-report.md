@@ -1,3 +1,9 @@
+# Development report — 2026-11-19
+
+## Cursor overnight 1 — scouting, fog and discovery
+
+Automatic scouts now leave the local ring and continue to the nearest fog cell that a physical corridor can reach. A fresh Greek city explored 4096/4096 cells in 4316 ticks (1079 simulated seconds, about 5.9 wall seconds) using `scout-auto` and `World.tick` only. Restart preserved 4096. Locked passes still reject armies. Settlement and cave claims fail on the second request after reload. A second city does not receive the scout report or explored list. Local scout speeds and slot counts were not changed. rokstats Scout Camp page fetched 2026-11-19 shows 25 cost levels and no scout speed or capacity; Fandom Scouting returned 403. Native client controls were adjusted and not played. `node --test server/exploration-coverage.test.mjs` passed. Remote publication was intentionally not run.
+
 # Development report — 2026-11-16
 
 ## Task7 official reference follow-up and traceability repair

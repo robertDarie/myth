@@ -211,6 +211,24 @@
       ]
     },
     {
+      "name": "legal automatic exploration of every reachable fog cell",
+      "command": [
+        "node",
+        "--test",
+        "server/exploration-coverage.test.mjs"
+      ]
+    },
+    {
+      "name": "scout camp capacity and speed stay on the existing local table",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "scout camp capacity",
+        "server/exploration-coverage.test.mjs"
+      ]
+    },
+    {
       "name": "scout-specific passage and military privilege separation",
       "command": [
         "node",

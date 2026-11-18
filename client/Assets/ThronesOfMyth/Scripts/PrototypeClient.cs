@@ -76,7 +76,7 @@ namespace ThronesOfMyth
             if(map!=null)map.hoveredId="";
             if (cameraControl != null) cameraControl.blockInput = string.IsNullOrEmpty(token) || cityExperience.BlocksWorld || PointerOverUI();
             if (me == null || LoadingActive) return;
-            if (Input.GetKeyDown(KeyCode.Escape)) { CloseInterface(); return; }
+            if (Input.GetKeyDown(KeyCode.Escape)) { CancelScoutAim(); CloseInterface(); return; }
             if (HandleCityKeys()) return;
             if (HandleCommanderKeys()) return;
             if (HandleInterfaceKeys()) return;
@@ -93,6 +93,8 @@ namespace ThronesOfMyth
             GUIUtility.keyboardControl = 0;
             if (chooseScoutDestination && Input.GetMouseButtonDown(0))
             { ScoutAt(hit.point.x, hit.point.z); return; }
+            if (chooseScoutDestination && Input.GetMouseButtonDown(1))
+            { CancelScoutAim(); status = "Scout destination cancelled."; return; }
             if (placeBeacon && Input.GetMouseButtonDown(0))
             {
                 Send(new GameCommand { type = "flag", x = hit.point.x, z = hit.point.z }); placeBeacon = false; return;

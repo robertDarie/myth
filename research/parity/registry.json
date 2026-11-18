@@ -1,6 +1,7 @@
 {
   "version": 1,
   "features": [
+    "research/parity/features/scouting-exploration.md",
     "research/parity/features/recovery-a-functional-passes.md",
     "research/parity/features/recovery-e-progression-design.md",
     "research/parity/features/secondary-passive-correction.md",

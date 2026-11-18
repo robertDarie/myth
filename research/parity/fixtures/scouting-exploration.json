@@ -1,0 +1,13 @@
+{
+  "classification": "Existing local Outlook of the Horizon table. Reference scout capacity and speed remain UNKNOWN and are not replaced.",
+  "levels": [
+    { "scouts": 0, "speed": 0, "radius": 0, "surveySeconds": 0, "autoSectors": 0 },
+    { "scouts": 1, "speed": 7, "radius": 9, "surveySeconds": 0.8, "autoSectors": 2 },
+    { "scouts": 1, "speed": 8.5, "radius": 10, "surveySeconds": 0.7, "autoSectors": 3 },
+    { "scouts": 2, "speed": 10, "radius": 12, "surveySeconds": 0.55, "autoSectors": 4 },
+    { "scouts": 2, "speed": 11.5, "radius": 13, "surveySeconds": 0.4, "autoSectors": 6 },
+    { "scouts": 3, "speed": 13, "radius": 15, "surveySeconds": 0.25, "autoSectors": 8 }
+  ],
+  "fogCells": 4096,
+  "stuckSeconds": 2
+}

@@ -1,5 +1,5 @@
 import { forsakenCard } from './forsaken.mjs';
-import { WORLD_SIZE, FOG_WIDTH, CELL_SIZE, cellIndex } from './world-map.mjs';
+import { WORLD_SIZE, FOG_WIDTH, CELL_SIZE, cellIndex, provinceAt, MAP_CORRIDORS } from './world-map.mjs';
 import { rememberStatics, recalled, staticContext } from './discovery.mjs';
 import { recordActivity } from './activity.mjs';
 import { recordEvent } from './events.mjs';
@@ -57,16 +57,34 @@ function regionBusy(p, x, z, exceptId = '') {
   const cell = cellIndex({ x, z });
   return p.scouts.some(s => s.id !== exceptId && (s.phase === 'Outbound' || s.phase === 'Exploring') && cellIndex({ x: s.targetX, z: s.targetZ }) === cell);
 }
-function assignTarget(p, s, x, z) {
+function assignTarget(p, s, x, z, autoAssigned = false) {
   s.targetX = x; s.targetZ = z; s.phase = 'Outbound'; s.surveyRemaining = 0; s.reportedThisLeg = false;
   s.rewardPending = !p.explored.includes(cellIndex({ x, z }));
   s.investigationId = '';
   s.recon = null;
   s.watchSeconds = 0;
+  s.autoAssigned = autoAssigned === true;
+  s.stuck = 0;
 }
-function createScout(p, x, z) {
-  const s = { id: randomUUID(), ownerId: p.id, x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ, targetX: x, targetZ: z, phase: 'Outbound', surveyRemaining: 0, rewardPending: !p.explored.includes(cellIndex({ x, z })), reportedThisLeg: false, investigationId: '', recon: null, watchSeconds: 0 };
+function createScout(p, x, z, autoAssigned = false) {
+  const s = { id: randomUUID(), ownerId: p.id, x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ, targetX: x, targetZ: z, phase: 'Outbound', surveyRemaining: 0, rewardPending: !p.explored.includes(cellIndex({ x, z })), reportedThisLeg: false, investigationId: '', recon: null, watchSeconds: 0, autoAssigned: autoAssigned === true, stuck: 0 };
   return s;
+}
+// Scout passage follows physical corridors and ignores military ownership.
+function scoutProvinces(from) {
+  const start = provinceAt(from)?.id;
+  if (!start) return new Set();
+  const seen = new Set([start]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const corridor of MAP_CORRIDORS) {
+      const a = provinceAt(corridor.a)?.id, b = provinceAt(corridor.b)?.id;
+      if (!a || !b) continue;
+      if (seen.has(a) !== seen.has(b)) { seen.add(a); seen.add(b); changed = true; }
+    }
+  }
+  return seen;
 }
 function visibleCells(w, p) {
   const known = new Set(p.explored);
@@ -88,22 +106,26 @@ export function sightCells(eyes) {
   }
   return [...cells].sort((a, b) => a - b);
 }
-export function nextAutoTarget(w, p, from, profile) {
+export function nextAutoTarget(w, p, from, profile, exceptId = '') {
   const origin = cellIndex(from), ox = origin % FOG_WIDTH, oz = Math.floor(origin / FOG_WIDTH);
   const known = visibleCells(w, p);
-  const taken = new Set(p.scouts.filter(s => s.phase === 'Outbound' || s.phase === 'Exploring').map(s => cellIndex({ x: s.targetX, z: s.targetZ })));
-  let best = null, bestRank = Infinity;
+  const taken = new Set(p.scouts.filter(s => s.id !== exceptId && (s.phase === 'Outbound' || s.phase === 'Exploring')).map(s => cellIndex({ x: s.targetX, z: s.targetZ })));
+  const provinces = scoutProvinces(from);
+  let local = null, localRank = Infinity, localIndex = Infinity, far = null, farDist = Infinity, farIndex = Infinity;
   for (let z = 0; z < FOG_WIDTH; z++) for (let x = 0; x < FOG_WIDTH; x++) {
     const index = z * FOG_WIDTH + x;
     if (known.has(index) || taken.has(index)) continue;
-    const reach = Math.max(Math.abs(x - ox), Math.abs(z - oz));
-    if (reach > profile.autoSectors) continue;
     const center = cellCenter(index);
-    if (!point(center) || !route(w,{ownerId:p.id,x:from.x,z:from.z},center)) continue;
-    const rank = reach * 1000 + dist(from, center);
-    if (rank < bestRank) { bestRank = rank; best = center; }
+    const province = provinceAt(center)?.id;
+    if (!point(center) || !province || !provinces.has(province)) continue;
+    const reach = Math.max(Math.abs(x - ox), Math.abs(z - oz));
+    const distance = dist(from, center);
+    if (reach <= profile.autoSectors) {
+      const rank = reach * 1000 + distance;
+      if (rank < localRank || (rank === localRank && index < localIndex)) { localRank = rank; local = center; localIndex = index; }
+    } else if (distance < farDist || (distance === farDist && index < farIndex)) { farDist = distance; far = center; farIndex = index; }
   }
-  return best;
+  return local || far;
 }
 function dispatchAuto(w, p, profile) {
   if (!p.autoExplore || profile.scouts <= 0) return;
@@ -111,7 +133,7 @@ function dispatchAuto(w, p, profile) {
   while (p.scouts.length < profile.scouts && guard-- > 0) {
     const next = nextAutoTarget(w, p, { x: p.homeX, z: p.homeZ }, profile);
     if (!next) return;
-    p.scouts.push(createScout(p, next.x, next.z));
+    p.scouts.push(createScout(p, next.x, next.z, true));
   }
 }
 function surveyReport(w, p, s, radius) {
@@ -162,6 +184,12 @@ export function explorationTick(w, dt) {
     const keep = [];
     for (const s of p.scouts) {
       trackRecon(w, p, s);
+      if (typeof s.autoAssigned !== 'boolean') s.autoAssigned = false;
+      if (s.autoAssigned && s.phase === 'Outbound' && !s.investigationId && !s.recon && visibleCells(w, p).has(cellIndex({ x: s.targetX, z: s.targetZ }))) {
+        const next = p.autoExplore ? nextAutoTarget(w, p, s, profile, s.id) : null;
+        if (next) assignTarget(p, s, next.x, next.z, true);
+        else { s.phase = 'Returning'; s.rewardPending = false; s.autoAssigned = false; }
+      }
       if (s.phase === 'Exploring') {
         s.surveyRemaining = Math.max(0, s.surveyRemaining - dt);
         if (s.surveyRemaining > 0.00001) { keep.push(s); continue; }
@@ -171,13 +199,23 @@ export function explorationTick(w, dt) {
           if (s.investigationId) { completeInvestigation(p, s.investigationId); s.investigationId = ''; }
         }
         if (p.autoExplore) {
-          const next = nextAutoTarget(w, p, s, profile);
-          if (next) { assignTarget(p, s, next.x, next.z); keep.push(s); continue; }
+          const next = nextAutoTarget(w, p, s, profile, s.id);
+          if (next) { assignTarget(p, s, next.x, next.z, true); keep.push(s); continue; }
         }
-        s.phase = 'Returning';
+        s.phase = 'Returning'; s.autoAssigned = false;
       }
       const returning = s.phase === 'Returning';
       const target = returning ? { x: p.homeX, z: p.homeZ } : { x: s.targetX, z: s.targetZ };
+      if (!route(w, s, target)) {
+        s.stuck = (s.stuck || 0) + dt;
+        if (s.stuck < 2) { keep.push(s); continue; }
+        if (!returning) {
+          s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; s.recon = null; s.autoAssigned = false; s.stuck = 0;
+          if (route(w, s, { x: p.homeX, z: p.homeZ })) { keep.push(s); continue; }
+        }
+        continue;
+      }
+      s.stuck = 0;
       const arrived = profile.speed > 0 && travel(w, s, target, profile.speed, dt, 0, returning);
       if (arrived && returning) continue;
       if (arrived && s.phase === 'Outbound') {
@@ -237,12 +275,12 @@ export function explorationCommand(w, p, c, fail) {
     if (regionBusy(p, c.x, c.z, s.id)) fail('A scout is already working on that region.');
     if ((s.phase === 'Outbound' || s.phase === 'Exploring') && cellIndex({ x: s.targetX, z: s.targetZ }) === cellIndex(c)) fail('That scout is already assigned to this region.');
     if(!route(w,s,c))fail('No open route from this scout to that destination.');
-    assignTarget(p, s, c.x, c.z); return true;
+    assignTarget(p, s, c.x, c.z, false); return true;
   }
   if (c.type === 'scout-recall') {
     const s = p.scouts.find(s => s.id === c.targetId);
     if (!s) fail('That scout mission is no longer active.');
-    s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; s.recon = null; return true;
+    s.phase = 'Returning'; s.rewardPending = false; s.investigationId = ''; s.recon = null; s.autoAssigned = false; return true;
   }
   if (c.type === 'scout-auto') {
     if (typeof c.enabled !== 'boolean') fail('Choose whether auto explore is on or off.');
@@ -298,6 +336,7 @@ export function validateExploration(p) {
   for (const s of p.scouts) {
     if (!s || !point(s) || !point({ x: s.targetX, z: s.targetZ }) || typeof s.id !== 'string' || s.ownerId !== p.id || !PHASES.includes(s.phase) || !Number.isFinite(s.surveyRemaining) || s.surveyRemaining < 0 || s.surveyRemaining > 30 || typeof s.rewardPending !== 'boolean' || typeof s.reportedThisLeg !== 'boolean' || typeof s.investigationId !== 'string' || !Number.isFinite(s.watchSeconds) || s.watchSeconds < 0 || s.watchSeconds > 30) throw new Error('Invalid saved scout.');
     if (s.recon && (!['city', 'march', 'garrison'].includes(s.recon.kind) || typeof s.recon.targetId !== 'string')) throw new Error('Invalid saved scout.');
+    if (typeof s.autoAssigned !== 'boolean') s.autoAssigned = false;
     if (s.recon && s.investigationId) throw new Error('Invalid saved scout.');
     if (s.investigationId && !findingById(s.investigationId)) throw new Error('Invalid saved scout.');
   }

@@ -50,6 +50,17 @@
         "server/qa-reference-world.mjs"
       ],
       "approved_compatibility": "research/parity/approvals/task7-b3-hardening.json"
+    },
+    {
+      "feature_id": "ROK-EXPLORATION-FULL-MAP",
+      "paths": [
+        "server/exploration.mjs",
+        "server/city-content.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-night-1-scouting.json"
     }
   ]
 }

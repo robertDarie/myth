@@ -110,7 +110,7 @@ namespace ThronesOfMyth
                 case "scout-send": return "A scout is traveling. Explored land stays clear after the survey.";
                 case "scout-redirect": return "Scout redirected. It does not need to return home first.";
                 case "scout-recall": return "Scout recalled. It will return through the gate corridors.";
-                case "scout-auto": return "Auto explore updated. Spare scouts survey nearby fog.";
+                case "scout-auto": return "Auto explore updated. Free scouts continue through reachable fog.";
                 case "move": return "Your march is on its way.";
                 case "rally-create": return "Rally assembly has begun. Allies can contribute a prepared march.";
                 case "rally-join": return "Your march is moving to the rally assembly point.";

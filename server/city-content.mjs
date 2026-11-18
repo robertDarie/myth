@@ -17,7 +17,7 @@ export const BUILDINGS = [
   { id: 'oathhall', name: 'Oathbound Hall', category: 'Alliance', description: 'Enables leading timed alliance rallies. Help alliance members with construction or research; each member can help a job once.', unlock: 2, base: { wood: 70, stone: 50, gold: 40 } },
   { id: 'forge', name: 'Forge of Dawn', category: 'Military', description: 'Craft relics in an independent lane. Equip completed relics when the army is at home.', unlock: 3, requirements: [{ id: 'quarry', level: 2 }], base: { wood: 80, stone: 80, gold: 50, mana: 15 } },
   { id: 'builders', name: 'Lodge of the First Builders', category: 'Civic', description: 'Permanently unlocks a second independent construction crew in the Age of Oaths. Two crews cannot upgrade the same structure simultaneously.', unlock: 2, base: { wood: 120, stone: 80, gold: 100 } },
-  { id: 'scoutcamp', name: 'Outlook of the Horizon', category: 'Military', description: 'Trains scouts, separate from military marches. Higher levels add scout slots, travel speed, a wider reveal, shorter surveys and a wider auto-explore range.', unlock: 1, base: { wood: 55, food: 35, gold: 25 } },
+  { id: 'scoutcamp', name: 'Outlook of the Horizon', category: 'Military', description: 'Trains scouts, separate from military marches. Higher levels add scout slots, travel speed, a wider reveal and shorter surveys. Auto explore prefers a wider nearby ring, then continues across every reachable unexplored sector.', unlock: 1, base: { wood: 55, food: 35, gold: 25 } },
 ];
 export const INITIAL_BUILDINGS = Object.fromEntries(BUILDINGS.filter(b => b.id !== 'citadel').map(b => [b.id, ['barracks', 'farm', 'lumber', 'vault', 'infirmary', 'scoutcamp'].includes(b.id) ? 1 : 0]));
 export const CITADEL_REQUIREMENTS = {
