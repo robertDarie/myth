@@ -1,0 +1,9 @@
+[
+  {
+    "path": "server/city-policy.mjs",
+    "checked": "2026-11-18",
+    "sha256": "65546e74b9bad499ebecada56decf8204993ca5303db57ff0d60f0cb14a1a802",
+    "evidence": "research/parity/task7/README.md",
+    "disposition": "Post-Task3 infrastructure addition; no claim this was audited at the historical commit"
+  }
+]

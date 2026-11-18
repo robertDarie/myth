@@ -1,5 +1,9 @@
 # Development report — 2026-11-16
 
+## Task7 official reference follow-up and traceability repair
+
+Verified official Lilith public patch posts1.1.09 and1.0.90;11historical patch-bound facts supplement the70table observations. Current complete VIP/building/tax profiles remain unresolved; no numeric gameplay enablement. First B0 publication correctly refused to push for missing new-module audit coverage. Added dated hashed supplement instead of rewriting historical Task3 audit; required checks rerun. Blank CH3 prerequisite cells now explicitly UNKNOWN. research/parity/task7/README.md.
+
 ## Task7 checkpoint B0 — non-converting production foundation
 
 Production city quotes now use an isolated legacy policy without numeric changes. Strict future25-row table validation rejects missing/unknown/imprecise data but does not activate new progression.4new tests;2720prior-source complete-card comparisons;8historical paid-job saves;53legal commands to existingCitadel5/3965simulated seconds; focused65PASS. Windows runtime dependency copy fixed/closure tested. Owner option1 preserved; no old level mapping, no real-save changes. Complete new-city25 progression NOT IMPLEMENTED; live prerequisite/modifier conflicts remain explicit. Native NOT TESTED. research/parity/task7/README.md.

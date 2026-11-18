@@ -1,5 +1,6 @@
 """Audit inventory, reference and real-command simulation consistency checks."""
 import csv
+import hashlib
 import json
 import math
 import posixpath
@@ -14,7 +15,12 @@ def read(name):
 features=read('feature-inventory.csv');modules=read('source-module-inventory.csv')
 assert len({r['feature_id'] for r in features})==len(features)
 assert len({r['subsystem'] for r in features})==17
-assert {r['path'] for r in modules}=={'server/'+p.name for p in (ROOT/'server').glob('*.mjs') if not p.name.endswith('.test.mjs')}
+supplement=json.loads((ROOT/'research/parity/task7/source-module-supplement.json').read_text(encoding='utf-8'))
+assert not ({r['path'] for r in modules}&{r['path'] for r in supplement}), 'Do not relabel historical audit entries'
+for row in supplement:
+    assert row['checked'] and row['evidence'] and (ROOT/row['evidence']).is_file()
+    assert hashlib.sha256((ROOT/row['path']).read_text(encoding='utf-8-sig').encode()).hexdigest()==row['sha256']
+assert {r['path'] for r in modules+supplement}=={'server/'+p.name for p in (ROOT/'server').glob('*.mjs') if not p.name.endswith('.test.mjs')}, 'Every new runtime module needs dated evidence; preserve the historical audit inventory'
 for feature in features:
     assert feature['behavior'] and feature['gap'] and feature['existing_tests']
     assert all((ROOT/path).exists() for path in feature['authoritative_paths'].split(';'))
@@ -85,4 +91,4 @@ with zipfile.ZipFile(DATA/'RoK_vs_Thrones_of_Myth_Master_Parity_Audit.xlsx') as 
                 try: same=math.isclose(float(value),float(expected),rel_tol=1e-12,abs_tol=1e-10)
                 except (ValueError,TypeError):same=str(expected)==value
                 assert same,(name,key,value,expected)
-print(json.dumps({'features':len(features),'modules':len(modules),'register_rows':len(legacy),'exported_numeric_fields':len(parameters),'building_level_rows':len(buildings),'reference_comparison_rows':len(reference),'legal_progression_milestones':6,'training_tiers_completed':5,'scope':'Internal evidence consistency; not external source truth or full parity'}))
+print(json.dumps({'features':len(features),'modules':len(modules),'post_audit_modules':len(supplement),'current_runtime_modules':len(modules+supplement),'register_rows':len(legacy),'exported_numeric_fields':len(parameters),'building_level_rows':len(buildings),'reference_comparison_rows':len(reference),'legal_progression_milestones':6,'training_tiers_completed':5,'scope':'Internal evidence consistency; not external source truth or full parity'}))

@@ -1,0 +1,34 @@
+{
+  "checked": "2026-11-18",
+  "posts": [
+    {
+      "id": 2259768,
+      "title": "Version Update 1.1.09: A Splendid Voyage",
+      "is_official": true,
+      "account_id": 10000000,
+      "inserted_at": "2026-06-23T11:00:35Z",
+      "edited_at": "2026-06-23T11:00:35Z",
+      "language": "en",
+      "content_version": 1,
+      "human_url": "https://forum-global.lilithgame.com/post/2259768",
+      "api_url": "https://forum-global.lilithgame.com/api/v2/posts/2259768",
+      "content_utf8_sha256": "a9dc29baf4c30eb399ebc02336b6c8d86ffbbebcd50007301ae905d668af38e3",
+      "provenance": "Official GM publication verified by direct public JSON; historical announcement, not current client measurement"
+    },
+    {
+      "id": 1896244,
+      "title": "Update 1.0.90: Return of the King Patchnotes",
+      "is_official": true,
+      "account_id": 10000000,
+      "inserted_at": "2024-12-31T11:00:07Z",
+      "edited_at": "2025-02-24T06:41:00Z",
+      "language": "en",
+      "content_version": 1,
+      "human_url": "https://forum-global.lilithgame.com/post/1896244",
+      "api_url": "https://forum-global.lilithgame.com/api/v2/posts/1896244",
+      "content_utf8_sha256": "5c6045297eeafbc0668124f08982919188db0e3f18768b862b36b8a9465e1804",
+      "provenance": "Official GM publication verified by direct public JSON; historical announcement, not current client measurement"
+    }
+  ],
+  "scope": "Dated official patch announcements only; complete current tables, rollout per mode and absence of later changes remain unverified"
+}
