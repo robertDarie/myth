@@ -1,0 +1,13 @@
+{
+  "checked": "2026-11-18",
+  "status": "OWNER_APPROVED",
+  "decision": "Preserve all existing five-level cities and current gameplay rules temporarily; develop verified complete25-level progression for NEW cities; no automatic old5->new5 conversion",
+  "constraints": [
+    "Preserve all owned assets and paid jobs",
+    "Future migration based on equivalent earned progression and entitlements",
+    "Mixed-city combat/alliance/research/military capacity compatibility tests",
+    "Temporary transition toward unified progression",
+    "No real-save changes",
+    "No unverified numerical substitutions"
+  ]
+}

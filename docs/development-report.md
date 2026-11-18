@@ -1,5 +1,9 @@
 # Development report — 2026-11-16
 
+## Task7 checkpoint A —2026-11-18
+
+Starting1d0d56f. Three read-only research topics returned classified public evidence;70source-specific scalar observations merged by generator into7200canonical rows. Conflicting prerequisites, cumulative-vs-increment power and truncated timers recorded; no fabricated live binding. Safe production policy architecture and a concrete non-converting migration proposal documented before source edits. Full25-level progression remains unimplemented; owner migration decision and current reference gaps explicit. Native NOT TESTED. Frozen Creator ZIP hash preserved. research/parity/task7/README.md.
+
 ## Private creator preview delivered —2026-11-17
 
 Clean source89a4b967,0.45.0/protocol17, actual Unity exit0; versioned131443936-byte ZIP with216hashed payload files, privacy/static-link audit PASS.51required source checks, five launcher/production-server and five archive regressions PASS. Actual extracted CMD ready/game/Greek creation/city render PASS. User ended further native input; nine remaining cases explicitly NOT TESTED, no backend-as-native substitution. Read-only synthetic save restore/owned cleanup verified; original name preference and saves/releases preserved. Offline7image/11effect creator pack/proposed backlog included; two owner tracker/brief files absent and NOT INCLUDED. See docs/creator-preview-release.md. Tasks7–10 untouched.

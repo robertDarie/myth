@@ -292,6 +292,15 @@ def build():
         for parameter in ['ordinary_max_level','ordinary_level_stats_rewards','fort_tiers_stats_rewards','pass_opening_tiers_defenders','event_schedule_rewards']:
             fid='ROK-PVE-HOME-ORDINARY' if mode=='home' else 'ROK-PVE-KVK-ORDINARY'
             number(f'MODE.{mode}.{parameter}',fid,parameter,mode)
+    # Keep new observations source-specific. Never overwrite older conflicting
+    # observations or turn a crawl date into a live client-version binding.
+    supplement = json.loads((DEST/'task7/observations.json').read_text(encoding='utf-8'))
+    fields=set(numeric[0])
+    for observation in supplement['rows']:
+        numeric.append({key: str(observation.get(key,'')) for key in numeric[0]})
+    for feature in features:
+        if any(row['feature_id']==feature['feature_id'] for row in supplement['rows']):
+            feature['scope_note'] += '; Task7 source-specific observations/conflicts: research/parity/task7/observations.json; not implementation-ready live parity'
     return features,numeric
 
 

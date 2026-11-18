@@ -1,10 +1,10 @@
 {
-  "checked": "2026-11-17",
+  "checked": "2026-11-18",
   "reference_scope_complete": false,
   "complete_reference_denominator": "UNKNOWN",
   "discovered_required_scopes": 206,
-  "numeric_rows": 7130,
-  "published_source_value_rows": 3260,
+  "numeric_rows": 7200,
+  "published_source_value_rows": 3330,
   "current_version_bound_rows": 0,
   "fully_verified_features": 0,
   "global_parity_percentage": null,
@@ -16,10 +16,11 @@
     "PARTIAL PARITY": 5
   },
   "numeric_evidence_counts": {
-    "VERIFIED": 3256,
-    "CORROBORATED": 4,
+    "VERIFIED": 3301,
     "UNKNOWN": 3868,
+    "CORROBORATED": 29,
     "CONFLICTING": 2
   },
-  "latest_functional_scope": "RecoveryA original Divine Gate compatibility, owner approved2026-11-17; no whole-feature numerical parity certified"
+  "latest_functional_scope": "RecoveryA original Divine Gate compatibility, owner approved2026-11-17; no whole-feature numerical parity certified",
+  "task7_status": "CheckpointA research/design;70new source-specific observations; no new live numerical parity or migration"
 }
