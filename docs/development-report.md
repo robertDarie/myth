@@ -1,5 +1,9 @@
 # Development report — 2026-11-16
 
+## Task7 checkpoint B0 — non-converting production foundation
+
+Production city quotes now use an isolated legacy policy without numeric changes. Strict future25-row table validation rejects missing/unknown/imprecise data but does not activate new progression.4new tests;2720prior-source complete-card comparisons;8historical paid-job saves;53legal commands to existingCitadel5/3965simulated seconds; focused65PASS. Windows runtime dependency copy fixed/closure tested. Owner option1 preserved; no old level mapping, no real-save changes. Complete new-city25 progression NOT IMPLEMENTED; live prerequisite/modifier conflicts remain explicit. Native NOT TESTED. research/parity/task7/README.md.
+
 ## Task7 checkpoint A —2026-11-18
 
 Starting1d0d56f. Three read-only research topics returned classified public evidence;70source-specific scalar observations merged by generator into7200canonical rows. Conflicting prerequisites, cumulative-vs-increment power and truncated timers recorded; no fabricated live binding. Safe production policy architecture and a concrete non-converting migration proposal documented before source edits. Full25-level progression remains unimplemented; owner migration decision and current reference gaps explicit. Native NOT TESTED. Frozen Creator ZIP hash preserved. research/parity/task7/README.md.

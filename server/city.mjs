@@ -1,7 +1,8 @@
+import { buildingPolicyQuote } from './city-policy.mjs';
 import { trainingOptions, trainingBatch, trainingSpeed } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
 import { recordEvent } from './events.mjs';
-import { BUILDINGS, INITIAL_BUILDINGS, CITADEL_REQUIREMENTS, TECHNOLOGIES, RELICS, ARMAMENTS, ARMAMENT_SET, ARMAMENT_SLOTS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
+import { BUILDINGS, INITIAL_BUILDINGS, TECHNOLOGIES, RELICS, ARMAMENTS, ARMAMENT_SET, ARMAMENT_SLOTS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
 import { scoutCampCard } from './scout-camp.mjs';
 import { armyList, age, crews, constructionJobs, totalTroops, totalMythic, skillInfo } from './progression.mjs';
 import { referenceScale, commanderCapacity } from './numerics.mjs';
@@ -64,22 +65,22 @@ function missing(p, requirements) {
   return '';
 }
 export function buildingCard(p, b) {
-  const level = buildingLevel(p, b.id), next = level + 1;
-  const nextCost = scaled(b.base, b.id === 'citadel' ? level : Math.pow(next, 1.4));
-  const nextDuration = (b.id === 'citadel' ? 20 * level : 12 * next) / (1 + 0.05 * p.technologies.masonry);
+  const quote=buildingPolicyQuote(p,b);
+  const {level,next,maximum}=quote;
+  const nextCost=quote.cost, nextDuration=quote.seconds;
   let lockedReason = '';
-  if (level >= (b.id === 'builders' ? 1 : 5)) lockedReason = 'Maximum prototype level.';
+  if (level >= maximum) lockedReason = 'Maximum prototype level.';
   else if (constructionJobs(p).some(j => (j.targetId || 'citadel') === b.id)) lockedReason = 'This structure is already under construction.';
   else if (constructionJobs(p).length >= crews(p)) lockedReason = 'All construction crews are busy.';
   else if (p.cityLevel < b.unlock) lockedReason = `Citadel level ${b.unlock} required.`;
   else if (b.id !== 'citadel' && next > p.cityLevel) lockedReason = 'Upgrade the Citadel first.';
-  else lockedReason = missing(p, b.id === 'citadel' ? CITADEL_REQUIREMENTS[next] : b.requirements);
+  else lockedReason = missing(p, quote.prerequisites);
   if (!lockedReason && !affordable(p, nextCost)) lockedReason = 'Not enough resources.';
-  const dependencies=[...(b.id==='citadel'?CITADEL_REQUIREMENTS[next]??[]:b.requirements??[])];
+  const dependencies=[...quote.prerequisites];
   if(b.id!=='citadel')dependencies.unshift({id:'citadel',level:Math.max(b.unlock,next)});
   const eachFive = b.resource && level ? (b.resource === 'mana' ? 1 : 2) * level * (1 + 0.15 * (p.technologies.harvest ?? 0)) : 0;
   const description=referenceScale(p)&&b.id==='barracks'?'+10% training speed per level beyond the first. Higher levels increase training order sizes.':referenceScale(p)&&b.id==='infirmary'?'2,000 treatment beds at level1, plus750 per further level. Paid treatment returns wounded troops to reserves.':b.description;
-  const card = { ...b, description, prerequisites:level>=(b.id==='builders'?1:5)?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: b.id === 'builders' ? 1 : 5, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason, productionPerFive: eachFive };
+  const card = { ...b, description, prerequisites:level>=maximum?[]:dependencies.map(r=>requirement(p,r)),level, maxLevel: maximum, nextCost, nextDuration, canUpgrade: !lockedReason, lockedReason, productionPerFive: eachFive };
   if (b.id === 'scoutcamp') card.scoutCamp = scoutCampCard(level);
   return card;
 }

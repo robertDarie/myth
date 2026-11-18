@@ -12,12 +12,12 @@
   ],
   "exemptions": [
     {
-      "kind": "bug-fix",
+      "kind": "infrastructure",
       "paths": [
-        "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs",
-        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.HudPolish.cs"
+        "server/city.mjs",
+        "server/city-policy.mjs"
       ],
-      "reason": "NA-002 deployed-army native retest found the march-order ribbon still at its old fixed position, covering expanded pass details. Move the same existing ribbon above the context card using shared geometry; ordinary layout unchanged. Two geometry regressions; no gameplay, balance, fog authorization or save changes."
+      "reason": "Task7 non-converting progression-policy extraction retains every legacy quote, maximum, prerequisite, payment and timer;2720 actual prior-source full-card comparisons,8synthetic historical saves and53legal production commands verify unchanged behavior. Strict future table validation does not activate a new profile. No reference numeric change, save rewrite or gameplay substitute; full25-level activation remains blocked by recorded evidence. Full Windows runtime inventory includes the new dependency."
     }
   ]
 }

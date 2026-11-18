@@ -2,6 +2,21 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "Task7 production city policy legacy quote and package closure regressions",
+      "command": [
+        "node",
+        "--test",
+        "server/city-policy.test.mjs"
+      ]
+    },
+    {
+      "name": "Task7 immutable historical source and legal legacy progression conservation",
+      "command": [
+        "node",
+        "scripts/check-task7-city-conservation.mjs"
+      ]
+    },
+    {
       "name": "creator local launcher actual production-server isolation and persistence",
       "command": [
         "node",

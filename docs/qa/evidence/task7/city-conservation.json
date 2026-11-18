@@ -1,0 +1,588 @@
+{
+  "checked": "2026-11-18",
+  "baseline": "d9418781cb3a8aca735ad0f42955a2d08b19ad3c",
+  "syntheticHistoricalSaves": 8,
+  "fullCardComparisons": 2720,
+  "clock": "Production World.tick(.25), injectable wall clock follows simulated time",
+  "freshLegacyCommands": 53,
+  "freshLegacySeconds": 3965,
+  "legacyFinalCitadel": 5,
+  "newReference25": "NOT ACTIVATED; complete version-bound data still unresolved",
+  "native": "NOT TESTED",
+  "actions": [
+    {
+      "building": "citadel",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 100,
+        "gold": 75,
+        "stone": 40
+      },
+      "seconds": 20
+    },
+    {
+      "building": "oracle",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 60,
+        "gold": 40,
+        "stone": 30
+      },
+      "seconds": 12
+    },
+    {
+      "building": "oracle",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 159,
+        "gold": 106,
+        "stone": 80
+      },
+      "seconds": 24
+    },
+    {
+      "building": "farm",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 80,
+        "gold": 40
+      },
+      "seconds": 24
+    },
+    {
+      "building": "lumber",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 80,
+        "gold": 40
+      },
+      "seconds": 24
+    },
+    {
+      "building": "quarry",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 40,
+        "food": 20
+      },
+      "seconds": 12
+    },
+    {
+      "building": "quarry",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 106,
+        "food": 53
+      },
+      "seconds": 24
+    },
+    {
+      "building": "scoutcamp",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 146,
+        "food": 93,
+        "gold": 66
+      },
+      "seconds": 24
+    },
+    {
+      "building": "academy",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 70,
+        "gold": 50,
+        "stone": 40
+      },
+      "seconds": 12
+    },
+    {
+      "building": "mint",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 50,
+        "stone": 40
+      },
+      "seconds": 12
+    },
+    {
+      "building": "well",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 60,
+        "stone": 40,
+        "gold": 30
+      },
+      "seconds": 12
+    },
+    {
+      "building": "market",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 60,
+        "stone": 40,
+        "gold": 30
+      },
+      "seconds": 12
+    },
+    {
+      "building": "menagerie",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 80,
+        "gold": 60,
+        "stone": 50,
+        "mana": 10
+      },
+      "seconds": 12
+    },
+    {
+      "building": "oathhall",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 70,
+        "stone": 50,
+        "gold": 40
+      },
+      "seconds": 12
+    },
+    {
+      "building": "barracks",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 159,
+        "food": 106,
+        "stone": 53
+      },
+      "seconds": 24
+    },
+    {
+      "building": "infirmary",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 132,
+        "food": 106,
+        "stone": 53
+      },
+      "seconds": 24
+    },
+    {
+      "building": "citadel",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 200,
+        "gold": 150,
+        "stone": 80
+      },
+      "seconds": 40
+    },
+    {
+      "building": "farm",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 140,
+        "gold": 70
+      },
+      "seconds": 36
+    },
+    {
+      "building": "lumber",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 140,
+        "gold": 70
+      },
+      "seconds": 36
+    },
+    {
+      "building": "quarry",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 187,
+        "food": 94
+      },
+      "seconds": 36
+    },
+    {
+      "building": "academy",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 185,
+        "gold": 132,
+        "stone": 106
+      },
+      "seconds": 24
+    },
+    {
+      "building": "scoutcamp",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 257,
+        "food": 163,
+        "gold": 117
+      },
+      "seconds": 36
+    },
+    {
+      "building": "vault",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 132,
+        "stone": 80,
+        "gold": 53
+      },
+      "seconds": 24
+    },
+    {
+      "building": "forge",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 80,
+        "stone": 80,
+        "gold": 50,
+        "mana": 15
+      },
+      "seconds": 12
+    },
+    {
+      "building": "barracks",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 280,
+        "food": 187,
+        "stone": 94
+      },
+      "seconds": 36
+    },
+    {
+      "building": "builders",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "wood": 120,
+        "stone": 80,
+        "gold": 100
+      },
+      "seconds": 12
+    },
+    {
+      "building": "infirmary",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 233,
+        "food": 187,
+        "stone": 94
+      },
+      "seconds": 36
+    },
+    {
+      "building": "mint",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 132,
+        "stone": 106
+      },
+      "seconds": 24
+    },
+    {
+      "building": "well",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 159,
+        "stone": 106,
+        "gold": 80
+      },
+      "seconds": 24
+    },
+    {
+      "building": "market",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 159,
+        "stone": 106,
+        "gold": 80
+      },
+      "seconds": 24
+    },
+    {
+      "building": "oathhall",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 185,
+        "stone": 132,
+        "gold": 106
+      },
+      "seconds": 24
+    },
+    {
+      "building": "vault",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 233,
+        "stone": 140,
+        "gold": 94
+      },
+      "seconds": 36
+    },
+    {
+      "building": "menagerie",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 212,
+        "gold": 159,
+        "stone": 132,
+        "mana": 27
+      },
+      "seconds": 24
+    },
+    {
+      "building": "mint",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 233,
+        "stone": 187
+      },
+      "seconds": 36
+    },
+    {
+      "building": "citadel",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 300,
+        "gold": 225,
+        "stone": 120
+      },
+      "seconds": 60
+    },
+    {
+      "building": "quarry",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 279,
+        "food": 140
+      },
+      "seconds": 48
+    },
+    {
+      "building": "barracks",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 418,
+        "food": 279,
+        "stone": 140
+      },
+      "seconds": 48
+    },
+    {
+      "building": "farm",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 209,
+        "gold": 105
+      },
+      "seconds": 48
+    },
+    {
+      "building": "lumber",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 209,
+        "gold": 105
+      },
+      "seconds": 48
+    },
+    {
+      "building": "infirmary",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 349,
+        "food": 279,
+        "stone": 140
+      },
+      "seconds": 48
+    },
+    {
+      "building": "well",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 280,
+        "stone": 187,
+        "gold": 140
+      },
+      "seconds": 36
+    },
+    {
+      "building": "market",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 280,
+        "stone": 187,
+        "gold": 140
+      },
+      "seconds": 36
+    },
+    {
+      "building": "vault",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 349,
+        "stone": 209,
+        "gold": 140
+      },
+      "seconds": 48
+    },
+    {
+      "building": "scoutcamp",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 384,
+        "food": 244,
+        "gold": 175
+      },
+      "seconds": 48
+    },
+    {
+      "building": "mint",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 349,
+        "stone": 279
+      },
+      "seconds": 48
+    },
+    {
+      "building": "oracle",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 280,
+        "gold": 187,
+        "stone": 140
+      },
+      "seconds": 36
+    },
+    {
+      "building": "forge",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "wood": 212,
+        "stone": 212,
+        "gold": 132,
+        "mana": 40
+      },
+      "seconds": 24
+    },
+    {
+      "building": "academy",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 326,
+        "gold": 233,
+        "stone": 187
+      },
+      "seconds": 36
+    },
+    {
+      "building": "oathhall",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 326,
+        "stone": 233,
+        "gold": 187
+      },
+      "seconds": 36
+    },
+    {
+      "building": "oracle",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 418,
+        "gold": 279,
+        "stone": 209
+      },
+      "seconds": 48
+    },
+    {
+      "building": "menagerie",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "wood": 373,
+        "gold": 280,
+        "stone": 233,
+        "mana": 47
+      },
+      "seconds": 36
+    },
+    {
+      "building": "well",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "wood": 418,
+        "stone": 279,
+        "gold": 209
+      },
+      "seconds": 48
+    },
+    {
+      "building": "citadel",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "wood": 400,
+        "gold": 300,
+        "stone": 160
+      },
+      "seconds": 80
+    }
+  ]
+}
