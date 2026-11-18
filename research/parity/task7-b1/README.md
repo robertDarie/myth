@@ -6,7 +6,7 @@ Starting main: b811ef82d96a3b903525751340b63ccfa8544d93. This checkpoint impleme
 
 Eleven independent identities with explicit25-row supplied tables: Citadel, four producers, four trainers, Academy and market. Real authenticated commands pay resources, enforce prerequisites/workers/lanes, complete jobs, apply effects, collect individual production storage, train experimental reserves, research and transfer resources between isolated accounts. Supplied modifier policies are explicit TEST_ONLY semantics. Normal World/server/Unity is not wired to this engine. No incomplete reference profile is enabled for normal new cities.
 
-Ten tests exercise validation, payments, quotes, independent queues, research, transfer authorization, replay, offline event boundaries and disk restart.270paid upgrades using540commands reach all11buildingLv25 in11670simulated seconds. The declared synthetic initial state has zeroresources, Citadel1 and fourLv1producers; all subsequent progress is funded by simulated production/collection. It is not RoK birth progression. PreparedQuarrying1 test starts from explicit Academy1/resources, pays100food+100wood and completes in60base seconds/+5power; only its recorded unlock state is tested, not native map gathering.
+Eleven tests exercise validation, payments, quotes, independent queues, research, transfer authorization, replay, offline event boundaries and disk restart.270paid upgrades using540commands reach all11buildingLv25 in11670simulated seconds. The declared synthetic initial state has zeroresources, Citadel1 and fourLv1producers; all subsequent progress is funded by simulated production/collection. It is not RoK birth progression. PreparedQuarrying1 test starts from explicit Academy1/resources, pays100food+100wood and completes in60base seconds/+5power; only its recorded unlock state is tested, not native map gathering.
 
 ## Evidence and limits
 
@@ -31,3 +31,6 @@ Run `node --test server/reference-city.test.mjs` for focused functional checks a
 ## Defects found during implementation
 
 Writable-descriptor fsync fixes reproduced Windows EPERM from read-only save flushing. Paid training now records its original facility level: upgrading that facility while training must not reinterpret a paid cost/timer on reload. A reconstructed prior implementation fails the dedicated regression with Invalid saved training ledger; corrected implementation completes original paid units exactly once. These are isolated experimental persistence fixes, with no normal balance change.
+
+
+B1 follow-up: reproduced and removed an implicit matching-Cityhall-level cap from the generic engine. Explicit supplied row prerequisites now exclusively govern eligibility; this allows reference tables whose building levels differ from CityHall. Regression red on f6d915f, green with11engine tests. Synthetic270-upgrade ledger unchanged. Initial checkpoint f6d915f passed all55publication checks and confirmed origin/main; follow-up reruns the same required plan. No normal-source values or frozen package changed.

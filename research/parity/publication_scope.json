@@ -1,5 +1,5 @@
 {
-  "description": "Bounded owner-approved experimental B1 and RecoveryA compatibility only; neither certifies numerical parity.",
+  "description": "Bounded owner-approved experimental B1 and RecoveryA compatibility only; B1 follow-up removes implicit hall cap so supplied prerequisites govern eligibility. No numerical parity certification.",
   "features": [
     {
       "feature_id": "ROK-WORLD-PASS-OBJECTIVES",

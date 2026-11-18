@@ -148,7 +148,7 @@ Separate EXPERIMENTAL_CITY_ENGINE_V1 format with profile fingerprint; normal sav
 
 ## Acceptance tests
 
-Ten focused tests cover activation validation, missing/malformed supplied rows, cycles, payments, worker occupancy, effects, unauthorized commands, replay, four trainers, disk restart, prepared Quarrying, transfers, offline event boundaries and HTTP isolation. Full synthetic paid path270upgrades/540commands/11670simulated seconds from declared zero resources and five startingLv1 structures. Levels are never injected after birth; production/collection funds all upgrades. Legacy test preserves2720prior-source cards across8synthetic historical saves plus53actual commands to oldCitadel5. Browser create/collect/Citadel2/Barracks/train reserve observed. Native Unity NOT TESTED.
+Eleven focused tests cover activation validation, missing/malformed supplied rows, cycles, payments, worker occupancy, effects, unauthorized commands, replay, four trainers, disk restart, prepared Quarrying, transfers, offline event boundaries and HTTP isolation. Full synthetic paid path270upgrades/540commands/11670simulated seconds from declared zero resources and five startingLv1 structures. Levels are never injected after birth; production/collection funds all upgrades. Legacy test preserves2720prior-source cards across8synthetic historical saves plus53actual commands to oldCitadel5. Browser create/collect/Citadel2/Barracks/train reserve observed. Native Unity NOT TESTED.
 
 ## Implementation status
 
@@ -157,3 +157,6 @@ IMPLEMENTED scoped engine capability, NOT completed Task7 or genuine reference C
 ## Versioned contract binding
 
 ROK-CITY-LEVELS-1-25 remains incomplete. publication_scope.json binds only owner-approved experimental paths and functional/unchanged-numeric checks. No gate weakened, no current parity certification. Full reference activation remains disabled.
+
+
+B1 follow-up: reproduced and removed an implicit matching-Cityhall-level cap from the generic engine. Explicit supplied row prerequisites now exclusively govern eligibility; this allows reference tables whose building levels differ from CityHall. Regression red on f6d915f, green with11engine tests. Synthetic270-upgrade ledger unchanged. Initial checkpoint f6d915f passed all55publication checks and confirmed origin/main; follow-up reruns the same required plan. No normal-source values or frozen package changed.

@@ -2,7 +2,7 @@
   "checked": "2026-11-18",
   "starting_main": "b811ef82d96a3b903525751340b63ccfa8544d93",
   "engine_tests": {
-    "pass": 10,
+    "pass": 11,
     "fail": 0,
     "command": "node --test server/reference-city.test.mjs"
   },
@@ -47,6 +47,19 @@
       "issue": "training paid before facility upgrade failed restore against newer facility quote",
       "red": "Reconstructed earlier implementation: dedicated test failed Invalid saved training ledger",
       "green": "Persist original facilityLevel, validate original immutable row;10engine tests pass"
+    },
+    {
+      "issue": "Implicit engine rule required building rank <= Cityhall despite explicit supplied prerequisites allowing otherwise",
+      "red": "Regression on published engine failed expected canUpgrade true, actual false",
+      "fix": "Removed implicit rule; explicit profile prerequisites are sole authority; synthetic270-upgrade ledger unchanged",
+      "scope": "Experimental engine only; no normal-game or reference-rule change"
     }
-  ]
+  ],
+  "initial_publication": {
+    "commit": "f6d915f1093c2db8497c2c7bda35f4b98a958fed",
+    "required_checks_passed": 55,
+    "confirmed_origin_main": true,
+    "portable_CSharp_contracts": 16784,
+    "native_rendering": "NOT TESTED"
+  }
 }

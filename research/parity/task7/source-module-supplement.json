@@ -9,7 +9,7 @@
   {
     "path": "server/reference-city.mjs",
     "checked": "2026-11-18",
-    "sha256": "e13b606cd58db98393d7c8b1d221e7916c2af0921fa1b643bf39990b629bd575",
+    "sha256": "225f42d4a9cd35b08c4cfcec586093dab87566c85ce25b75114a0c43ffa39c96",
     "evidence": "research/parity/features/task7-b1-experimental-city.md",
     "disposition": "Post-Task3 owner-authorized isolated experimental engine; not historical or current full parity"
   },

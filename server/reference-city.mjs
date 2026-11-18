@@ -84,9 +84,8 @@ export class ReferenceCityEngine {
  #quote(p,b,research=false){
   const level=(research?p.technologies:p.levels)[b.id],next=level+1;
   if(next>b.maximum)return {level,maximum:b.maximum,canUpgrade:false,reason:'Maximum supplied profile level'};
-  const row=b.table.quote(next),effects=this.#effects(p),hall=[...this.#buildings.values()].find(v=>v.role==='cityhall');
+  const row=b.table.quote(next),effects=this.#effects(p);
   let reason='';
-  if(!research&&b.role!=='cityhall'&&next>p.levels[hall.id])reason='Cityhall level required';
   if(row.prerequisites.some(r=>(r.kind==='technology'?p.technologies:p.levels)[r.id]<r.level))reason='Building/technology prerequisite required';
   if(p.jobs.some(j=>j.targetId===b.id&&j.type===(research?'research':'building')))reason='Target already queued';
   if(research?p.jobs.some(j=>j.type==='research'):p.jobs.filter(j=>j.type==='building').length>=effects.workers)reason='Worker/research lane occupied';

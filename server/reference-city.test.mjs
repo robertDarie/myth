@@ -19,6 +19,13 @@ test('experimental opt-in and complete explicit tables are mandatory; fixture nu
  }
  const cyclic=structuredClone(p);cyclic.buildings[0].rows[1].prerequisites=[{id:'academy',level:2}];assert.throws(()=>new ReferenceCityEngine(cyclic,{experimental:true}),/Cyclic/);
 });
+
+test('supplied prerequisites alone govern a building rank, without invented matching Cityhall cap',()=>{
+ const profile=syntheticCityProfile();profile.buildings.find(b=>b.id==='farm').rows[1].prerequisites=[{id:'citadel',level:1}];
+ const {e,s}=setup(profile);fund(e,s);
+ assert.equal(e.snapshot(s.token).buildings.find(b=>b.id==='farm').canUpgrade,true);
+ build(e,s,'farm');assert.equal(e.snapshot(s.token).levels.farm,2);assert.equal(e.snapshot(s.token).levels.citadel,1);
+});
 test('collection, production capacity, exact payments, prerequisites, worker occupancy and replay',()=>{
  const {e,s}=setup();const start=e.snapshot(s.token);assert.equal(start.resources.food,0);
  assert.throws(()=>command(e,s,'building-upgrade',{targetId:'academy'}),/resources/);
