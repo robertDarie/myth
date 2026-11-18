@@ -49,3 +49,5 @@ for(const k of ['cityLevel','buildings','technologies','units','ownedCommanders'
 const result={checked:'2026-11-18',baseline,syntheticHistoricalSaves:8,fullCardComparisons,clock:'Production World.tick(.25), injectable wall clock follows simulated time',freshLegacyCommands:actions.length,freshLegacySeconds:w.time,legacyFinalCitadel:p.cityLevel,newReference25:'NOT ACTIVATED; complete version-bound data still unresolved',native:'NOT TESTED',actions};
 mkdirSync('work/task7',{recursive:true});writeFileSync('work/task7/city-conservation.json',JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({...result,actions:undefined}));
+// Reusable disposable, legitimately earned legacy save for mixed-profile QA.
+export {w as earnedLegacyWorld,s as earnedLegacySession};

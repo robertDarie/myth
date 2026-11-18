@@ -60,6 +60,7 @@ namespace ThronesOfMyth.Editor
             ArtReview.ValidateAssets(false);PrototypeSceneBuilder.EnsureBuildScene();
             PlayerSettings.companyName="ThronesOfMyth";PlayerSettings.productName="Thrones of Myth";
             PlayerSettings.bundleVersion=ReleaseVersion.Current;PlayerSettings.runInBackground=true;
+            using var qaProduct=new QaReferenceProductIdentity(Array.IndexOf(arguments,"-thronesQaReferenceClient")>=0);
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone,ScriptingImplementation.Mono2x);
             if(Directory.Exists(package))Directory.Delete(package,true);
             Directory.CreateDirectory(Path.Combine(package,"Game"));
@@ -74,6 +75,19 @@ namespace ThronesOfMyth.Editor
             if(File.Exists(zip))File.Delete(zip);
             ZipFile.CreateFromDirectory(package,zip,System.IO.Compression.CompressionLevel.Optimal,false);
             Debug.Log("Client-only ZIP created: "+zip);
+        }
+
+        // Dedicated QA product keeps native PlayerPrefs/session keys out of the real game.
+        private sealed class QaReferenceProductIdentity : IDisposable
+        {
+            private readonly string company,product;
+            private readonly bool enabled;
+            public QaReferenceProductIdentity(bool enabled)
+            {
+                this.enabled=enabled;company=PlayerSettings.companyName;product=PlayerSettings.productName;
+                if(enabled){PlayerSettings.companyName="ThronesOfMythQA";PlayerSettings.productName="Thrones of Myth B2 QA";}
+            }
+            public void Dispose(){if(enabled){PlayerSettings.companyName=company;PlayerSettings.productName=product;}}
         }
 
         private static string Build()

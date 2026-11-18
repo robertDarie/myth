@@ -1,0 +1,11 @@
+{
+  "checked": "2026-11-19",
+  "track": "A REFERENCE-SUPPORTED FRESH PROGRESSION",
+  "status": "BLOCKED_BEFORE_REFERENCE_INITIALIZATION",
+  "highest_verified_city_hall": null,
+  "reference_supported_upgrades_completed": 0,
+  "normal_activation": false,
+  "reason": "No current-account birth specification or complete early dependency/modifier/effect context; source-observed costs alone insufficient. CH3 dependency and first Academy conflicts retained.",
+  "needed_evidence": "research/parity/task7-b2/REFERENCE_COLLECTION_CHECKLIST.md",
+  "synthetic_fallback_counted": false
+}

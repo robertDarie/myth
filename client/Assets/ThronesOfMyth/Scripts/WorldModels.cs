@@ -7,7 +7,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class KingdomCard { public string id; public string name; public string description; public int players; public int capacity; public string join; public string status; }
     [Serializable] public sealed class KingdomList { public KingdomCard[] kingdoms; }
     [Serializable] public sealed class ErrorResponse { public string error; }
-    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId; public int count, troops, mythic, skillIndex, day; public bool enabled; public UnitCounts units; }
+    [Serializable] public sealed class GameCommand { public string type; public float x; public float z; public string targetId; public string name, marchId, period, allianceId, jobId, requestId; public int count, troops, mythic, skillIndex, day; public bool enabled; public UnitCounts units; }
     [Serializable] public sealed class InventoryItem { public string id,name,kind,resource,scope,description,category; public int amount,seconds,count; }
     [Serializable] public sealed class InventoryJob { public string id,lane,type,targetId; public float remaining; }
     [Serializable] public sealed class InventoryData { public bool suppliesAvailable; public InventoryItem[] items; public InventoryJob[] jobs; }
@@ -88,6 +88,7 @@ namespace ThronesOfMyth
         public ArmamentLoadout[] armamentLoadout;
         public QueueJob research, crafting;
         public BuildingCard[] cityBuildings;
+        public ReferenceCityData referenceCity;
         public ResearchCard[] researchOptions;
         public HeroProgress[] heroProgress;
         public DrawResult[] summonHistory;
@@ -96,6 +97,11 @@ namespace ThronesOfMyth
         public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
     }
+    [Serializable] public sealed class ReferenceCityData { public bool experimental,normalActivation; public string playerId,profileId,label,evidenceKind; public ResourceAmounts resources; public ReferenceBuilding[] buildings,research; public ReferenceJob[] jobs; public ReferenceReserve[] reserves; public string[] blockedActions; public int quarantinedLegacyTroops,power; public float time; }
+    [Serializable] public sealed class ReferenceBuilding { public string id,name,role,reason; public int level,maximum,nextLevel; public bool canUpgrade; public float seconds,baseSeconds,stored; public ResourceAmounts cost; public ReferenceRequirement[] prerequisites; }
+    [Serializable] public sealed class ReferenceRequirement { public string id,kind; public int level; }
+    [Serializable] public sealed class ReferenceJob { public string id,type,targetId,unitId; public int targetLevel,quantity; public float remaining,duration; public ResourceAmounts paid; }
+    [Serializable] public sealed class ReferenceReserve { public string id; public int count; }
     [Serializable] public sealed class FormationRule { public string id, name; public int minimumPercent; public float health; }
     [Serializable] public sealed class ArmamentLoadout { public string commanderId, weapon, armor, banner; }
     [Serializable] public sealed class ArmamentData { public string id, name, slot, description; public float duration, damage, health, speed; public ResourceAmounts cost; }

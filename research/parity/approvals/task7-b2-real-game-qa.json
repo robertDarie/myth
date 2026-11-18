@@ -1,0 +1,30 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Explicit owner Task7 B2 prompt sections3–6; isolated synthetic QA integration and blocking unsupported cross-profile actions only",
+  "owner_decision": "For now, keep experimental reference data behind an explicitly isolated QA-only mode.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": [
+    "ROK-CITY-LEVELS-1-25"
+  ],
+  "paths": [
+    "server/qa-reference-world.mjs",
+    "server/qa-reference-host.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.ReferenceCityQa.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.CityExperience.cs"
+  ],
+  "evidence_document": "research/parity/features/task7-b2-real-game-qa.md",
+  "functional_checks": [
+    "Task7 B2 real World mixed-profile authentication payments and rollback",
+    "Task7 B2 integrated synthetic progression and legacy conservation",
+    "Task7 B2 actual Unity interface and source-bound QA evidence",
+    "Task7 B2 actual disposable process restart and receipt conservation"
+  ],
+  "unchanged_numeric_checks": [
+    "Task7 production city policy legacy quote and package closure regressions",
+    "Task7 immutable historical source and legal legacy progression conservation",
+    "Task7 B1 isolated engine actions, authentication and persistence"
+  ]
+}

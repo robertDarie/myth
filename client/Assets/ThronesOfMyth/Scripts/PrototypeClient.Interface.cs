@@ -208,7 +208,7 @@ namespace ThronesOfMyth
                 DrawTopHud();
                 if (me != null)
                 {
-                    if (interfacePage == InterfacePage.City && cityModelView) DrawImmersiveCity();
+                    if (interfacePage == InterfacePage.City && cityModelView && me.referenceCity==null) DrawImmersiveCity();
                     else if (interfacePage == InterfacePage.World && !cityExperience.BlocksWorld)
                     {
                         DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
@@ -218,6 +218,7 @@ namespace ThronesOfMyth
                     else if(interfacePage!=InterfacePage.World)DrawInterfaceWindow();
                     DrawBottomNavigation();
                     DrawInterfaceToast();
+                    if(me.referenceCity!=null)theme.OneLine(new Rect(270,84,ViewWidth-290,26),"EXPERIMENTAL / TEST DATA · City QA only · Military interoperability BLOCKED",theme.Eyebrow);
                 }
                 else theme.Text(new Rect(ViewWidth / 2 - 180, ViewHeight / 2, 360, 50), "Entering your kingdom…", theme.Center);
             }
@@ -461,7 +462,8 @@ namespace ThronesOfMyth
             if(interfacePage==InterfacePage.City)opening.CityViewed=true;
             if(interfacePage==InterfacePage.Reports)opening.OutcomeViewed=true;
             if(interfacePage==InterfacePage.Heroes)opening.CommanderViewed=true;
-            if(interfacePage==InterfacePage.Menu)DrawMenuWindow(inner);
+            if(me.referenceCity!=null&&(interfacePage==InterfacePage.City||interfacePage==InterfacePage.Training||interfacePage==InterfacePage.Research||interfacePage==InterfacePage.Market))RenderReferenceCityQa(inner);
+            else if(interfacePage==InterfacePage.Menu)DrawMenuWindow(inner);
             else if (interfacePage == InterfacePage.Formation) RenderFormationWindow(inner);
             else if (interfacePage == InterfacePage.City) RenderCityWindow(inner);
             else if (interfacePage == InterfacePage.Heroes) RenderHeroesWindow(inner);

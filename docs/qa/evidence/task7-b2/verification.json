@@ -1,0 +1,108 @@
+{
+  "checked": "2026-11-19",
+  "starting_main": "3b050272a027e158b4c947182c6bac34ef8f3482",
+  "integration_tests": {
+    "pass": 7,
+    "fail": 0
+  },
+  "process_restart": {
+    "real_processes": 2,
+    "test_pass": 1,
+    "preserved": [
+      "real session",
+      "paid Citadel2",
+      "exact-once request receipt",
+      "ordinary save sentinel"
+    ],
+    "native": false,
+    "duplicate_authority": "REJECTED without using or stopping existing authority"
+  },
+  "native": {
+    "verdict": "PARTIAL",
+    "client": "dist/WindowsB2QA-InputFixed/Game/ThronesOfMyth.exe",
+    "unity": "6000.3.0f1",
+    "protocol": 17,
+    "base_commit": "3b050272a027e158b4c947182c6bac34ef8f3482",
+    "modified_sources": true,
+    "package_files_verified": 145,
+    "exe_sha256": "40adc76c08a72722c42921f51052c36de1b8e8c75eb8f76d9007d9e5714ee84f",
+    "product_identity": "ThronesOfMythQA / Thrones of Myth B2 QA; separate PlayerPrefs",
+    "actual_pass": [
+      "Greek city creation through Unity /join",
+      "existing city/session resumed in corrected binary",
+      "EXPERIMENTAL / TEST DATA banner visible",
+      "independent Farm/Barracks/Academy selection",
+      "Farm2 blocked by Citadel2 prerequisite before upgrade",
+      "collection credited446food/wood/stone/gold from actual stored production",
+      "Citadel2 completed with4food/4wood/2stone/2gold debit",
+      "Barracks1 constructed for2food/2wood/1stone/1gold",
+      "one TEST_ONLY reserve trained for2food/1wood;2.0second paid queue observed; completion visible",
+      "Academy1 constructed; test-writing1 paid3food/3wood/1stone/1gold",
+      "research countdown4.6seconds and occupied lane visible, then rank1 completion visible"
+    ],
+    "not_tested": [
+      "Short construction-countdown retest interrupted by Windows user-input guard",
+      "Full native server restart after earned progression",
+      "Native mixed-profile combat/reinforcement (explicitly blocked, not parity-supported)",
+      "All25levels through native inputs",
+      "Native alliance membership (backend verified only)"
+    ],
+    "interruption": "Windows reported user input in QA window; no further inputs sent. Last attempted Academy2 upgrade unconfirmed and not counted.",
+    "bugs_fixed": [
+      {
+        "id": "B2-QA-STAMP",
+        "red": "Native source-version mismatch; HTTP regression served placeholder instead of requested SHA",
+        "fix": "Operator launcher stamps actual git HEAD; client check unchanged",
+        "green": "Native entry succeeded with matching source stamp; six integration tests pass"
+      },
+      {
+        "id": "B2-QA-INPUT",
+        "red": "Underlying immersive city picker consumed panel clicks; no engine receipts created",
+        "fix": "Disable legacy diorama picking when referenceCity snapshot is present",
+        "green": "Corrected native building selection, collection, construction, training and research completed"
+      }
+    ],
+    "known_log_warning": "Existing recursive ArmyData.homeFormations DTO reports JsonUtility serialization depth warnings; panel actions above still worked; no broad DTO redesign performed"
+  },
+  "screenshots": [
+    {
+      "path": "docs/qa/evidence/task7-b2/native-collection-prerequisites.jpg",
+      "sha256": "ab56e2ad8ee35d779ff99aafb0f9535684290cc90c22f3b61ccdf30838139cfe"
+    },
+    {
+      "path": "docs/qa/evidence/task7-b2/native-training-paid-queue.jpg",
+      "sha256": "a982e200f59398c4c1fbf2f3034be33a9862831694755905c8748becae2a527f"
+    },
+    {
+      "path": "docs/qa/evidence/task7-b2/native-research-paid-countdown.jpg",
+      "sha256": "419c1b8eecf18137c2a53f5c90871660dc60c9ddf674e5e738153a1c9c024c8e"
+    },
+    {
+      "path": "docs/qa/evidence/task7-b2/native-completed-reference-city.jpg",
+      "sha256": "d33073cff8429e8e91a536505e4da05efce584ec9832f69a98915d841f3f81ad"
+    }
+  ],
+  "track_A": "BLOCKED before verified initialization; no reference-supported fresh level claimed",
+  "track_B": {
+    "paid_upgrades": 270,
+    "commands": 540,
+    "buildings": 11,
+    "maximum": 25,
+    "server_seconds": 11670,
+    "legacyMatchedOrdinaryWorld": true,
+    "classification": "SYNTHETIC ONLY"
+  },
+  "normal_activation": false,
+  "real_saves_used": false,
+  "frozen_creator_sha256": "9d22646f7a0f320609b0146c1c261fe1f6411e02b3a018ef8ad600475636a5a8",
+  "mixed_earned_legacy": {
+    "source": "existing actual production-command conservation fixture, baseline d9418781cb3a8aca735ad0f42955a2d08b19ad3c",
+    "earned_citadel": 5,
+    "commands": 53,
+    "seconds": 3965,
+    "paid_job_retained": true,
+    "real_save": false,
+    "max_state_injection": false,
+    "ordinary_world_comparison": "PASS exact legacy fields/assets/jobs/resources through same elapsed time"
+  }
+}

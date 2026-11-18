@@ -1,5 +1,5 @@
 {
-  "description": "Bounded owner-approved experimental B1 and RecoveryA compatibility only; B1 follow-up removes implicit hall cap so supplied prerequisites govern eligibility. No numerical parity certification.",
+  "description": "B2 owner-authorized real-game QA integration only; synthetic data isolated; unsupported cross-profile actions blocked; normal reference activation disabled.",
   "features": [
     {
       "feature_id": "ROK-WORLD-PASS-OBJECTIVES",
@@ -30,6 +30,18 @@
         "server/reference-city-http.mjs"
       ],
       "approved_compatibility": "research/parity/approvals/task7-b1-experimental-city.json"
+    },
+    {
+      "feature_id": "ROK-CITY-LEVELS-1-25",
+      "paths": [
+        "server/qa-reference-world.mjs",
+        "server/qa-reference-host.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.ReferenceCityQa.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.CityExperience.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/task7-b2-real-game-qa.json"
     }
   ]
 }

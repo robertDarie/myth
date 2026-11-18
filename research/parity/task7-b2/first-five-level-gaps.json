@@ -1,0 +1,115 @@
+{
+  "checked": "2026-11-19",
+  "extends": "research/parity/task7-b1/requirements-matrix.json",
+  "normal_activation": false,
+  "rows": [
+    {
+      "level": 1,
+      "published_food": 1800,
+      "published_wood": 1800,
+      "published_seconds": 1,
+      "published_cumulative_power": 7,
+      "published_requirements": null,
+      "source": "https://gacha-data.com/rise-of-kingdoms/buildings/",
+      "checked": "2026-11-18",
+      "classification": "VERIFIED published observation only",
+      "current_account_binding": "UNKNOWN",
+      "birth_or_tutorial_charging": "UNKNOWN",
+      "complete_nested_dependencies": "UNKNOWN",
+      "production_collection_and_modifier_semantics": "UNKNOWN",
+      "current_supported_activation": false,
+      "conflicts": [
+        "CH1 cost row versus dated guide says already-built/free starting level"
+      ]
+    },
+    {
+      "level": 2,
+      "published_food": 3500,
+      "published_wood": 3500,
+      "published_seconds": 2,
+      "published_cumulative_power": 21,
+      "published_requirements": null,
+      "source": "https://gacha-data.com/rise-of-kingdoms/buildings/",
+      "checked": "2026-11-18",
+      "classification": "VERIFIED published observation only",
+      "current_account_binding": "UNKNOWN",
+      "birth_or_tutorial_charging": "UNKNOWN",
+      "complete_nested_dependencies": "UNKNOWN",
+      "production_collection_and_modifier_semantics": "UNKNOWN",
+      "current_supported_activation": false,
+      "conflicts": [
+        "blank extracted prerequisite versus dated guide explicitly no building requirement"
+      ]
+    },
+    {
+      "level": 3,
+      "published_food": 6500,
+      "published_wood": 6500,
+      "published_seconds": 300,
+      "published_cumulative_power": 59,
+      "published_requirements": null,
+      "source": "https://gacha-data.com/rise-of-kingdoms/buildings/",
+      "checked": "2026-11-18",
+      "classification": "VERIFIED published observation only",
+      "current_account_binding": "UNKNOWN",
+      "birth_or_tutorial_charging": "UNKNOWN",
+      "complete_nested_dependencies": "UNKNOWN",
+      "production_collection_and_modifier_semantics": "UNKNOWN",
+      "current_supported_activation": false,
+      "conflicts": [
+        "blank extracted prerequisite versus dated guide Wall2"
+      ]
+    },
+    {
+      "level": 4,
+      "published_food": 11800,
+      "published_wood": 11800,
+      "published_seconds": 1200,
+      "published_cumulative_power": 154,
+      "published_requirements": [
+        {
+          "id": "wall",
+          "level": 3
+        }
+      ],
+      "source": "https://gacha-data.com/rise-of-kingdoms/buildings/",
+      "checked": "2026-11-18",
+      "classification": "VERIFIED published observation only",
+      "current_account_binding": "UNKNOWN",
+      "birth_or_tutorial_charging": "UNKNOWN",
+      "complete_nested_dependencies": "UNKNOWN",
+      "production_collection_and_modifier_semantics": "UNKNOWN",
+      "current_supported_activation": false,
+      "conflicts": [
+        "Academy unlock CH4 in guide versus CH6 in extracted table"
+      ]
+    },
+    {
+      "level": 5,
+      "published_food": 21300,
+      "published_wood": 21300,
+      "published_seconds": 3600,
+      "published_cumulative_power": 383,
+      "published_requirements": [
+        {
+          "id": "wall",
+          "level": 4
+        },
+        {
+          "id": "hospital",
+          "level": 4
+        }
+      ],
+      "source": "https://gacha-data.com/rise-of-kingdoms/buildings/",
+      "checked": "2026-11-18",
+      "classification": "VERIFIED published observation only",
+      "current_account_binding": "UNKNOWN",
+      "birth_or_tutorial_charging": "UNKNOWN",
+      "complete_nested_dependencies": "UNKNOWN",
+      "production_collection_and_modifier_semantics": "UNKNOWN",
+      "current_supported_activation": false,
+      "conflicts": []
+    }
+  ],
+  "collection_checklist": "research/parity/task7-b2/REFERENCE_COLLECTION_CHECKLIST.md"
+}

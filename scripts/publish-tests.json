@@ -2,6 +2,38 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "Task7 B2 real World mixed-profile authentication payments and rollback",
+      "command": [
+        "node",
+        "--test",
+        "server/qa-reference-world.test.mjs"
+      ]
+    },
+    {
+      "name": "Task7 B2 actual disposable process restart and receipt conservation",
+      "command": [
+        "node",
+        "--test",
+        "scripts/test_reference_qa_launcher.cjs"
+      ]
+    },
+    {
+      "name": "Task7 B2 integrated synthetic progression and legacy conservation",
+      "command": [
+        "node",
+        "scripts/qa-reference-playthrough.mjs"
+      ]
+    },
+    {
+      "name": "Task7 B2 actual Unity interface and source-bound QA evidence",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-task7-b2-evidence.py"
+      ]
+    },
+    {
       "name": "Task7 B1 isolated engine actions, authentication and persistence",
       "command": [
         "node",

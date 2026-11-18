@@ -35,17 +35,17 @@
     "server/kingdom.mjs": "7dc7defbf28e7989d3970f86a8a794f80abfd34d7e7686f948a685eebac1275c",
     "server/campaign.mjs": "d2c2240d5f77d91a94a698cbaeec4f59a17771186cd081d36e0660de3cf8d185",
     "server/marches.mjs": "36b4cfbdb5078dd5090a169af075246bba66d61043cd430ba1762bda66890b58",
-    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs": "d6ed16cef79518057a84306a273a0cb93c218b0906ce9be1103afe27739eac81",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs": "4c174444c77267bbdaa247ace79d819491347c47bb0a2227e722b812680c3cbb",
     "client/Assets/ThronesOfMyth/Scripts/WorldView.Environment.cs": "592f10818239f54ec0593de08a065875561272b182112956bc3a86e5cf5e3475",
     "client/Assets/ThronesOfMyth/Scripts/WorldView.Territory.cs": "c43b8f17adda623cbdedb0239b12c206ff3a5c6768fbfb2f99aeeb32a445ccb2",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs": "246ba57b6758fbd2c8febdcc33ca32ca784cd1be4d38f127b9d1494a0bb55ecb",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs": "847a19fdd3db9c4c7f472ca9ee069287ec66c9d6ed42fd75d647d6452b9844e8",
     "server/forsaken-population.mjs": "65a6681ee2f0decbddd6b1d502c10f20d20c1a1c3af8c051338c5e4032280381",
     "client/Assets/ThronesOfMyth/Scripts/WorldView.cs": "e7a1e0cbc746e2b069963ad31dd55f2fc4de0618dcc725586a1ffdfc0fa6ad75",
-    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs": "44bcc1118170edc4adb438bff5d005f328b03dd0e60fea8f811f50da79c6fdd7",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs": "2facf093508a08491363b623e4c2a9ec41237dc7d9b4ec4cef92460a495a10d0",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Warfare.cs": "2ad0214ec231045eb0183f7fc61361b656579e9639ebc2a1809900901869679b",
     "server/storage.mjs": "b37df1043a8535cd8193558d5787de79ccc9cdbfa509eb9b6d981e221aa3302e",
-    "client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs": "56936750c75e6b6c1965d01d1ac3f42da4641097769b4df53c46a8d190c13d80",
+    "client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs": "84cab3cfa268c63700b08d502674efbd33a37eae58687901b48f55d883719995",
     "client/Assets/ThronesOfMyth/Editor/PassReview.cs": "0f3c5a36c7435cd8f48abcb23cc2670fd8534fa9dc70a4b4d65c8e89f039ced3",
     "scripts/recovery-a-playthrough.mjs": "e297d979a549c1d913eae973fc03951e518cb3bf5680db352736c3ce4539f145",
     "scripts/check_recovery_a_evidence.py": "6a59a22f3ed521ab2d7833fc7a4771bbbd12fefe4d60fb6e0931062d5170c90f",
@@ -66,5 +66,15 @@
   "native_followup": "docs/qa/RECOVERY_A_NATIVE_WINDOWS.md",
   "native_blocker_at_source_checkpoint": "CUA selected Thrones of Myth window but accessibility initially unavailable; screenshot showed unrelated foreground application. Refreshed same discovered window, got title-bar AX, invoked exposed Raise action; target capture failed: no screenshot targets found for process:<QA ThronesOfMyth.exe>. No coordinates/input sent to unrelated window. No unrelated screenshot retained.",
   "native_current_capture": "Supported @oai/sky actual inputs; final bounded16-case report published; native status PARTIAL, remaining cases explicitly NOT TESTED",
-  "task7_builder_followup": "Only added city-policy.mjs runtime dependency. Actual full runtime copy-inventory relative dependency closure test PASS; prior native/package observations retain their original source SHA. No client runtime/scene source changed; existing9-file Unity topology fingerprint unmodified."
+  "task7_builder_followup": "Only added city-policy.mjs runtime dependency. Actual full runtime copy-inventory relative dependency closure test PASS; prior native/package observations retain their original source SHA. No client runtime/scene source changed; existing9-file Unity topology fingerprint unmodified.",
+  "b2_qa_regression": {
+    "checked": "2026-11-19",
+    "actual_unity": "6000.3.0f1 ReferenceCityReview.Validate invokes PassReview.ValidateTopology; source-bound current result copied",
+    "source_paths_revalidated": [
+      "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+      "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+      "client/Assets/ThronesOfMyth/Editor/WindowsPlaytestBuilder.cs"
+    ],
+    "scope": "Recompiled optional city QA and packaging changes; ten real pass models rerun; historical native verdict unchanged"
+  }
 }

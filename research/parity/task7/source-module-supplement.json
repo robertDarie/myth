@@ -19,5 +19,19 @@
     "sha256": "1cac8403c1fd045a025e5cf7d29571d1ac57217d0af6c1ec487e81195c81c913",
     "evidence": "research/parity/features/task7-b1-experimental-city.md",
     "disposition": "Post-Task3 owner-authorized isolated experimental engine; not historical or current full parity"
+  },
+  {
+    "path": "server/qa-reference-world.mjs",
+    "checked": "2026-11-19",
+    "sha256": "5e96a268c8d014c0f23307cb4ae41cf3eceaf60a7c4416e7620e3d60bbd1c06d",
+    "evidence": "research/parity/features/task7-b2-real-game-qa.md",
+    "disposition": "B2 opt-in QA integration; not imported by normal World/index; no historical/full reference parity claim"
+  },
+  {
+    "path": "server/qa-reference-host.mjs",
+    "checked": "2026-11-19",
+    "sha256": "4ea7fb2c082770990e0143458d2d617554f941cfe0329a8e184326b64de5c05b",
+    "evidence": "research/parity/features/task7-b2-real-game-qa.md",
+    "disposition": "B2 opt-in QA integration; not imported by normal World/index; no historical/full reference parity claim"
   }
 ]

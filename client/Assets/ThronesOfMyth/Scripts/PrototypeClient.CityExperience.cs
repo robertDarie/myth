@@ -69,7 +69,7 @@ namespace ThronesOfMyth
             Color before=GUI.color;GUI.color=new Color(before.r,before.g,before.b,before.a*cityExperience.Blend);
             MythInterfaceTheme.Fill(new Rect(0,98,ViewWidth,ViewHeight-180),new Color(.10f,.17f,.18f,cityExperience.Blend));
             int old=selectedBuilding;
-            selectedBuilding=cityDiorama.Draw(CityCanvas,me,selectedBuilding,theme,reducedMotion,cityProgress,true,cityExperience.CanPickCity&&interfacePage==InterfacePage.City&&cityModelView&&!(NotificationVisible&&NotificationRect.Contains(Event.current.mousePosition)),cityExperience.Blend);
+            selectedBuilding=cityDiorama.Draw(CityCanvas,me,selectedBuilding,theme,reducedMotion,cityProgress,true,me.referenceCity==null&&cityExperience.CanPickCity&&interfacePage==InterfacePage.City&&cityModelView&&!(NotificationVisible&&NotificationRect.Contains(Event.current.mousePosition)),cityExperience.Blend);
             if(old!=selectedBuilding){contentScroll=Vector2.zero;BattlefieldAudio.UiCue("confirm");}
             GUI.color=before;
         }
