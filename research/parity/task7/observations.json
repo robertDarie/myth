@@ -1683,11 +1683,10 @@
       "id": "TRADING_POST",
       "class_": "CONFLICTING",
       "alternatives": [
-        "L25=2.5m old guide",
-        "10m since1.0.90 claim not official-verified",
-        "received=sent*(1-tax) vs sender gross-up"
+        "Older secondary table2.5m; official1.0.90 announcement increases level25 from5m to10m (dated change VERIFIED)",
+        "Complete current level table/rollout unverified; transfer received=sent*(1-tax) vs sender gross-up remains unresolved"
       ],
-      "impact": "Need actual current UI transaction evidence and rounding."
+      "impact": "Official patch resolves the dated level25 change; it does not resolve current full table, tax semantics, rounding or transport behavior."
     },
     {
       "id": "T5_TIME",

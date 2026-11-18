@@ -67,7 +67,7 @@ Published source observations only. CH3 and Academy unlock conflicts prevent rea
 
 ## Numeric reference
 
-Seventy classified scalar observations appended to canonical dataset without replacing older conflicting rows; quantities explicitly retain UNKNOWN live binding.
+Eighty-one classified scalar observations, including eleven official historical patch facts, appended to canonical dataset without replacing older conflicting rows; quantities explicitly retain UNKNOWN live binding.
 
 ## Formulas and modifiers
 
