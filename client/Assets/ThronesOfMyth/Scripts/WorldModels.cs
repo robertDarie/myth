@@ -96,12 +96,15 @@ namespace ThronesOfMyth
         public QueueJob construction, secondConstruction;
         public QueueJob[] trainingQueue;
         public string[] ownedCommanders;
+        public ForsakenProgress forsaken;
     }
     [Serializable] public sealed class ReferenceCityData { public bool experimental,normalActivation; public string playerId,profileId,label,evidenceKind; public ResourceAmounts resources; public ReferenceBuilding[] buildings,research; public ReferenceJob[] jobs; public ReferenceReserve[] reserves; public string[] blockedActions; public int quarantinedLegacyTroops,power; public float time; }
     [Serializable] public sealed class ReferenceBuilding { public string id,name,role,reason; public int level,maximum,nextLevel; public bool canUpgrade; public float seconds,baseSeconds,stored; public ResourceAmounts cost; public ReferenceRequirement[] prerequisites; }
     [Serializable] public sealed class ReferenceRequirement { public string id,kind; public int level; }
     [Serializable] public sealed class ReferenceJob { public string id,type,targetId,unitId; public int targetLevel,quantity; public float remaining,duration; public ResourceAmounts paid; }
     [Serializable] public sealed class ReferenceReserve { public string id; public int count; }
+    [Serializable] public sealed class ForsakenSearchResult { public string status, id, message; public int level, sequence; public float x, z; }
+    [Serializable] public sealed class ForsakenProgress { public int version, unlocked, kingdomLevel, searchReadySeconds; public int[] firstClears; public ForsakenSearchResult searchResult; }
     [Serializable] public sealed class FormationRule { public string id, name; public int minimumPercent; public float health; }
     [Serializable] public sealed class ArmamentLoadout { public string commanderId, weapon, armor, banner; }
     [Serializable] public sealed class ArmamentData { public string id, name, slot, description; public float duration, damage, health, speed; public ResourceAmounts cost; }
@@ -124,7 +127,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class SaveStatus { public bool enabled; public string lastSaved, error, backend; }
     [Serializable] public sealed class CoreReport { public string id,type,title,detail,outcome,armyId,commanderId,reason,sourceId,currencyNote; public float time,started; public ResourceAmounts resources,lost; public CargoSource[] sources; }
     [Serializable] public sealed class CargoSource { public string nodeId,name,resource; public float x,z; public int amount; }
-    [Serializable] public sealed class CampData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name,lockedReason; public int level, health, maxHealth, respawn,enemyPower,enemyTroops,enemyTier,recommendedTroops,recommendedTier,commanderXP,apCost; public float x, z; }
+    [Serializable] public sealed class CampData { public bool lastKnown, terrainExplored, searchPin; public float observedAt; public string id, name,lockedReason; public int level, health, maxHealth, respawn,enemyPower,enemyTroops,enemyTier,recommendedTroops,recommendedTier,commanderXP,apCost; public float x, z; }
     [Serializable] public sealed class NodeData { public bool lastKnown, terrainExplored; public float observedAt; public string id, name, resource; public float x, z; public int remaining, capacity; }
     [Serializable] public sealed class ProvinceData { public string id,name,category; public float minX,maxX,minZ,maxZ; public string[] gates; }
     [Serializable] public sealed class CorridorData { public string id,gateId; public RoutePoint a,b; }

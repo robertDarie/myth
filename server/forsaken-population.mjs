@@ -131,16 +131,19 @@ export function populationCommand(w,p,c,fail){
   if(!Number.isInteger(level)||level<1||level>Math.min(p.forsaken.unlocked,kingdomForsakenLevel(w)))fail('Choose an unlocked Forsaken level.');
   if(now<p.forsaken.searchReadyAtMs)fail('Wait '+Math.ceil((p.forsaken.searchReadyAtMs-now)/1000)+' seconds before searching again.');
   p.forsaken.searchReadyAtMs=now+30000;p.forsaken.searchSequence++;
-  const seen=visionContext(w,p).seen,visibleEnemy=aliveForsaken(w).filter(c=>c.level===level&&w.canEnter(p,c)&&seen(c)).sort((a,b)=>distance(a,{x:p.homeX,z:p.homeZ})-distance(b,{x:p.homeX,z:p.homeZ}))[0];
-  let result={status:'none',message:'No visible Forsaken of this level. Send a scout and search again.'};
-  if(visibleEnemy)result={status:'found',id:visibleEnemy.id,x:visibleEnemy.x,z:visibleEnemy.z,level,message:'Found a visible Forsaken. Focus the sighting and select a march.'};
+  const seen=visionContext(w,p).seen,home={x:p.homeX,z:p.homeZ},previous=p.forsaken.searchResult?.status==='found'?p.forsaken.searchResult.id:'';
+  const ranked=aliveForsaken(w).filter(c=>c.level===level&&w.canEnter(p,c)&&seen(c)).sort((a,b)=>distance(a,home)-distance(b,home));
+  const visibleEnemy=ranked.find(c=>c.id!==previous)||ranked[0];
+  let result={status:'none',message:'No reachable Forsaken of this level is in explored land. Scout farther and search again.'};
+  if(visibleEnemy)result={status:'found',id:visibleEnemy.id,x:visibleEnemy.x,z:visibleEnemy.z,level,message:'Found a Forsaken. The sighting stays on your map until you search again.'};
   else if(level<=12){
-    const region=provinceAt({x:p.homeX,z:p.homeZ}),r=REGIONAL_POPULATION.find(r=>r.id===region?.id),live=aliveForsaken(w);
+    const region=provinceAt(home),r=REGIONAL_POPULATION.find(r=>r.id===region?.id),live=aliveForsaken(w);
     if(r&&live.length<192&&live.filter(c=>c.provinceId===r.id).length<r.target+4){
       const context=collisionContext(w),eyes=observerEyes(w);
       for(let i=0;i<24;i++){const angle=(w.random()+i*.61803398875)*Math.PI*2,radius=8+w.random()*8,location={x:p.homeX+Math.cos(angle)*radius,z:p.homeZ+Math.sin(angle)*radius};
         if(!p.explored.includes(cellIndex(location))||!suitable(w,region,location,context,eyes))continue;
-        const slot=freeSlot(w);if(!slot)break;spawn(w,slot,r,location,level);result={status:'scout',message:'A nearby trail is available in explored land. Scout around your city.'};break;
+        const slot=freeSlot(w);if(!slot)break;spawn(w,slot,r,location,level);
+        result={status:'found',id:slot.id,x:slot.x,z:slot.z,level,message:'A Forsaken stepped onto explored land. Focus it and march.'};break;
       }
     }
   }

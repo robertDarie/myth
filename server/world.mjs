@@ -548,6 +548,10 @@ export class World {
     const reachable=viewer?reachableRegions(this,viewer):null;
     // Public strategic control, never hidden enemy troop/garrison intelligence.
     result.passes=this.sites.filter(s=>s.kind==='gate').map(s=>{const locked=!siteIsOpen(this,s.id),own=!!viewer?.allianceId&&s.allianceId===viewer.allianceId,known=!viewer||own||vision.seen(s),approachAccessible=!reachable||s.zoneIds.some(id=>reachable.has(id));return {...s,locked,health:known?s.health:0,maxHealth:known?s.maxHealth:0,defendersKnown:known,garrisonMarches:own?this.garrisons.find(g=>g.targetId===s.id)?.armyIds.length??0:-1,approachAccessible,militaryAccess:!locked&&own,accessExplanation:locked?'Sealed until The Divine Gates Awaken':own?'Your alliance controls this crossing':!viewer?.allianceId?'Join an alliance; scouts may pass':!approachAccessible?'Secure the earlier passes before approaching':!territoryNear(this,viewer.allianceId,s)?'Extend connected alliance territory to this pass':'Rally from an accessible side to defeat the pass fortification'};});
+    if(referenceScale(this)&&viewer?.forsaken?.searchResult?.status==='found'){
+      const pin=this.camps.find(c=>c.id===viewer.forsaken.searchResult.id&&c.spawned!==false&&c.health>0);
+      if(pin&&!result.camps.some(c=>c.id===pin.id))result.camps.push({...forsakenCard(pin),searchPin:true});
+    }
     if(referenceScale(this)&&viewer)for(const c of result.camps)c.lockedReason=forsakenReason(this,viewer,c);
     return result;
   }

@@ -211,6 +211,24 @@
       ]
     },
     {
+      "name": "legal Forsaken search, fight, privacy and rally separation",
+      "command": [
+        "node",
+        "--test",
+        "server/forsaken-encounters.test.mjs"
+      ]
+    },
+    {
+      "name": "ordinary Forsaken level rows stay on the existing reference table",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "intermediate and high Forsaken",
+        "server/forsaken-encounters.test.mjs"
+      ]
+    },
+    {
       "name": "legal automatic exploration of every reachable fog cell",
       "command": [
         "node",

@@ -47,7 +47,8 @@ export function marchCommand(world, p, c, fail) {
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
       const camp = world.camps.find(e => e.id === c.targetId);
-      const seen=camp&&camp.spawned!==false&&visible(world,p,camp);
+      const searched=camp&&p.forsaken?.searchResult?.status==='found'&&p.forsaken.searchResult.id===camp.id&&camp.health>0;
+      const seen=camp&&camp.spawned!==false&&(visible(world,p,camp)||searched);
       const known=seen?camp:p.discovery.find(r=>r.kind==='camps'&&r.value.id===c.targetId)?.value;
       if (!camp||!known || (seen&&camp.health<=0)) fail('Camp unavailable or behind a locked gate.');
       if(p.numericVersion===1){const reason=forsakenReason(world,p,known);if(reason)fail(reason);}

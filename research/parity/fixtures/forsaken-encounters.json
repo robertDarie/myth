@@ -1,0 +1,9 @@
+{
+  "classification": "Existing ordinary Forsaken rows and rules. Hidden drop probabilities were not changed.",
+  "maxLevel": 25,
+  "ap": 50,
+  "commanderXpPerLevel": 100,
+  "respawnSeconds": 90,
+  "rareChance": 0.1,
+  "initialKingdomLevel": 6
+}

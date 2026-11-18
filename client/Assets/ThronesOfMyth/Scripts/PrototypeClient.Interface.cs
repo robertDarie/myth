@@ -29,6 +29,8 @@ namespace ThronesOfMyth
         private Rect NotificationRect => interfacePage==InterfacePage.World||LoadingActive||pendingOrder!=null?new Rect((ViewWidth-560)/2,108,560,88):new Rect(WindowRect.x+24,WindowRect.yMax-42,Mathf.Min(640,WindowRect.width-48),34);
         private float MarchStep => InterfaceLayout.MarchStep;
         private Rect MarchRail => new Rect(ViewWidth-232,112,InterfaceLayout.RailWidth,32+5*MarchStep);
+        private Rect ForsakenSearchRect => new Rect(MarchRail.x, InterfaceLayout.MarchTop + 5 * MarchStep + 8, 214, 96);
+        private int seenForsakenSearch = -1;
         private string hoveredTooltip="";
         private readonly TooltipSession tooltips=new TooltipSession();
         private bool NotificationVisible => processing||(!string.IsNullOrEmpty(status)&&status!=previousToast)||pendingOrder!=null||Time.unscaledTime<toastUntil||Time.unscaledTime-lastSnapshotAt>6||!string.IsNullOrEmpty(world?.persistence?.error)||placeBeacon;
@@ -78,7 +80,7 @@ namespace ThronesOfMyth
                 int jobs=(HasJob(me?.construction)?1:0)+(HasJob(me?.secondConstruction)?1:0)+(HasJob(me?.research)?1:0);
                 if(jobs>0&&new Rect(18,QuestRect.yMax+10,242,jobs*52-6).Contains(p))return true;
             }
-            if(MarchRail.Contains(p)||MinimapRect.Contains(p)||ActiveArmy!=null&&ActiveArmy.deployed&&MarchOrdersRect.Contains(p))return true;
+            if(MarchRail.Contains(p)||ForsakenSearchRect.Contains(p)||MinimapRect.Contains(p)||ActiveArmy!=null&&ActiveArmy.deployed&&MarchOrdersRect.Contains(p))return true;
             if(!string.IsNullOrEmpty(selectedId)&&ContextRect.Contains(p))return true;
             return CityShortcutRect.Contains(p)||ZoomControlsRect.Contains(p);
         }
@@ -179,6 +181,7 @@ namespace ThronesOfMyth
                 case "promote": return "Your reserves have begun veteran training.";
                 case "inventory-supplies": return "Founding supplies added to your inventory.";
                 case "inventory-use": return "Your selected supplies have been used.";
+                case "forsaken-search": return "Forsaken search updated.";
                 default: return "Your orders have been received.";
             }
         }
@@ -211,7 +214,7 @@ namespace ThronesOfMyth
                     if (interfacePage == InterfacePage.City && cityModelView && me.referenceCity==null) DrawImmersiveCity();
                     else if (interfacePage == InterfacePage.World && !cityExperience.BlocksWorld)
                     {
-                        DrawQuestHud(); DrawMarchHud(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
+                        DrawQuestHud(); DrawMarchHud(); DrawForsakenSearch(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
                         if (theme.Button(CityShortcutRect, "City [C]", true)) OpenInterface(InterfacePage.City);
                         theme.OneLine(new Rect(18,ViewHeight-194,360,24),kingdomName,theme.Eyebrow);
                     }
@@ -366,6 +369,35 @@ namespace ThronesOfMyth
                 }
             }
         }
+        private void DrawForsakenSearch()
+        {
+            var card = me.forsaken;
+            if (card == null) return;
+            var r = ForsakenSearchRect;
+            theme.Panel(r);
+            theme.OneLine(new Rect(r.x + 8, r.y + 6, 198, 18), "FORSAKEN  " + card.unlocked + " unlocked · kingdom " + card.kingdomLevel, theme.Eyebrow);
+            forsakenSearchLevel = GUI.TextField(new Rect(r.x + 8, r.y + 28, 46, 28), forsakenSearchLevel ?? "1", 2);
+            bool wait = card.searchReadySeconds > 0 || processing;
+            string label = card.searchReadySeconds > 0 ? "Wait " + card.searchReadySeconds + "s" : "Search";
+            if (theme.Button(new Rect(r.x + 60, r.y + 28, 146, 28), label, !wait && int.TryParse(forsakenSearchLevel, out _)))
+                Send(new GameCommand { type = "forsaken-search", count = int.Parse(forsakenSearchLevel) });
+            string message = card.searchResult != null ? card.searchResult.message : "Search a level you have unlocked. Godbreakers stay rally-only.";
+            theme.Text(new Rect(r.x + 8, r.y + 60, 198, 30), message ?? "", theme.Small);
+        }
+        private void NoteForsakenSearch()
+        {
+            var result = me?.forsaken?.searchResult;
+            if (result == null || result.sequence == seenForsakenSearch) return;
+            seenForsakenSearch = result.sequence;
+            status = result.message ?? "Forsaken search updated.";
+            toastUntil = Time.unscaledTime + 6f;
+            if (result.status != "found") return;
+            var camp = world?.camps == null ? null : Array.Find(world.camps, item => item.id == result.id);
+            float x = camp != null ? camp.x : result.x, z = camp != null ? camp.z : result.z;
+            if (camp != null) Select(camp.id, "camp");
+            FocusGameplay(x, z);
+        }
+        private string forsakenSearchLevel = "1";
         private void DrawKingdomMinimap()
         {
             var r = MinimapRect; theme.Panel(r);

@@ -1,5 +1,11 @@
 # Development report — 2026-11-19
 
+## Cursor overnight 2 — Forsaken encounters
+
+Players can search an unlocked Forsaken level from the world HUD. The result is a private pin, including a camp placed on explored land, and the march follows the military route to that camp. A fresh city defeated one level-1 Forsaken, spent 50 AP once, gained 100 commander XP, and kept that report after restart. Levels 21 and 25 stay blocked until both the personal unlock and the kingdom age allow them. A second city does not receive the search record. A solo attack on a Godbreaker still fails. Population anchors stayed off cities and passes, and 200 ticks finished in the test budget. Ordinary reference rows, respawn and the rare-item chance were not edited. Native UI remains NOT TESTED. `node --test server/forsaken-encounters.test.mjs server/forsaken.test.mjs` passed.
+
+# Development report — 2026-11-19
+
 ## Cursor overnight 1 — scouting, fog and discovery
 
 Automatic scouts now leave the local ring and continue to the nearest fog cell that a physical corridor can reach. A fresh Greek city explored 4096/4096 cells in 4316 ticks (1079 simulated seconds, about 5.9 wall seconds) using `scout-auto` and `World.tick` only. Restart preserved 4096. Locked passes still reject armies. Settlement and cave claims fail on the second request after reload. A second city does not receive the scout report or explored list. Local scout speeds and slot counts were not changed. rokstats Scout Camp page fetched 2026-11-19 shows 25 cost levels and no scout speed or capacity; Fandom Scouting returned 403. Native client controls were adjusted and not played. `node --test server/exploration-coverage.test.mjs` passed. Remote publication was intentionally not run.

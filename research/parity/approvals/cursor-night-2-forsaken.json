@@ -1,0 +1,23 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Owner overnight instruction for isolated local Cursor task 2, before this gameplay correction",
+  "owner_decision": "Overnight task 2 authorizes legal Forsaken search and marching while ordinary enemy numbers and unknown drop rates stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-PVE-POPULATION"],
+  "paths": [
+    "server/forsaken-population.mjs",
+    "server/marches.mjs",
+    "server/world.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs"
+  ],
+  "evidence_document": "research/parity/features/forsaken-encounters.md",
+  "functional_checks": [
+    "legal Forsaken search, fight, privacy and rally separation"
+  ],
+  "unchanged_numeric_checks": [
+    "ordinary Forsaken level rows stay on the existing reference table"
+  ]
+}

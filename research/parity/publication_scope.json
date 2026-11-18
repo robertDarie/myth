@@ -61,6 +61,18 @@
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
       ],
       "approved_compatibility": "research/parity/approvals/cursor-night-1-scouting.json"
+    },
+    {
+      "feature_id": "ROK-PVE-POPULATION",
+      "paths": [
+        "server/forsaken-population.mjs",
+        "server/marches.mjs",
+        "server/world.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-night-2-forsaken.json"
     }
   ]
 }

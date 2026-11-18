@@ -625,7 +625,7 @@ namespace ThronesOfMyth
                         if (!string.IsNullOrEmpty(next.kingdomId) && next.kingdomId != ActiveKingdomId) { token = null; loadingError = "The server returned a different kingdom. Choose the kingdom again."; status = loadingError; break; }
                         if (!string.IsNullOrEmpty(next.kingdomName)) kingdomName = next.kingdomName;
                         lastSnapshotAt = Time.unscaledTime;
-                        world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId); NoteScoutReports();
+                        world = next; cameraControl?.SetMapBounds(new Rect(0,0,next.size,next.size)); me = Array.Find(world.players, p => p.id == playerId); NoteScoutReports(); NoteForsakenSearch();
                         if (me != null)
                         {
                             cityProgress.Observe(serverUrl.TrimEnd('/')+"/"+playerId,me,Time.unscaledTime);

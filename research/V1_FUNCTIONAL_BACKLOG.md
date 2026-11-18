@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Cursor overnight 2 — Forsaken encounters
+
+Search now returns one lawful Forsaken pin, the owner can march to it, and the world HUD can send that search. Level-1 victory, AP, restart, kingdom gates through level 25, fog privacy, insufficient AP and solo Godbreaker rejection passed. Enemy stats and the 10 percent rare chance were not changed. Fort, guardian and event-boss reference tables remain unresolved. Native search clicks were not run.
+
 ## Cursor overnight 1 — scouting, fog and discovery
 
 Fresh legal automatic exploration reached 4096/4096 fog cells in 1079 simulated seconds and the same 4096 cells reloaded. Scout camp speeds and slot counts were not changed. Reference Scout Camp costs for 25 levels were fetched and not applied because scout capacity and speed were absent and city construction is outside this checkpoint. Native scouting clicks remain NOT TESTED. Partial parity only.
