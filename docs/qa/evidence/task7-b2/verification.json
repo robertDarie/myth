@@ -41,8 +41,6 @@
       "research countdown4.6seconds and occupied lane visible, then rank1 completion visible"
     ],
     "not_tested": [
-      "Short construction-countdown retest interrupted by Windows user-input guard",
-      "Full native server restart after earned progression",
       "Native mixed-profile combat/reinforcement (explicitly blocked, not parity-supported)",
       "All25levels through native inputs",
       "Native alliance membership (backend verified only)"
@@ -62,7 +60,15 @@
         "green": "Corrected native building selection, collection, construction, training and research completed"
       }
     ],
-    "known_log_warning": "Existing recursive ArmyData.homeFormations DTO reports JsonUtility serialization depth warnings; panel actions above still worked; no broad DTO redesign performed"
+    "known_log_warning": "Existing recursive ArmyData.homeFormations DTO reports JsonUtility serialization depth warnings; panel actions above still worked; no broad DTO redesign performed",
+    "initial_not_tested": [
+      "Short construction-countdown retest interrupted by Windows user-input guard",
+      "Full native server restart after earned progression",
+      "Native mixed-profile combat/reinforcement (explicitly blocked, not parity-supported)",
+      "All25levels through native inputs",
+      "Native alliance membership (backend verified only)"
+    ],
+    "clean_client_followup": "docs/qa/evidence/task7-b2-overnight/verification.json"
   },
   "screenshots": [
     {

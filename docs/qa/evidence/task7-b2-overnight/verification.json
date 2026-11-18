@@ -1,0 +1,84 @@
+{
+  "checked": "2026-11-19",
+  "source_commit": "d59c114a7e2c15610aa22c4b0723108c70ab7d27",
+  "client_dirty": false,
+  "unity": "6000.3.0f1",
+  "protocol": 17,
+  "package_files_verified": 145,
+  "kind": "ACTUAL NATIVE UNITY \u2014 SYNTHETIC QA DATA ONLY",
+  "real_saves_used": false,
+  "starting_resources": {
+    "food": 0,
+    "wood": 0,
+    "stone": 0,
+    "gold": 0
+  },
+  "collected_resources": {
+    "food": 53,
+    "wood": 53,
+    "stone": 53,
+    "gold": 53
+  },
+  "native_commands": [
+    "qa-city-collect",
+    "qa-city-upgrade citadel1to2",
+    "qa-city-upgrade farm1to2",
+    "qa-city-upgrade academy0to1",
+    "qa-city-upgrade barracks0to1",
+    "qa-city-train barracks quantity1",
+    "qa-city-research test-writing0to1"
+  ],
+  "accepted_command_receipts": 7,
+  "construction_countdown_observed_seconds": 1.3,
+  "research_countdown_observed_seconds": 9.2,
+  "client_restarts": 1,
+  "server_restarts": 1,
+  "restored_bank": {
+    "food": 36,
+    "wood": 37,
+    "stone": 46,
+    "gold": 46
+  },
+  "restored_levels": {
+    "citadel": 2,
+    "farm": 2,
+    "lumber": 1,
+    "quarry": 1,
+    "mine": 1,
+    "barracks": 1,
+    "archery": 0,
+    "stable": 0,
+    "siege": 0,
+    "academy": 1,
+    "market": 0
+  },
+  "restored_technologies": {
+    "test-writing": 1
+  },
+  "restored_reserves": {
+    "TEST_ONLY_barracks": 1
+  },
+  "paid_jobs_after_completion": [],
+  "world_identity_binding_valid": true,
+  "normal_activation": false,
+  "reference_supported_city_hall": null,
+  "native_scope": "City selection/quotes/prerequisites/payment/countdowns/collection/training/research/client-and-server restart; not all25levels, native mixed alliance/warfare or map rendering certification",
+  "screenshots": [
+    {
+      "path": "docs/qa/evidence/task7-b2-overnight/native-after-client-and-server-restart.jpg",
+      "sha256": "4768eb5f373f42c596a19d244358aab4eeb0bde1f702d9d39c19e413cb5d12ca"
+    },
+    {
+      "path": "docs/qa/evidence/task7-b2-overnight/native-after-server-restart.jpg",
+      "sha256": "9ca066394b48afa8a76c1df12b2f036b9b843b3f10cf3fc4efb9baedd65485ce"
+    },
+    {
+      "path": "docs/qa/evidence/task7-b2-overnight/native-before-restart.jpg",
+      "sha256": "be176c91a7be6b7e95fb46c5a961988b76cd577f89e7152db4425414e9c1fc2f"
+    },
+    {
+      "path": "docs/qa/evidence/task7-b2-overnight/native-construction-countdown.jpg",
+      "sha256": "d66262367b044d68a073745b0e6e75f5736481e2b1f01e8896a1ca3678c70f4e"
+    }
+  ]
+}

@@ -151,3 +151,8 @@ IMPLEMENTED for bounded real-game QA integration. Seven integration tests and ac
 ## Versioned contract binding
 
 ROK-CITY-LEVELS-1-25 remains incomplete; publication_scope binds only explicit owner-approved synthetic QA integration. No gate weakened and no full parity status assigned. Production deployment remains unchanged.
+
+
+## Overnight1/2 B2 follow-up —2026-11-19
+
+Fetched clean d59c114a7e2c15610aa22c4b0723108c70ab7d27 (original requested baseline3b05027). Existing production-compatible adapters/Unity implementation already published atd59c114 were preserved. Completed the remaining city-QA checks on its clean protocol17/Unity6000.3.0f1 Windows client: observed real Farm2 paid construction countdown1.3seconds, then restarted the dedicated server process and the Unity client. Native session resumed with Citadel2/Farm2/Academy1/Barracks1/research1/reserve1 and exact36food/37wood/46stone/46gold. Seven accepted native command receipts reconcile against actual supplied test quotes; no grants or injected levels. Added that deterministic reconciliation to the existing B2 publication evidence check. Native all25levels/mixed warfare/alliance/map acceptance remains unverified; TrackA birth remains blocked and normal25activation disabled. Real saves, art/audio implementation, frozen Creator ZIP and Tasks8–10 untouched. docs/qa/TASK7_B2_OVERNIGHT_REPORT.md.
