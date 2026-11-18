@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Cursor overnight 3 — commander battle skills
+
+A paired secondary active now spends the next 1,000 rage. The primary still spends the first bar. Existing damage, shield, heal and expertise factors were not retuned, and the secondary level multiplier stays absent. Primary talents apply. Secondary talents do not. PvE still uses the PvE factor and PvP does not. Casualty conservation and restart passed in the new battle test. Exact RoK cast order and hidden combat formulas remain unresolved. Native commander clicks were not run.
+
 ## Cursor overnight 2 — Forsaken encounters
 
 Search now returns one lawful Forsaken pin, the owner can march to it, and the world HUD can send that search. Level-1 victory, AP, restart, kingdom gates through level 25, fog privacy, insufficient AP and solo Godbreaker rejection passed. Enemy stats and the 10 percent rare chance were not changed. Fort, guardian and event-boss reference tables remain unresolved. Native search clicks were not run.

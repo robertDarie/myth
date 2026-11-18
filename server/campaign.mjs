@@ -9,7 +9,7 @@ import { allianceRole } from './social.mjs';
 import { protectionReason } from './diplomacy.mjs';
 import { recordSeason } from './season.mjs';
 import { combatFor, side, retreat, applyDamage, counterMultiplier } from './war.mjs';
-import { activeSkill, armyList } from './progression.mjs';
+import { castBattleSkill, armyList } from './progression.mjs';
 import { validUnits } from './troops.mjs';
 
 export const campaignLimits=w=>w.numericVersion===1?{...CAMPAIGN_LIMITS,rallyLoad:1500000,garrisonLoad:1000000}:CAMPAIGN_LIMITS;
@@ -205,7 +205,7 @@ function siegeRound(w,r,t,s) {
     const enemy=enemies[(s.report.rounds-1+i)%enemies.length],stats=w.stats(a),target=enemy||t;
     if(!enemy&&entry.team==='Defenders')return;
     const effective=stats.damage*(enemy?counterMultiplier(a,enemy):1),before=a.health,shield=a.shield;
-    a.rage=Math.min(1000,a.rage+200);const extra=a.rage>=1000?activeSkill(w.owner(a),a,{...stats,damage:effective}):0;
+    a.rage=Math.min(1000,a.rage+200);const extra=castBattleSkill(w.owner(a),a,{...stats,damage:effective});
     entry.healed+=Math.max(0,a.health-before);entry.shieldCreated+=Math.max(0,a.shield-shield);
     a.cooldown=1;a.attackSequence=(a.attackSequence||0)+1;a.attackX=target.x;a.attackZ=target.z;
     setOrder(a,'siege',t.id,target,'Siege fighting');

@@ -22,6 +22,7 @@ const PROFILES = {
   wukong: ['Heavenward Staff', 'damage', 'offense'],
 };
 export const activeKind = id => PROFILES[id][1];
+export const ACTIVE_TIMING = 'Spends 1,000 rage. A paired secondary active spends the next full rage bar.';
 export const TALENT_TREES = [
   { id: 'warhost', name: 'Warhost', nodes: [
     { id: 'line-oath', name: 'Oath of the Line', max: 3, requires: '', effect: '+2% damage per rank' },
@@ -74,7 +75,7 @@ export function initializeProgression(p) {
     record.stars = Math.min(6, Math.max(1, Math.ceil((1 + Math.floor(p.xp / 100)) / 10)));
     record.skills = [1, ...[2, 3, 4].map(star => record.stars >= star ? 1 : 0)];
   }
-  for (const a of armyList(p)) { a.rage ??= 0; a.shield ??= 0; a.shieldTime ??= 0; a.lastSkill ??= ''; a.skillCasts ??= 0; }
+  for (const a of armyList(p)) { a.rage ??= 0; a.shield ??= 0; a.shieldTime ??= 0; a.lastSkill ??= ''; a.lastSkillRole ??= ''; a.skillCasts ??= 0; a.nextActive ??= 'primary'; }
 }
 export function skillInfo(p, id) {
   const hero = COMMANDERS.find(c => c.id === id), r = p.heroRecords[id] ?? { numericVersion:p.numericVersion,rarity:hero.rarity,xp: 0, stars: 1, skills: [1, 0, 0, 0] };
@@ -97,7 +98,7 @@ export function skillInfo(p, id) {
   return { id, heroLevel: heroLevel(r), xp: r.xp, xpLevelStart:xpAtLevel(r,heroLevel(r)),xpNextLevel:xpAtLevel(r,Math.min(60,heroLevel(r)+1)), stars: r.stars, talentPoints: talentPoints(r), talentPointsSpent: spent, respecMana: 15 * spent, respecLockedReason: spent < 1 ? 'This commander has no talents to respec.' : '', talents, expertise,
     expertiseDescription: ['Epic', 'Legendary'].includes(hero.rarity) ? 'All four normal skills at level 5: +20% active-skill effect.' : 'No expertise in this prototype rarity.',
     skills: [
-      { index: 0, name: active, kind: 'Active', level: r.skills[0], unlockStar: 1, description: kind === 'damage' ? 'Automatically spends 1,000 rage for extra damage (1.2 + 0.2 × skill level) times normal attack damage.' : kind === 'shield' ? 'At 1,000 rage, shields for (8% + 2% × skill level) of maximum health for four seconds.' : 'At 1,000 rage, heals (8% + 2% × skill level) of maximum health.' },
+      { index: 0, name: active, kind: 'Active', level: r.skills[0], unlockStar: 1, description: (kind === 'damage' ? 'Extra damage (1.2 + 0.2 × skill level) times normal attack damage.' : kind === 'shield' ? 'Shields for (8% + 2% × skill level) of maximum health for four seconds.' : 'Heals (8% + 2% × skill level) of maximum health.') + ' ' + ACTIVE_TIMING },
       ...names.map((name, i) => ({ index: i + 1, name, kind: 'Passive', level: r.skills[i + 1], unlockStar: i + 2, description: descriptions[i] })),
     ] };
 }
@@ -113,15 +114,25 @@ export function skillModifiers(p, a, includeTalents = true) {
     heal: (role === 'support' ? 1 + 0.04 * s3 : 1) * talents.heal,
     mitigation: (['defense', 'support'].includes(role) ? 0.02 * s4 : 0) + talents.mitigation };
 }
-export function activeSkill(p, a, stats) {
-  const r = ensureHero(p, a.commanderId), [name, kind] = PROFILES[a.commanderId];
-  const expert = skillInfo(p, a.commanderId).expertise ? 1.2 : 1;
-  a.rage -= 1000; a.lastSkill = name; a.skillCasts++;
+export function activeSkill(p, a, stats, commanderId = a.commanderId) {
+  const r = ensureHero(p, commanderId), [name, kind] = PROFILES[commanderId];
+  const expert = skillInfo(p, commanderId).expertise ? 1.2 : 1;
+  a.rage -= 1000; a.lastSkill = name; a.lastSkillRole = commanderId === a.commanderId ? 'primary' : 'secondary'; a.skillCasts++;
   if (kind === 'damage') return Math.round(stats.damage * (1.2 + 0.2 * r.skills[0]) * expert);
   const amount = Math.round(stats.maxHealth * (0.08 + 0.02 * r.skills[0]) * expert);
   if (kind === 'heal') a.health = Math.min(stats.maxHealth, a.health + amount);
   else { a.shield = amount; a.shieldTime = 4; }
   return 0;
+}
+export function castBattleSkill(p, a, stats) {
+  if (a.rage < 1000) return 0;
+  a.nextActive ??= 'primary';
+  const secondaryId = a.secondaryCommanderId || '';
+  const secondaryReady = !!secondaryId && ensureHero(p, secondaryId).skills[0] > 0;
+  const useSecondary = a.nextActive === 'secondary' && secondaryReady;
+  const extra = activeSkill(p, a, stats, useSecondary ? secondaryId : a.commanderId);
+  a.nextActive = !useSecondary && secondaryReady ? 'secondary' : 'primary';
+  return extra;
 }
 export function progressionCommand(world, p, c, fail) {
   if (!['mentor-commander', 'promote-commander', 'upgrade-skill', 'talent-raise', 'talent-respec'].includes(c.type)) return false;
@@ -162,7 +173,10 @@ export function progressionCommand(world, p, c, fail) {
 export function validateProgression(p) {
   if (!p.heroRecords || !Array.isArray(p.marches) || p.marches.length > 4) throw new Error('Invalid saved march progression.');
   if (!Number.isInteger(p.nextMarchNumber) || p.nextMarchNumber < 2) throw new Error('Invalid saved march numbering.');
-  for (const a of armyList(p)) if (['rage', 'shield', 'shieldTime', 'skillCasts'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.rage > 1000 || typeof a.lastSkill !== 'string') throw new Error('Invalid saved army skill state.');
+  for (const a of armyList(p)) {
+    a.nextActive ??= 'primary'; a.lastSkillRole ??= '';
+    if (['rage', 'shield', 'shieldTime', 'skillCasts'].some(key => !Number.isFinite(a[key]) || a[key] < 0) || a.rage > 1000 || typeof a.lastSkill !== 'string' || !['primary', 'secondary'].includes(a.nextActive) || !['', 'primary', 'secondary'].includes(a.lastSkillRole)) throw new Error('Invalid saved army skill state.');
+  }
   for (const [id, hero] of Object.entries(p.heroRecords)) {
     if (!hero.talents || typeof hero.talents !== 'object' || Array.isArray(hero.talents)) hero.talents = {};
     if(referenceScale(p)&&(hero.numericVersion!==1||hero.rarity!==COMMANDERS.find(c=>c.id===id)?.rarity))throw new Error('Invalid commander numeric profile.');

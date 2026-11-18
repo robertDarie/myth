@@ -62,7 +62,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class TroopTypeData { public string id, name, role, description; public float health, damage, speed, duration, orderSeconds, promotionSeconds; public int cityLevel,tier,sourceAvailable,orderAmount,promotionAmount; public string baseId,sourceId,lockedReason; public ResourceAmounts cost,orderCost,promotionCost; }
     [Serializable] public sealed class ArmyData
     {
-        public string id, ownerId, name, civilization, commanderId, secondaryCommanderId, allianceId, state, targetId, ageName, lastSkill, skillKind, allianceRole, assignmentKind, assignmentId;
+        public string id, ownerId, name, civilization, commanderId, secondaryCommanderId, allianceId, state, targetId, ageName, lastSkill, lastSkillRole, nextActive, skillKind, allianceRole, assignmentKind, assignmentId;
         public bool deployed, mapVisible, lastKnown, protectedField; public float observedAt; public int activeMarches, carryCapacity; public ResourceAmounts cargo; public ArmyData[] homeFormations; public CoreReport[] reports;
         public EconomyData economy; public int aether,numericVersion;
         public InventoryData inventory; public PowerData powerBreakdown;

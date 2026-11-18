@@ -211,6 +211,26 @@
       ]
     },
     {
+      "name": "primary and secondary battle skills change recorded combat",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "primary and secondary battle skills",
+        "server/commander-battle.test.mjs"
+      ]
+    },
+    {
+      "name": "advertised active timing text stays on the existing local rule",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "advertised active timing",
+        "server/commander-battle.test.mjs"
+      ]
+    },
+    {
       "name": "legal Forsaken search, fight, privacy and rally separation",
       "command": [
         "node",

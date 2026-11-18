@@ -4,7 +4,7 @@ import { protectionReason } from './diplomacy.mjs';
 import { route } from './navigation.mjs';
 import { randomUUID } from 'node:crypto';
 import { TROOP_TYPES, emptyUnits, unitTotal, validUnits, countOf, changeUnits, normalizedUnits, classCounts } from './troops.mjs';
-import { activeSkill, armyList } from './progression.mjs';
+import { castBattleSkill, armyList } from './progression.mjs';
 export const hospitalCapacity = p => (25 + 15 * p.buildings.infirmary) * (referenceScale(p)?50:1);
 export const treatmentSpeed = p => (1 + 0.15 * Math.max(0, (p.buildings.infirmary ?? 0) - 1)) * (1 + 0.06 * Math.max(0, Math.min(3, p.technologies?.mercy ?? 0)));
 export const wardTroops = p => unitTotal(p.wounded) + (p.healing ? unitTotal(p.healing.units) : 0);
@@ -89,8 +89,9 @@ export function tickBattle(w, a, b) {
     x.cooldown = 1; x.attackSequence = (x.attackSequence ?? 0) + 1; x.attackX = enemy.x; x.attackZ = enemy.z;
     x.rage = Math.min(1000, x.rage + 200);
     const hp = x.health, shield = x.shield;
-    const extra = x.rage >= 1000 ? activeSkill(w.owner(x), x, { ...stats[i], damage: effective }) : 0;
+    const extra = castBattleSkill(w.owner(x), x, { ...stats[i], damage: effective });
     record.healed += Math.max(0, x.health - hp); record.shieldCreated += Math.max(0, x.shield - shield);
+    record.lastSkill = x.lastSkill; record.lastSkillRole = x.lastSkillRole;
     return Math.max(1, Math.round((effective + extra) * (referenceScale(w.owner(enemy))?defenseFactor(stats[1-i].defense):1) * (1 - stats[1 - i].mitigation)));
   });
   // Both attacks use the same pre-round stats; neither gains an iteration-order advantage.

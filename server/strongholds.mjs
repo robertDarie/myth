@@ -1,7 +1,7 @@
 import { referenceScale, defenseFactor } from './numerics.mjs';
 import { recordKingdomVictory } from './kingdom.mjs';
 import { recordStrongholdActivity } from './activity.mjs';
-import { activeSkill, ensureHero, heroLevel } from './progression.mjs';
+import { castBattleSkill, ensureHero, heroLevel } from './progression.mjs';
 import { applyDamage, counterMultiplier } from './war.mjs';
 export const STRONGHOLD_RULES={minMarches:2,roundLimit:90,respawnSeconds:300};
 const TIERS={
@@ -25,7 +25,7 @@ export function strongholdRound(w,r,t,s){
  for(const a of armies){
   if(a.cooldown>0.0001)continue;const entry=report.participants.find(e=>e.armyId===a.id),stats=w.stats(a),health=a.health,shield=a.shield;
   const damage=stats.damage*stats.pve*(guardAlive?counterMultiplier(a,npc):1);a.rage=Math.min(1000,a.rage+200);
-  const extra=a.rage>=1000?activeSkill(w.owner(a),a,{...stats,damage}):0;
+  const extra=castBattleSkill(w.owner(a),a,{...stats,damage});
   entry.healed+=Math.max(0,a.health-health);entry.shieldCreated+=Math.max(0,a.shield-shield);
   hits.push({entry,amount:Math.max(1,Math.round(damage+extra))});a.cooldown=1;a.attackSequence=(a.attackSequence||0)+1;a.attackX=t.x;a.attackZ=t.z;
   a.target={type:'siege',id:t.id,x:t.x,z:t.z};a.state='Siege fighting';

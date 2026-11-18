@@ -27,7 +27,7 @@ import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troop
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand } from './marches.mjs';
-import { AGES, age, crews, armyList, constructionJobs, totalTroops, totalMythic, ensureHero, heroLevel, activeKind, initializeProgression, skillModifiers, activeSkill, progressionCommand, validateProgression } from './progression.mjs';
+import { AGES, age, crews, armyList, constructionJobs, totalTroops, totalMythic, ensureHero, heroLevel, activeKind, initializeProgression, skillModifiers, castBattleSkill, progressionCommand, validateProgression } from './progression.mjs';
 import { initializeCity, capacity, mythicCapacity, cityCommand, citySnapshot, tickCity, validateCity, ensureArmaments, armamentFactor } from './city.mjs';
 import { SIZE, CIVILIZATIONS, COMMANDERS, campDefinitions, siteDefinitions } from './content.mjs';
 export class GameError extends Error {
@@ -274,7 +274,7 @@ export class World {
     let damage = Math.min(camp.health, Math.round(stats.damage * stats.pve * (npc?defenseFactor(npc.defense):1))); camp.health -= damage;
     a.rage = Math.min(1000, a.rage + 200);
     if (camp.health > 0 && a.rage >= 1000) {
-      const extra = Math.min(camp.health, activeSkill(p, a, { ...stats, damage: stats.damage * stats.pve * (npc?defenseFactor(npc.defense):1) }));
+      const extra = Math.min(camp.health, castBattleSkill(p, a, { ...stats, damage: stats.damage * stats.pve * (npc?defenseFactor(npc.defense):1) }));
       camp.health -= extra; damage += extra;
     }
     camp.contributors[a.id] = (camp.contributors[a.id] ?? 0) + damage;
@@ -517,7 +517,7 @@ export class World {
     const pass=assignment&&(assignment.kind==='garrison'||assignment.group.phase!=='Assembling')?this.sites.find(s=>s.id===assignment.group.targetId&&s.kind==='gate'):null;
     const path = pass?objectiveRoute(this,a,pass):destination ? route(this, a, destination, a.target?.type === 'return') : [];
     return { protectedField:p.cityLevel<2||this.atHome(a)||a.recovery>0,deployed:a.deployed,cargo:{...a.cargo},carryCapacity:carryCapacity(this,a), route: path || [], assignmentKind: assignment?.kind || '', assignmentId: assignment ? (assignment.group.id || assignment.group.targetId) : '', id: a.id, ownerId: p.id, civilization: p.civilization, attackSequence: a.attackSequence ?? 0, attackX: a.attackX ?? a.x, attackZ: a.attackZ ?? a.z, allianceId: p.allianceId, name: a.id === p.id ? p.name + ' · March 1' : a.name,
-      units: { ...a.units }, skillKind: activeKind(a.commanderId), commanderId: a.commanderId, secondaryCommanderId: a.secondaryCommanderId || '', equippedRelic: a.equippedRelic, formationActive: formationOf(a.units).active, formationName: FORMATION.name, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
+      units: { ...a.units }, skillKind: a.lastSkillRole === 'secondary' && a.secondaryCommanderId ? activeKind(a.secondaryCommanderId) : activeKind(a.commanderId), commanderId: a.commanderId, secondaryCommanderId: a.secondaryCommanderId || '', lastSkillRole: a.lastSkillRole || '', nextActive: a.nextActive || 'primary', equippedRelic: a.equippedRelic, formationActive: formationOf(a.units).active, formationName: FORMATION.name, x: a.x, z: a.z, homeX: p.homeX, homeZ: p.homeZ,
       troops: a.troops, mythic: a.mythic, health: Math.ceil(a.health), recovery: a.recovery, rage: Math.floor(a.rage), shield: Math.ceil(a.shield), lastSkill: a.lastSkill, skillCasts: a.skillCasts,
       state: a.state, hasOrder: !!a.target, targetId: a.target?.id ?? '', targetX: destination?.x ?? a.x, targetZ: destination?.z ?? a.z, ...this.stats(a) };
   }

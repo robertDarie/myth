@@ -1,0 +1,26 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Owner overnight instruction for isolated local Cursor task 3, before this battle correction",
+  "owner_decision": "Overnight task 3 authorizes paired secondary actives to spend the next rage bar while existing skill coefficients and the secondary-passive recovery stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-COMMANDER-SECONDARY-ACTIVES"],
+  "paths": [
+    "server/progression.mjs",
+    "server/war.mjs",
+    "server/forsaken.mjs",
+    "server/campaign.mjs",
+    "server/strongholds.mjs",
+    "server/world.mjs",
+    "server/marches.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+  ],
+  "evidence_document": "research/parity/features/commander-battle.md",
+  "functional_checks": [
+    "primary and secondary battle skills change recorded combat"
+  ],
+  "unchanged_numeric_checks": [
+    "advertised active timing text stays on the existing local rule"
+  ]
+}

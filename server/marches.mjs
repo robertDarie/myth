@@ -26,7 +26,7 @@ export function marchCommand(world, p, c, fail) {
     if (!p.ownedCommanders.includes(c.targetId) || armyList(p).some(a => a.commanderId === c.targetId || a.secondaryCommanderId === c.targetId)) fail('Choose a recruited commander who is not leading another march.');
     const a = { id: randomUUID(), ownerId: p.id, name: p.name + ' · March ' + (p.nextMarchNumber++),
       commanderId: c.targetId, secondaryCommanderId: '', equippedRelic: '', x: p.homeX, z: p.homeZ, homeX: p.homeX, homeZ: p.homeZ,
-      troops, mythic, units, health: 1, xp: 0, level: 1, rage: 0, shield: 0, shieldTime: 0, lastSkill: '', skillCasts: 0,
+      troops, mythic, units, health: 1, xp: 0, level: 1, rage: 0, shield: 0, shieldTime: 0, lastSkill: '', lastSkillRole: '', skillCasts: 0, nextActive: 'primary',
       target: null, state: 'Idle', cooldown: 0, gatherClock: 0, recovery: 0 };
     transfer(p, null, chosen);
     ensureHero(p, c.targetId); p.marches.push(a);initializeLogistics(p);a.deployed=false; a.health = world.stats(a).maxHealth; return true;
@@ -67,7 +67,7 @@ export function marchCommand(world, p, c, fail) {
       if (a.secondaryCommanderId === hero.id) fail('Unpair this companion before assigning them as primary.');
       if (armyList(p).some(other => other.id !== a.id && (other.commanderId === hero.id || other.secondaryCommanderId === hero.id))) fail('That commander already serves on another march.');
       if (!p.ownedCommanders.includes(hero.id)) fail('Acquire this commander through summons, shards or progression first.');
-      ensureHero(p, hero.id); a.commanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); a.rage = 0; return true;
+      ensureHero(p, hero.id); a.commanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); a.rage = 0; a.nextActive = 'primary'; return true;
     }
     case 'pair-commander': {
       world.requireHome(a);
@@ -75,10 +75,10 @@ export function marchCommand(world, p, c, fail) {
       if (hero.id === a.commanderId) fail('The primary commander cannot also be the companion.');
       if (!p.ownedCommanders.includes(hero.id)) fail('Acquire this commander through summons, shards or progression first.');
       if (armyList(p).some(other => other.commanderId === hero.id || (other.id !== a.id && other.secondaryCommanderId === hero.id))) fail('That commander already serves on another march.');
-      ensureHero(p, hero.id); a.secondaryCommanderId = hero.id; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
+      ensureHero(p, hero.id); a.secondaryCommanderId = hero.id; a.nextActive = 'primary'; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
     }
     case 'unpair-commander': {
-      world.requireHome(a); a.secondaryCommanderId = ''; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
+      world.requireHome(a); a.secondaryCommanderId = ''; a.nextActive = 'primary'; a.health = Math.min(a.health, world.stats(a).maxHealth); return true;
     }
     case 'configure-march': {
       world.requireHome(a);
@@ -89,7 +89,7 @@ export function marchCommand(world, p, c, fail) {
       const commanderId = c.targetId || a.commanderId;
       if (commanderId === a.secondaryCommanderId) fail('Unpair this companion before assigning them as primary.');
       if (!p.ownedCommanders.includes(commanderId) || armyList(p).some(other => other.id !== a.id && (other.commanderId === commanderId || other.secondaryCommanderId === commanderId))) fail('Choose a recruited commander who is not leading another march.');
-      transfer(p, a, chosen); ensureHero(p, commanderId); a.commanderId = commanderId;
+      transfer(p, a, chosen); ensureHero(p, commanderId); a.commanderId = commanderId; a.nextActive = 'primary';
       a.health = world.stats(a).maxHealth; a.rage = 0; a.shield = 0; a.shieldTime = 0; a.state = 'Idle'; return true;
     }
     case 'reinforce': {

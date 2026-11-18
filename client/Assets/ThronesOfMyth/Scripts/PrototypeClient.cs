@@ -506,7 +506,7 @@ namespace ThronesOfMyth
                 GUI.enabled = true; GUILayout.EndVertical();
             }
             GUILayout.Label((progress.expertise ? "EXPERTISE ACTIVE · " : "Expertise · ") + progress.expertiseDescription, noteStyle);
-            GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Active skills fire automatically at 1,000 rage.", noteStyle);
+            GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Spends 1,000 rage. A paired secondary active spends the next full rage bar.", noteStyle);
         }
         private void Dot(Rect area, float x, float z, Color color, int size)
         {

@@ -1,5 +1,9 @@
 # Development report — 2026-11-19
 
+## Cursor overnight 3 — commander battle skills
+
+Field battles, Forsaken fights, strongholds and campaign rounds now cast the paired secondary active on the rage bar after the primary cast. The skill card and the commander hall use the same sentence. A production duel recorded Rallying Cry, then Runes of Renewal, and a higher secondary rank and expertise changed the recorded result. Secondary level 60 did not change damage at fixed skills. Wounded troops moved once into treatment and back to reserves. `node --test server/commander-battle.test.mjs` passed, along with the secondary-passive, progression, war, Forsaken and stronghold regressions. Native UI remains NOT TESTED.
+
 ## Cursor overnight 2 — Forsaken encounters
 
 Players can search an unlocked Forsaken level from the world HUD. The result is a private pin, including a camp placed on explored land, and the march follows the military route to that camp. A fresh city defeated one level-1 Forsaken, spent 50 AP once, gained 100 commander XP, and kept that report after restart. Levels 21 and 25 stay blocked until both the personal unlock and the kingdom age allow them. A second city does not receive the search record. A solo attack on a Godbreaker still fails. Population anchors stayed off cities and passes, and 200 ticks finished in the test budget. Ordinary reference rows, respawn and the rare-item chance were not edited. Native UI remains NOT TESTED. `node --test server/forsaken-encounters.test.mjs server/forsaken.test.mjs` passed.

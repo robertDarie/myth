@@ -73,6 +73,21 @@
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs"
       ],
       "approved_compatibility": "research/parity/approvals/cursor-night-2-forsaken.json"
+    },
+    {
+      "feature_id": "ROK-COMMANDER-SECONDARY-ACTIVES",
+      "paths": [
+        "server/progression.mjs",
+        "server/war.mjs",
+        "server/forsaken.mjs",
+        "server/campaign.mjs",
+        "server/strongholds.mjs",
+        "server/world.mjs",
+        "server/marches.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-night-3-commanders.json"
     }
   ]
 }

@@ -1,7 +1,7 @@
 import { validUnits, unitTotal } from './troops.mjs';
 import { randomUUID } from 'node:crypto';
 import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
-import { armyList, ensureHero, heroLevel, activeSkill } from './progression.mjs';
+import { armyList, ensureHero, heroLevel, castBattleSkill } from './progression.mjs';
 import { economyTime, refreshEconomy } from './economy.mjs';
 import { coreReport } from './field-logistics.mjs';
 import { grantReward } from './inventory.mjs';
@@ -70,7 +70,7 @@ function writeReport(w,p,c,e,outcome,reward={},firstClear={}) {
   const resources=Object.fromEntries(['food','wood','gold','stone','mana'].map(k=>[k,reward[k]??0]));
   const a=w.army(e.armyId),hp=a?.health??0;
   coreReport(w,p,{id:e.id,type:'pve',title:c.name+' · '+outcome,outcome,
-    detail:c.name+' · '+e.unitsBeforeCount+' real troops · '+e.damageDealt+' damage dealt · '+Math.ceil(e.damageTaken)+' damage received · '+e.apCharged+' AP charged · '+(outcome==='Victory'?100*c.level:0)+' XP per commander · '+unitCount(e.wounded)+' severe wounded · '+Math.ceil(hp)+' HP remaining',
+    detail:c.name+' · '+e.unitsBeforeCount+' real troops · '+e.damageDealt+' damage dealt · '+Math.ceil(e.damageTaken)+' damage received · '+e.apCharged+' AP charged · '+(outcome==='Victory'?100*c.level:0)+' XP per commander · '+unitCount(e.wounded)+' severe wounded · '+Math.ceil(hp)+' HP remaining'+(a?.lastSkill?' · Last skill: '+a.lastSkill+' ('+a.lastSkillRole+').':''),
     encounterId:c.id,encounterCycle:c.cycle,armyId:e.armyId,commanderId:e.commanderId,unitsBefore:e.unitsBefore,unitsAfter:{...a?.units},wounded:e.wounded,healthRemaining:hp,damageDealt:e.damageDealt,damageTaken:e.damageTaken,apCharged:e.apCharged,commanderXP:outcome==='Victory'?100*c.level:0,resources,items:reward.items??{},firstClear});
 }
 const unitCount=u=>Object.values(u??{}).reduce((n,v)=>n+v,0);
@@ -85,7 +85,7 @@ export function fightForsaken(w,a,c,stats) {
   const npc=referenceCamp(c.level),effective=stats.damage*stats.pve*defenseFactor(npc.defense);
   a.cooldown=1;a.attackSequence=(a.attackSequence??0)+1;a.attackX=c.x;a.attackZ=c.z;a.rage=Math.min(1000,a.rage+200);
   let damage=Math.min(c.health,Math.max(1,Math.round(effective)));c.health-=damage;
-  if(c.health>0&&a.rage>=1000){const extra=Math.min(c.health,activeSkill(p,a,{...stats,damage:effective}));c.health-=extra;damage+=extra;}
+  if(c.health>0){const extra=Math.min(c.health,castBattleSkill(p,a,{...stats,damage:effective}));c.health-=extra;damage+=extra;}
   e.damageDealt+=damage;c.contributors[a.id]=(c.contributors[a.id]??0)+damage;
   if(c.health===0){
     c.respawn=FORSAKEN_RULES.respawnSeconds;w.logisticsRevision++;recordKingdomVictory(w,'camps');
