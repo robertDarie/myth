@@ -1,0 +1,52 @@
+{
+  "checked": "2026-11-18",
+  "starting_main": "b811ef82d96a3b903525751340b63ccfa8544d93",
+  "engine_tests": {
+    "pass": 10,
+    "fail": 0,
+    "command": "node --test server/reference-city.test.mjs"
+  },
+  "synthetic_progression": {
+    "buildings": 11,
+    "paid_upgrades": 270,
+    "commands": 540,
+    "seconds": 11670,
+    "classification": "TEST_ONLY ENGINE CAPABILITY; not RoK progression"
+  },
+  "prepared_research": "Quarrying1 after explicitly prepared Academy1;100food/100wood/60base seconds/5power; no birth proof",
+  "legacy_conservation": {
+    "synthetic_historical_saves": 8,
+    "complete_card_comparisons": 2720,
+    "commands": 53,
+    "seconds": 3965,
+    "final_citadel": 5
+  },
+  "browser": {
+    "observed": [
+      "create experimental city",
+      "collect accrued production",
+      "pay and complete Citadel2",
+      "construct Barracks",
+      "train and complete one experimental reserve"
+    ],
+    "screenshot": "docs/qa/evidence/task7-b1/browser-synthetic-engine.jpg",
+    "sha256": "91a3bfa459059968ba9b99bf024a73f9274b341009c7cfbfc19d72036264b289",
+    "native_Unity": "NOT TESTED",
+    "authority": "Isolated opt-in loopback experimental realm, not normal game"
+  },
+  "normal_25_activation": false,
+  "complete_RoK_birth_slice_levels": 0,
+  "real_saves_used": false,
+  "frozen_creator_sha256": "9d22646f7a0f320609b0146c1c261fe1f6411e02b3a018ef8ad600475636a5a8",
+  "defects": [
+    {
+      "issue": "Windows read-only fsync EPERM",
+      "fix": "flush original writable temporary-file descriptor before atomic rename"
+    },
+    {
+      "issue": "training paid before facility upgrade failed restore against newer facility quote",
+      "red": "Reconstructed earlier implementation: dedicated test failed Invalid saved training ledger",
+      "green": "Persist original facilityLevel, validate original immutable row;10engine tests pass"
+    }
+  ]
+}

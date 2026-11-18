@@ -1,5 +1,5 @@
 {
-  "description": "Owner-approved bounded RecoveryA functional compatibility, numerical parity unverified; no other gameplay scope authorized.",
+  "description": "Bounded owner-approved experimental B1 and RecoveryA compatibility only; neither certifies numerical parity.",
   "features": [
     {
       "feature_id": "ROK-WORLD-PASS-OBJECTIVES",
@@ -21,6 +21,15 @@
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Warfare.cs"
       ],
       "approved_compatibility": "research/parity/approvals/recovery-a-divine-gate-compatibility.json"
+    },
+    {
+      "feature_id": "ROK-CITY-LEVELS-1-25",
+      "paths": [
+        "server/city-policy.mjs",
+        "server/reference-city.mjs",
+        "server/reference-city-http.mjs"
+      ],
+      "approved_compatibility": "research/parity/approvals/task7-b1-experimental-city.json"
     }
   ]
 }

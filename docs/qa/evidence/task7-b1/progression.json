@@ -1,0 +1,6528 @@
+{
+  "checked": "2026-11-18",
+  "evidence": "SYNTHETIC ENGINE CAPABILITY ONLY — NOT RoK numerical parity or birth progression",
+  "initialFixture": {
+    "resources": {
+      "food": 0,
+      "wood": 0,
+      "stone": 0,
+      "gold": 0
+    },
+    "levels": {
+      "citadel": 1,
+      "farm": 1,
+      "lumber": 1,
+      "quarry": 1,
+      "mine": 1
+    }
+  },
+  "independentBuildings": 11,
+  "finalLevels": {
+    "citadel": 25,
+    "farm": 25,
+    "lumber": 25,
+    "quarry": 25,
+    "mine": 25,
+    "barracks": 25,
+    "archery": 25,
+    "stable": 25,
+    "siege": 25,
+    "academy": 25,
+    "market": 25
+  },
+  "paidUpgradeCommands": 270,
+  "totalCommands": 540,
+  "simulationSeconds": 11670,
+  "clock": "Authoritative experimental engine tick(seconds), exact event-boundary completion; supplied TEST_ONLY modifier formula",
+  "resources": {
+    "food": 247895,
+    "wood": 197493,
+    "stone": 176007,
+    "gold": 150951
+  },
+  "saveRestart": "PASS separate experimental format, exact same profile fingerprint",
+  "normalActivation": false,
+  "native": "NOT TESTED",
+  "ledger": [
+    {
+      "id": "academy",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "stone": 1,
+        "gold": 1
+      },
+      "seconds": 1,
+      "before": {
+        "food": 60,
+        "wood": 60,
+        "stone": 60,
+        "gold": 60
+      },
+      "afterPayment": {
+        "food": 58,
+        "wood": 58,
+        "stone": 59,
+        "gold": 59
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 58,
+        "wood": 58,
+        "stone": 59,
+        "gold": 59
+      },
+      "afterPayment": {
+        "food": 54,
+        "wood": 54,
+        "stone": 57,
+        "gold": 57
+      }
+    },
+    {
+      "id": "farm",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 117,
+        "wood": 117,
+        "stone": 120,
+        "gold": 120
+      },
+      "afterPayment": {
+        "food": 113,
+        "wood": 113,
+        "stone": 118,
+        "gold": 118
+      }
+    },
+    {
+      "id": "academy",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 175,
+        "wood": 145,
+        "stone": 150,
+        "gold": 150
+      },
+      "afterPayment": {
+        "food": 171,
+        "wood": 141,
+        "stone": 148,
+        "gold": 148
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 171,
+        "wood": 141,
+        "stone": 148,
+        "gold": 148
+      },
+      "afterPayment": {
+        "food": 165,
+        "wood": 135,
+        "stone": 145,
+        "gold": 145
+      }
+    },
+    {
+      "id": "farm",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 295,
+        "wood": 200,
+        "stone": 210,
+        "gold": 210
+      },
+      "afterPayment": {
+        "food": 289,
+        "wood": 194,
+        "stone": 207,
+        "gold": 207
+      }
+    },
+    {
+      "id": "academy",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 385,
+        "wood": 227,
+        "stone": 240,
+        "gold": 240
+      },
+      "afterPayment": {
+        "food": 379,
+        "wood": 221,
+        "stone": 237,
+        "gold": 237
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 379,
+        "wood": 221,
+        "stone": 237,
+        "gold": 237
+      },
+      "afterPayment": {
+        "food": 371,
+        "wood": 213,
+        "stone": 233,
+        "gold": 233
+      }
+    },
+    {
+      "id": "farm",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 572,
+        "wood": 280,
+        "stone": 300,
+        "gold": 300
+      },
+      "afterPayment": {
+        "food": 564,
+        "wood": 272,
+        "stone": 296,
+        "gold": 296
+      }
+    },
+    {
+      "id": "academy",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 696,
+        "wood": 306,
+        "stone": 330,
+        "gold": 330
+      },
+      "afterPayment": {
+        "food": 688,
+        "wood": 298,
+        "stone": 326,
+        "gold": 326
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 688,
+        "wood": 298,
+        "stone": 326,
+        "gold": 326
+      },
+      "afterPayment": {
+        "food": 678,
+        "wood": 288,
+        "stone": 321,
+        "gold": 321
+      }
+    },
+    {
+      "id": "farm",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 954,
+        "wood": 357,
+        "stone": 390,
+        "gold": 390
+      },
+      "afterPayment": {
+        "food": 944,
+        "wood": 347,
+        "stone": 385,
+        "gold": 385
+      }
+    },
+    {
+      "id": "academy",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 1114,
+        "wood": 382,
+        "stone": 420,
+        "gold": 420
+      },
+      "afterPayment": {
+        "food": 1104,
+        "wood": 372,
+        "stone": 415,
+        "gold": 415
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 1104,
+        "wood": 372,
+        "stone": 415,
+        "gold": 415
+      },
+      "afterPayment": {
+        "food": 1092,
+        "wood": 360,
+        "stone": 409,
+        "gold": 409
+      }
+    },
+    {
+      "id": "farm",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 1447,
+        "wood": 431,
+        "stone": 480,
+        "gold": 480
+      },
+      "afterPayment": {
+        "food": 1435,
+        "wood": 419,
+        "stone": 474,
+        "gold": 474
+      }
+    },
+    {
+      "id": "academy",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 1645,
+        "wood": 455,
+        "stone": 510,
+        "gold": 510
+      },
+      "afterPayment": {
+        "food": 1633,
+        "wood": 443,
+        "stone": 504,
+        "gold": 504
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 1633,
+        "wood": 443,
+        "stone": 504,
+        "gold": 504
+      },
+      "afterPayment": {
+        "food": 1619,
+        "wood": 429,
+        "stone": 497,
+        "gold": 497
+      }
+    },
+    {
+      "id": "farm",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 2057,
+        "wood": 502,
+        "stone": 570,
+        "gold": 570
+      },
+      "afterPayment": {
+        "food": 2043,
+        "wood": 488,
+        "stone": 563,
+        "gold": 563
+      }
+    },
+    {
+      "id": "academy",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 2295,
+        "wood": 525,
+        "stone": 600,
+        "gold": 600
+      },
+      "afterPayment": {
+        "food": 2281,
+        "wood": 511,
+        "stone": 593,
+        "gold": 593
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 2281,
+        "wood": 511,
+        "stone": 593,
+        "gold": 593
+      },
+      "afterPayment": {
+        "food": 2265,
+        "wood": 495,
+        "stone": 585,
+        "gold": 585
+      }
+    },
+    {
+      "id": "farm",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 2790,
+        "wood": 570,
+        "stone": 660,
+        "gold": 660
+      },
+      "afterPayment": {
+        "food": 2774,
+        "wood": 554,
+        "stone": 652,
+        "gold": 652
+      }
+    },
+    {
+      "id": "academy",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 3070,
+        "wood": 592,
+        "stone": 690,
+        "gold": 690
+      },
+      "afterPayment": {
+        "food": 3054,
+        "wood": 576,
+        "stone": 682,
+        "gold": 682
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 3054,
+        "wood": 576,
+        "stone": 682,
+        "gold": 682
+      },
+      "afterPayment": {
+        "food": 3036,
+        "wood": 558,
+        "stone": 673,
+        "gold": 673
+      }
+    },
+    {
+      "id": "farm",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 3652,
+        "wood": 635,
+        "stone": 750,
+        "gold": 750
+      },
+      "afterPayment": {
+        "food": 3634,
+        "wood": 617,
+        "stone": 741,
+        "gold": 741
+      }
+    },
+    {
+      "id": "academy",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 3976,
+        "wood": 656,
+        "stone": 780,
+        "gold": 780
+      },
+      "afterPayment": {
+        "food": 3958,
+        "wood": 638,
+        "stone": 771,
+        "gold": 771
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 3958,
+        "wood": 638,
+        "stone": 771,
+        "gold": 771
+      },
+      "afterPayment": {
+        "food": 3938,
+        "wood": 618,
+        "stone": 761,
+        "gold": 761
+      }
+    },
+    {
+      "id": "farm",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 4649,
+        "wood": 697,
+        "stone": 840,
+        "gold": 840
+      },
+      "afterPayment": {
+        "food": 4629,
+        "wood": 677,
+        "stone": 830,
+        "gold": 830
+      }
+    },
+    {
+      "id": "academy",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 5019,
+        "wood": 717,
+        "stone": 870,
+        "gold": 870
+      },
+      "afterPayment": {
+        "food": 4999,
+        "wood": 697,
+        "stone": 860,
+        "gold": 860
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 4999,
+        "wood": 697,
+        "stone": 860,
+        "gold": 860
+      },
+      "afterPayment": {
+        "food": 4977,
+        "wood": 675,
+        "stone": 849,
+        "gold": 849
+      }
+    },
+    {
+      "id": "farm",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 5787,
+        "wood": 756,
+        "stone": 930,
+        "gold": 930
+      },
+      "afterPayment": {
+        "food": 5765,
+        "wood": 734,
+        "stone": 919,
+        "gold": 919
+      }
+    },
+    {
+      "id": "academy",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 6205,
+        "wood": 775,
+        "stone": 960,
+        "gold": 960
+      },
+      "afterPayment": {
+        "food": 6183,
+        "wood": 753,
+        "stone": 949,
+        "gold": 949
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 6183,
+        "wood": 753,
+        "stone": 949,
+        "gold": 949
+      },
+      "afterPayment": {
+        "food": 6159,
+        "wood": 729,
+        "stone": 937,
+        "gold": 937
+      }
+    },
+    {
+      "id": "farm",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 7072,
+        "wood": 812,
+        "stone": 1020,
+        "gold": 1020
+      },
+      "afterPayment": {
+        "food": 7048,
+        "wood": 788,
+        "stone": 1008,
+        "gold": 1008
+      }
+    },
+    {
+      "id": "academy",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 7540,
+        "wood": 830,
+        "stone": 1050,
+        "gold": 1050
+      },
+      "afterPayment": {
+        "food": 7516,
+        "wood": 806,
+        "stone": 1038,
+        "gold": 1038
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 7516,
+        "wood": 806,
+        "stone": 1038,
+        "gold": 1038
+      },
+      "afterPayment": {
+        "food": 7490,
+        "wood": 780,
+        "stone": 1025,
+        "gold": 1025
+      }
+    },
+    {
+      "id": "farm",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 8510,
+        "wood": 865,
+        "stone": 1110,
+        "gold": 1110
+      },
+      "afterPayment": {
+        "food": 8484,
+        "wood": 839,
+        "stone": 1097,
+        "gold": 1097
+      }
+    },
+    {
+      "id": "academy",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 9030,
+        "wood": 882,
+        "stone": 1140,
+        "gold": 1140
+      },
+      "afterPayment": {
+        "food": 9004,
+        "wood": 856,
+        "stone": 1127,
+        "gold": 1127
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 9004,
+        "wood": 856,
+        "stone": 1127,
+        "gold": 1127
+      },
+      "afterPayment": {
+        "food": 8976,
+        "wood": 828,
+        "stone": 1113,
+        "gold": 1113
+      }
+    },
+    {
+      "id": "farm",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 10107,
+        "wood": 915,
+        "stone": 1200,
+        "gold": 1200
+      },
+      "afterPayment": {
+        "food": 10079,
+        "wood": 887,
+        "stone": 1186,
+        "gold": 1186
+      }
+    },
+    {
+      "id": "academy",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 10681,
+        "wood": 931,
+        "stone": 1230,
+        "gold": 1230
+      },
+      "afterPayment": {
+        "food": 10653,
+        "wood": 903,
+        "stone": 1216,
+        "gold": 1216
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 10653,
+        "wood": 903,
+        "stone": 1216,
+        "gold": 1216
+      },
+      "afterPayment": {
+        "food": 10623,
+        "wood": 873,
+        "stone": 1201,
+        "gold": 1201
+      }
+    },
+    {
+      "id": "farm",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 11869,
+        "wood": 962,
+        "stone": 1290,
+        "gold": 1290
+      },
+      "afterPayment": {
+        "food": 11839,
+        "wood": 932,
+        "stone": 1275,
+        "gold": 1275
+      }
+    },
+    {
+      "id": "academy",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 12499,
+        "wood": 977,
+        "stone": 1320,
+        "gold": 1320
+      },
+      "afterPayment": {
+        "food": 12469,
+        "wood": 947,
+        "stone": 1305,
+        "gold": 1305
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 12469,
+        "wood": 947,
+        "stone": 1305,
+        "gold": 1305
+      },
+      "afterPayment": {
+        "food": 12437,
+        "wood": 915,
+        "stone": 1289,
+        "gold": 1289
+      }
+    },
+    {
+      "id": "farm",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 13802,
+        "wood": 1006,
+        "stone": 1380,
+        "gold": 1380
+      },
+      "afterPayment": {
+        "food": 13770,
+        "wood": 974,
+        "stone": 1364,
+        "gold": 1364
+      }
+    },
+    {
+      "id": "academy",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 14490,
+        "wood": 1020,
+        "stone": 1410,
+        "gold": 1410
+      },
+      "afterPayment": {
+        "food": 14458,
+        "wood": 988,
+        "stone": 1394,
+        "gold": 1394
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 14458,
+        "wood": 988,
+        "stone": 1394,
+        "gold": 1394
+      },
+      "afterPayment": {
+        "food": 14424,
+        "wood": 954,
+        "stone": 1377,
+        "gold": 1377
+      }
+    },
+    {
+      "id": "farm",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 15912,
+        "wood": 1047,
+        "stone": 1470,
+        "gold": 1470
+      },
+      "afterPayment": {
+        "food": 15878,
+        "wood": 1013,
+        "stone": 1453,
+        "gold": 1453
+      }
+    },
+    {
+      "id": "academy",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 16660,
+        "wood": 1060,
+        "stone": 1500,
+        "gold": 1500
+      },
+      "afterPayment": {
+        "food": 16626,
+        "wood": 1026,
+        "stone": 1483,
+        "gold": 1483
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 16626,
+        "wood": 1026,
+        "stone": 1483,
+        "gold": 1483
+      },
+      "afterPayment": {
+        "food": 16590,
+        "wood": 990,
+        "stone": 1465,
+        "gold": 1465
+      }
+    },
+    {
+      "id": "farm",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 18205,
+        "wood": 1085,
+        "stone": 1560,
+        "gold": 1560
+      },
+      "afterPayment": {
+        "food": 18169,
+        "wood": 1049,
+        "stone": 1542,
+        "gold": 1542
+      }
+    },
+    {
+      "id": "academy",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 19015,
+        "wood": 1097,
+        "stone": 1590,
+        "gold": 1590
+      },
+      "afterPayment": {
+        "food": 18979,
+        "wood": 1061,
+        "stone": 1572,
+        "gold": 1572
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 18979,
+        "wood": 1061,
+        "stone": 1572,
+        "gold": 1572
+      },
+      "afterPayment": {
+        "food": 18941,
+        "wood": 1023,
+        "stone": 1553,
+        "gold": 1553
+      }
+    },
+    {
+      "id": "farm",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 20687,
+        "wood": 1120,
+        "stone": 1650,
+        "gold": 1650
+      },
+      "afterPayment": {
+        "food": 20649,
+        "wood": 1082,
+        "stone": 1631,
+        "gold": 1631
+      }
+    },
+    {
+      "id": "academy",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 21561,
+        "wood": 1131,
+        "stone": 1680,
+        "gold": 1680
+      },
+      "afterPayment": {
+        "food": 21523,
+        "wood": 1093,
+        "stone": 1661,
+        "gold": 1661
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 21523,
+        "wood": 1093,
+        "stone": 1661,
+        "gold": 1661
+      },
+      "afterPayment": {
+        "food": 21483,
+        "wood": 1053,
+        "stone": 1641,
+        "gold": 1641
+      }
+    },
+    {
+      "id": "farm",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 23364,
+        "wood": 1152,
+        "stone": 1740,
+        "gold": 1740
+      },
+      "afterPayment": {
+        "food": 23324,
+        "wood": 1112,
+        "stone": 1720,
+        "gold": 1720
+      }
+    },
+    {
+      "id": "academy",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 24304,
+        "wood": 1162,
+        "stone": 1770,
+        "gold": 1770
+      },
+      "afterPayment": {
+        "food": 24264,
+        "wood": 1122,
+        "stone": 1750,
+        "gold": 1750
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 24264,
+        "wood": 1122,
+        "stone": 1750,
+        "gold": 1750
+      },
+      "afterPayment": {
+        "food": 24222,
+        "wood": 1080,
+        "stone": 1729,
+        "gold": 1729
+      }
+    },
+    {
+      "id": "farm",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 26242,
+        "wood": 1181,
+        "stone": 1830,
+        "gold": 1830
+      },
+      "afterPayment": {
+        "food": 26200,
+        "wood": 1139,
+        "stone": 1809,
+        "gold": 1809
+      }
+    },
+    {
+      "id": "academy",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 27250,
+        "wood": 1190,
+        "stone": 1860,
+        "gold": 1860
+      },
+      "afterPayment": {
+        "food": 27208,
+        "wood": 1148,
+        "stone": 1839,
+        "gold": 1839
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 27208,
+        "wood": 1148,
+        "stone": 1839,
+        "gold": 1839
+      },
+      "afterPayment": {
+        "food": 27164,
+        "wood": 1104,
+        "stone": 1817,
+        "gold": 1817
+      }
+    },
+    {
+      "id": "farm",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 29327,
+        "wood": 1207,
+        "stone": 1920,
+        "gold": 1920
+      },
+      "afterPayment": {
+        "food": 29283,
+        "wood": 1163,
+        "stone": 1898,
+        "gold": 1898
+      }
+    },
+    {
+      "id": "academy",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 30405,
+        "wood": 1215,
+        "stone": 1950,
+        "gold": 1950
+      },
+      "afterPayment": {
+        "food": 30361,
+        "wood": 1171,
+        "stone": 1928,
+        "gold": 1928
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 30361,
+        "wood": 1171,
+        "stone": 1928,
+        "gold": 1928
+      },
+      "afterPayment": {
+        "food": 30315,
+        "wood": 1125,
+        "stone": 1905,
+        "gold": 1905
+      }
+    },
+    {
+      "id": "farm",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 32625,
+        "wood": 1230,
+        "stone": 2010,
+        "gold": 2010
+      },
+      "afterPayment": {
+        "food": 32579,
+        "wood": 1184,
+        "stone": 1987,
+        "gold": 1987
+      }
+    },
+    {
+      "id": "academy",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 33775,
+        "wood": 1237,
+        "stone": 2040,
+        "gold": 2040
+      },
+      "afterPayment": {
+        "food": 33729,
+        "wood": 1191,
+        "stone": 2017,
+        "gold": 2017
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 33729,
+        "wood": 1191,
+        "stone": 2017,
+        "gold": 2017
+      },
+      "afterPayment": {
+        "food": 33681,
+        "wood": 1143,
+        "stone": 1993,
+        "gold": 1993
+      }
+    },
+    {
+      "id": "farm",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 36142,
+        "wood": 1250,
+        "stone": 2100,
+        "gold": 2100
+      },
+      "afterPayment": {
+        "food": 36094,
+        "wood": 1202,
+        "stone": 2076,
+        "gold": 2076
+      }
+    },
+    {
+      "id": "academy",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 37366,
+        "wood": 1256,
+        "stone": 2130,
+        "gold": 2130
+      },
+      "afterPayment": {
+        "food": 37318,
+        "wood": 1208,
+        "stone": 2106,
+        "gold": 2106
+      }
+    },
+    {
+      "id": "citadel",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 37318,
+        "wood": 1208,
+        "stone": 2106,
+        "gold": 2106
+      },
+      "afterPayment": {
+        "food": 37268,
+        "wood": 1158,
+        "stone": 2081,
+        "gold": 2081
+      }
+    },
+    {
+      "id": "farm",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 39164,
+        "wood": 1237,
+        "stone": 2160,
+        "gold": 2160
+      },
+      "afterPayment": {
+        "food": 39114,
+        "wood": 1187,
+        "stone": 2135,
+        "gold": 2135
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 40464,
+        "wood": 1242,
+        "stone": 2190,
+        "gold": 2190
+      },
+      "afterPayment": {
+        "food": 40460,
+        "wood": 1238,
+        "stone": 2188,
+        "gold": 2188
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 41260,
+        "wood": 1300,
+        "stone": 2220,
+        "gold": 2220
+      },
+      "afterPayment": {
+        "food": 41254,
+        "wood": 1294,
+        "stone": 2217,
+        "gold": 2217
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 42079,
+        "wood": 1390,
+        "stone": 2250,
+        "gold": 2250
+      },
+      "afterPayment": {
+        "food": 42071,
+        "wood": 1382,
+        "stone": 2246,
+        "gold": 2246
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 42921,
+        "wood": 1514,
+        "stone": 2280,
+        "gold": 2280
+      },
+      "afterPayment": {
+        "food": 42911,
+        "wood": 1504,
+        "stone": 2275,
+        "gold": 2275
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 43786,
+        "wood": 1674,
+        "stone": 2310,
+        "gold": 2310
+      },
+      "afterPayment": {
+        "food": 43774,
+        "wood": 1662,
+        "stone": 2304,
+        "gold": 2304
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 44674,
+        "wood": 1872,
+        "stone": 2340,
+        "gold": 2340
+      },
+      "afterPayment": {
+        "food": 44660,
+        "wood": 1858,
+        "stone": 2333,
+        "gold": 2333
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 45585,
+        "wood": 2110,
+        "stone": 2370,
+        "gold": 2370
+      },
+      "afterPayment": {
+        "food": 45569,
+        "wood": 2094,
+        "stone": 2362,
+        "gold": 2362
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 46519,
+        "wood": 2390,
+        "stone": 2400,
+        "gold": 2400
+      },
+      "afterPayment": {
+        "food": 46501,
+        "wood": 2372,
+        "stone": 2391,
+        "gold": 2391
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 47476,
+        "wood": 2714,
+        "stone": 2430,
+        "gold": 2430
+      },
+      "afterPayment": {
+        "food": 47456,
+        "wood": 2694,
+        "stone": 2420,
+        "gold": 2420
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 48456,
+        "wood": 3084,
+        "stone": 2460,
+        "gold": 2460
+      },
+      "afterPayment": {
+        "food": 48434,
+        "wood": 3062,
+        "stone": 2449,
+        "gold": 2449
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 49459,
+        "wood": 3502,
+        "stone": 2490,
+        "gold": 2490
+      },
+      "afterPayment": {
+        "food": 49435,
+        "wood": 3478,
+        "stone": 2478,
+        "gold": 2478
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 50485,
+        "wood": 3970,
+        "stone": 2520,
+        "gold": 2520
+      },
+      "afterPayment": {
+        "food": 50459,
+        "wood": 3944,
+        "stone": 2507,
+        "gold": 2507
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 51534,
+        "wood": 4490,
+        "stone": 2550,
+        "gold": 2550
+      },
+      "afterPayment": {
+        "food": 51506,
+        "wood": 4462,
+        "stone": 2536,
+        "gold": 2536
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 52606,
+        "wood": 5064,
+        "stone": 2580,
+        "gold": 2580
+      },
+      "afterPayment": {
+        "food": 52576,
+        "wood": 5034,
+        "stone": 2565,
+        "gold": 2565
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 53701,
+        "wood": 5694,
+        "stone": 2610,
+        "gold": 2610
+      },
+      "afterPayment": {
+        "food": 53669,
+        "wood": 5662,
+        "stone": 2594,
+        "gold": 2594
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 54819,
+        "wood": 6382,
+        "stone": 2640,
+        "gold": 2640
+      },
+      "afterPayment": {
+        "food": 54785,
+        "wood": 6348,
+        "stone": 2623,
+        "gold": 2623
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 55960,
+        "wood": 7130,
+        "stone": 2670,
+        "gold": 2670
+      },
+      "afterPayment": {
+        "food": 55924,
+        "wood": 7094,
+        "stone": 2652,
+        "gold": 2652
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 57124,
+        "wood": 7940,
+        "stone": 2700,
+        "gold": 2700
+      },
+      "afterPayment": {
+        "food": 57086,
+        "wood": 7902,
+        "stone": 2681,
+        "gold": 2681
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 58311,
+        "wood": 8814,
+        "stone": 2730,
+        "gold": 2730
+      },
+      "afterPayment": {
+        "food": 58271,
+        "wood": 8774,
+        "stone": 2710,
+        "gold": 2710
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 59521,
+        "wood": 9754,
+        "stone": 2760,
+        "gold": 2760
+      },
+      "afterPayment": {
+        "food": 59479,
+        "wood": 9712,
+        "stone": 2739,
+        "gold": 2739
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 60754,
+        "wood": 10762,
+        "stone": 2790,
+        "gold": 2790
+      },
+      "afterPayment": {
+        "food": 60710,
+        "wood": 10718,
+        "stone": 2768,
+        "gold": 2768
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 62010,
+        "wood": 11840,
+        "stone": 2820,
+        "gold": 2820
+      },
+      "afterPayment": {
+        "food": 61964,
+        "wood": 11794,
+        "stone": 2797,
+        "gold": 2797
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 63289,
+        "wood": 12990,
+        "stone": 2850,
+        "gold": 2850
+      },
+      "afterPayment": {
+        "food": 63241,
+        "wood": 12942,
+        "stone": 2826,
+        "gold": 2826
+      }
+    },
+    {
+      "id": "lumber",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 64591,
+        "wood": 14214,
+        "stone": 2880,
+        "gold": 2880
+      },
+      "afterPayment": {
+        "food": 64541,
+        "wood": 14164,
+        "stone": 2855,
+        "gold": 2855
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 65916,
+        "wood": 15514,
+        "stone": 2910,
+        "gold": 2910
+      },
+      "afterPayment": {
+        "food": 65912,
+        "wood": 15510,
+        "stone": 2908,
+        "gold": 2908
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 66712,
+        "wood": 16310,
+        "stone": 2970,
+        "gold": 2940
+      },
+      "afterPayment": {
+        "food": 66706,
+        "wood": 16304,
+        "stone": 2967,
+        "gold": 2937
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 67531,
+        "wood": 17129,
+        "stone": 3063,
+        "gold": 2970
+      },
+      "afterPayment": {
+        "food": 67523,
+        "wood": 17121,
+        "stone": 3059,
+        "gold": 2966
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 68373,
+        "wood": 17971,
+        "stone": 3191,
+        "gold": 3000
+      },
+      "afterPayment": {
+        "food": 68363,
+        "wood": 17961,
+        "stone": 3186,
+        "gold": 2995
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 69238,
+        "wood": 18836,
+        "stone": 3356,
+        "gold": 3030
+      },
+      "afterPayment": {
+        "food": 69226,
+        "wood": 18824,
+        "stone": 3350,
+        "gold": 3024
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 70126,
+        "wood": 19724,
+        "stone": 3560,
+        "gold": 3060
+      },
+      "afterPayment": {
+        "food": 70112,
+        "wood": 19710,
+        "stone": 3553,
+        "gold": 3053
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 71037,
+        "wood": 20635,
+        "stone": 3805,
+        "gold": 3090
+      },
+      "afterPayment": {
+        "food": 71021,
+        "wood": 20619,
+        "stone": 3797,
+        "gold": 3082
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 71971,
+        "wood": 21569,
+        "stone": 4093,
+        "gold": 3120
+      },
+      "afterPayment": {
+        "food": 71953,
+        "wood": 21551,
+        "stone": 4084,
+        "gold": 3111
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 72928,
+        "wood": 22526,
+        "stone": 4426,
+        "gold": 3150
+      },
+      "afterPayment": {
+        "food": 72908,
+        "wood": 22506,
+        "stone": 4416,
+        "gold": 3140
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 73908,
+        "wood": 23506,
+        "stone": 4806,
+        "gold": 3180
+      },
+      "afterPayment": {
+        "food": 73886,
+        "wood": 23484,
+        "stone": 4795,
+        "gold": 3169
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 74911,
+        "wood": 24509,
+        "stone": 5235,
+        "gold": 3210
+      },
+      "afterPayment": {
+        "food": 74887,
+        "wood": 24485,
+        "stone": 5223,
+        "gold": 3198
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 75937,
+        "wood": 25535,
+        "stone": 5715,
+        "gold": 3240
+      },
+      "afterPayment": {
+        "food": 75911,
+        "wood": 25509,
+        "stone": 5702,
+        "gold": 3227
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 76986,
+        "wood": 26584,
+        "stone": 6248,
+        "gold": 3270
+      },
+      "afterPayment": {
+        "food": 76958,
+        "wood": 26556,
+        "stone": 6234,
+        "gold": 3256
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 78058,
+        "wood": 27656,
+        "stone": 6836,
+        "gold": 3300
+      },
+      "afterPayment": {
+        "food": 78028,
+        "wood": 27626,
+        "stone": 6821,
+        "gold": 3285
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 79153,
+        "wood": 28751,
+        "stone": 7481,
+        "gold": 3330
+      },
+      "afterPayment": {
+        "food": 79121,
+        "wood": 28719,
+        "stone": 7465,
+        "gold": 3314
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 80271,
+        "wood": 29869,
+        "stone": 8185,
+        "gold": 3360
+      },
+      "afterPayment": {
+        "food": 80237,
+        "wood": 29835,
+        "stone": 8168,
+        "gold": 3343
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 81412,
+        "wood": 31010,
+        "stone": 8950,
+        "gold": 3390
+      },
+      "afterPayment": {
+        "food": 81376,
+        "wood": 30974,
+        "stone": 8932,
+        "gold": 3372
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 82576,
+        "wood": 32174,
+        "stone": 9778,
+        "gold": 3420
+      },
+      "afterPayment": {
+        "food": 82538,
+        "wood": 32136,
+        "stone": 9759,
+        "gold": 3401
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 83763,
+        "wood": 33361,
+        "stone": 10671,
+        "gold": 3450
+      },
+      "afterPayment": {
+        "food": 83723,
+        "wood": 33321,
+        "stone": 10651,
+        "gold": 3430
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 84973,
+        "wood": 34571,
+        "stone": 11631,
+        "gold": 3480
+      },
+      "afterPayment": {
+        "food": 84931,
+        "wood": 34529,
+        "stone": 11610,
+        "gold": 3459
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 86206,
+        "wood": 35804,
+        "stone": 12660,
+        "gold": 3510
+      },
+      "afterPayment": {
+        "food": 86162,
+        "wood": 35760,
+        "stone": 12638,
+        "gold": 3488
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 87462,
+        "wood": 37060,
+        "stone": 13760,
+        "gold": 3540
+      },
+      "afterPayment": {
+        "food": 87416,
+        "wood": 37014,
+        "stone": 13737,
+        "gold": 3517
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 88741,
+        "wood": 38339,
+        "stone": 14933,
+        "gold": 3570
+      },
+      "afterPayment": {
+        "food": 88693,
+        "wood": 38291,
+        "stone": 14909,
+        "gold": 3546
+      }
+    },
+    {
+      "id": "quarry",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 90043,
+        "wood": 39641,
+        "stone": 16181,
+        "gold": 3600
+      },
+      "afterPayment": {
+        "food": 89993,
+        "wood": 39591,
+        "stone": 16156,
+        "gold": 3575
+      }
+    },
+    {
+      "id": "mine",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 91368,
+        "wood": 40966,
+        "stone": 17506,
+        "gold": 3630
+      },
+      "afterPayment": {
+        "food": 91364,
+        "wood": 40962,
+        "stone": 17504,
+        "gold": 3628
+      }
+    },
+    {
+      "id": "mine",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 92164,
+        "wood": 41762,
+        "stone": 18304,
+        "gold": 3690
+      },
+      "afterPayment": {
+        "food": 92158,
+        "wood": 41756,
+        "stone": 18301,
+        "gold": 3687
+      }
+    },
+    {
+      "id": "mine",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 92983,
+        "wood": 42581,
+        "stone": 19126,
+        "gold": 3783
+      },
+      "afterPayment": {
+        "food": 92975,
+        "wood": 42573,
+        "stone": 19122,
+        "gold": 3779
+      }
+    },
+    {
+      "id": "mine",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 93825,
+        "wood": 43423,
+        "stone": 19972,
+        "gold": 3911
+      },
+      "afterPayment": {
+        "food": 93815,
+        "wood": 43413,
+        "stone": 19967,
+        "gold": 3906
+      }
+    },
+    {
+      "id": "mine",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 94690,
+        "wood": 44288,
+        "stone": 20842,
+        "gold": 4076
+      },
+      "afterPayment": {
+        "food": 94678,
+        "wood": 44276,
+        "stone": 20836,
+        "gold": 4070
+      }
+    },
+    {
+      "id": "mine",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 95578,
+        "wood": 45176,
+        "stone": 21736,
+        "gold": 4280
+      },
+      "afterPayment": {
+        "food": 95564,
+        "wood": 45162,
+        "stone": 21729,
+        "gold": 4273
+      }
+    },
+    {
+      "id": "mine",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 96489,
+        "wood": 46087,
+        "stone": 22654,
+        "gold": 4525
+      },
+      "afterPayment": {
+        "food": 96473,
+        "wood": 46071,
+        "stone": 22646,
+        "gold": 4517
+      }
+    },
+    {
+      "id": "mine",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 97423,
+        "wood": 47021,
+        "stone": 23596,
+        "gold": 4813
+      },
+      "afterPayment": {
+        "food": 97405,
+        "wood": 47003,
+        "stone": 23587,
+        "gold": 4804
+      }
+    },
+    {
+      "id": "mine",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 98380,
+        "wood": 47978,
+        "stone": 24562,
+        "gold": 5146
+      },
+      "afterPayment": {
+        "food": 98360,
+        "wood": 47958,
+        "stone": 24552,
+        "gold": 5136
+      }
+    },
+    {
+      "id": "mine",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 99360,
+        "wood": 48958,
+        "stone": 25552,
+        "gold": 5526
+      },
+      "afterPayment": {
+        "food": 99338,
+        "wood": 48936,
+        "stone": 25541,
+        "gold": 5515
+      }
+    },
+    {
+      "id": "mine",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 100363,
+        "wood": 49961,
+        "stone": 26566,
+        "gold": 5955
+      },
+      "afterPayment": {
+        "food": 100339,
+        "wood": 49937,
+        "stone": 26554,
+        "gold": 5943
+      }
+    },
+    {
+      "id": "mine",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 101389,
+        "wood": 50987,
+        "stone": 27604,
+        "gold": 6435
+      },
+      "afterPayment": {
+        "food": 101363,
+        "wood": 50961,
+        "stone": 27591,
+        "gold": 6422
+      }
+    },
+    {
+      "id": "mine",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 102438,
+        "wood": 52036,
+        "stone": 28666,
+        "gold": 6968
+      },
+      "afterPayment": {
+        "food": 102410,
+        "wood": 52008,
+        "stone": 28652,
+        "gold": 6954
+      }
+    },
+    {
+      "id": "mine",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 103510,
+        "wood": 53108,
+        "stone": 29752,
+        "gold": 7556
+      },
+      "afterPayment": {
+        "food": 103480,
+        "wood": 53078,
+        "stone": 29737,
+        "gold": 7541
+      }
+    },
+    {
+      "id": "mine",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 104605,
+        "wood": 54203,
+        "stone": 30862,
+        "gold": 8201
+      },
+      "afterPayment": {
+        "food": 104573,
+        "wood": 54171,
+        "stone": 30846,
+        "gold": 8185
+      }
+    },
+    {
+      "id": "mine",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 105723,
+        "wood": 55321,
+        "stone": 31996,
+        "gold": 8905
+      },
+      "afterPayment": {
+        "food": 105689,
+        "wood": 55287,
+        "stone": 31979,
+        "gold": 8888
+      }
+    },
+    {
+      "id": "mine",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 106864,
+        "wood": 56462,
+        "stone": 33154,
+        "gold": 9670
+      },
+      "afterPayment": {
+        "food": 106828,
+        "wood": 56426,
+        "stone": 33136,
+        "gold": 9652
+      }
+    },
+    {
+      "id": "mine",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 108028,
+        "wood": 57626,
+        "stone": 34336,
+        "gold": 10498
+      },
+      "afterPayment": {
+        "food": 107990,
+        "wood": 57588,
+        "stone": 34317,
+        "gold": 10479
+      }
+    },
+    {
+      "id": "mine",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 109215,
+        "wood": 58813,
+        "stone": 35542,
+        "gold": 11391
+      },
+      "afterPayment": {
+        "food": 109175,
+        "wood": 58773,
+        "stone": 35522,
+        "gold": 11371
+      }
+    },
+    {
+      "id": "mine",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 110425,
+        "wood": 60023,
+        "stone": 36772,
+        "gold": 12351
+      },
+      "afterPayment": {
+        "food": 110383,
+        "wood": 59981,
+        "stone": 36751,
+        "gold": 12330
+      }
+    },
+    {
+      "id": "mine",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 111658,
+        "wood": 61256,
+        "stone": 38026,
+        "gold": 13380
+      },
+      "afterPayment": {
+        "food": 111614,
+        "wood": 61212,
+        "stone": 38004,
+        "gold": 13358
+      }
+    },
+    {
+      "id": "mine",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 112914,
+        "wood": 62512,
+        "stone": 39304,
+        "gold": 14480
+      },
+      "afterPayment": {
+        "food": 112868,
+        "wood": 62466,
+        "stone": 39281,
+        "gold": 14457
+      }
+    },
+    {
+      "id": "mine",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 114193,
+        "wood": 63791,
+        "stone": 40606,
+        "gold": 15653
+      },
+      "afterPayment": {
+        "food": 114145,
+        "wood": 63743,
+        "stone": 40582,
+        "gold": 15629
+      }
+    },
+    {
+      "id": "mine",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 115495,
+        "wood": 65093,
+        "stone": 41932,
+        "gold": 16901
+      },
+      "afterPayment": {
+        "food": 115445,
+        "wood": 65043,
+        "stone": 41907,
+        "gold": 16876
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "stone": 1,
+        "gold": 1
+      },
+      "seconds": 1,
+      "before": {
+        "food": 116820,
+        "wood": 66418,
+        "stone": 43282,
+        "gold": 18226
+      },
+      "afterPayment": {
+        "food": 116818,
+        "wood": 66416,
+        "stone": 43281,
+        "gold": 18225
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 117593,
+        "wood": 67191,
+        "stone": 44056,
+        "gold": 19000
+      },
+      "afterPayment": {
+        "food": 117589,
+        "wood": 67187,
+        "stone": 44054,
+        "gold": 18998
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 118389,
+        "wood": 67987,
+        "stone": 44854,
+        "gold": 19798
+      },
+      "afterPayment": {
+        "food": 118383,
+        "wood": 67981,
+        "stone": 44851,
+        "gold": 19795
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 119208,
+        "wood": 68806,
+        "stone": 45676,
+        "gold": 20620
+      },
+      "afterPayment": {
+        "food": 119200,
+        "wood": 68798,
+        "stone": 45672,
+        "gold": 20616
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 120050,
+        "wood": 69648,
+        "stone": 46522,
+        "gold": 21466
+      },
+      "afterPayment": {
+        "food": 120040,
+        "wood": 69638,
+        "stone": 46517,
+        "gold": 21461
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 120915,
+        "wood": 70513,
+        "stone": 47392,
+        "gold": 22336
+      },
+      "afterPayment": {
+        "food": 120903,
+        "wood": 70501,
+        "stone": 47386,
+        "gold": 22330
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 121803,
+        "wood": 71401,
+        "stone": 48286,
+        "gold": 23230
+      },
+      "afterPayment": {
+        "food": 121789,
+        "wood": 71387,
+        "stone": 48279,
+        "gold": 23223
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 122714,
+        "wood": 72312,
+        "stone": 49204,
+        "gold": 24148
+      },
+      "afterPayment": {
+        "food": 122698,
+        "wood": 72296,
+        "stone": 49196,
+        "gold": 24140
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 123648,
+        "wood": 73246,
+        "stone": 50146,
+        "gold": 25090
+      },
+      "afterPayment": {
+        "food": 123630,
+        "wood": 73228,
+        "stone": 50137,
+        "gold": 25081
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 124605,
+        "wood": 74203,
+        "stone": 51112,
+        "gold": 26056
+      },
+      "afterPayment": {
+        "food": 124585,
+        "wood": 74183,
+        "stone": 51102,
+        "gold": 26046
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 125585,
+        "wood": 75183,
+        "stone": 52102,
+        "gold": 27046
+      },
+      "afterPayment": {
+        "food": 125563,
+        "wood": 75161,
+        "stone": 52091,
+        "gold": 27035
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 126588,
+        "wood": 76186,
+        "stone": 53116,
+        "gold": 28060
+      },
+      "afterPayment": {
+        "food": 126564,
+        "wood": 76162,
+        "stone": 53104,
+        "gold": 28048
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 127614,
+        "wood": 77212,
+        "stone": 54154,
+        "gold": 29098
+      },
+      "afterPayment": {
+        "food": 127588,
+        "wood": 77186,
+        "stone": 54141,
+        "gold": 29085
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 128663,
+        "wood": 78261,
+        "stone": 55216,
+        "gold": 30160
+      },
+      "afterPayment": {
+        "food": 128635,
+        "wood": 78233,
+        "stone": 55202,
+        "gold": 30146
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 129735,
+        "wood": 79333,
+        "stone": 56302,
+        "gold": 31246
+      },
+      "afterPayment": {
+        "food": 129705,
+        "wood": 79303,
+        "stone": 56287,
+        "gold": 31231
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 130830,
+        "wood": 80428,
+        "stone": 57412,
+        "gold": 32356
+      },
+      "afterPayment": {
+        "food": 130798,
+        "wood": 80396,
+        "stone": 57396,
+        "gold": 32340
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 131948,
+        "wood": 81546,
+        "stone": 58546,
+        "gold": 33490
+      },
+      "afterPayment": {
+        "food": 131914,
+        "wood": 81512,
+        "stone": 58529,
+        "gold": 33473
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 133089,
+        "wood": 82687,
+        "stone": 59704,
+        "gold": 34648
+      },
+      "afterPayment": {
+        "food": 133053,
+        "wood": 82651,
+        "stone": 59686,
+        "gold": 34630
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 134253,
+        "wood": 83851,
+        "stone": 60886,
+        "gold": 35830
+      },
+      "afterPayment": {
+        "food": 134215,
+        "wood": 83813,
+        "stone": 60867,
+        "gold": 35811
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 135440,
+        "wood": 85038,
+        "stone": 62092,
+        "gold": 37036
+      },
+      "afterPayment": {
+        "food": 135400,
+        "wood": 84998,
+        "stone": 62072,
+        "gold": 37016
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 136650,
+        "wood": 86248,
+        "stone": 63322,
+        "gold": 38266
+      },
+      "afterPayment": {
+        "food": 136608,
+        "wood": 86206,
+        "stone": 63301,
+        "gold": 38245
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 137883,
+        "wood": 87481,
+        "stone": 64576,
+        "gold": 39520
+      },
+      "afterPayment": {
+        "food": 137839,
+        "wood": 87437,
+        "stone": 64554,
+        "gold": 39498
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 139139,
+        "wood": 88737,
+        "stone": 65854,
+        "gold": 40798
+      },
+      "afterPayment": {
+        "food": 139093,
+        "wood": 88691,
+        "stone": 65831,
+        "gold": 40775
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 140418,
+        "wood": 90016,
+        "stone": 67156,
+        "gold": 42100
+      },
+      "afterPayment": {
+        "food": 140370,
+        "wood": 89968,
+        "stone": 67132,
+        "gold": 42076
+      }
+    },
+    {
+      "id": "barracks",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 141720,
+        "wood": 91318,
+        "stone": 68482,
+        "gold": 43426
+      },
+      "afterPayment": {
+        "food": 141670,
+        "wood": 91268,
+        "stone": 68457,
+        "gold": 43401
+      }
+    },
+    {
+      "id": "archery",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "stone": 1,
+        "gold": 1
+      },
+      "seconds": 1,
+      "before": {
+        "food": 143045,
+        "wood": 92643,
+        "stone": 69832,
+        "gold": 44776
+      },
+      "afterPayment": {
+        "food": 143043,
+        "wood": 92641,
+        "stone": 69831,
+        "gold": 44775
+      }
+    },
+    {
+      "id": "archery",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 143818,
+        "wood": 93416,
+        "stone": 70606,
+        "gold": 45550
+      },
+      "afterPayment": {
+        "food": 143814,
+        "wood": 93412,
+        "stone": 70604,
+        "gold": 45548
+      }
+    },
+    {
+      "id": "archery",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 144614,
+        "wood": 94212,
+        "stone": 71404,
+        "gold": 46348
+      },
+      "afterPayment": {
+        "food": 144608,
+        "wood": 94206,
+        "stone": 71401,
+        "gold": 46345
+      }
+    },
+    {
+      "id": "archery",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 145433,
+        "wood": 95031,
+        "stone": 72226,
+        "gold": 47170
+      },
+      "afterPayment": {
+        "food": 145425,
+        "wood": 95023,
+        "stone": 72222,
+        "gold": 47166
+      }
+    },
+    {
+      "id": "archery",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 146275,
+        "wood": 95873,
+        "stone": 73072,
+        "gold": 48016
+      },
+      "afterPayment": {
+        "food": 146265,
+        "wood": 95863,
+        "stone": 73067,
+        "gold": 48011
+      }
+    },
+    {
+      "id": "archery",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 147140,
+        "wood": 96738,
+        "stone": 73942,
+        "gold": 48886
+      },
+      "afterPayment": {
+        "food": 147128,
+        "wood": 96726,
+        "stone": 73936,
+        "gold": 48880
+      }
+    },
+    {
+      "id": "archery",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 148028,
+        "wood": 97626,
+        "stone": 74836,
+        "gold": 49780
+      },
+      "afterPayment": {
+        "food": 148014,
+        "wood": 97612,
+        "stone": 74829,
+        "gold": 49773
+      }
+    },
+    {
+      "id": "archery",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 148939,
+        "wood": 98537,
+        "stone": 75754,
+        "gold": 50698
+      },
+      "afterPayment": {
+        "food": 148923,
+        "wood": 98521,
+        "stone": 75746,
+        "gold": 50690
+      }
+    },
+    {
+      "id": "archery",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 149873,
+        "wood": 99471,
+        "stone": 76696,
+        "gold": 51640
+      },
+      "afterPayment": {
+        "food": 149855,
+        "wood": 99453,
+        "stone": 76687,
+        "gold": 51631
+      }
+    },
+    {
+      "id": "archery",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 150830,
+        "wood": 100428,
+        "stone": 77662,
+        "gold": 52606
+      },
+      "afterPayment": {
+        "food": 150810,
+        "wood": 100408,
+        "stone": 77652,
+        "gold": 52596
+      }
+    },
+    {
+      "id": "archery",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 151810,
+        "wood": 101408,
+        "stone": 78652,
+        "gold": 53596
+      },
+      "afterPayment": {
+        "food": 151788,
+        "wood": 101386,
+        "stone": 78641,
+        "gold": 53585
+      }
+    },
+    {
+      "id": "archery",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 152813,
+        "wood": 102411,
+        "stone": 79666,
+        "gold": 54610
+      },
+      "afterPayment": {
+        "food": 152789,
+        "wood": 102387,
+        "stone": 79654,
+        "gold": 54598
+      }
+    },
+    {
+      "id": "archery",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 153839,
+        "wood": 103437,
+        "stone": 80704,
+        "gold": 55648
+      },
+      "afterPayment": {
+        "food": 153813,
+        "wood": 103411,
+        "stone": 80691,
+        "gold": 55635
+      }
+    },
+    {
+      "id": "archery",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 154888,
+        "wood": 104486,
+        "stone": 81766,
+        "gold": 56710
+      },
+      "afterPayment": {
+        "food": 154860,
+        "wood": 104458,
+        "stone": 81752,
+        "gold": 56696
+      }
+    },
+    {
+      "id": "archery",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 155960,
+        "wood": 105558,
+        "stone": 82852,
+        "gold": 57796
+      },
+      "afterPayment": {
+        "food": 155930,
+        "wood": 105528,
+        "stone": 82837,
+        "gold": 57781
+      }
+    },
+    {
+      "id": "archery",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 157055,
+        "wood": 106653,
+        "stone": 83962,
+        "gold": 58906
+      },
+      "afterPayment": {
+        "food": 157023,
+        "wood": 106621,
+        "stone": 83946,
+        "gold": 58890
+      }
+    },
+    {
+      "id": "archery",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 158173,
+        "wood": 107771,
+        "stone": 85096,
+        "gold": 60040
+      },
+      "afterPayment": {
+        "food": 158139,
+        "wood": 107737,
+        "stone": 85079,
+        "gold": 60023
+      }
+    },
+    {
+      "id": "archery",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 159314,
+        "wood": 108912,
+        "stone": 86254,
+        "gold": 61198
+      },
+      "afterPayment": {
+        "food": 159278,
+        "wood": 108876,
+        "stone": 86236,
+        "gold": 61180
+      }
+    },
+    {
+      "id": "archery",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 160478,
+        "wood": 110076,
+        "stone": 87436,
+        "gold": 62380
+      },
+      "afterPayment": {
+        "food": 160440,
+        "wood": 110038,
+        "stone": 87417,
+        "gold": 62361
+      }
+    },
+    {
+      "id": "archery",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 161665,
+        "wood": 111263,
+        "stone": 88642,
+        "gold": 63586
+      },
+      "afterPayment": {
+        "food": 161625,
+        "wood": 111223,
+        "stone": 88622,
+        "gold": 63566
+      }
+    },
+    {
+      "id": "archery",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 162875,
+        "wood": 112473,
+        "stone": 89872,
+        "gold": 64816
+      },
+      "afterPayment": {
+        "food": 162833,
+        "wood": 112431,
+        "stone": 89851,
+        "gold": 64795
+      }
+    },
+    {
+      "id": "archery",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 164108,
+        "wood": 113706,
+        "stone": 91126,
+        "gold": 66070
+      },
+      "afterPayment": {
+        "food": 164064,
+        "wood": 113662,
+        "stone": 91104,
+        "gold": 66048
+      }
+    },
+    {
+      "id": "archery",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 165364,
+        "wood": 114962,
+        "stone": 92404,
+        "gold": 67348
+      },
+      "afterPayment": {
+        "food": 165318,
+        "wood": 114916,
+        "stone": 92381,
+        "gold": 67325
+      }
+    },
+    {
+      "id": "archery",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 166643,
+        "wood": 116241,
+        "stone": 93706,
+        "gold": 68650
+      },
+      "afterPayment": {
+        "food": 166595,
+        "wood": 116193,
+        "stone": 93682,
+        "gold": 68626
+      }
+    },
+    {
+      "id": "archery",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 167945,
+        "wood": 117543,
+        "stone": 95032,
+        "gold": 69976
+      },
+      "afterPayment": {
+        "food": 167895,
+        "wood": 117493,
+        "stone": 95007,
+        "gold": 69951
+      }
+    },
+    {
+      "id": "stable",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "stone": 1,
+        "gold": 1
+      },
+      "seconds": 1,
+      "before": {
+        "food": 169270,
+        "wood": 118868,
+        "stone": 96382,
+        "gold": 71326
+      },
+      "afterPayment": {
+        "food": 169268,
+        "wood": 118866,
+        "stone": 96381,
+        "gold": 71325
+      }
+    },
+    {
+      "id": "stable",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 170043,
+        "wood": 119641,
+        "stone": 97156,
+        "gold": 72100
+      },
+      "afterPayment": {
+        "food": 170039,
+        "wood": 119637,
+        "stone": 97154,
+        "gold": 72098
+      }
+    },
+    {
+      "id": "stable",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 170839,
+        "wood": 120437,
+        "stone": 97954,
+        "gold": 72898
+      },
+      "afterPayment": {
+        "food": 170833,
+        "wood": 120431,
+        "stone": 97951,
+        "gold": 72895
+      }
+    },
+    {
+      "id": "stable",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 171658,
+        "wood": 121256,
+        "stone": 98776,
+        "gold": 73720
+      },
+      "afterPayment": {
+        "food": 171650,
+        "wood": 121248,
+        "stone": 98772,
+        "gold": 73716
+      }
+    },
+    {
+      "id": "stable",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 172500,
+        "wood": 122098,
+        "stone": 99622,
+        "gold": 74566
+      },
+      "afterPayment": {
+        "food": 172490,
+        "wood": 122088,
+        "stone": 99617,
+        "gold": 74561
+      }
+    },
+    {
+      "id": "stable",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 173365,
+        "wood": 122963,
+        "stone": 100492,
+        "gold": 75436
+      },
+      "afterPayment": {
+        "food": 173353,
+        "wood": 122951,
+        "stone": 100486,
+        "gold": 75430
+      }
+    },
+    {
+      "id": "stable",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 174253,
+        "wood": 123851,
+        "stone": 101386,
+        "gold": 76330
+      },
+      "afterPayment": {
+        "food": 174239,
+        "wood": 123837,
+        "stone": 101379,
+        "gold": 76323
+      }
+    },
+    {
+      "id": "stable",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 175164,
+        "wood": 124762,
+        "stone": 102304,
+        "gold": 77248
+      },
+      "afterPayment": {
+        "food": 175148,
+        "wood": 124746,
+        "stone": 102296,
+        "gold": 77240
+      }
+    },
+    {
+      "id": "stable",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 176098,
+        "wood": 125696,
+        "stone": 103246,
+        "gold": 78190
+      },
+      "afterPayment": {
+        "food": 176080,
+        "wood": 125678,
+        "stone": 103237,
+        "gold": 78181
+      }
+    },
+    {
+      "id": "stable",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 177055,
+        "wood": 126653,
+        "stone": 104212,
+        "gold": 79156
+      },
+      "afterPayment": {
+        "food": 177035,
+        "wood": 126633,
+        "stone": 104202,
+        "gold": 79146
+      }
+    },
+    {
+      "id": "stable",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 178035,
+        "wood": 127633,
+        "stone": 105202,
+        "gold": 80146
+      },
+      "afterPayment": {
+        "food": 178013,
+        "wood": 127611,
+        "stone": 105191,
+        "gold": 80135
+      }
+    },
+    {
+      "id": "stable",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 179038,
+        "wood": 128636,
+        "stone": 106216,
+        "gold": 81160
+      },
+      "afterPayment": {
+        "food": 179014,
+        "wood": 128612,
+        "stone": 106204,
+        "gold": 81148
+      }
+    },
+    {
+      "id": "stable",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 180064,
+        "wood": 129662,
+        "stone": 107254,
+        "gold": 82198
+      },
+      "afterPayment": {
+        "food": 180038,
+        "wood": 129636,
+        "stone": 107241,
+        "gold": 82185
+      }
+    },
+    {
+      "id": "stable",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 181113,
+        "wood": 130711,
+        "stone": 108316,
+        "gold": 83260
+      },
+      "afterPayment": {
+        "food": 181085,
+        "wood": 130683,
+        "stone": 108302,
+        "gold": 83246
+      }
+    },
+    {
+      "id": "stable",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 182185,
+        "wood": 131783,
+        "stone": 109402,
+        "gold": 84346
+      },
+      "afterPayment": {
+        "food": 182155,
+        "wood": 131753,
+        "stone": 109387,
+        "gold": 84331
+      }
+    },
+    {
+      "id": "stable",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 183280,
+        "wood": 132878,
+        "stone": 110512,
+        "gold": 85456
+      },
+      "afterPayment": {
+        "food": 183248,
+        "wood": 132846,
+        "stone": 110496,
+        "gold": 85440
+      }
+    },
+    {
+      "id": "stable",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 184398,
+        "wood": 133996,
+        "stone": 111646,
+        "gold": 86590
+      },
+      "afterPayment": {
+        "food": 184364,
+        "wood": 133962,
+        "stone": 111629,
+        "gold": 86573
+      }
+    },
+    {
+      "id": "stable",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 185539,
+        "wood": 135137,
+        "stone": 112804,
+        "gold": 87748
+      },
+      "afterPayment": {
+        "food": 185503,
+        "wood": 135101,
+        "stone": 112786,
+        "gold": 87730
+      }
+    },
+    {
+      "id": "stable",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 186703,
+        "wood": 136301,
+        "stone": 113986,
+        "gold": 88930
+      },
+      "afterPayment": {
+        "food": 186665,
+        "wood": 136263,
+        "stone": 113967,
+        "gold": 88911
+      }
+    },
+    {
+      "id": "stable",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 187890,
+        "wood": 137488,
+        "stone": 115192,
+        "gold": 90136
+      },
+      "afterPayment": {
+        "food": 187850,
+        "wood": 137448,
+        "stone": 115172,
+        "gold": 90116
+      }
+    },
+    {
+      "id": "stable",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 189100,
+        "wood": 138698,
+        "stone": 116422,
+        "gold": 91366
+      },
+      "afterPayment": {
+        "food": 189058,
+        "wood": 138656,
+        "stone": 116401,
+        "gold": 91345
+      }
+    },
+    {
+      "id": "stable",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 190333,
+        "wood": 139931,
+        "stone": 117676,
+        "gold": 92620
+      },
+      "afterPayment": {
+        "food": 190289,
+        "wood": 139887,
+        "stone": 117654,
+        "gold": 92598
+      }
+    },
+    {
+      "id": "stable",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 191589,
+        "wood": 141187,
+        "stone": 118954,
+        "gold": 93898
+      },
+      "afterPayment": {
+        "food": 191543,
+        "wood": 141141,
+        "stone": 118931,
+        "gold": 93875
+      }
+    },
+    {
+      "id": "stable",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 192868,
+        "wood": 142466,
+        "stone": 120256,
+        "gold": 95200
+      },
+      "afterPayment": {
+        "food": 192820,
+        "wood": 142418,
+        "stone": 120232,
+        "gold": 95176
+      }
+    },
+    {
+      "id": "stable",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 194170,
+        "wood": 143768,
+        "stone": 121582,
+        "gold": 96526
+      },
+      "afterPayment": {
+        "food": 194120,
+        "wood": 143718,
+        "stone": 121557,
+        "gold": 96501
+      }
+    },
+    {
+      "id": "siege",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "stone": 1,
+        "gold": 1
+      },
+      "seconds": 1,
+      "before": {
+        "food": 195495,
+        "wood": 145093,
+        "stone": 122932,
+        "gold": 97876
+      },
+      "afterPayment": {
+        "food": 195493,
+        "wood": 145091,
+        "stone": 122931,
+        "gold": 97875
+      }
+    },
+    {
+      "id": "siege",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 196268,
+        "wood": 145866,
+        "stone": 123706,
+        "gold": 98650
+      },
+      "afterPayment": {
+        "food": 196264,
+        "wood": 145862,
+        "stone": 123704,
+        "gold": 98648
+      }
+    },
+    {
+      "id": "siege",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 197064,
+        "wood": 146662,
+        "stone": 124504,
+        "gold": 99448
+      },
+      "afterPayment": {
+        "food": 197058,
+        "wood": 146656,
+        "stone": 124501,
+        "gold": 99445
+      }
+    },
+    {
+      "id": "siege",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 197883,
+        "wood": 147481,
+        "stone": 125326,
+        "gold": 100270
+      },
+      "afterPayment": {
+        "food": 197875,
+        "wood": 147473,
+        "stone": 125322,
+        "gold": 100266
+      }
+    },
+    {
+      "id": "siege",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 198725,
+        "wood": 148323,
+        "stone": 126172,
+        "gold": 101116
+      },
+      "afterPayment": {
+        "food": 198715,
+        "wood": 148313,
+        "stone": 126167,
+        "gold": 101111
+      }
+    },
+    {
+      "id": "siege",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 199590,
+        "wood": 149188,
+        "stone": 127042,
+        "gold": 101986
+      },
+      "afterPayment": {
+        "food": 199578,
+        "wood": 149176,
+        "stone": 127036,
+        "gold": 101980
+      }
+    },
+    {
+      "id": "siege",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 200478,
+        "wood": 150076,
+        "stone": 127936,
+        "gold": 102880
+      },
+      "afterPayment": {
+        "food": 200464,
+        "wood": 150062,
+        "stone": 127929,
+        "gold": 102873
+      }
+    },
+    {
+      "id": "siege",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 201389,
+        "wood": 150987,
+        "stone": 128854,
+        "gold": 103798
+      },
+      "afterPayment": {
+        "food": 201373,
+        "wood": 150971,
+        "stone": 128846,
+        "gold": 103790
+      }
+    },
+    {
+      "id": "siege",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 202323,
+        "wood": 151921,
+        "stone": 129796,
+        "gold": 104740
+      },
+      "afterPayment": {
+        "food": 202305,
+        "wood": 151903,
+        "stone": 129787,
+        "gold": 104731
+      }
+    },
+    {
+      "id": "siege",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 203280,
+        "wood": 152878,
+        "stone": 130762,
+        "gold": 105706
+      },
+      "afterPayment": {
+        "food": 203260,
+        "wood": 152858,
+        "stone": 130752,
+        "gold": 105696
+      }
+    },
+    {
+      "id": "siege",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 204260,
+        "wood": 153858,
+        "stone": 131752,
+        "gold": 106696
+      },
+      "afterPayment": {
+        "food": 204238,
+        "wood": 153836,
+        "stone": 131741,
+        "gold": 106685
+      }
+    },
+    {
+      "id": "siege",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 205263,
+        "wood": 154861,
+        "stone": 132766,
+        "gold": 107710
+      },
+      "afterPayment": {
+        "food": 205239,
+        "wood": 154837,
+        "stone": 132754,
+        "gold": 107698
+      }
+    },
+    {
+      "id": "siege",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 206289,
+        "wood": 155887,
+        "stone": 133804,
+        "gold": 108748
+      },
+      "afterPayment": {
+        "food": 206263,
+        "wood": 155861,
+        "stone": 133791,
+        "gold": 108735
+      }
+    },
+    {
+      "id": "siege",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 207338,
+        "wood": 156936,
+        "stone": 134866,
+        "gold": 109810
+      },
+      "afterPayment": {
+        "food": 207310,
+        "wood": 156908,
+        "stone": 134852,
+        "gold": 109796
+      }
+    },
+    {
+      "id": "siege",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 208410,
+        "wood": 158008,
+        "stone": 135952,
+        "gold": 110896
+      },
+      "afterPayment": {
+        "food": 208380,
+        "wood": 157978,
+        "stone": 135937,
+        "gold": 110881
+      }
+    },
+    {
+      "id": "siege",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 209505,
+        "wood": 159103,
+        "stone": 137062,
+        "gold": 112006
+      },
+      "afterPayment": {
+        "food": 209473,
+        "wood": 159071,
+        "stone": 137046,
+        "gold": 111990
+      }
+    },
+    {
+      "id": "siege",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 210623,
+        "wood": 160221,
+        "stone": 138196,
+        "gold": 113140
+      },
+      "afterPayment": {
+        "food": 210589,
+        "wood": 160187,
+        "stone": 138179,
+        "gold": 113123
+      }
+    },
+    {
+      "id": "siege",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 211764,
+        "wood": 161362,
+        "stone": 139354,
+        "gold": 114298
+      },
+      "afterPayment": {
+        "food": 211728,
+        "wood": 161326,
+        "stone": 139336,
+        "gold": 114280
+      }
+    },
+    {
+      "id": "siege",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 212928,
+        "wood": 162526,
+        "stone": 140536,
+        "gold": 115480
+      },
+      "afterPayment": {
+        "food": 212890,
+        "wood": 162488,
+        "stone": 140517,
+        "gold": 115461
+      }
+    },
+    {
+      "id": "siege",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 214115,
+        "wood": 163713,
+        "stone": 141742,
+        "gold": 116686
+      },
+      "afterPayment": {
+        "food": 214075,
+        "wood": 163673,
+        "stone": 141722,
+        "gold": 116666
+      }
+    },
+    {
+      "id": "siege",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 215325,
+        "wood": 164923,
+        "stone": 142972,
+        "gold": 117916
+      },
+      "afterPayment": {
+        "food": 215283,
+        "wood": 164881,
+        "stone": 142951,
+        "gold": 117895
+      }
+    },
+    {
+      "id": "siege",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 216558,
+        "wood": 166156,
+        "stone": 144226,
+        "gold": 119170
+      },
+      "afterPayment": {
+        "food": 216514,
+        "wood": 166112,
+        "stone": 144204,
+        "gold": 119148
+      }
+    },
+    {
+      "id": "siege",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 217814,
+        "wood": 167412,
+        "stone": 145504,
+        "gold": 120448
+      },
+      "afterPayment": {
+        "food": 217768,
+        "wood": 167366,
+        "stone": 145481,
+        "gold": 120425
+      }
+    },
+    {
+      "id": "siege",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 219093,
+        "wood": 168691,
+        "stone": 146806,
+        "gold": 121750
+      },
+      "afterPayment": {
+        "food": 219045,
+        "wood": 168643,
+        "stone": 146782,
+        "gold": 121726
+      }
+    },
+    {
+      "id": "siege",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 220395,
+        "wood": 169993,
+        "stone": 148132,
+        "gold": 123076
+      },
+      "afterPayment": {
+        "food": 220345,
+        "wood": 169943,
+        "stone": 148107,
+        "gold": 123051
+      }
+    },
+    {
+      "id": "academy",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 221720,
+        "wood": 171318,
+        "stone": 149482,
+        "gold": 124426
+      },
+      "afterPayment": {
+        "food": 221670,
+        "wood": 171268,
+        "stone": 149457,
+        "gold": 124401
+      }
+    },
+    {
+      "id": "market",
+      "from": 0,
+      "to": 1,
+      "cost": {
+        "food": 2,
+        "wood": 2,
+        "stone": 1,
+        "gold": 1
+      },
+      "seconds": 1,
+      "before": {
+        "food": 223045,
+        "wood": 172643,
+        "stone": 150832,
+        "gold": 125776
+      },
+      "afterPayment": {
+        "food": 223043,
+        "wood": 172641,
+        "stone": 150831,
+        "gold": 125775
+      }
+    },
+    {
+      "id": "market",
+      "from": 1,
+      "to": 2,
+      "cost": {
+        "food": 4,
+        "wood": 4,
+        "stone": 2,
+        "gold": 2
+      },
+      "seconds": 2,
+      "before": {
+        "food": 223818,
+        "wood": 173416,
+        "stone": 151606,
+        "gold": 126550
+      },
+      "afterPayment": {
+        "food": 223814,
+        "wood": 173412,
+        "stone": 151604,
+        "gold": 126548
+      }
+    },
+    {
+      "id": "market",
+      "from": 2,
+      "to": 3,
+      "cost": {
+        "food": 6,
+        "wood": 6,
+        "stone": 3,
+        "gold": 3
+      },
+      "seconds": 3,
+      "before": {
+        "food": 224614,
+        "wood": 174212,
+        "stone": 152404,
+        "gold": 127348
+      },
+      "afterPayment": {
+        "food": 224608,
+        "wood": 174206,
+        "stone": 152401,
+        "gold": 127345
+      }
+    },
+    {
+      "id": "market",
+      "from": 3,
+      "to": 4,
+      "cost": {
+        "food": 8,
+        "wood": 8,
+        "stone": 4,
+        "gold": 4
+      },
+      "seconds": 4,
+      "before": {
+        "food": 225433,
+        "wood": 175031,
+        "stone": 153226,
+        "gold": 128170
+      },
+      "afterPayment": {
+        "food": 225425,
+        "wood": 175023,
+        "stone": 153222,
+        "gold": 128166
+      }
+    },
+    {
+      "id": "market",
+      "from": 4,
+      "to": 5,
+      "cost": {
+        "food": 10,
+        "wood": 10,
+        "stone": 5,
+        "gold": 5
+      },
+      "seconds": 5,
+      "before": {
+        "food": 226275,
+        "wood": 175873,
+        "stone": 154072,
+        "gold": 129016
+      },
+      "afterPayment": {
+        "food": 226265,
+        "wood": 175863,
+        "stone": 154067,
+        "gold": 129011
+      }
+    },
+    {
+      "id": "market",
+      "from": 5,
+      "to": 6,
+      "cost": {
+        "food": 12,
+        "wood": 12,
+        "stone": 6,
+        "gold": 6
+      },
+      "seconds": 6,
+      "before": {
+        "food": 227140,
+        "wood": 176738,
+        "stone": 154942,
+        "gold": 129886
+      },
+      "afterPayment": {
+        "food": 227128,
+        "wood": 176726,
+        "stone": 154936,
+        "gold": 129880
+      }
+    },
+    {
+      "id": "market",
+      "from": 6,
+      "to": 7,
+      "cost": {
+        "food": 14,
+        "wood": 14,
+        "stone": 7,
+        "gold": 7
+      },
+      "seconds": 7,
+      "before": {
+        "food": 228028,
+        "wood": 177626,
+        "stone": 155836,
+        "gold": 130780
+      },
+      "afterPayment": {
+        "food": 228014,
+        "wood": 177612,
+        "stone": 155829,
+        "gold": 130773
+      }
+    },
+    {
+      "id": "market",
+      "from": 7,
+      "to": 8,
+      "cost": {
+        "food": 16,
+        "wood": 16,
+        "stone": 8,
+        "gold": 8
+      },
+      "seconds": 8,
+      "before": {
+        "food": 228939,
+        "wood": 178537,
+        "stone": 156754,
+        "gold": 131698
+      },
+      "afterPayment": {
+        "food": 228923,
+        "wood": 178521,
+        "stone": 156746,
+        "gold": 131690
+      }
+    },
+    {
+      "id": "market",
+      "from": 8,
+      "to": 9,
+      "cost": {
+        "food": 18,
+        "wood": 18,
+        "stone": 9,
+        "gold": 9
+      },
+      "seconds": 9,
+      "before": {
+        "food": 229873,
+        "wood": 179471,
+        "stone": 157696,
+        "gold": 132640
+      },
+      "afterPayment": {
+        "food": 229855,
+        "wood": 179453,
+        "stone": 157687,
+        "gold": 132631
+      }
+    },
+    {
+      "id": "market",
+      "from": 9,
+      "to": 10,
+      "cost": {
+        "food": 20,
+        "wood": 20,
+        "stone": 10,
+        "gold": 10
+      },
+      "seconds": 10,
+      "before": {
+        "food": 230830,
+        "wood": 180428,
+        "stone": 158662,
+        "gold": 133606
+      },
+      "afterPayment": {
+        "food": 230810,
+        "wood": 180408,
+        "stone": 158652,
+        "gold": 133596
+      }
+    },
+    {
+      "id": "market",
+      "from": 10,
+      "to": 11,
+      "cost": {
+        "food": 22,
+        "wood": 22,
+        "stone": 11,
+        "gold": 11
+      },
+      "seconds": 11,
+      "before": {
+        "food": 231810,
+        "wood": 181408,
+        "stone": 159652,
+        "gold": 134596
+      },
+      "afterPayment": {
+        "food": 231788,
+        "wood": 181386,
+        "stone": 159641,
+        "gold": 134585
+      }
+    },
+    {
+      "id": "market",
+      "from": 11,
+      "to": 12,
+      "cost": {
+        "food": 24,
+        "wood": 24,
+        "stone": 12,
+        "gold": 12
+      },
+      "seconds": 12,
+      "before": {
+        "food": 232813,
+        "wood": 182411,
+        "stone": 160666,
+        "gold": 135610
+      },
+      "afterPayment": {
+        "food": 232789,
+        "wood": 182387,
+        "stone": 160654,
+        "gold": 135598
+      }
+    },
+    {
+      "id": "market",
+      "from": 12,
+      "to": 13,
+      "cost": {
+        "food": 26,
+        "wood": 26,
+        "stone": 13,
+        "gold": 13
+      },
+      "seconds": 13,
+      "before": {
+        "food": 233839,
+        "wood": 183437,
+        "stone": 161704,
+        "gold": 136648
+      },
+      "afterPayment": {
+        "food": 233813,
+        "wood": 183411,
+        "stone": 161691,
+        "gold": 136635
+      }
+    },
+    {
+      "id": "market",
+      "from": 13,
+      "to": 14,
+      "cost": {
+        "food": 28,
+        "wood": 28,
+        "stone": 14,
+        "gold": 14
+      },
+      "seconds": 14,
+      "before": {
+        "food": 234888,
+        "wood": 184486,
+        "stone": 162766,
+        "gold": 137710
+      },
+      "afterPayment": {
+        "food": 234860,
+        "wood": 184458,
+        "stone": 162752,
+        "gold": 137696
+      }
+    },
+    {
+      "id": "market",
+      "from": 14,
+      "to": 15,
+      "cost": {
+        "food": 30,
+        "wood": 30,
+        "stone": 15,
+        "gold": 15
+      },
+      "seconds": 15,
+      "before": {
+        "food": 235960,
+        "wood": 185558,
+        "stone": 163852,
+        "gold": 138796
+      },
+      "afterPayment": {
+        "food": 235930,
+        "wood": 185528,
+        "stone": 163837,
+        "gold": 138781
+      }
+    },
+    {
+      "id": "market",
+      "from": 15,
+      "to": 16,
+      "cost": {
+        "food": 32,
+        "wood": 32,
+        "stone": 16,
+        "gold": 16
+      },
+      "seconds": 16,
+      "before": {
+        "food": 237055,
+        "wood": 186653,
+        "stone": 164962,
+        "gold": 139906
+      },
+      "afterPayment": {
+        "food": 237023,
+        "wood": 186621,
+        "stone": 164946,
+        "gold": 139890
+      }
+    },
+    {
+      "id": "market",
+      "from": 16,
+      "to": 17,
+      "cost": {
+        "food": 34,
+        "wood": 34,
+        "stone": 17,
+        "gold": 17
+      },
+      "seconds": 17,
+      "before": {
+        "food": 238173,
+        "wood": 187771,
+        "stone": 166096,
+        "gold": 141040
+      },
+      "afterPayment": {
+        "food": 238139,
+        "wood": 187737,
+        "stone": 166079,
+        "gold": 141023
+      }
+    },
+    {
+      "id": "market",
+      "from": 17,
+      "to": 18,
+      "cost": {
+        "food": 36,
+        "wood": 36,
+        "stone": 18,
+        "gold": 18
+      },
+      "seconds": 18,
+      "before": {
+        "food": 239314,
+        "wood": 188912,
+        "stone": 167254,
+        "gold": 142198
+      },
+      "afterPayment": {
+        "food": 239278,
+        "wood": 188876,
+        "stone": 167236,
+        "gold": 142180
+      }
+    },
+    {
+      "id": "market",
+      "from": 18,
+      "to": 19,
+      "cost": {
+        "food": 38,
+        "wood": 38,
+        "stone": 19,
+        "gold": 19
+      },
+      "seconds": 19,
+      "before": {
+        "food": 240478,
+        "wood": 190076,
+        "stone": 168436,
+        "gold": 143380
+      },
+      "afterPayment": {
+        "food": 240440,
+        "wood": 190038,
+        "stone": 168417,
+        "gold": 143361
+      }
+    },
+    {
+      "id": "market",
+      "from": 19,
+      "to": 20,
+      "cost": {
+        "food": 40,
+        "wood": 40,
+        "stone": 20,
+        "gold": 20
+      },
+      "seconds": 20,
+      "before": {
+        "food": 241665,
+        "wood": 191263,
+        "stone": 169642,
+        "gold": 144586
+      },
+      "afterPayment": {
+        "food": 241625,
+        "wood": 191223,
+        "stone": 169622,
+        "gold": 144566
+      }
+    },
+    {
+      "id": "market",
+      "from": 20,
+      "to": 21,
+      "cost": {
+        "food": 42,
+        "wood": 42,
+        "stone": 21,
+        "gold": 21
+      },
+      "seconds": 21,
+      "before": {
+        "food": 242875,
+        "wood": 192473,
+        "stone": 170872,
+        "gold": 145816
+      },
+      "afterPayment": {
+        "food": 242833,
+        "wood": 192431,
+        "stone": 170851,
+        "gold": 145795
+      }
+    },
+    {
+      "id": "market",
+      "from": 21,
+      "to": 22,
+      "cost": {
+        "food": 44,
+        "wood": 44,
+        "stone": 22,
+        "gold": 22
+      },
+      "seconds": 22,
+      "before": {
+        "food": 244108,
+        "wood": 193706,
+        "stone": 172126,
+        "gold": 147070
+      },
+      "afterPayment": {
+        "food": 244064,
+        "wood": 193662,
+        "stone": 172104,
+        "gold": 147048
+      }
+    },
+    {
+      "id": "market",
+      "from": 22,
+      "to": 23,
+      "cost": {
+        "food": 46,
+        "wood": 46,
+        "stone": 23,
+        "gold": 23
+      },
+      "seconds": 23,
+      "before": {
+        "food": 245364,
+        "wood": 194962,
+        "stone": 173404,
+        "gold": 148348
+      },
+      "afterPayment": {
+        "food": 245318,
+        "wood": 194916,
+        "stone": 173381,
+        "gold": 148325
+      }
+    },
+    {
+      "id": "market",
+      "from": 23,
+      "to": 24,
+      "cost": {
+        "food": 48,
+        "wood": 48,
+        "stone": 24,
+        "gold": 24
+      },
+      "seconds": 24,
+      "before": {
+        "food": 246643,
+        "wood": 196241,
+        "stone": 174706,
+        "gold": 149650
+      },
+      "afterPayment": {
+        "food": 246595,
+        "wood": 196193,
+        "stone": 174682,
+        "gold": 149626
+      }
+    },
+    {
+      "id": "market",
+      "from": 24,
+      "to": 25,
+      "cost": {
+        "food": 50,
+        "wood": 50,
+        "stone": 25,
+        "gold": 25
+      },
+      "seconds": 25,
+      "before": {
+        "food": 247945,
+        "wood": 197543,
+        "stone": 176032,
+        "gold": 150976
+      },
+      "afterPayment": {
+        "food": 247895,
+        "wood": 197493,
+        "stone": 176007,
+        "gold": 150951
+      }
+    }
+  ]
+}

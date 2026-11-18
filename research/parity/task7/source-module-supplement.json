@@ -2,8 +2,22 @@
   {
     "path": "server/city-policy.mjs",
     "checked": "2026-11-18",
-    "sha256": "65546e74b9bad499ebecada56decf8204993ca5303db57ff0d60f0cb14a1a802",
-    "evidence": "research/parity/task7/README.md",
-    "disposition": "Post-Task3 infrastructure addition; no claim this was audited at the historical commit"
+    "sha256": "395f57d658c8c7897dbaf861dc81abdd4d3315f7339e21c25a72f218e9af8da2",
+    "evidence": "research/parity/features/task7-b1-experimental-city.md",
+    "disposition": "Post-Task3 owner-authorized isolated experimental engine; not historical or current full parity"
+  },
+  {
+    "path": "server/reference-city.mjs",
+    "checked": "2026-11-18",
+    "sha256": "e13b606cd58db98393d7c8b1d221e7916c2af0921fa1b643bf39990b629bd575",
+    "evidence": "research/parity/features/task7-b1-experimental-city.md",
+    "disposition": "Post-Task3 owner-authorized isolated experimental engine; not historical or current full parity"
+  },
+  {
+    "path": "server/reference-city-http.mjs",
+    "checked": "2026-11-18",
+    "sha256": "1cac8403c1fd045a025e5cf7d29571d1ac57217d0af6c1ec487e81195c81c913",
+    "evidence": "research/parity/features/task7-b1-experimental-city.md",
+    "disposition": "Post-Task3 owner-authorized isolated experimental engine; not historical or current full parity"
   }
 ]

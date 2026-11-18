@@ -1,0 +1,21 @@
+# B1 additional source review —2026-11-18
+
+All quantities below are source-specific observations, not proof of current-client equivalence. Exact live build/mode binding remains UNKNOWN. Costs are published base-table values; no player VIP, alliance, rune or civilization modifiers are assumed. Historical source-backed observations are reused rather than relabeled as current parity.
+
+- https://www.gamesguideinfo.com/rise-of-kingdoms/building/120000287-City-Hall — public table inspected. CH18 lists ArcheryRange13; RoKBuilder/RoKStats list Wall17+Storehouse17. CONFLICTING prerequisite completeness; power columns must distinguish gained from cumulative. No current build binding.
+- https://app.rokstats.online/buildings/?lang=en — building index/child tables;650rows/26categories, levels1–25, preserved historical numeric CSV reused in requirements-matrix.json. Source-observed costs/time are VERIFIED as displayed; precision/current applicability UNKNOWN. Blank prerequisite fields cannot prove no requirement. Dataset independence not established.
+- https://rokbuilder.com/tools/calculators/city-hall/ — public calculated building requirements; derives GachaData, not independent corroboration. CH3 Wall2 in other references is absent from extracted listing, so requirement UNKNOWN/CONFLICTING. CH18 contradiction retained; no convenient selection.
+- https://rokbuilder.com/tools/calculators/research/ — public calculator inspected. Describes71technologies but prerequisite links are missing/unreliable. This is not a complete verified technology DAG. GachaData lineage shared with city calculator; modified calculator outputs are not automatically base data.
+- https://riseofkingdoms.fandom.com/wiki/Buildings/City_Hall — direct402; indexed extracts only. CH3 Wall2 and CH25 one blueprint are published claims, not complete direct observation or verified live prerequisites. Access controls respected.
+- https://riseofkingdoms.fandom.com/wiki/Buildings/Academy — direct402; indexed extracts only. Published Academy1 CH6/500food/800wood/6seconds conflicts with extracted GachaData2seconds and another guide CH4. Current unlock/time CONFLICTING. No complete verified Academy build path.
+- https://gacha-data.com/rise-of-kingdoms/technology/ — public410rank-row technology table inspected. Quarrying1 Academy1/100food/100wood/60seconds/+5power observed. Irrigation and Handsaw1–5 display600/900/2000/5000/10000seconds. These15new scalar observations supplement canonical reference data with UNKNOWN live binding; old wiki minute-precision/conflicting observations are retained. Published table observation VERIFIED; full prerequisites/modifiers/current version UNKNOWN.
+- https://gacha-data.com/rise-of-kingdoms/buildings/ — underlying public city table inspected; first Academy CH6,500food,800wood,2seconds,+5power. Dataset lineage shared with RoKBuilder; no independent corroboration asserted.
+- https://riseofkingdomsguides.com/academy/ — community Academy guide lists CH4 and6second construction; incompatible with the above CH6/2second listing. This is discrepancy evidence, not chosen replacement authority.
+
+GachaData keyed API requires email-issued credentials; historical/version snapshots are paidPro. No signup, authentication, purchase or bypass attempted. Official historical Lilith patch evidence from checkpointA remains dated historical evidence and does not resolve all current tables.
+
+## Matrix interpretation and first blocker
+
+requirements-matrix.json enumerates650building-level rows. Null means UNKNOWN, never zero or absent requirement. Prerequisites listed for CH4–25 remain published partial lists with completeness UNKNOWN. Other prerequisite rows, power increases, unlocks, capacities and modifiers are explicitly unresolved. This is a coverage matrix, not an activation specification or proof that26categories exhaust all current buildings. Academy section records prepared Quarrying1 and missing full DAG; all remaining technology prerequisites/ranks are unresolved rather than invented.
+
+No complete consecutive RoK birth slice can be claimed: birth-state initialization/charging and CH2 requirement completeness fail first; CH3 and first Academy add explicit conflicts. A declared preparedAcademy quote test is independent work. Synthetic25-level data is ENGINE CAPABILITY ONLY. All normal activation stays disabled.

@@ -1,0 +1,24 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-18",
+  "authority": "Explicit Task7 checkpoint B1 owner prompt, phases3–6; experimental profile only, never incomplete normal-city activation",
+  "owner_decision": "Create a synthetic 25-level reference fixture for testing the ENGINE'S CAPABILITY ONLY.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": [
+    "ROK-CITY-LEVELS-1-25"
+  ],
+  "paths": [
+    "server/city-policy.mjs",
+    "server/reference-city.mjs",
+    "server/reference-city-http.mjs"
+  ],
+  "evidence_document": "research/parity/features/task7-b1-experimental-city.md",
+  "functional_checks": [
+    "Task7 B1 isolated engine actions, authentication and persistence",
+    "Task7 B1 synthetic paid 25-level progression capability"
+  ],
+  "unchanged_numeric_checks": [
+    "Task7 production city policy legacy quote and package closure regressions",
+    "Task7 immutable historical source and legal legacy progression conservation"
+  ]
+}

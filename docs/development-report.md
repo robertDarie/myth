@@ -136,3 +136,8 @@ The four baseline failures were traced to the authored combat fixture moving its
 `python -X utf8 scripts/publish_task.py`: **31 required checks passed**, including 16,757 portable C# presentation contracts. Initial three-sheet XLSX exported, summary counts recalculated, no formula errors found, and all three sheet previews visually inspected. Its cover explicitly says IN PROGRESS. Comprehensive audit coverage is still unfinished.
 
 Not executed: new Unity compilation, native Windows interaction, remote human multiplayer, legal long-term progression. Publication must use the guarded push and verify the remote SHA before being called complete. No real saves or gameplay source changed.
+
+
+## Task7 B1 — isolated working experimental building engine (2026-11-18)
+
+Ten functional engine tests pass. Eleven independent buildings have actual paid construction/effects and producer, trainer, research or transfer actions. Synthetic engine capability run:270paid upgrades/540commands/11670simulated seconds to all25, using production and collection from declared fixture birth state; not RoK progression. Prepared Academy1 Quarrying1 quote tested100food/100wood/60seconds/+5power, not birth proof. Actual browser create/collect/Citadel upgrade/Barracks/train reserve observed. Native Unity NOT TESTED. Normal new/legacy cities remain unchanged max5; complete25-level activation disabled. No fully verified consecutive CH birth slice: birth state, CH2/3 prerequisites and Academy conflicts remain blocking.650row requirements matrix records missing fields explicitly; no interpolation. No Tasks8–10 implementation. See research/parity/features/task7-b1-experimental-city.md and docs/qa/evidence/task7-b1/.
