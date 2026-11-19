@@ -8,10 +8,10 @@
   },
   {
     "path": "server/reference-city.mjs",
-    "checked": "2026-11-18",
-    "sha256": "225f42d4a9cd35b08c4cfcec586093dab87566c85ce25b75114a0c43ffa39c96",
-    "evidence": "research/parity/features/task7-b1-experimental-city.md",
-    "disposition": "Post-Task3 owner-authorized isolated experimental engine; not historical or current full parity"
+    "checked": "2026-11-19",
+    "sha256": "834b2c7c24a611b2a4179003bd81299d38332e96881b1d7d3e9fe9a138ff81cf",
+    "evidence": "research/parity/features/task7-b3-integration-hardening.md",
+    "disposition": "B3 isolated QA correctness hardening; supplied values unchanged; ordinary activation disabled"
   },
   {
     "path": "server/reference-city-http.mjs",
@@ -23,9 +23,9 @@
   {
     "path": "server/qa-reference-world.mjs",
     "checked": "2026-11-19",
-    "sha256": "5e96a268c8d014c0f23307cb4ae41cf3eceaf60a7c4416e7620e3d60bbd1c06d",
-    "evidence": "research/parity/features/task7-b2-real-game-qa.md",
-    "disposition": "B2 opt-in QA integration; not imported by normal World/index; no historical/full reference parity claim"
+    "sha256": "57b636c087926d29b6736b6a524d82eace05f02fe394463c67184d7e44c70961",
+    "evidence": "research/parity/features/task7-b3-integration-hardening.md",
+    "disposition": "B3 isolated QA correctness hardening; supplied values unchanged; ordinary activation disabled"
   },
   {
     "path": "server/qa-reference-host.mjs",

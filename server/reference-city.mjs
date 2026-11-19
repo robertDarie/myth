@@ -4,6 +4,7 @@ import {compileReferenceBuilding} from './city-policy.mjs';
 const resources=['food','wood','stone','gold'],roles=new Set(['cityhall','production','training','academy','trade']);
 const clone=x=>structuredClone(x),fingerprint=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const amount=n=>Number.isSafeInteger(n)&&n>=0;
+const requirementsMet=(p,row)=>row.prerequisites.every(r=>(r.kind==='technology'?p.technologies:p.levels)[r.id]>=r.level);
 function requireTrue(v,message){if(!v)throw new Error(message);}
 function cost(c){requireTrue(c&&Object.keys(c).length===4&&resources.every(k=>amount(c[k])),'Explicit four-resource cost required');return clone(c);}
 function safeAdd(a,b){requireTrue(amount(a)&&amount(b)&&amount(a+b),'Unsafe resource/unit quantity');return a+b;}
@@ -14,7 +15,7 @@ function validateEffects(e={}){
  if(e.workers!==undefined)requireTrue(Number.isInteger(e.workers)&&e.workers>=1&&e.workers<=8,'Invalid worker effect');
  if(e.productionBonus)requireTrue(Object.keys(e.productionBonus).every(k=>resources.includes(k)&&Number.isFinite(e.productionBonus[k])&&e.productionBonus[k]>=0),'Invalid production bonus');
  if(e.production)requireTrue(resources.includes(e.production.resource)&&Number.isFinite(e.production.perHour)&&e.production.perHour>=0&&amount(e.production.capacity),'Invalid production effect');
- if(e.training){cost(e.training.cost);requireTrue(e.training.unitId&&amount(e.training.capacity)&&e.training.capacity>0&&Number.isFinite(e.training.seconds)&&e.training.seconds>0,'Invalid facility training effect');}
+ if(e.training){cost(e.training.cost);requireTrue(typeof e.training.unitId==='string'&&e.training.unitId.length>0&&amount(e.training.capacity)&&e.training.capacity>0&&Number.isFinite(e.training.seconds)&&e.training.seconds>0,'Invalid facility training effect');}
  if(e.transferCapacity!==undefined)requireTrue(amount(e.transferCapacity)&&Number.isInteger(e.tradeTaxBps)&&e.tradeTaxBps>=0&&e.tradeTaxBps<=10000,'Incomplete transfer effects');
  if(e.stoneGatheringUnlocked!==undefined)requireTrue(typeof e.stoneGatheringUnlocked==='boolean','Invalid unlock effect');
 }
@@ -48,6 +49,7 @@ export class ReferenceCityEngine {
    this.#technologies.set(t.id,{...clone(t),table});
   }
   for(const b of [...this.#buildings.values(),...this.#technologies.values()])for(const row of b.rows)for(const r of row.prerequisites){
+   requireTrue(r.kind===undefined||['building','technology'].includes(r.kind),'Unknown prerequisite kind');
    const map=r.kind==='technology'?this.#technologies:this.#buildings;
    requireTrue(map.has(r.id)&&r.level<=map.get(r.id).maximum,'Unknown prerequisite identity/level');
   }
@@ -60,6 +62,8 @@ export class ReferenceCityEngine {
   cost(profile.initial.resources);
   for(const [id,level]of Object.entries(profile.initial.levels))requireTrue(this.#buildings.has(id)&&amount(level)&&level<=this.#buildings.get(id).maximum,'Invalid declared fixture initialization');
   requireTrue(profile.initial.levels[defs.find(b=>b.role==='cityhall').id]>=1,'Declared starting cityhall required');
+  const initial={levels:Object.fromEntries(defs.map(b=>[b.id,profile.initial.levels[b.id]??0])),technologies:Object.fromEntries([...this.#technologies.keys()].map(id=>[id,0]))};
+  for(const b of this.#buildings.values())for(let level=1;level<=initial.levels[b.id];level++)requireTrue(requirementsMet(initial,b.table.quote(level)),'Invalid declared initial prerequisite');
  }
  get profileId(){return this.#profile.id;}
  #actor(token){const p=this.#players.get(this.#sessions.get(token));requireTrue(p,'Experimental session authorization required');return p;}
@@ -95,6 +99,10 @@ export class ReferenceCityEngine {
   return {level,maximum:b.maximum,nextLevel:next,cost:row.cost,baseSeconds:row.seconds,seconds,prerequisites:row.prerequisites,effects:row.effects??{},powerTotal:row.powerTotal,canUpgrade:!reason,reason};
  }
  #spend(p,c){requireTrue(resources.every(k=>p.bank[k]>=c[k]),'Not enough resources');for(const k of resources)p.bank[k]-=c[k];}
+ #settleDue(p,threshold=0){
+  const done=p.jobs.filter(j=>j.remaining<=threshold);p.jobs=p.jobs.filter(j=>j.remaining>threshold);
+  for(const j of done){if(j.type==='building')p.levels[j.targetId]=j.targetLevel;else if(j.type==='research')p.technologies[j.targetId]=j.targetLevel;else p.units[j.unitId]=safeAdd(p.units[j.unitId]??0,j.quantity);}
+ }
  command(token,c){
   const p=this.#actor(token);requireTrue(c&&typeof c.requestId==='string'&&c.requestId.length>0&&c.requestId.length<=80,'Command requestId required');
   requireTrue(!('playerId'in c)||c.playerId===p.id,'Foreign city command rejected');
@@ -124,11 +132,12 @@ export class ReferenceCityEngine {
     const tax=Number((BigInt(c.amount)*BigInt(e.tradeTaxBps)+9999n)/10000n),debit=c.amount+tax;requireTrue(amount(debit)&&p.bank[c.resource]>=debit,'Insufficient transfer resources');
     receiver.bank[c.resource]=safeAdd(receiver.bank[c.resource],c.amount);p.bank[c.resource]-=debit;result={...result,tax,received:c.amount,settlement:'EXPERIMENTAL SUPPLIED POLICY; not verified RoK transport'};
    }else throw new Error('Unsupported experimental city command');
-   this.#receipts.set(key,{hash,result});return clone(result);
+   this.#settleDue(p);this.#receipts.set(key,{hash,result});return clone(result);
   }catch(error){this.#players=new Map(before);throw error;}
  }
  tick(seconds,{productionSeconds=seconds}={}){
   requireTrue(Number.isFinite(seconds)&&seconds>=0&&Number.isFinite(productionSeconds)&&productionSeconds>=0,'Invalid authoritative clock');
+  for(const p of this.#players.values())this.#settleDue(p);
   let remaining=seconds,budget=Math.min(seconds,productionSeconds);
   while(remaining>1e-9){
    let step=remaining;
@@ -140,8 +149,7 @@ export class ReferenceCityEngine {
      const e=this.#row(p,b).effects.production;p.stored[b.id]=Math.min(e.capacity,(p.stored[b.id]??0)+step*e.perHour/3600*(1+effects.productionBonus[e.resource]));
     }
     for(const j of p.jobs)j.remaining=Math.max(0,j.remaining-step);
-    const done=p.jobs.filter(j=>j.remaining<=1e-9);p.jobs=p.jobs.filter(j=>j.remaining>1e-9);
-    for(const j of done){if(j.type==='building')p.levels[j.targetId]=j.targetLevel;else if(j.type==='research')p.technologies[j.targetId]=j.targetLevel;else p.units[j.unitId]=safeAdd(p.units[j.unitId]??0,j.quantity);}
+    this.#settleDue(p,1e-9);
    }
    remaining=Math.max(0,remaining-step);budget=Math.max(0,budget-step);this.#time+=step;
   }
@@ -161,11 +169,14 @@ export class ReferenceCityEngine {
   requireTrue(Number.isFinite(saved.time)&&saved.time>=0&&Array.isArray(saved.players)&&Array.isArray(saved.sessions)&&Array.isArray(saved.receipts),'Malformed experimental save');
   engine.#players=new Map(clone(saved.players));engine.#sessions=new Map(clone(saved.sessions));engine.#receipts=new Map(clone(saved.receipts));engine.#time=saved.time;
   requireTrue(engine.#players.size===saved.players.length,'Duplicate saved city');
+  const unitIds=new Set([...engine.#buildings.values()].flatMap(b=>b.rows.map(row=>row.effects?.training?.unitId).filter(Boolean)));
   for(const [id,p]of engine.#players){
    requireTrue(id===p.id&&p.bank&&resources.every(k=>amount(p.bank[k]))&&p.units&&Object.values(p.units).every(amount),'Invalid saved resource/unit ledger');
+   requireTrue(Object.keys(p.units).every(unit=>unitIds.has(unit)),'Unknown saved unit identity');
    requireTrue(Object.keys(p.levels).length===engine.#buildings.size&&Object.keys(p.technologies).length===engine.#technologies.size,'Unknown saved progression identity');
    for(const [key,b]of engine.#buildings)requireTrue(amount(p.levels[key])&&p.levels[key]<=b.maximum&&(b.role!=='cityhall'||p.levels[key]>=1),'Invalid saved building level');
    for(const [key,t]of engine.#technologies)requireTrue(amount(p.technologies[key])&&p.technologies[key]<=t.maximum,'Invalid saved research level');
+   for(const b of [...engine.#buildings.values(),...engine.#technologies.values()])for(let level=1;level<=(b.role?p.levels:p.technologies)[b.id];level++)requireTrue(requirementsMet(p,b.table.quote(level)),'Invalid saved completed prerequisite');
    for(const [key,value]of Object.entries(p.stored)){const b=engine.#buildings.get(key),e=b&&engine.#row(p,b)?.effects.production;requireTrue(e&&Number.isFinite(value)&&value>=0&&value<=e.capacity,'Invalid saved production store');}
    requireTrue(Array.isArray(p.jobs)&&p.jobs.filter(j=>j.type==='building').length<=engine.#effects(p).workers&&p.jobs.filter(j=>j.type==='research').length<=1,'Invalid saved queue occupancy');
    const targets=new Set();for(const j of p.jobs){
@@ -173,7 +184,7 @@ export class ReferenceCityEngine {
     const b=(j.type==='research'?engine.#technologies:engine.#buildings).get(j.targetId);requireTrue(b,'Unknown saved job target');const key=j.type+':'+j.targetId;requireTrue(!targets.has(key),'Duplicate saved job');targets.add(key);
     let expected;
     if(j.type==='training'){requireTrue(b.role==='training'&&Number.isInteger(j.facilityLevel)&&j.facilityLevel>=1&&j.facilityLevel<=p.levels[b.id],'Invalid saved training facility level');const t=b.table.quote(j.facilityLevel).effects.training;requireTrue(t&&j.unitId===t.unitId&&amount(j.quantity)&&j.quantity>0&&j.quantity<=t.capacity&&j.duration===t.seconds*j.quantity,'Invalid saved training ledger');expected=Object.fromEntries(resources.map(k=>[k,t.cost[k]*j.quantity]));}
-    else{requireTrue(j.targetLevel===(j.type==='research'?p.technologies:p.levels)[j.targetId]+1&&j.targetLevel<=b.maximum,'Invalid saved target level');const row=b.table.quote(j.targetLevel);requireTrue(j.duration>0&&j.duration<=row.seconds,'Invalid saved original duration');expected=row.cost;}
+    else{requireTrue(j.targetLevel===(j.type==='research'?p.technologies:p.levels)[j.targetId]+1&&j.targetLevel<=b.maximum,'Invalid saved target level');const row=b.table.quote(j.targetLevel);requireTrue(requirementsMet(p,row),'Invalid saved queued prerequisite');requireTrue(j.duration>0&&j.duration<=row.seconds,'Invalid saved original duration');expected=row.cost;}
     requireTrue(resources.every(k=>j.paid[k]===expected[k]),'Saved paid cost does not match immutable profile');
    }
   }

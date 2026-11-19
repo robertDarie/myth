@@ -1,0 +1,144 @@
+{
+  "classification": "TEST_ONLY synthetic supplied values; actual production HTTP routes",
+  "requests": 71,
+  "duplicateRequests": 12,
+  "simultaneousTrainingFacilities": 4,
+  "parallelPaidJobs": 7,
+  "completedReserveUnits": 12,
+  "restart": "saved envelope reload",
+  "normalActivation": false,
+  "trace": [
+    {
+      "type": "qa-city-collect",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 400
+    },
+    {
+      "type": "qa-city-research",
+      "status": 400
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 400
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 400
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 400
+    },
+    {
+      "type": "qa-city-collect",
+      "status": 200
+    },
+    {
+      "type": "qa-city-train",
+      "status": 400
+    },
+    {
+      "type": "qa-city-train",
+      "status": 400
+    },
+    {
+      "type": "qa-city-train",
+      "status": 400
+    },
+    {
+      "type": "qa-city-train",
+      "status": 400
+    },
+    {
+      "type": "qa-city-train",
+      "status": 400
+    },
+    {
+      "type": "qa-city-train",
+      "status": 400
+    },
+    {
+      "type": "qa-city-research",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-upgrade",
+      "status": 200
+    },
+    {
+      "type": "qa-city-research",
+      "status": 400
+    },
+    {
+      "type": "qa-city-transfer",
+      "status": 200
+    },
+    {
+      "type": "qa-city-transfer",
+      "status": 400
+    },
+    {
+      "type": "alliance-create",
+      "status": 200
+    },
+    {
+      "type": "alliance-join",
+      "status": 200
+    },
+    {
+      "type": "resource-transfer",
+      "status": 400
+    },
+    {
+      "type": "attack-player",
+      "status": 400
+    },
+    {
+      "type": "reinforce",
+      "status": 400
+    },
+    {
+      "type": "garrison-join",
+      "status": 400
+    },
+    {
+      "type": "qa-city-transfer",
+      "status": 400
+    },
+    {
+      "type": "move",
+      "status": 400
+    }
+  ]
+}

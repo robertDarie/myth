@@ -61,6 +61,7 @@ export class QaReferenceWorld extends World {
  command(p,c){
   requireQa(p&&this.players.get(p.id)===p,'Authenticated World actor required');
   requireQa(c&&typeof c==='object','Invalid QA command');
+  requireQa(typeof c.type==='string'&&c.type.length>0,'Invalid command type');
   requireQa(!['profile','cityProgressionProfile','experimental','time','resources','levels'].some(k=>Object.hasOwn(c,k)),'Client profile, clock or fixture overrides are forbidden');
   requireQa(!c.playerId||c.playerId===p.id,'Foreign city actor rejected');
   const before=checkpoint(this);

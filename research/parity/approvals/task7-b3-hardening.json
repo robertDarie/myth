@@ -1,0 +1,24 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Explicit owner Task7 B3 integration hardening and synthetic capability tests; no normal activation",
+  "owner_decision": "Use explicitly labeled synthetic fixtures for capabilities not yet supported by verified current RoK values.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": [
+    "ROK-CITY-LEVELS-1-25"
+  ],
+  "paths": [
+    "server/reference-city.mjs",
+    "server/qa-reference-world.mjs"
+  ],
+  "evidence_document": "research/parity/features/task7-b3-integration-hardening.md",
+  "functional_checks": [
+    "Task7 B3 concurrent production HTTP queues payments and save boundaries",
+    "Task7 B3 evidence and source-bound integration matrix"
+  ],
+  "unchanged_numeric_checks": [
+    "Task7 production city policy legacy quote and package closure regressions",
+    "Task7 immutable historical source and legal legacy progression conservation",
+    "Task7 B1 isolated engine actions, authentication and persistence"
+  ]
+}

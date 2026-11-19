@@ -1,0 +1,34 @@
+# Task7 B3 — integration hardening,2026-11-19
+
+Starting main/origin: a7b87e9da573e5683443a5a6ad7b04bb59eda8e8. B2 code, tests and actual clean-client restart evidence inspected; bounded adapter checkpoints genuinely existed. Final commit/remote SHA are reported with publication, not guessed inside the commit.
+
+## Integrated systems and executed acceptance
+
+Production World HTTP/auth/custom persistence, player/city ownership, civilizations, positions, shared alliance membership, independent building quotes/payment/production/collection, Academy and four training facilities remain integrated only in operator-created disposable QA worlds. No normal World/index or C# runtime changes.
+
+New lasting five-test suite: `node --test server/qa-reference-b3.test.mjs`. Actual loopback `/join`, `/world`, `/command` produced71requests. Twelve concurrent identical Citadel orders debit once; a changed payload with the same receipt rejects. Four paid training facilities run concurrently with one research and two construction jobs (seven jobs); invalid counts/prerequisites/foreign identity/occupied queues reject. Two concurrent transfers exceeding available combined funds yield one200/one400 and exactly one debit/credit. Test uses server-only deterministic elapsed time, production and collection from a declared zero-bank fixture; no injected maximum state or client clock endpoint.
+
+Mixed kingdom: legacy Egyptian, experimental Greek and Norse identities; private snapshots, distinct world positions, shared alliance and legacy troop conservation verified. Cross-profile transfer, attack, reinforcement/garrison and experimental movement safely reject. Experimental reserves are not combat troops; combat/capacity interoperability is **BLOCKED**, not passed. Persisted actual host JSON reloaded; jobs, position, alliance and legacy units retained; four paid batches complete once and receipt retry after reload adds no charge/units. Existing separate B2 process-restart test remains required.
+
+Four initially reproduced defects fixed narrowly: remaining0 saved construction accrued old-level production; supplied zero-second construction stayed pending/unreloadable; corrupt unit IDs/completed prerequisites accepted; malformed legacy command type returned500. Regression tests now pass. Defensive declared/pending prerequisites and string unit IDs validated. Supplied costs/times/effects unchanged. Normal legacy saves and paid jobs untouched; no migration/schema conversion.
+
+Reproduction is retained in the first four named tests. For expiry: earn/collect fixture resources, pay Citadel2 and Farm2, set only the disposable saved Farm job remaining to0, restore, tick0.25; old code stored0.25food versus required0.5 at the supplied new rate. For zero time: supply Academy1 seconds0, earn/collect resources and pay; old code left level0/pending instead of level1/completed. For corrupt restore: add UNLISTED_UNIT10 or Farm25 while Citadel1 to a disposable envelope; old code accepted both. For malformed HTTP: authenticate a seeded disposable legacy player and POST `/command` with `{ "type":42 }`; old QA adapter returned500 rather than400. None of these edited negative fixtures counts as earned progression.
+
+## Test classification and limits
+
+- **Production HTTP commands:** actual71-request multiplayer matrix through createGameServer/custom store; TEST_ONLY profile, deterministic trusted server clock, not RoK progression.
+- **Experimental authority tests:** three timer/corrupt-save boundary tests and malformed-type HTTP regression. Corrupt remaining0/levels are explicitly boundary fixtures, never progression proof.
+- **Synthetic fixture capability:** existing B1 engine and B2 integrated command playthrough remain required. Eleven independent buildings reach25 through270 paid upgrades/540commands/11670server seconds; exact supplied costs/timers/prerequisites. Legacy outcome matches ordinary World. Research/negative/boundary coverage remains in engine suite.
+- **Unity compiled:** actual Unity6000.3.0f1 batchmode compilation, JsonUtility decoding of newly generated actual World snapshot,11building DTOs, paid queue and command roundtrip; existing actual seven-zone/ten-pass scene validation also runs. Source fingerprint evidence committed. First sandboxed Editor crashed; authorized installed Editor rerun exited0. No UI source change or tooling modification.
+- **Native player executed:** B3 **NOT TESTED**. No new mouse/keyboard client interactions were executed; compilation/backend success is not native PASS. B2 clean d59 client native collection/countdown/training/research/client+server restart remains dated prior evidence only. No new native usability certification.
+- **Multiplayer HTTP:** concurrent requests, authorization, mixed profile, persistence PASS within above boundaries. Real-time network lag/fault stress and deployable experimental warfare NOT TESTED/unsupported.
+
+## Actual progression and missing data
+
+Synthetic actual-command vertical slice reaches Citadel2, Farm2/Lumber2, Academy1/writing1, all four training facilities1 with three reserves each. Separate full25 fixture proves representational capacity only. **Authentic RoK progression demonstrated: zero upgrades; highest verified fresh-account City Hall not established.** Current birth/tutorial/modifier/nested prerequisite evidence and conflicting Academy unlock/time prevent a safe reference birth profile. See research/parity/task7-b3/REFERENCE_COLLECTION_PACKET.md for exact screens, measurements, modifiers and checked source conflicts.
+
+## Readiness and preservation
+
+B3 bounded integration is ready for independent engineering review, not ordinary25-level activation. Legacy migration remains separately authorized; equivalent-earned-progress/entitlement design and current reference birth/economy/military/equipment bindings still required. No real saves, frozen Creator Preview, original workbooks, art/audio/tree tooling or Tasks8–10 touched. Native UI acceptance and reference-data closure remain next-milestone prerequisites. Full required publication plan and gates must pass before push; published command/result evidence is validated afresh.
+
+Precommit validation: all61required publication checks passed, research numeric bindings passed, contract still reports full_parity_certified=false. Five new B3 tests pass/no skips. Unity actual batchmode exits0; presentation contracts16784pass (not rendering). Existing broader QA retains automatic scouting759cells/incomplete, followed by380manual commands reaching4096 and surviving restart; that known gameplay failure was neither fixed nor promoted to PASS in this scoped milestone. Frozen Creator Preview SHA256 remains9d22646f7a0f320609b0146c1c261fe1f6411e02b3a018ef8ad600475636a5a8. Publication repeats the full plan after commit.

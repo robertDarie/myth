@@ -10,7 +10,8 @@
     "research/parity/features/forsaken-population.md",
     "research/parity/features/task7-city-progression.md",
     "research/parity/features/task7-b1-experimental-city.md",
-    "research/parity/features/task7-b2-real-game-qa.md"
+    "research/parity/features/task7-b2-real-game-qa.md",
+    "research/parity/features/task7-b3-integration-hardening.md"
   ],
   "exemptions": [
     {

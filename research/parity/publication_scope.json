@@ -42,6 +42,14 @@
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.CityExperience.cs"
       ],
       "approved_compatibility": "research/parity/approvals/task7-b2-real-game-qa.json"
+    },
+    {
+      "feature_id": "ROK-CITY-LEVELS-1-25",
+      "paths": [
+        "server/reference-city.mjs",
+        "server/qa-reference-world.mjs"
+      ],
+      "approved_compatibility": "research/parity/approvals/task7-b3-hardening.json"
     }
   ]
 }
