@@ -12,7 +12,7 @@ Isolated checkout: `C:\Users\rober\Documents\GitHub\myth-cursor-night`. Branch: 
 2. Forsaken search and march: `a603f2f5ec88022a61c3ad8c4a750d0a4bc04121` — Let a city search a lawful Forsaken and march to that private pin.
 3. Primary and secondary battle skills: `f38ba912e850508c43fda76db2f36a180b085ab8` — Let a paired secondary commander spend the next rage bar.
 4. Alliance invitations and disbandment: `5be1b78a001f3a8fdee0b81e28c79fc12788e604` — Record alliance invitations and return marches when an alliance is deleted.
-5. Kingdom search and march preview: `TASK5_SHA` — filled after the local commit that contains this handoff. Confirm with `git rev-parse HEAD` and `git log --oneline origin/main..HEAD`.
+5. Kingdom search and march preview: `0cb1016f0f6ceaac2de0a3f21f7bf3e86fa83394` — Let the world screen preview an authorized route before a march starts. This handoff line was added in the following local commit so the SHA could be recorded after that commit existed.
 
 ## 3. Features actually implemented
 
@@ -143,7 +143,8 @@ Review, do not push this checkout. In the integration checkout, cherry-pick onto
 2. `a603f2f5ec88022a61c3ad8c4a750d0a4bc04121`
 3. `f38ba912e850508c43fda76db2f36a180b085ab8`
 4. `5be1b78a001f3a8fdee0b81e28c79fc12788e604`
-5. The task 5 SHA recorded in section 2.
+5. `0cb1016f0f6ceaac2de0a3f21f7bf3e86fa83394`
+6. The following local commit, which only records that SHA in this handoff.
 
 Resolve shared files by keeping both the city-hall behavior and these world commands. Re-run the commands in section 14. Do not force-push, rebase this overnight branch onto Codex, or reset either checkout.
 
