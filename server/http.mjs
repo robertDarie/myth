@@ -109,9 +109,9 @@ export function createGameServer({ savePath = null, databasePath = null, shutdow
         });
         return send(201, { ...session, kingdomId });
       }
-      if ((request.method === 'GET' && ['/world','/commander-comparison'].includes(path)) || (request.method === 'POST' && path === '/command')) {
+      if ((request.method === 'GET' && ['/world','/commander-comparison','/march-preview'].includes(path)) || (request.method === 'POST' && path === '/command')) {
         const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
-        if(path==='/commander-comparison'){const p=identity.authenticate(token);const query=new URL(request.url,'http://localhost').searchParams;if(query.get('kingdomId')&&query.get('kingdomId')!==kingdomId)throw new GameError('That request belongs to another kingdom.',409);return send(200,world.compareCommanders(p,query.get('marchId'),query.get('candidateId')));}
+        if(path==='/commander-comparison'||path==='/march-preview'){const p=identity.authenticate(token);const query=new URL(request.url,'http://localhost').searchParams;if(query.get('kingdomId')&&query.get('kingdomId')!==kingdomId)throw new GameError('That request belongs to another kingdom.',409);if(path==='/commander-comparison')return send(200,world.compareCommanders(p,query.get('marchId'),query.get('candidateId')));return send(200,world.previewMarch(p,{type:query.get('type'),marchId:query.get('marchId'),targetId:query.get('targetId'),x:query.get('x'),z:query.get('z')}));}
         if (path === '/world') {
           const player = identity.authenticate(token); player.lastSeen = performance.now(); player.offline = false;
           return send(200, { ...measure('snapshot',()=>world.snapshot(player.id)), kingdomId, kingdomName: kingdomId === 'local' ? 'Local Kingdom' : kingdomId, persistence: { ...persistence } });

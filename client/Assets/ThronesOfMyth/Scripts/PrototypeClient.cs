@@ -104,12 +104,12 @@ namespace ThronesOfMyth
                 Select(marker.id,marker.kind);
                 if(marker.kind=="city"&&marker.id=="city-"+playerId&&Input.GetMouseButtonDown(0)){BeginCity();return;}
                 if (marker.kind == "army" && Array.Exists(world.armies, a => a.id == marker.id && a.ownerId == playerId)) activeMarchId = marker.id;
-                if (Input.GetMouseButtonDown(1)) ActOnSelection();
+                if (Input.GetMouseButtonDown(1)) ConfirmMarkerAction(marker);
             }
             else if (hit.collider.gameObject.name == "Ground")
             {
-                if (Input.GetMouseButtonDown(1)) Send(new GameCommand { type = "move", x = hit.point.x, z = hit.point.z });
-                else { selectedId = ""; map.selectedId = ""; }
+                if (Input.GetMouseButtonDown(1)) ConfirmGroundMarch(hit.point.x, hit.point.z);
+                else { selectedId = ""; map.selectedId = ""; marchPreview = null; }
             }
         }
         private bool PointerOverUI() => InterfaceBlocksPoint(Input.mousePosition);
@@ -514,7 +514,7 @@ namespace ThronesOfMyth
         {
             GUI.color = color; GUI.DrawTexture(new Rect(area.x + x / (world?.size??ReleaseVersion.WorldSize) * area.width - size / 2f, area.y + (1 - z / (world?.size??ReleaseVersion.WorldSize)) * area.height - size / 2f, size, size), Texture2D.whiteTexture); GUI.color = Color.white;
         }
-        private void Select(string id, string kind) { if(selectedId!=id)map.SelectionFeedback(id);selectedId=id;selectedKind=kind;map.selectedId=id; }
+        private void Select(string id, string kind) { if(selectedId!=id)map.SelectionFeedback(id);selectedId=id;selectedKind=kind;map.selectedId=id; string previewType=kind=="camp"?"attack":kind=="node"?"gather":kind=="site"?"capture":""; if(previewType.Length>0&&!marchPreviewBusy&&marchPreviewKey!=PreviewKey(previewType,id,0,0))QueueMarchPreview(previewType,id,0,0); }
         private void ActOnSelection()
         {
             if (selectedKind == "army") { var enemy = Array.Find(world.armies, a => a.id == selectedId); if (enemy != null && enemy.ownerId != playerId) Send("attack-player", selectedId); }
@@ -605,7 +605,7 @@ namespace ThronesOfMyth
                     freshGuest=string.IsNullOrEmpty(body.resumeToken);
                     token = session.token; playerId = session.playerId; activeMarchId = playerId; focused = false; lastSnapshotAt = Time.unscaledTime; interfacePage = InterfacePage.World;
                     PlayerPrefs.SetString(SessionKey, token);if(clientOnlyConnection)PlayerPrefs.SetString("ThronesOfMyth.remoteServer",serverUrl); PlayerPrefs.SetString("ThronesOfMyth.name", playerName); PlayerPrefs.Save();
-                    status = "Connected. Right-click ground to march; left-click objects to inspect.";
+                    status = "Connected. Left-click to inspect. Right-click previews a route; right-click again to march.";
                     loadingStage = "Restoring your city and armies";
                     pollRoutine = StartCoroutine(Poll());
                 }

@@ -464,7 +464,7 @@ namespace ThronesOfMyth
             if(GUILayout.Button("Kingdom power rankings",GUILayout.Height(36)))OpenInterface(InterfacePage.Rankings);
             GUILayout.Label("COMMAND YOUR KINGDOM", theme.Eyebrow);
             openingEnabled=GUILayout.Toggle(openingEnabled,"Show optional first-session guidance");PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",openingEnabled?1:0);
-            GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click · March or act on a target\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
+            GUILayout.Label("WASD / arrows · Pan the map\nMouse wheel · Zoom\nMiddle mouse drag · Pan\nLeft-click · Inspect or select\nRight-click once · Preview the authorized route\nRight-click the same target again · Issue that march\n1–5 · Select your march\nC · City    K · Commanders    L · Alliance\nH · Focus home    Space · Focus selected march\nR · Return selected march    Esc · Close / cancel", theme.Body);
             GUILayout.Space(18); GUILayout.Label("Kingdom · " + kingdomName + " · " + ActiveKingdomId, theme.Heading);
             if(theme.Action("Leave this kingdom",!processing&&!accountBusy&&pendingOrder==null&&commands.Count==0,"Finish pending orders before leaving this kingdom."))LeaveKingdom();
             GUILayout.Label("Build "+ReleaseIdentity.Label,theme.Small);GUILayout.Label("Connected to " + serverUrl, theme.Small);

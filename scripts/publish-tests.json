@@ -597,6 +597,24 @@
         "utf8",
         "scripts/run_presentation_contracts.py"
       ]
+    },
+    {
+      "name": "known kingdom search hides private targets and previews the same military route",
+      "command": [
+        "node",
+        "--test",
+        "server/kingdom-play.test.mjs"
+      ]
+    },
+    {
+      "name": "march preview leaves the save unchanged",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "march preview leaves the save unchanged",
+        "server/kingdom-play.test.mjs"
+      ]
     }
   ]
 }

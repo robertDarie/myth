@@ -101,6 +101,19 @@
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
       ],
       "approved_compatibility": "research/parity/approvals/cursor-night-4-alliances.json"
+    },
+    {
+      "feature_id": "ROK-WORLD-MILITARY-ACCESS",
+      "paths": [
+        "server/marches.mjs",
+        "server/world.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-night-5-kingdom-search.json"
     }
   ]
 }

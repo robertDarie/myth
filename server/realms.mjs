@@ -192,13 +192,14 @@ async function routeRealm(realm, request, response, path, { send, allow, address
     });
     return send(201, { ...session, kingdomId: realm.id });
   }
-  if ((request.method === 'GET' && ['/world', '/commander-comparison'].includes(path)) || (request.method === 'POST' && path === '/command')) {
+  if ((request.method === 'GET' && ['/world', '/commander-comparison', '/march-preview'].includes(path)) || (request.method === 'POST' && path === '/command')) {
     const token = (request.headers.authorization ?? '').replace(/^Bearer /, '');
-    if (path === '/commander-comparison') {
+    if (path === '/commander-comparison' || path === '/march-preview') {
       const player = identity.authenticate(token);
       const query = new URL(request.url, 'http://localhost').searchParams;
       if (query.get('kingdomId') && query.get('kingdomId') !== realm.id) throw new GameError('That request belongs to another kingdom.', 409);
-      return send(200, world.compareCommanders(player, query.get('marchId'), query.get('candidateId')));
+      if (path === '/commander-comparison') return send(200, world.compareCommanders(player, query.get('marchId'), query.get('candidateId')));
+      return send(200, world.previewMarch(player, { type: query.get('type'), marchId: query.get('marchId'), targetId: query.get('targetId'), x: query.get('x'), z: query.get('z') }));
     }
     if (path === '/world') {
       const started = performance.now();

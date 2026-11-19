@@ -1,6 +1,6 @@
 import { forsakenReason } from './forsaken.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
-import { route } from './navigation.mjs';
+import { route, scoutRoute } from './navigation.mjs';
 import { initializeLogistics, cargoTotal } from './field-logistics.mjs';
 import { visible } from './exploration.mjs';
 import { siteIsOpen } from './kingdom.mjs';
@@ -145,4 +145,48 @@ export function marchCommand(world, p, c, fail) {
     }
   }
   a.state = ({ move: 'Marching', attack: 'Attacking', gather: 'Gathering', capture: 'Capturing' })[c.type]; return true;
+}
+const denyPreview = (message) => ({ authorized: false, message, route: [] });
+export function previewMarch(world, p, query) {
+  const type = query?.type;
+  const asked = { ...query, x: Number(query?.x), z: Number(query?.z) };
+  if (type === 'scout') {
+    const scout = asked.targetId ? p.scouts.find(s => s.id === asked.targetId) : null;
+    if (asked.targetId && !scout) return denyPreview('That scout mission is no longer active.');
+    const actor = scout || { ownerId: p.id, x: p.homeX, z: p.homeZ };
+    if (!point(asked)) return denyPreview('Choose a scouting destination inside the map bounds.');
+    const path = scoutRoute(world, actor, asked);
+    if (!path) return denyPreview(scout ? 'No open route from this scout to that destination.' : 'No open route from this city to the scouting destination.');
+    return { authorized: true, message: 'Scouts follow the physical route. Military marches still need an authorized gate.', route: path };
+  }
+  const a = armyList(p).find(march => march.id === (asked.marchId || p.id));
+  if (!a) return denyPreview('That march does not belong to your city.');
+  if (a.health <= 0 || a.recovery > 0) return denyPreview('This army is recovering at home.');
+  let destination = null;
+  if (type === 'move') {
+    if (!point(asked)) return denyPreview(`Destination must be inside the map (1–${WORLD_SIZE - 1}).`);
+    destination = { x: asked.x, z: asked.z };
+  } else if (type === 'attack') {
+    const camp = world.camps.find(e => e.id === asked.targetId);
+    const searched = camp && p.forsaken?.searchResult?.status === 'found' && p.forsaken.searchResult.id === camp.id && camp.health > 0;
+    const seen = camp && camp.spawned !== false && (visible(world, p, camp) || searched);
+    const known = seen ? camp : p.discovery.find(r => r.kind === 'camps' && r.value.id === asked.targetId)?.value;
+    if (!camp || !known || (seen && camp.health <= 0)) return denyPreview('Camp unavailable or behind a locked gate.');
+    if (p.numericVersion === 1) { const reason = forsakenReason(world, p, known); if (reason) return denyPreview(reason); }
+    destination = known;
+  } else if (type === 'gather') {
+    const node = world.nodes.find(n => n.id === asked.targetId);
+    if (!node || (!visible(world, p, node) && !p.discovery.some(r => r.kind === 'nodes' && r.value.id === node.id))) return denyPreview('Resource unavailable.');
+    destination = node;
+  } else if (type === 'capture') {
+    const site = world.sites.find(s => s.id === asked.targetId);
+    if (!site || !p.allianceId) return denyPreview('Join an alliance to capture a site.');
+    if (!siteIsOpen(world, site.id)) return denyPreview('This sacred site is sealed until its kingdom milestone opens.');
+    if (site.allianceId && site.allianceId !== p.allianceId) return denyPreview('An enemy-held site must be defeated with a rally.');
+    if (!territoryNear(world, p.allianceId, site)) return denyPreview(`Extend alliance beacons to within ${TERRITORY_RULES.supplyRadius} units of this site.`);
+    destination = site;
+  } else return denyPreview('Choose a march, attack, gather, capture or scout preview.');
+  const path = route(world, a, destination);
+  if (!path) return denyPreview('No authorized gate route from this march to that destination.');
+  return { authorized: true, message: destination.kind === 'gate' ? 'Authorized approach. This pass opens only its own corridor.' : 'Authorized route from the selected march.', route: path };
 }

@@ -1,5 +1,9 @@
 # Development report — 2026-11-19
 
+## Cursor overnight 5 — kingdom search and march preview
+
+`node --test server/kingdom-play.test.mjs` passed. A cross-province military preview is denied without changing the save, while the scout preview still uses the physical route. An authenticated GET cannot start a march. The world list does not add hidden targets. Native UI remains NOT TESTED.
+
 ## Cursor overnight 4 — alliance invitations and warfare
 
 The alliance hall can send, accept and withdraw invitations. Weekly help, gather and stronghold counts already stored for a member are shown on the roster. Disbanding the last member releases any leftover rally or garrison march back to its owner. `node --test server/alliance-warfare.test.mjs server/social.test.mjs server/campaign.test.mjs` passed. A Dawn rally took a Dusk-held pass without mixing troop counts, and the east corridor opened only for Dawn. Native UI remains NOT TESTED.

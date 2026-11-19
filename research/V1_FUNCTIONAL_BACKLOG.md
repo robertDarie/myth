@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Cursor overnight 5 — kingdom search and march preview
+
+The world screen can list resources, passes, sanctuaries, strongholds and the player's own alliance targets from the snapshot the server already sent. The first right-click reads `/march-preview`; a second right-click sends the existing march only when that preview is authorized. Hidden camps, unseen nodes and another city's Forsaken pin stay private. No march speed or reward changed. Native clicks were not run.
+
 ## Cursor overnight 4 — alliance invitations and warfare
 
 Officers can invite an unaffiliated city, and that invitation counts toward the existing 100-member ceiling. Deleting an alliance returns marches still assigned to its rallies or garrisons. A defended pass fight kept each city's troops, opened only that pass corridor, and left an unrelated province closed. Donation costs, alliance technology effects and gift probabilities were not invented. Native alliance clicks were not run.

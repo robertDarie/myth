@@ -80,7 +80,7 @@ namespace ThronesOfMyth
                 int jobs=(HasJob(me?.construction)?1:0)+(HasJob(me?.secondConstruction)?1:0)+(HasJob(me?.research)?1:0);
                 if(jobs>0&&new Rect(18,QuestRect.yMax+10,242,jobs*52-6).Contains(p))return true;
             }
-            if(MarchRail.Contains(p)||ForsakenSearchRect.Contains(p)||MinimapRect.Contains(p)||ActiveArmy!=null&&ActiveArmy.deployed&&MarchOrdersRect.Contains(p))return true;
+            if(MarchRail.Contains(p)||ForsakenSearchRect.Contains(p)||KingdomSearchRect.Contains(p)||MinimapRect.Contains(p)||ActiveArmy!=null&&ActiveArmy.deployed&&MarchOrdersRect.Contains(p))return true;
             if(!string.IsNullOrEmpty(selectedId)&&ContextRect.Contains(p))return true;
             return CityShortcutRect.Contains(p)||ZoomControlsRect.Contains(p);
         }
@@ -216,7 +216,7 @@ namespace ThronesOfMyth
                     if (interfacePage == InterfacePage.City && cityModelView && me.referenceCity==null) DrawImmersiveCity();
                     else if (interfacePage == InterfacePage.World && !cityExperience.BlocksWorld)
                     {
-                        DrawQuestHud(); DrawMarchHud(); DrawForsakenSearch(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
+                        DrawQuestHud(); DrawMarchHud(); DrawForsakenSearch(); DrawKingdomSearch(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
                         if (theme.Button(CityShortcutRect, "City [C]", true)) OpenInterface(InterfacePage.City);
                         theme.OneLine(new Rect(18,ViewHeight-194,360,24),kingdomName,theme.Eyebrow);
                     }
@@ -555,7 +555,8 @@ namespace ThronesOfMyth
         private ArmyData drawnRouteArmy;private RoutePoint[] drawnRoute;
         private void DrawMarchRoute()
         {
-            if (ActiveArmy == null || !ActiveArmy.hasOrder || Camera.main == null) return;
+            if (ActiveArmy == null || Camera.main == null) return;
+            if (!ActiveArmy.hasOrder) { DrawPreviewRoute(); return; }
             routeDashBudget=160;
             if(!ReferenceEquals(drawnRouteArmy,ActiveArmy)){drawnRouteArmy=ActiveArmy;drawnRoute=MarchJourney.DisplayRoute(ActiveArmy);}
             var points = drawnRoute;

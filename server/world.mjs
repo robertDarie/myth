@@ -26,7 +26,7 @@ import { initializeWar, retreat, warCommand, tickBattle, finishBattle, attackRea
 import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, troopTypes, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
-import { marchCommand } from './marches.mjs';
+import { marchCommand, previewMarch as marchPreview } from './marches.mjs';
 import { AGES, age, crews, armyList, constructionJobs, totalTroops, totalMythic, ensureHero, heroLevel, activeKind, initializeProgression, skillModifiers, castBattleSkill, progressionCommand, validateProgression } from './progression.mjs';
 import { initializeCity, capacity, mythicCapacity, cityCommand, citySnapshot, tickCity, validateCity, ensureArmaments, armamentFactor } from './city.mjs';
 import { SIZE, CIVILIZATIONS, COMMANDERS, campDefinitions, siteDefinitions } from './content.mjs';
@@ -508,6 +508,7 @@ export class World {
     for (const p of world.players.values()) refreshJourney(world, p);
     return world;
   }
+  previewMarch(p, query) { return marchPreview(this, p, query); }
   compareCommanders(p,marchId,candidateId){
     const a=armyList(p).find(a=>a.id===marchId);if(!a||!p.ownedCommanders.includes(candidateId))throw new GameError('Choose an owned march and recruited commander.',403);
     const pick=stats=>Object.fromEntries(['maxHealth','damage','speed','gather','heal','mitigation','level'].map(k=>[k,stats[k]]));

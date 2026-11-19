@@ -1,0 +1,24 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Owner overnight instruction for isolated local Cursor task 5, before this kingdom-search correction",
+  "owner_decision": "Overnight task 5 authorizes a read-only march preview and a search of already visible kingdom targets while hidden armies and undiscovered sites stay private.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-WORLD-MILITARY-ACCESS"],
+  "paths": [
+    "server/marches.mjs",
+    "server/world.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs"
+  ],
+  "evidence_document": "research/parity/features/kingdom-search.md",
+  "functional_checks": [
+    "known kingdom search hides private targets and previews the same military route"
+  ],
+  "unchanged_numeric_checks": [
+    "march preview leaves the save unchanged"
+  ]
+}

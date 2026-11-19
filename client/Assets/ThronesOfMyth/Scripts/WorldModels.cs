@@ -148,6 +148,7 @@ namespace ThronesOfMyth
     [Serializable] public sealed class CampaignLimits { public int rallyMarches, rallyLoad, garrisonMarches, garrisonLoad, reportEntries; }
     [Serializable] public sealed class GroupBattleReport { public string kind; public int tier, targetCycle; public bool settled; public float guardHealthBefore, guardHealthAfter, wallHealthBefore, wallHealthAfter, npcDamageDealt, npcDamageTaken; public StrongholdReward[] rewards; public string id, targetId, targetName, attackingAllianceId, defendingAllianceId, outcome; public float started, ended, structureDamage; public int rounds; public BattleSide[] participants; }
     [Serializable] public sealed class RoutePoint { public float x, z; }
+    [Serializable] public sealed class MarchPreview { public bool authorized; public string message; public RoutePoint[] route; }
     [Serializable] public sealed class ScoutData { public string id, ownerId, phase, reconKind; public float x, z, targetX, targetZ, eta, progress; public bool auto; }
     [Serializable] public sealed class ReconTypeLine { public string id, name; public int tier, count; }
     [Serializable] public sealed class ReconForce { public string id, role, commanderId, commanderName; public int troops, mythic; public ReconTypeLine[] types; }

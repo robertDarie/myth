@@ -1,6 +1,7 @@
 {
   "version": 1,
   "features": [
+    "research/parity/features/kingdom-search.md",
     "research/parity/features/alliance-invitations.md",
     "research/parity/features/commander-battle.md",
     "research/parity/features/forsaken-encounters.md",
