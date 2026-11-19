@@ -193,7 +193,8 @@ namespace ThronesOfMyth
     [Serializable] public sealed class EconomyData { public int ap,apCap,nextAPSeconds,fullAPSeconds,tradeRemaining,tradeResetSeconds,nextTransfer; public EconomyRules rules; public EconomyMember[] members; public EconomyBuff[] buffs; }
     [Serializable] public sealed class RewardGrant { public string id,name; public int count; }
     [Serializable] public sealed class AllianceJobCard {public string id,type;public float remaining,duration;public bool canHelp;}
-    [Serializable] public sealed class AllianceMemberCard {public string id,name,role;public AllianceJobCard[] jobs;}
+    [Serializable] public sealed class AllianceMemberCard {public string id,name,role;public int helps,gather,strongholds;public AllianceJobCard[] jobs;}
+    [Serializable] public sealed class AllianceInvite { public string id, allianceId, allianceName, playerId, name; }
     [Serializable] public sealed class TerritoryRules { public float supplyRadius, linkRadius, placeRadius, rootRadius, enemyGap, beaconSpacing; public int beaconLimit; }
     [Serializable] public sealed class DiplomacyAlliance { public string id, name, relationship, leaderName; }
     [Serializable] public sealed class DiplomacyOffer { public string id, allianceId, allianceName, expiresUtc; public int remainingSeconds; }
@@ -248,6 +249,7 @@ namespace ThronesOfMyth
         public FlagData[] flags;
         public TerritoryRules territoryRules;
         public AllianceData[] alliances;
+        public AllianceInvite[] incoming, outgoing;
         public CommanderData[] commanders;
         public CivilizationData[] civilizations;
         public EventData[] events;

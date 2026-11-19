@@ -2,6 +2,7 @@ import { LIMITS } from './world-map.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
 import { randomUUID } from 'node:crypto';
 import { releaseAllianceDiplomacy, coalitionOf } from './diplomacy.mjs';
+import { releaseAllianceForces } from './campaign.mjs';
 export const allianceRole = (w, p) => { const a = w.alliances.get(p.allianceId); return !a ? 'None' : a.leaderId === p.id ? 'Leader' : a.officers.includes(p.id) ? 'Officer' : 'Member'; };
 export function initializeSocial(p) { p.lastChatAt = -10; }
 const canManage = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
@@ -22,6 +23,23 @@ export function socialCommand(w,p,c,fail) {
     if(w.markers.filter(m=>m.allianceId===p.allianceId).length>=12) fail('Alliance marker limit reached.');
     w.markers.push({id:randomUUID(),allianceId:p.allianceId,authorId:p.id,name:c.name.trim(),x:c.x,z:c.z,expires:w.time+600});return true;
   }
+  if(c.type==='alliance-invite'||c.type==='alliance-revoke-invite') {
+    const alliance=w.alliances.get(p.allianceId);if(!alliance)fail('Join an alliance first.');
+    if(!canManage(w,p))fail('Only alliance leaders and officers can manage invitations.');
+    alliance.invites??=[];
+    if(c.type==='alliance-revoke-invite') {
+      const invite=alliance.invites.find(item=>item.id===c.targetId);
+      if(!invite)fail('That invitation is no longer open.');
+      alliance.invites=alliance.invites.filter(item=>item.id!==invite.id);return true;
+    }
+    const other=w.players.get(c.targetId);
+    if(!other||other.id===p.id)fail('Choose another city.');
+    if(other.allianceId)fail('That city already belongs to an alliance.');
+    if(alliance.invites.some(item=>item.playerId===other.id))fail('That city already has an invitation.');
+    const members=[...w.players.values()].filter(q=>q.allianceId===alliance.id).length;
+    if(members>=LIMITS.allianceMembers||members+alliance.invites.length>=LIMITS.allianceMembers)fail('This alliance has reached its 100-member capacity.');
+    alliance.invites.push({id:randomUUID(),playerId:other.id,invitedBy:p.id});return true;
+  }
   if(c.type==='marker-remove') {
     const marker=w.markers.find(m=>m.id===c.targetId&&m.allianceId===p.allianceId);
     if(!marker||!canManage(w,p)) fail('Only an alliance leader or officer can remove this marker.');
@@ -35,6 +53,7 @@ export function socialCommand(w,p,c,fail) {
     if(leader&&members.length>1)fail('Transfer leadership before leaving your alliance.');
     p.allianceId='';alliance.officers=alliance.officers.filter(id=>id!==p.id);
     if(leader) {
+      releaseAllianceForces(w,alliance.id);
       w.alliances.delete(alliance.id);releaseAllianceDiplomacy(w,alliance.id);w.flags=w.flags.filter(f=>f.allianceId!==alliance.id);w.markers=w.markers.filter(m=>m.allianceId!==alliance.id);
       for(const site of w.sites){if(site.allianceId===alliance.id)site.allianceId='';if(site.challengerId===alliance.id){site.challengerId='';site.progress=0;}}
     }
@@ -58,11 +77,29 @@ export function validateSocial(w) {
   if(new Set(w.messages.map(m=>m.id)).size!==w.messages.length||new Set(w.markers.map(m=>m.id)).size!==w.markers.length)throw new Error('Invalid saved communication IDs.');
   for(const m of w.messages){if(!m||typeof m.id!=='string'||!['kingdom','alliance','coalition'].includes(m.channel)||typeof m.authorId!=='string'||typeof m.author!=='string'||typeof m.allianceId!=='string'||typeof m.text!=='string'||m.text.length>240||!Number.isFinite(m.time)||m.time<0)throw new Error('Invalid saved message.');const coalitionId=typeof m.coalitionId==='string'?m.coalitionId:'';if((m.channel==='coalition'&&!w.coalitions?.some(c=>c.id===coalitionId))||(m.channel!=='coalition'&&coalitionId!==''))throw new Error('Invalid saved message.');}
   for(const m of w.markers)if(!m||typeof m.id!=='string'||typeof m.name!=='string'||m.name.length>40||!w.alliances.has(m.allianceId)||!w.players.has(m.authorId)||![m.x,m.z].every(v=>Number.isFinite(v)&&v>=1&&v<=WORLD_SIZE-1)||!Number.isFinite(m.expires))throw new Error('Invalid saved marker.');
-  for(const a of w.alliances.values())if(!Array.isArray(a.officers)||new Set(a.officers).size!==a.officers.length||a.officers.some(id=>id===a.leaderId||w.players.get(id)?.allianceId!==a.id)||w.players.get(a.leaderId)?.allianceId!==a.id)throw new Error('Invalid saved alliance roles.');
+  for(const a of w.alliances.values()) {
+    a.invites??=[];
+    const members=[...w.players.values()].filter(p=>p.allianceId===a.id).length;
+    if(!Array.isArray(a.officers)||new Set(a.officers).size!==a.officers.length||a.officers.some(id=>id===a.leaderId||w.players.get(id)?.allianceId!==a.id)||w.players.get(a.leaderId)?.allianceId!==a.id)throw new Error('Invalid saved alliance roles.');
+    if(!Array.isArray(a.invites)||a.invites.length>LIMITS.allianceMembers||members+a.invites.length>LIMITS.allianceMembers||new Set(a.invites.map(item=>item.playerId)).size!==a.invites.length)throw new Error('Invalid saved alliance invitation.');
+    for(const invite of a.invites)if(!invite||typeof invite.id!=='string'||!invite.id||!w.players.has(invite.playerId)||w.players.get(invite.playerId).allianceId||typeof invite.invitedBy!=='string')throw new Error('Invalid saved alliance invitation.');
+  }
 }
 
 // Alliance membership/assistance is live social data, separate from frozen city intelligence.
 export function allianceRoster(w,p){
  if(!p?.allianceId)return [];
- return [...w.players.values()].filter(q=>q.allianceId===p.allianceId).map(q=>({id:q.id,name:q.name,role:allianceRole(w,q),jobs:[q.construction,q.secondConstruction,q.research].filter(j=>j&&j.id&&q.buildings.oathhall).map(j=>({id:j.id,type:j.type,remaining:j.remaining,duration:j.duration,canHelp:q.id!==p.id&&p.buildings.oathhall>0&&!(j.helpedBy??[]).includes(p.id)&&(j.helpedBy??[]).length<Math.min(5,1+q.buildings.oathhall)}))}));
+ const contributions=w.alliances.get(p.allianceId)?.weekly?.contributions??{};
+ return [...w.players.values()].filter(q=>q.allianceId===p.allianceId).map(q=>{
+  const earned=contributions[q.id]??{};
+  return {id:q.id,name:q.name,role:allianceRole(w,q),helps:earned.helps??0,gather:earned.gather??0,strongholds:earned.strongholds??0,jobs:[q.construction,q.secondConstruction,q.research].filter(j=>j&&j.id&&q.buildings.oathhall).map(j=>({id:j.id,type:j.type,remaining:j.remaining,duration:j.duration,canHelp:q.id!==p.id&&p.buildings.oathhall>0&&!(j.helpedBy??[]).includes(p.id)&&(j.helpedBy??[]).length<Math.min(5,1+q.buildings.oathhall)}))};
+ });
+}
+export function allianceInviteView(w,p) {
+  if(!p)return {incoming:[],outgoing:[]};
+  const incoming=[];
+  for(const alliance of w.alliances.values())for(const invite of alliance.invites??[])if(invite.playerId===p.id)incoming.push({id:invite.id,allianceId:alliance.id,allianceName:alliance.name});
+  const alliance=w.alliances.get(p.allianceId);
+  const outgoing=alliance&&canManage(w,p)?(alliance.invites??[]).map(invite=>({id:invite.id,playerId:invite.playerId,name:w.players.get(invite.playerId)?.name??''})):[];
+  return {incoming,outgoing};
 }

@@ -88,6 +88,19 @@
         "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
       ],
       "approved_compatibility": "research/parity/approvals/cursor-night-3-commanders.json"
+    },
+    {
+      "feature_id": "ROK-ALLIANCE-MEMBERSHIP",
+      "paths": [
+        "server/social.mjs",
+        "server/campaign.mjs",
+        "server/world.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-night-4-alliances.json"
     }
   ]
 }

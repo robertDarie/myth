@@ -211,6 +211,24 @@
       ]
     },
     {
+      "name": "alliance invitations, pass ownership and troop conservation",
+      "command": [
+        "node",
+        "--test",
+        "server/alliance-warfare.test.mjs"
+      ]
+    },
+    {
+      "name": "alliance member capacity stays on the existing limit",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "alliance member capacity",
+        "server/alliance-warfare.test.mjs"
+      ]
+    },
+    {
       "name": "primary and secondary battle skills change recorded combat",
       "command": [
         "node",

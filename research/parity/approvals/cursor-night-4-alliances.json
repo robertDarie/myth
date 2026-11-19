@@ -1,0 +1,24 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-19",
+  "authority": "Owner overnight instruction for isolated local Cursor task 4, before this alliance correction",
+  "owner_decision": "Overnight task 4 authorizes alliance invitations and disbandment return of marches while donation costs and gift probabilities stay unpublished.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-ALLIANCE-MEMBERSHIP"],
+  "paths": [
+    "server/social.mjs",
+    "server/campaign.mjs",
+    "server/world.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
+  ],
+  "evidence_document": "research/parity/features/alliance-invitations.md",
+  "functional_checks": [
+    "alliance invitations, pass ownership and troop conservation"
+  ],
+  "unchanged_numeric_checks": [
+    "alliance member capacity stays on the existing limit"
+  ]
+}

@@ -160,6 +160,8 @@ namespace ThronesOfMyth
                 case "craft": return "The Forge of Dawn has begun its work.";
                 case "equip-relic": case "unequip-relic": return "Your march's relic loadout has been updated.";
                 case "alliance-create": case "alliance-join": return "Your oath has been sworn.";
+                case "alliance-invite": return "Invitation sent.";
+                case "alliance-revoke-invite": return "Invitation withdrawn.";
                 case "alliance-help": return "Your aid has reached your ally.";
                 case "diplomacy-propose": return "Non-aggression proposal sent.";
                 case "diplomacy-accept": return "Non-aggression pact is now active.";

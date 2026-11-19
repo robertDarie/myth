@@ -21,7 +21,7 @@ import { initializeExploration, migrateScouting, explorationTick, explorationCom
 import { initializeFindings, validateFindings, findingCommand } from './findings.mjs';
 import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
-import { socialCommand, allianceRole, allianceRoster, initializeSocial, validateSocial } from './social.mjs';
+import { socialCommand, allianceRole, allianceRoster, allianceInviteView, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, retreat, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
 import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, troopTypes, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
@@ -201,13 +201,16 @@ export class World {
         if (typeof c.name !== 'string' || !c.name.trim() || c.name.trim().length > 24) throw new GameError('Alliance name must contain 1–24 characters.');
         if ([...this.alliances.values()].some(a => a.name.toLowerCase() === c.name.trim().toLowerCase())) throw new GameError('Alliance name is already used.');
         this.spend(p, { gold: 50 });
-        const id = randomUUID(); this.alliances.set(id, { id, name: c.name.trim(), leaderId: p.id, officers: [] }); p.allianceId = id;
+        const id = randomUUID(); this.alliances.set(id, { id, name: c.name.trim(), leaderId: p.id, officers: [], invites: [] }); p.allianceId = id;
+        for (const alliance of this.alliances.values()) alliance.invites = (alliance.invites ?? []).filter(invite => invite.playerId !== p.id);
         this.event(`${p.name} founded ${c.name.trim()}.`); return;
       }
       case 'alliance-join':
         if (p.allianceId || !this.alliances.has(c.targetId)) throw new GameError('Choose an existing alliance while unaffiliated.');
         if ([...this.players.values()].filter(member=>member.allianceId===c.targetId).length>=LIMITS.allianceMembers) throw new GameError('This alliance has reached its 100-member capacity.');
-        p.allianceId = c.targetId; this.event(`${p.name} joined ${this.alliances.get(p.allianceId).name}.`); return;
+        p.allianceId = c.targetId;
+        for (const alliance of this.alliances.values()) alliance.invites = (alliance.invites ?? []).filter(invite => invite.playerId !== p.id);
+        this.event(`${p.name} joined ${this.alliances.get(p.allianceId).name}.`); return;
       default: throw new GameError('Unknown command.');
     }
   }
@@ -542,7 +545,8 @@ export class World {
         return { ...visible, ...(referenceScale(p)?{forsaken:publicForsakenProgress(this,p)}:{}), activeMarches:activeMarches(p).length,homeFormations:armyList(p).filter(a=>!a.deployed).map(a=>this.armySnapshot(a)),economy:economySnapshot(this,p),reports:unifiedReports(this,p,warSnapshot(this,p).battleReports,groupReports(this,p)), inventory: inventorySnapshot(p), powerBreakdown: powerOf(p), journeyCampaign: journeySnapshot(this, p), ...warSnapshot(this, p), groupReports: groupReports(this, p), allianceRole: allianceRole(this, p), ...citySnapshot(this, p), ...this.stats(p), health: Math.ceil(p.health), hasOrder: !!target, targetId: target?.id ?? '', targetX: target?.x ?? p.x, targetZ: target?.z ?? p.z };
       }), camps: this.camps.filter(c=>c.spawned!==false).map(({ contributors, encounter, ...camp }) => referenceScale(this)?forsakenCard(camp):({ ...camp, respawn: Math.ceil(camp.respawn) })),
       nodes: this.nodes.map(n => ({ ...n })), sites: this.sites.map(s => ({ ...s, locked: !siteIsOpen(this,s.id) })), flags: this.flags.map(f => ({ ...f })),
-      alliances: [...this.alliances.values()].map(({weekly,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
+      alliances: [...this.alliances.values()].map(({weekly,invites,...a}) => ({ ...a, members: [...this.players.values()].filter(p => p.allianceId === a.id).length })),
+      ...allianceInviteView(this, viewer),
       commanders: COMMANDERS.map(c => ({ ...c, skillKind: activeKind(c.id) })), civilizations: CIVILIZATIONS, events: this.events.map(e => ({ ...e })) };
     const result=viewerId && this.players.has(viewerId) ? filterFog(this, snapshot, this.players.get(viewerId),vision) : snapshot;
     const reachable=viewer?reachableRegions(this,viewer):null;

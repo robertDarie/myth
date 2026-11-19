@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Cursor overnight 4 — alliance invitations and warfare
+
+Officers can invite an unaffiliated city, and that invitation counts toward the existing 100-member ceiling. Deleting an alliance returns marches still assigned to its rallies or garrisons. A defended pass fight kept each city's troops, opened only that pass corridor, and left an unrelated province closed. Donation costs, alliance technology effects and gift probabilities were not invented. Native alliance clicks were not run.
+
 ## Cursor overnight 3 — commander battle skills
 
 A paired secondary active now spends the next 1,000 rage. The primary still spends the first bar. Existing damage, shield, heal and expertise factors were not retuned, and the secondary level multiplier stays absent. Primary talents apply. Secondary talents do not. PvE still uses the PvE factor and PvP does not. Casualty conservation and restart passed in the new battle test. Exact RoK cast order and hidden combat formulas remain unresolved. Native commander clicks were not run.

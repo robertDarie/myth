@@ -106,7 +106,7 @@ namespace ThronesOfMyth
             GUILayout.Label("Members and command", sectionStyle);
             foreach (var member in world.allianceRoster??Array.Empty<AllianceMemberCard>())
             {
-                GUILayout.BeginVertical(GUI.skin.box); GUILayout.Label(member.name + " · " + member.role, new GUIStyle(noteStyle) { richText = false });
+                GUILayout.BeginVertical(GUI.skin.box); GUILayout.Label(member.name + " · " + member.role + " · helps " + member.helps + " · gathers " + member.gather + " · strongholds " + member.strongholds, new GUIStyle(noteStyle) { richText = false });
                 if (member.id != playerId)
                 {
                     if(theme.Button(GUILayoutUtility.GetRect(80,32),"Send resources",false,!processing)){tradeMember=Mathf.Max(0,Array.FindIndex(me.economy.members,m=>m.id==member.id));OpenInterface(InterfacePage.Market);}
@@ -121,6 +121,17 @@ namespace ThronesOfMyth
                     GUI.enabled = true;
                 }
                 GUILayout.EndVertical();
+            }
+            if (officer && world.rankings != null)
+            {
+                GUILayout.Label("Invitations use the existing 100-member capacity. Donation prices and gift odds are not published here.", noteStyle);
+                foreach (var city in world.rankings.players)
+                {
+                    if (!string.IsNullOrEmpty(city.allianceId) || city.id == playerId) continue;
+                    if (GUILayout.Button("Invite " + city.name)) Send("alliance-invite", city.id);
+                }
+                foreach (var invite in world.outgoing ?? Array.Empty<AllianceInvite>())
+                    if (GUILayout.Button("Withdraw invitation · " + invite.name)) Send("alliance-revoke-invite", invite.id);
             }
             GUI.enabled = !processing; AllianceAction("leave alliance", "alliance-leave", ""); GUI.enabled = true;
             GUILayout.Label("Shared map markers", sectionStyle);

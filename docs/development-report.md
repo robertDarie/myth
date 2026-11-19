@@ -1,5 +1,9 @@
 # Development report — 2026-11-19
 
+## Cursor overnight 4 — alliance invitations and warfare
+
+The alliance hall can send, accept and withdraw invitations. Weekly help, gather and stronghold counts already stored for a member are shown on the roster. Disbanding the last member releases any leftover rally or garrison march back to its owner. `node --test server/alliance-warfare.test.mjs server/social.test.mjs server/campaign.test.mjs` passed. A Dawn rally took a Dusk-held pass without mixing troop counts, and the east corridor opened only for Dawn. Native UI remains NOT TESTED.
+
 ## Cursor overnight 3 — commander battle skills
 
 Field battles, Forsaken fights, strongholds and campaign rounds now cast the paired secondary active on the rage bar after the primary cast. The skill card and the commander hall use the same sentence. A production duel recorded Rallying Cry, then Runes of Renewal, and a higher secondary rank and expertise changed the recorded result. Secondary level 60 did not change damage at fixed skills. Wounded troops moved once into treatment and back to reserves. `node --test server/commander-battle.test.mjs` passed, along with the secondary-passive, progression, war, Forsaken and stronghold regressions. Native UI remains NOT TESTED.

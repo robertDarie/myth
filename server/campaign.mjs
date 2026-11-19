@@ -68,6 +68,10 @@ function sealSiege(w,siege,outcome) {
   }
   w.sieges=w.sieges.filter(s=>s.id!==siege.id);
 }
+export function releaseAllianceForces(w,allianceId) {
+  for(const rally of [...w.rallies])if(rally.allianceId===allianceId)removeRally(w,rally,'Alliance disbanded');
+  for(const garrison of [...w.garrisons])if(garrison.allianceId===allianceId)for(const id of [...garrison.armyIds])removeMember(w,{kind:'garrison',group:garrison},id,'Withdrawn');
+}
 function removeRally(w,rally,outcome,paused=false) {
   const siege=rallySiege(w,rally.id);if(siege)sealSiege(w,siege,outcome);
   const target=fortification(w,rally.targetId);if(isStronghold(target))resetStronghold(target);
