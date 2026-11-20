@@ -9,7 +9,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
-    "sha256": "f7fd378c4216602723165dc2f8166ea1ef248a3fa4b91a9523fe3bd0b21e2237"
+    "sha256": "5e26bfdc585b17bc31b4a57f1cdc14c43b167e9df80621e949f54f432ae86ad1"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
@@ -33,7 +33,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
-    "sha256": "4e930ca54fd88e41856fa143c7d69962aa752a4401dc0465220d781f14ad7859"
+    "sha256": "cd88d211406881e145eef717d16072f8c4cfdae3324139840f81d6bab48d39f5"
   },
   {
     "path": "server/campaign.mjs",
@@ -45,7 +45,7 @@
   },
   {
     "path": "server/exploration.mjs",
-    "sha256": "360fa3aa887edbdd80975e4466045f7183a866139de9f3c56a0ef6efe4057ae7"
+    "sha256": "944ab1fcfc47073fe1f87429a8abb9be1e89983f57516ba44ec22e2395a3f2b2"
   },
   {
     "path": "server/forsaken-population.mjs",
