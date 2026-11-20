@@ -1,6 +1,6 @@
 # TM-072 Season of the First Throne
 
-Season of the First Throne lasts 28 UTC days from the calendar day when the season system first activates on a world. It does not replay actions from before that day. The activity clock only moves forward, so a restart cannot move the season backward. Protocol stays 16.
+Season of the First Throne lasts 28 UTC days from the calendar day when the season system first activates on a world. It is a single-kingdom prototype. It is not a Rise of Kingdoms Kingdom versus Kingdom season, and it does not move a city into another kingdom. It does not replay actions from before that day. The activity clock only moves forward, so a restart cannot move the season backward. A completion id is stored for the season, up to 4096 ids. A repeated id does not score, and a full list does not drop an older id. Cargo delivered without an id still adds. Protocol stays 16.
 
 ## Phases
 

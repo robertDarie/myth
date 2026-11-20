@@ -15,7 +15,8 @@ namespace ThronesOfMyth
             GUILayout.Label("Phase " + season.phaseIndex + " · " + season.phaseName + " · Day " + season.dayNumber + " of " + season.length, sectionStyle);
             GUILayout.Label(season.startsUtc + " to " + season.endsUtc + " · " + ActivityResetText(season.remainingSeconds) + " remaining", noteStyle);
             GUILayout.Label("This phase ends " + season.phaseEndsUtc + " · " + ActivityResetText(season.phaseRemainingSeconds), theme.Small);
-            GUILayout.Label(season.settled ? "This season is closed. New actions wait for the next season." : "Scores come from finished work only. Queued, canceled, and passive production do not count.", noteStyle);
+            GUILayout.Label("This is the 28-day home season. It is not a cross-kingdom war, and it does not move your city to another kingdom.", noteStyle);
+            GUILayout.Label(season.settled ? "This season is closed. New actions wait for the next season. Settled rewards stay claimable until the date shown." : "Scores come from finished work only. Queued, canceled, and passive production do not count.", noteStyle);
             GUILayout.Label("Your score " + season.score + (season.rank > 0 ? " · Rank " + season.rank : " · Unranked"), sectionStyle);
             if (!string.IsNullOrEmpty(season.allianceId)) GUILayout.Label(season.allianceName + " · " + season.allianceScore + (season.allianceRank > 0 ? " · Alliance rank " + season.allianceRank : ""), noteStyle);
             else GUILayout.Label("Personal objectives do not require an alliance. Alliance score starts when you are a member.", noteStyle);
@@ -35,6 +36,7 @@ namespace ThronesOfMyth
             {
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(milestone.points + " season points", sectionStyle);
+                GUILayout.Label(SeasonPay(milestone.reward), theme.Small);
                 if (!string.IsNullOrEmpty(milestone.lockedReason)) GUILayout.Label(milestone.lockedReason, theme.Small);
                 GUI.enabled = milestone.canClaim && !processing;
                 if (GUILayout.Button(milestone.claimed ? "Milestone claimed" : "Claim milestone", theme.Primary)) Send(new GameCommand { type = milestone.id != null && milestone.id.Contains(":") ? "season-reward" : "season-milestone", targetId = milestone.id });
@@ -46,6 +48,7 @@ namespace ThronesOfMyth
                 if (claim.label != null && claim.label.StartsWith("milestone-")) continue;
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label(claim.label + " · expires " + claim.expiresUtc, sectionStyle);
+                GUILayout.Label(SeasonPay(claim.reward), theme.Small);
                 if (!string.IsNullOrEmpty(claim.lockedReason)) GUILayout.Label(claim.lockedReason, theme.Small);
                 GUI.enabled = claim.canClaim && !processing;
                 if (GUILayout.Button(claim.claimed ? "Reward claimed" : "Claim season reward", theme.Primary)) Send(new GameCommand { type = "season-reward", targetId = claim.id });
@@ -64,6 +67,14 @@ namespace ThronesOfMyth
                     if (entry.personal != null && entry.personal.Length > 0) GUILayout.Label("Leading city · " + entry.personal[0].name + " · " + entry.personal[0].points, theme.Small);
                 }
             }
+        }
+        private string SeasonPay(SeasonReward reward)
+        {
+            if (reward == null) return "The server has not sent a payout.";
+            var text = "";
+            foreach (var pair in new[] { new { name = "wood", value = reward.wood }, new { name = "food", value = reward.food }, new { name = "stone", value = reward.stone }, new { name = "gold", value = reward.gold }, new { name = "mana", value = reward.mana } })
+                if (pair.value > 0) text += (text.Length > 0 ? " · " : "") + pair.value + " " + pair.name;
+            return text.Length == 0 ? "No resource payout" : text;
         }
     }
 }

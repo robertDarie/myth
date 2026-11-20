@@ -71,6 +71,15 @@
       "approved_compatibility": "research/parity/approvals/cursor-phase2-events.json"
     },
     {
+      "feature_id": "ROK-RANKING-LEADERBOARDS",
+      "paths": [
+        "server/season.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Season.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Inventory.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-phase2-season.json"
+    },
+    {
       "feature_id": "ROK-EXPLORATION-FULL-MAP",
       "paths": [
         "server/exploration.mjs",

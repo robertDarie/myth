@@ -1,10 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { fixtureCommand } from './testing/roster-fixture.mjs';
 import { recordActivity } from './activity.mjs';
-import { validateSeason } from './season.mjs';
+import { validateSeason, SEASON_MILESTONES, PERSONAL_REWARDS, ALLIANCE_REWARDS, PARTICIPATION } from './season.mjs';
+import { powerOf } from './power.mjs';
+const expected = JSON.parse(readFileSync(new URL('../research/parity/fixtures/season-rewards.json', import.meta.url), 'utf8'));
 
 const command = (w, p, type, extra = {}) => fixtureCommand(w, p, { type, ...extra });
 const view = (w, p) => w.snapshot(p.id).season;
@@ -202,4 +205,101 @@ test('settlement freezes the board, pays a reward once, and preserves the city',
   assert.equal(gap.w.season.current.index, 13);
   assert.equal(gap.a.gold, before);
   assert.equal(gap.a.troops, gap.a.troops);
+});
+
+test('season rewards stay on the existing milestone and placement schedule', () => {
+  assert.deepEqual(SEASON_MILESTONES.map(item => ({ points: item.points, reward: item.reward })), expected.milestones);
+  assert.deepEqual(PERSONAL_REWARDS, expected.personal);
+  assert.deepEqual(ALLIANCE_REWARDS, expected.alliance);
+  assert.deepEqual(PARTICIPATION, expected.participation);
+});
+
+test('a repeated season token cannot score again and a full ledger does not forget an older token', () => {
+  const { w, a } = realm();
+  recordActivity(w, a, 'gather', 100, 'cargo-once');
+  recordActivity(w, a, 'gather', 100, 'cargo-once');
+  assert.equal(view(w, a).score, 1);
+  w.season.current.credited = Array.from({ length: 4096 }, (_, index) => 'pad-' + index);
+  const held = view(w, a).score;
+  recordActivity(w, a, 'gather', 100, 'cargo-new');
+  recordActivity(w, a, 'gather', 100, 'pad-0');
+  assert.equal(view(w, a).score, held);
+  recordActivity(w, a, 'gather', 100);
+  assert.equal(view(w, a).score, held + 1);
+});
+
+test('leaving, leadership transfer, and disbanding keep season score with the alliance that earned it', () => {
+  const { w, a, b, setDate, advance } = realm();
+  command(w, a, 'alliance-create', { name: 'Ash' });
+  command(w, b, 'alliance-join', { targetId: a.allianceId });
+  recordActivity(w, a, 'gather', 2000);
+  const allianceId = a.allianceId;
+  command(w, a, 'alliance-transfer', { targetId: b.id });
+  assert.equal(w.alliances.get(allianceId).leaderId, b.id);
+  assert.equal(w.season.current.alliances[allianceId].points, 20);
+  recordActivity(w, b, 'gather', 1000);
+  assert.equal(w.season.current.alliances[allianceId].points, 30);
+  command(w, a, 'alliance-leave');
+  command(w, b, 'alliance-leave');
+  assert.equal(w.alliances.has(allianceId), false);
+  assert.equal(w.season.current.alliances[allianceId].points, 30);
+  setDate(Date.UTC(2026, 1, 2));
+  advance(0.1);
+  assert.equal(w.season.archive[0].alliances[0].points, 30);
+  assert.equal(w.snapshot(a.id).season.claims.some(claim => claim.label.startsWith('Alliance')), false);
+  assert.equal(w.snapshot(b.id).season.claims.some(claim => claim.label.startsWith('Alliance')), false);
+});
+
+test('an unclaimed milestone survives settlement once, and a full balance does not consume the claim', () => {
+  const { w, a, setDate, advance } = realm();
+  recordActivity(w, a, 'gather', 2500);
+  const beforeSettlement = structuredClone(w.toSave());
+  a.gold = Number.MAX_SAFE_INTEGER - 10;
+  assert.throws(() => command(w, a, 'season-milestone', { targetId: 'milestone-25' }), /balance/);
+  assert.equal(a.gold, Number.MAX_SAFE_INTEGER - 10);
+  assert.equal(view(w, a).milestones.find(item => item.points === 25).claimed, false);
+  a.gold = 1000;
+  setDate(Date.UTC(2026, 1, 2));
+  advance(0.1);
+  assert.equal(view(w, a).index, 2);
+  assert.throws(() => command(w, a, 'season-milestone', { targetId: 'milestone-25' }), /points|settled|milestone/);
+  const pending = w.snapshot(a.id).season.claims.find(claim => claim.label === 'milestone-25');
+  assert.equal(pending.canClaim, true);
+  const gold = a.gold;
+  command(w, a, 'season-reward', { targetId: pending.id });
+  assert.equal(a.gold, gold + 100);
+  assert.throws(() => command(w, a, 'season-reward', { targetId: pending.id }), /already/);
+  const early = World.fromSave(beforeSettlement, { now: () => Date.UTC(2026, 1, 1) });
+  const earlyPlayer = [...early.players.values()].find(player => player.name === 'Ash');
+  assert.equal(early.snapshot(earlyPlayer.id).season.index, 1);
+  assert.equal(early.snapshot(earlyPlayer.id).season.score, 25);
+  const settled = World.fromSave(beforeSettlement, { now: () => Date.UTC(2026, 1, 2) });
+  const settledPlayer = [...settled.players.values()].find(player => player.name === 'Ash');
+  settled.snapshot(settledPlayer.id);
+  assert.equal(settled.season.current.index, 2);
+  assert.equal(settled.season.archive[0].personal[0].points, 25);
+  assert.equal(settledPlayer.gold, earlyPlayer.gold);
+  setDate(Date.UTC(2026, 0, 5));
+  advance(0.1);
+  assert.equal(view(w, a).index, 2);
+  assert.equal(w.season.archive[0].personal[0].points, 25);
+});
+
+test('power rankings follow derived power, break ties by id, and do not publish inventory', () => {
+  const { w, a, b } = realm();
+  a.cityLevel = 3;
+  b.cityLevel = 3;
+  assert.equal(powerOf(a).total, powerOf(b).total);
+  const tied = [a.id, b.id].sort();
+  const board = w.snapshot(a.id).rankings.players.filter(row => tied.includes(row.id)).map(row => row.id);
+  assert.deepEqual(board, tied);
+  assert.equal(new Set(w.snapshot(a.id).rankings.players.map(row => row.id)).size, w.players.size);
+  a.cityLevel = 4;
+  const raised = w.snapshot(a.id).rankings.players;
+  assert.ok(raised.findIndex(row => row.id === a.id) < raised.findIndex(row => row.id === b.id));
+  const loaded = World.fromSave(w.toSave(), { now: () => Date.UTC(2026, 0, 5) });
+  assert.deepEqual(loaded.snapshot(a.id).rankings.players.map(row => row.id), raised.map(row => row.id));
+  const foreign = loaded.snapshot(b.id).players.find(row => row.id === a.id);
+  if (foreign) assert.equal(foreign.inventory, undefined);
+  assert.deepEqual(Object.keys(loaded.snapshot(a.id).rankings.players[0]).sort(), ['allianceId', 'civilization', 'id', 'name', 'power']);
 });

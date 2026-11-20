@@ -1,0 +1,22 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner phase 2 task 4 instruction for isolated local season and ranking work, before this correction",
+  "owner_decision": "Phase 2 task 4 authorizes a non-dropping season receipt list and visible existing rewards while season point values, placement rewards, and power coefficients stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-RANKING-LEADERBOARDS"],
+  "paths": [
+    "server/season.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Season.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Inventory.cs"
+  ],
+  "evidence_document": "research/parity/features/season-rankings.md",
+  "functional_checks": [
+    "a repeated season token cannot score again and a full ledger does not forget an older token",
+    "an unclaimed milestone survives settlement once, and a full balance does not consume the claim",
+    "power rankings follow derived power, break ties by id, and do not publish inventory"
+  ],
+  "unchanged_numeric_checks": [
+    "season rewards stay on the existing milestone and placement schedule"
+  ]
+}

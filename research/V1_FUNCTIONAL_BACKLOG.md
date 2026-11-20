@@ -1,6 +1,8 @@
 # V1 functional backlog
 
-## Phase 2 task 3 — event hub history
+## Phase 2 task 4 — season receipts and rankings
+
+Season of the First Throne remains a 28-day single-kingdom prototype. Its rewards and the local power formula were not replaced. KvK preparation, matchmaking, Lost Kingdom entry, occupation, and return migration stay blocked. Native season and ranking clicks were not run.
 
 Oath of the Builders and Frontier Vigil remain the only paying events. Closed periods are kept as history. Construction, research, training, commander, gathering, broader PvE, alliance, and ranked event families are listed and unscored because live Rise of Kingdoms rates were not verified. Native event-hub clicks were not run.
 

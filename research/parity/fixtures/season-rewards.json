@@ -1,0 +1,11 @@
+{
+  "classification": "Existing prototype season rewards. No Rise of Kingdoms season or KvK payout was verified.",
+  "milestones": [
+    { "points": 25, "reward": { "wood": 200, "food": 200, "gold": 100 } },
+    { "points": 75, "reward": { "stone": 200, "gold": 200, "mana": 10 } },
+    { "points": 150, "reward": { "wood": 300, "food": 300, "gold": 250, "mana": 20 } }
+  ],
+  "personal": { "1": { "gold": 500, "mana": 25 }, "2": { "gold": 300, "mana": 15 }, "3": { "gold": 200, "mana": 10 } },
+  "alliance": { "1": { "gold": 400, "mana": 20 }, "2": { "gold": 250, "mana": 10 }, "3": { "gold": 150, "mana": 5 } },
+  "participation": { "wood": 150, "food": 150, "gold": 50 }
+}

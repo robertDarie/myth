@@ -2,7 +2,7 @@ const DAY = 86400000;
 const LENGTH = 28;
 const TITLE = 'Season of the First Throne';
 const MAX_RAW = 1000000;
-const TOKEN_LIMIT = 256;
+const TOKEN_LIMIT = 4096;
 
 export const SEASON_CATEGORIES = {
   gather: { per: 100, points: 1, cap: 40, label: 'Cargo delivered home' },
@@ -30,17 +30,17 @@ export const SEASON_MILESTONES = [
   { id: 'milestone-75', points: 75, reward: { stone: 200, gold: 200, mana: 10 } },
   { id: 'milestone-150', points: 150, reward: { wood: 300, food: 300, gold: 250, mana: 20 } }
 ];
-const PERSONAL_REWARDS = {
+export const PERSONAL_REWARDS = {
   1: { gold: 500, mana: 25 },
   2: { gold: 300, mana: 15 },
   3: { gold: 200, mana: 10 }
 };
-const ALLIANCE_REWARDS = {
+export const ALLIANCE_REWARDS = {
   1: { gold: 400, mana: 20 },
   2: { gold: 250, mana: 10 },
   3: { gold: 150, mana: 5 }
 };
-const PARTICIPATION = { wood: 150, food: 150, gold: 50 };
+export const PARTICIPATION = { wood: 150, food: 150, gold: 50 };
 const CLAIM_WINDOW = 28;
 const ARCHIVE_LIMIT = 8;
 
@@ -147,9 +147,8 @@ export function recordSeason(w, p, key, amount, token = '') {
   const category = categoryFor(view.phase, key);
   if (!category) return;
   if (token) {
-    if (season.credited.includes(token)) return;
+    if (season.credited.includes(token) || season.credited.length >= TOKEN_LIMIT) return;
     season.credited.push(token);
-    if (season.credited.length > TOKEN_LIMIT) season.credited.shift();
   }
   const row = season.players[p.id] ??= { name: p.name, points: 0, reachedAt: now, raw: emptyRaw(), phases: emptyPhases(), milestones: [] };
   row.name = p.name;
@@ -228,7 +227,7 @@ export function seasonCommand(w, p, c, fail) {
     row.milestones ??= [];
     if (row.milestones.includes(milestone.id)) fail('This milestone was already claimed.');
     if (seasonView(season, day).closed) fail('Claim this milestone from the settled season rewards.');
-    grantReward(p, milestone.reward);
+    try { grantReward(p, milestone.reward); } catch (error) { fail(error.message === 'Reward inventory capacity exceeded.' || error.message === 'Reward balance limit reached.' ? error.message : 'Reward inventory capacity exceeded.'); }
     row.milestones.push(milestone.id);
     return true;
   }
@@ -236,7 +235,7 @@ export function seasonCommand(w, p, c, fail) {
   if (!claim || claim.playerId !== p.id) fail('That season reward is not yours.');
   if (claim.claimed) fail('That season reward was already claimed.');
   if (day > claim.expiresDay) fail('That season reward has expired.');
-  grantReward(p, claim.reward);
+  try { grantReward(p, claim.reward); } catch (error) { fail(error.message === 'Reward inventory capacity exceeded.' || error.message === 'Reward balance limit reached.' ? error.message : 'Reward inventory capacity exceeded.'); }
   claim.claimed = true;
   if (claim.kind === 'milestone') {
     const archived = claim.seasonId === w.season.current.id ? w.season.current.players[p.id] : null;

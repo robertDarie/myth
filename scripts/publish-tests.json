@@ -2,6 +2,22 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "season rewards stay on the existing milestone and placement schedule",
+      "command": ["node", "--test", "--test-name-pattern", "milestone and placement schedule", "server/season.test.mjs"]
+    },
+    {
+      "name": "a repeated season token cannot score again and a full ledger does not forget an older token",
+      "command": ["node", "--test", "--test-name-pattern", "full ledger does not forget", "server/season.test.mjs"]
+    },
+    {
+      "name": "an unclaimed milestone survives settlement once, and a full balance does not consume the claim",
+      "command": ["node", "--test", "--test-name-pattern", "unclaimed milestone survives", "server/season.test.mjs"]
+    },
+    {
+      "name": "power rankings follow derived power, break ties by id, and do not publish inventory",
+      "command": ["node", "--test", "--test-name-pattern", "power rankings follow derived power", "server/season.test.mjs"]
+    },
+    {
       "name": "a repeated event token does not raise progress and a full receipt list does not revive an old token",
       "command": ["node", "--test", "--test-name-pattern", "full receipt list", "server/events.test.mjs"]
     },

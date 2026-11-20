@@ -1,5 +1,9 @@
 # Development report — 2026-11-20
 
+## Phase 2 task 4 — season receipts and rankings
+
+A season completion id is no longer dropped, so it cannot score a second time. A reward that would pass the resource ceiling stays claimable. Milestone and placement amounts are unchanged. The season screen shows those server amounts and says this is not a cross-kingdom war. Power coefficients were not edited. Native clicks were not run.
+
 ## Phase 2 task 3 — event hub history
 
 A repeated completion id no longer adds event progress, and a closed period with progress or a claim stays visible without becoming claimable. Oath of the Builders and Frontier Vigil keep their existing rewards. Eight other event families are shown as not scheduled and do not score. Native clicks were not run.

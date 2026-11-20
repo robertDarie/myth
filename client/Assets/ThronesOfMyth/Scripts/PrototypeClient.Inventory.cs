@@ -84,11 +84,12 @@ namespace ThronesOfMyth
             GUILayout.BeginArea(new Rect(r.x+18,r.y+10,r.width-36,r.height-20));contentScroll=GUILayout.BeginScrollView(contentScroll);
             if(world.rankings==null){GUILayout.Label("Rankings are not available on this server.",theme.Body);GUILayout.EndScrollView();GUILayout.EndArea();return;}
             GUILayout.Label("KINGDOM POWER",theme.Eyebrow);GUILayout.Label(world.rankings.policy,theme.Small);
+            GUILayout.Label("The public board is total power only. Your own city, research, commanders, and military figures use the local prototype breakdown. They are not a Rise of Kingdoms power table, kill ranking, or event ranking.",theme.Small);
             if(me.powerBreakdown!=null)
             {
                 var p=me.powerBreakdown;
                 GUILayout.Label("Your power · "+p.total.ToString("N0"),theme.Heading);
-                GUILayout.Label("City "+p.city+" · Research "+p.research+" · Heroes "+p.heroes+" · Reserves "+p.ready+" · Deployed "+p.deployed,theme.Body);
+                GUILayout.Label("City "+p.city+" · Research "+p.research+" · Commanders "+p.heroes+" · Military "+(p.ready+p.deployed)+" (reserves "+p.ready+", deployed "+p.deployed+")",theme.Body);
             }
             GUILayout.Space(12);GUILayout.Label("CIVILIZATIONS",theme.Eyebrow);
             for(int i=0;i<world.rankings.players.Length;i++){var entry=world.rankings.players[i];GUILayout.Label((i+1)+". "+entry.name+" · "+entry.power.ToString("N0"),entry.id==playerId?theme.Heading:theme.Body);}

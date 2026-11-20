@@ -64,7 +64,6 @@ const archivePeriod = (p, event, row) => {
 export function ensureEvents(w, p) {
   const { day } = activityClock(w);
   p.events ??= {};
-  p.eventHistory ??= [];
   for (const event of EVENTS) {
     const window = eventWindow(event.id, day);
     const row = p.events[event.id];
