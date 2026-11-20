@@ -18,6 +18,12 @@ namespace ThronesOfMyth.Editor
         }
         public static void Validate()
         {
+            var normal = JsonUtility.FromJson<ArmyData>("{\"id\":\"normal-city\"}");
+            if (normal.IsReferenceQa) throw new Exception("Normal snapshot without referenceCity must never select the QA city interface");
+            var qa = JsonUtility.FromJson<ArmyData>("{\"id\":\"qa-city\",\"referenceCity\":{\"experimental\":true,\"normalActivation\":false,\"playerId\":\"qa-city\"}}");
+            if (!qa.IsReferenceQa) throw new Exception("Bound explicit experimental city must retain the QA interface");
+            qa.referenceCity.playerId="other-city";
+            if (qa.IsReferenceQa) throw new Exception("Unbound reference DTO cannot select the QA interface");
             ReferenceCityReview.Validate();
             string repository = Path.GetFullPath(Path.Combine(Application.dataPath, "../.."));
             string folder = Path.Combine(Application.dataPath, "ThronesOfMyth/Scripts");

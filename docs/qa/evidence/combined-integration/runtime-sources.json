@@ -1,11 +1,15 @@
 [
   {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.CityExperience.cs",
+    "sha256": "f56be753c812f769476037f5161cf89ae57a511e07906d524c0b8cfdabc606c4"
+  },
+  {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs",
     "sha256": "e87967a6dbc53a611178f3a80cc756f8e800ddf44676cf2da25be3af384c4c07"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
-    "sha256": "5346c04f10331714bd33b9f1e95d6fead75fe04407926ebe526d68205d2c5bdd"
+    "sha256": "f7fd378c4216602723165dc2f8166ea1ef248a3fa4b91a9523fe3bd0b21e2237"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
@@ -14,6 +18,10 @@
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
     "sha256": "08c410bfbacaa0aaf6f0b26b2df94a369f2db9498c8edd5994a070ebdab66213"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.ReferenceCityQa.cs",
+    "sha256": "15d54c089c75e541cf9e69b9ff77f556a75d06f10e1865e53b40055cc207f484"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
@@ -25,7 +33,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
-    "sha256": "5deca160539343904059404919e6bbfa922b894ea010fc705067e860ab150f26"
+    "sha256": "4e930ca54fd88e41856fa143c7d69962aa752a4401dc0465220d781f14ad7859"
   },
   {
     "path": "server/campaign.mjs",

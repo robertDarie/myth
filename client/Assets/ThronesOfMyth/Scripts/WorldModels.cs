@@ -89,6 +89,7 @@ namespace ThronesOfMyth
         public QueueJob research, crafting;
         public BuildingCard[] cityBuildings;
         public ReferenceCityData referenceCity;
+        public bool IsReferenceQa => referenceCity != null && referenceCity.experimental && !referenceCity.normalActivation && !string.IsNullOrEmpty(id) && referenceCity.playerId == id;
         public ResearchCard[] researchOptions;
         public HeroProgress[] heroProgress;
         public DrawResult[] summonHistory;

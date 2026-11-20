@@ -9,7 +9,7 @@ namespace ThronesOfMyth
         private Vector2 referenceScroll;
         private void SendReferenceQa(string type,string id="",int count=0)
         {
-            if(me?.referenceCity==null||!me.referenceCity.experimental||me.referenceCity.normalActivation||
+            if(me==null||!me.IsReferenceQa||
                !Uri.TryCreate(serverUrl,UriKind.Absolute,out var uri)||!uri.IsLoopback)return;
             Send(new GameCommand{type=type,targetId=id,count=count,requestId=Guid.NewGuid().ToString("N"),marchId=playerId});
         }

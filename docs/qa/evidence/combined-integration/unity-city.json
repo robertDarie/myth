@@ -1,7 +1,7 @@
 {
     "success": true,
     "unityVersion": "6000.3.0f1",
-    "sourceFingerprint": "1a938b78027a24cfc0e91b9b122a5ee281af982ee3f8e346beb583762e0ddfd7",
+    "sourceFingerprint": "43326cb10dfd82b7178bf459e6d7b289e07343badceef2afdc1559045d265b39",
     "scope": "Actual Unity JsonUtility DTO/command integration; native input NOT TESTED",
     "independentBuildings": 11,
     "paidJobs": 1

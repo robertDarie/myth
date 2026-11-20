@@ -76,10 +76,12 @@
     "Task7 B2 integrated synthetic progression and legacy conservation"
   ],
   "covers": [
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.CityExperience.cs",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.ReferenceCityQa.cs",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
     "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
     "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",

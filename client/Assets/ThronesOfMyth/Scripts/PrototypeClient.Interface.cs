@@ -213,7 +213,7 @@ namespace ThronesOfMyth
                 DrawTopHud();
                 if (me != null)
                 {
-                    if (interfacePage == InterfacePage.City && cityModelView && me.referenceCity==null) DrawImmersiveCity();
+                    if (interfacePage == InterfacePage.City && cityModelView && !me.IsReferenceQa) DrawImmersiveCity();
                     else if (interfacePage == InterfacePage.World && !cityExperience.BlocksWorld)
                     {
                         DrawQuestHud(); DrawMarchHud(); DrawForsakenSearch(); DrawKingdomSearch(); DrawKingdomMinimap(); DrawContextActions();DrawMarchOrders();
@@ -223,7 +223,7 @@ namespace ThronesOfMyth
                     else if(interfacePage!=InterfacePage.World)DrawInterfaceWindow();
                     DrawBottomNavigation();
                     DrawInterfaceToast();
-                    if(me.referenceCity!=null)theme.OneLine(new Rect(270,84,ViewWidth-290,26),"EXPERIMENTAL / TEST DATA · City QA only · Military interoperability BLOCKED",theme.Eyebrow);
+                    if(me.IsReferenceQa)theme.OneLine(new Rect(270,84,ViewWidth-290,26),"EXPERIMENTAL / TEST DATA · City QA only · Military interoperability BLOCKED",theme.Eyebrow);
                 }
                 else theme.Text(new Rect(ViewWidth / 2 - 180, ViewHeight / 2, 360, 50), "Entering your kingdom…", theme.Center);
             }
@@ -374,7 +374,7 @@ namespace ThronesOfMyth
         private void DrawForsakenSearch()
         {
             var card = me.forsaken;
-            if (card == null) return;
+            if (card == null || card.version != 1) return;
             var r = ForsakenSearchRect;
             theme.Panel(r);
             theme.OneLine(new Rect(r.x + 8, r.y + 6, 198, 18), "FORSAKEN  " + card.unlocked + " unlocked · kingdom " + card.kingdomLevel, theme.Eyebrow);
@@ -389,7 +389,7 @@ namespace ThronesOfMyth
         private void NoteForsakenSearch()
         {
             var result = me?.forsaken?.searchResult;
-            if (result == null || result.sequence == seenForsakenSearch) return;
+            if (result == null || string.IsNullOrEmpty(result.status) || result.sequence == seenForsakenSearch) return;
             seenForsakenSearch = result.sequence;
             status = result.message ?? "Forsaken search updated.";
             toastUntil = Time.unscaledTime + 6f;
@@ -496,7 +496,7 @@ namespace ThronesOfMyth
             if(interfacePage==InterfacePage.City)opening.CityViewed=true;
             if(interfacePage==InterfacePage.Reports)opening.OutcomeViewed=true;
             if(interfacePage==InterfacePage.Heroes)opening.CommanderViewed=true;
-            if(me.referenceCity!=null&&(interfacePage==InterfacePage.City||interfacePage==InterfacePage.Training||interfacePage==InterfacePage.Research||interfacePage==InterfacePage.Market))RenderReferenceCityQa(inner);
+            if(me.IsReferenceQa&&(interfacePage==InterfacePage.City||interfacePage==InterfacePage.Training||interfacePage==InterfacePage.Research||interfacePage==InterfacePage.Market))RenderReferenceCityQa(inner);
             else if(interfacePage==InterfacePage.Menu)DrawMenuWindow(inner);
             else if (interfacePage == InterfacePage.Formation) RenderFormationWindow(inner);
             else if (interfacePage == InterfacePage.City) RenderCityWindow(inner);
