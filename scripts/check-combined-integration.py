@@ -20,4 +20,15 @@ fresh=json.loads((ROOT/'work/combined-integration/legal-exploration.json').read_
 assert fresh['cells']==fresh['restarted']==4096
 assert not fresh['scouts'] or all(s['phase'] in ['Outbound','Returning','Exploring'] for s in fresh['scouts'])
 assert 'qa-reference' not in (ROOT/'server/index.mjs').read_text(encoding='utf-8')
+native=read('verification.json');restart=read('native-restart.json')
+assert native['package_dirty'] is False and native['protocol']==17 and native['payloads_verified']==194
+assert native['normal_25_activation'] is False and native['real_saves_used'] is False
+assert native['native']['verdict']=='PARTIAL' and native['native']['not_tested']
+assert native['package_source']=='6ebf698ffe3afc9ca8c81a5e1281071a4b486d7c'
+assert restart['earnedStateConserved'] and restart['troops']==900 and restart['commanderXP']==100
+assert restart['fogBefore']==restart['fogAfter']==320 and restart['positionBefore']==restart['positionAfter']
+assert restart['pveReports']==[{'outcome':'Victory','ap':50,'xp':100}]
+for screenshot in native['screenshots']:
+    data=(ROOT/screenshot['path']).read_bytes()
+    assert data.startswith(b'\xff\xd8') and hashlib.sha256(data).hexdigest()==screenshot['sha256']
 print('PASS current combined Unity/runtime bindings and fresh4096-cell automatic exploration; external parity/native input independent')

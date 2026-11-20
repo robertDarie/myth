@@ -1,0 +1,95 @@
+{
+  "checked": "2026-11-20",
+  "starting_main": "ab033864a549ecb43b1eb92bd9d9fc7f2ac25c36",
+  "package_source": "6ebf698ffe3afc9ca8c81a5e1281071a4b486d7c",
+  "package_dirty": false,
+  "protocol": 17,
+  "unity": "6000.3.0f1",
+  "package": "C:/Users/rober/Documents/GitHub/myth/dist/Thrones-of-Myth-Windows-Combined-0_45_0-6ebf698.zip",
+  "zip_sha256": "e82b6c5ffe77d54d10aa3285743792156f80d9143883d9c7b81a6f0999aa832d",
+  "payloads_verified": 194,
+  "server_digest": "ef48c132f050bc483b7546cf5565476e185460ca4d0879f502048ca9a8ba0b1c",
+  "real_saves_used": false,
+  "normal_25_activation": false,
+  "native": {
+    "verdict": "PARTIAL",
+    "gameplay_source": "8e013f241ac56024b37293a290086eb3d5fb502c",
+    "final_camera_fix_source": "6ebf698ffe3afc9ca8c81a5e1281071a4b486d7c",
+    "actual_pass": [
+      "Greek city creation and normal district interface",
+      "world entry and visible target list",
+      "Forsaken level1 search/card/route preview",
+      "real attack, visible primary shield effect, Victory50AP100XP",
+      "commander card showing earned100XP",
+      "private invitation decline and acceptance; independent Norse HTTP counterpart",
+      "native auto exploration42 to320 cells",
+      "mouse-wheel zoom",
+      "first ground right-click preview without order; second accepted march",
+      "client+server restart preserves900 troops,100XP,alliance,320fog cells and exact position",
+      "final clean6ebf698 initial intro return shows home instead of empty fog"
+    ],
+    "not_tested": [
+      "Full4096 native automatic exploration",
+      "native secondary pairing and active cast",
+      "native pass capture or stale ownership crossing",
+      "native rally/garrison/gather actions",
+      "rapid native duplicate/retry wire-count stress",
+      "all map boundaries and cursor-centered zoom accuracy",
+      "normal packaged launcher at8080; disposable-run launcher used",
+      "complete feature replay on final camera-only rebuild"
+    ]
+  },
+  "screenshots": [
+    {
+      "path": "docs/qa/evidence/combined-integration/native-after-restart.jpg",
+      "sha256": "36b1834d6fbccb38f78e7181b452734bdcd2ba26d9df7664eb270d8c548c3bd6"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-alliance-membership.jpg",
+      "sha256": "bd399e37df0f81bbe51173155c7c166f7f9f8b955cdd9379ea5e2bf20fd8c88f"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-auto-exploration.jpg",
+      "sha256": "12a24c5b63aff38aad0fe07a7568293626866ad98d7aec69354e5b413295858a"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-commander-earned-xp.jpg",
+      "sha256": "2c0946d5b58df84ad89a19efde524f56dab57bb53fda2b4e2d0c0142f6ce9393"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-final-initial-world.jpg",
+      "sha256": "faee3c395784e244d2feb326879f6bc1b8084eb38e1db5f55aeb60e2b73cf6fd"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-normal-city-fixed.jpg",
+      "sha256": "ee36fd5378c6dac9bbc5a12dd110a05141a9ac30c6c725339690de8eec0b9e60"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-normal-city-wrong-qa.jpg",
+      "sha256": "b592f9a3b3ceb1b15e822e2a556429d88eb3df570cdae36daa74a6c544e88ac4"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-search-and-preview.jpg",
+      "sha256": "09e0dee4aa15c1031a767b44bbc72bd7809fa373b61941ebfd9bc82bc4a8c18c"
+    },
+    {
+      "path": "docs/qa/evidence/combined-integration/native-second-click-march.jpg",
+      "sha256": "08650bdd20ab6b32278d356e7847f6e35ed8a0c76b07ea6cc25190891a5d6c49"
+    }
+  ],
+  "publication": "Full74check approved publisher required; remote SHA reported after confirmation",
+  "scope": "Actual bounded native evidence; neither full alpha nor live RoK parity certification",
+  "full_server": {
+    "tests": 487,
+    "passed": 482,
+    "failed": 0,
+    "skipped": 5,
+    "skip_scope": "Existing Linux-only package/launcher cases on Windows"
+  },
+  "combined_tests": {
+    "tests": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  }
+}

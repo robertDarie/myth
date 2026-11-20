@@ -4,7 +4,9 @@ import {World} from './world.mjs';
 import {QaReferenceWorld} from './qa-reference-world.mjs';
 import {syntheticCityProfile} from './testing/reference-city-fixtures.mjs';
 import {createGameServer} from './http.mjs';
-import {LIMITS} from './world-map.mjs';
+import {LIMITS,MAP_CORRIDORS} from './world-map.mjs';
+import {route} from './navigation.mjs';
+import {openKingdom} from './testing/kingdom-fixture.mjs';
 
 test('reference QA preview rejects the same unsupported military as the real command',()=>{
  const w=new QaReferenceWorld({qaOnly:true,profile:syntheticCityProfile()}),s=w.join('Reference QA','greek'),p=w.authenticate(s.token);
@@ -59,4 +61,17 @@ test('a private search pin never reveals a recycled camp slot from a different r
  // Negative recycled-slot fixture, not a legitimate progression claim.
  camp.cycle++;camp.x=250;camp.z=250;
  assert.equal(w.snapshot(p.id).camps.some(c=>c.id===camp.id&&c.searchPin),false);
+});
+
+test('stale authorized gate preview cannot send a real march after ownership is lost',()=>{
+ const w=new World({random:()=>.25}),p=w.authenticate(w.join('Gate preview','greek').token);
+ w.command(p,{type:'alliance-create',name:'Gate preview QA'});
+ openKingdom(w); // Explicit milestone boundary fixture, not earned pass capture evidence.
+ const border=MAP_CORRIDORS.find(c=>!!route(w,p,c.a)!==!!route(w,p,c.b));assert.ok(border);
+ const destination=route(w,p,border.a)?border.b:border.a,gate=w.sites.find(s=>s.id===border.gateId);
+ gate.allianceId=p.allianceId;const q={type:'move',x:destination.x,z:destination.z};
+ assert.equal(w.previewMarch(p,q).authorized,true);
+ const before={units:structuredClone(p.units),position:[p.x,p.z]};gate.allianceId='';
+ assert.throws(()=>w.command(p,q),/authorized gate/);assert.equal(p.target,null);
+ assert.deepEqual(p.units,before.units);assert.deepEqual([p.x,p.z],before.position);
 });
