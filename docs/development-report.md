@@ -1,3 +1,9 @@
+# Development report — 2026-11-20
+
+## Phase 2 task 2 — daily activity receipts
+
+A repeated completion id no longer adds a second daily or alliance credit. Chest thresholds and the day-1 login reward stayed on the existing table. A full resource balance refuses the chest and leaves it unclaimed. The world button opens the seven-day tab when that claim is the one ready. Native clicks were not run.
+
 # Development report — 2026-11-19
 
 ## Cursor overnight 5 — kingdom search and march preview

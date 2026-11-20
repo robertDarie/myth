@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Phase 2 task 2 — daily activity receipts
+
+Daily, chest, login and alliance claims already used server events. The hole was a second delivery of the same completion id. That second delivery is now ignored. Existing payout numbers were not replaced. Live Rise of Kingdoms chest contents and VIP dailies remain unknown. Native activity clicks were not run.
+
 ## Cursor overnight 5 — kingdom search and march preview
 
 The world screen can list resources, passes, sanctuaries, strongholds and the player's own alliance targets from the snapshot the server already sent. The first right-click reads `/march-preview`; a second right-click sends the existing march only when that preview is authorized. Hidden camps, unseen nodes and another city's Forsaken pin stay private. No march speed or reward changed. Native clicks were not run.

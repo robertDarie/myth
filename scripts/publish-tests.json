@@ -2,6 +2,14 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "a repeated completion token does not pay daily activity twice",
+      "command": ["node", "--test", "--test-name-pattern", "repeated completion token", "server/activity.test.mjs"]
+    },
+    {
+      "name": "activity chest thresholds and the first login reward stay on the existing schedule",
+      "command": ["node", "--test", "--test-name-pattern", "existing schedule", "server/activity.test.mjs"]
+    },
+    {
       "name": "Task7 B3 concurrent production HTTP queues payments and save boundaries",
       "command": [
         "node",

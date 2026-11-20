@@ -1,0 +1,19 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner phase 2 task 2 instruction for isolated local daily activity work, before this correction",
+  "owner_decision": "Phase 2 task 2 authorizes one credit per completion token and a login claim shortcut while existing chest thresholds and login rewards stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-EVENT-DAILY"],
+  "paths": [
+    "server/activity.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
+  ],
+  "evidence_document": "research/parity/features/daily-activity.md",
+  "functional_checks": [
+    "a repeated completion token does not pay daily activity twice"
+  ],
+  "unchanged_numeric_checks": [
+    "activity chest thresholds and the first login reward stay on the existing schedule"
+  ]
+}

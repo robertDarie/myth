@@ -316,7 +316,8 @@ namespace ThronesOfMyth
         {
             if(theme.Button(new Rect(ActivityRect.x,ActivityRect.y,116,28),compactHud?"Activity +":"Activity −"))compactHud=!compactHud;
             var daily=world.activity?.daily;bool readyDaily=daily!=null&&(Array.Exists(daily.chests,c=>c.canClaim)||Array.Exists(daily.tasks,t=>t.canClaim));
-            if(theme.Button(new Rect(ActivityRect.x+124,ActivityRect.y,118,28),readyDaily?"Daily · Claim":"Daily · "+(daily==null?0:Mathf.Min(100,daily.points))+"/100",readyDaily))OpenActivity();
+            bool readyLogin=world.activity?.login?.canClaim==true;
+            if(theme.Button(new Rect(ActivityRect.x+124,ActivityRect.y,118,28),readyDaily?"Daily · Claim":readyLogin?"Login · Claim":"Daily · "+(daily==null?0:Mathf.Min(100,daily.points))+"/100",readyDaily||readyLogin)){if(!readyDaily&&readyLogin){activityTab=2;GuidePage(InterfacePage.Activity);}else OpenActivity();}
             if(compactHud)return;
             var r=QuestRect;theme.Panel(r);var chapter=CurrentChapter;var task=NextTask(chapter);
             bool ready=chapter!=null&&(chapter.canClaim||task!=null&&task.canClaim);var intro=ready?null:Opening;

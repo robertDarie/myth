@@ -3,7 +3,9 @@ import { legacySpawns, testWorld } from './testing/kingdom-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { World } from './testing/legacy-world.mjs';
-import { activitySnapshot, recordActivity, recordStrongholdActivity, DAILY_TASKS, ACTIVITY_CHESTS } from './activity.mjs';
+import { readFileSync } from 'node:fs';
+import { activitySnapshot, recordActivity, recordStrongholdActivity, DAILY_TASKS, ACTIVITY_CHESTS, LOGIN_REWARDS } from './activity.mjs';
+const expected = JSON.parse(readFileSync(new URL('../research/parity/fixtures/daily-activity.json', import.meta.url), 'utf8'));
 const DAY=86400000;
 const advance=(w,s)=>{for(let i=0;i<s*10;i++)w.tick(0.1);};
 const cmd=(w,p,type,extra={})=>w.command(p,{type,...extra});
@@ -89,7 +91,7 @@ test('one stronghold victory is one shared event, with personal credit for each 
 
 test('malformed daily counters, chest claims, alliance contribution rows and clocks are rejected',()=>{
  const {w,a,b}=setup();join(w,a,b);recordActivity(w,a,'gather',100);activitySnapshot(w,a);
- for(const mutate of[s=>s.world.activityClockMs=-1,s=>s.world.players[0].daily.counters.gather=-1,s=>s.world.players[0].daily.claimed=['gather'],s=>s.world.players[0].daily.chests=['chest-100'],s=>s.world.players[0].weeklyClaims.claimed=['unknown'],s=>s.world.alliances[0].weekly.contributions.fake={gather:1,helps:0,strongholds:0},s=>s.world.alliances[0].weekly.strongholdEvents=['duplicate','duplicate']]){
+ for(const mutate of[s=>s.world.activityClockMs=-1,s=>s.world.players[0].daily.counters.gather=-1,s=>s.world.players[0].daily.claimed=['gather'],s=>s.world.players[0].daily.chests=['chest-100'],s=>s.world.players[0].weeklyClaims.claimed=['unknown'],s=>s.world.alliances[0].weekly.contributions.fake={gather:1,helps:0,strongholds:0},s=>s.world.alliances[0].weekly.strongholdEvents=['duplicate','duplicate'],s=>s.world.players[0].daily.receipts=['same','same']]){
   const bad=structuredClone(w.toSave());mutate(bad);assert.throws(()=>World.fromSave(bad,{now:()=>Date.UTC(2026,10,2,12)}),/activity|claims/);
  }
  const old=structuredClone(w.toSave());legacyMap(old);old.schema=9;delete old.world.activityClockMs;for(const p of old.world.players){delete p.daily;delete p.weeklyClaims;}for(const a of old.world.alliances)delete a.weekly;
@@ -125,4 +127,31 @@ test('authenticated activity claims preserve daily privacy, alliance-only ledger
  assert.equal((await post(1,{type:'alliance-goal-claim',targetId:'supply',period:weekly.period,allianceId:a.allianceId})).status,400);
  assert.equal((await post(0,{type:'alliance-goal-claim',targetId:'supply',period:weekly.period,allianceId:a.allianceId})).status,200);
  assert.equal((await post(0,{type:'alliance-goal-claim',targetId:'supply',period:weekly.period,allianceId:a.allianceId})).status,400);assert.deepEqual(c.weeklyClaims.claimed,[]);
+});
+
+test('activity chest thresholds and the first login reward stay on the existing schedule', () => {
+  assert.deepEqual(ACTIVITY_CHESTS.map(chest => chest.points), expected.chestPoints);
+  assert.deepEqual(LOGIN_REWARDS[0].reward, expected.loginDayOne);
+});
+
+test('a repeated completion token does not pay daily activity twice', () => {
+  const { w, a, b } = setup();
+  join(w, a, b);
+  recordActivity(w, a, 'trained', 10, 'job-once');
+  recordActivity(w, a, 'trained', 10, 'job-once');
+  recordActivity(w, a, 'gather', 100, 'delivery-once');
+  recordActivity(w, a, 'gather', 50, 'delivery-once');
+  assert.equal(a.daily.counters.trained, 10);
+  assert.equal(a.daily.counters.gather, 100);
+  assert.equal(activitySnapshot(w, a).alliance.goals[0].personalProgress, 100);
+  recordActivity(w, a, 'gather', 20);
+  assert.equal(a.daily.counters.gather, 120);
+  const wood = a.wood;
+  a.wood = Number.MAX_SAFE_INTEGER - 10;
+  recordActivity(w, a, 'gather', 200);
+  claim(w, a, 'gather');
+  assert.throws(() => cmd(w, a, 'activity-chest', { targetId: 'chest-20', period: activitySnapshot(w, a).daily.period }), /balance/);
+  assert.equal(a.wood, Number.MAX_SAFE_INTEGER - 10);
+  assert.equal(a.daily.chests.includes('chest-20'), false);
+  a.wood = wood;
 });

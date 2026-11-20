@@ -39,7 +39,7 @@ export const LOGIN_REWARDS=[
  {day:7,reward:{food:300,wood:300,gold:250,mana:25}}
 ];
 const date=day=>new Date(day*DAY).toISOString().slice(0,10);
-const emptyDaily=day=>({day,counters:Object.fromEntries(ACTIVITY_KEYS.map(k=>[k,0])),claimed:[],chests:[]});
+const emptyDaily=day=>({day,counters:Object.fromEntries(ACTIVITY_KEYS.map(k=>[k,0])),claimed:[],chests:[],receipts:[]});
 export const emptyLogin=()=>({lastClaimDay:-1,claimedDay:0});
 export function loginEligibility(streak, today){
  if(!streak||streak.lastClaimDay<0)return {day:1,canClaim:true,missed:false,streak:0};
@@ -58,8 +58,16 @@ export function ensureActivity(w,p){
 }
 function allianceWeek(w,a){const {week}=activityClock(w);if(!a.weekly||a.weekly.week!==week)a.weekly={week,contributions:{},strongholdEvents:[]};return a.weekly;}
 const emptyContribution=()=>({gather:0,helps:0,strongholds:0});
+const rememberReceipt=(p,token)=>{
+  if(typeof token!=='string'||token.length<1||token.length>96)return false;
+  const receipts=p.daily.receipts??=[];
+  if(receipts.includes(token))return true;
+  if(receipts.length<400)receipts.push(token);
+  return false;
+};
 export function recordActivity(w,p,key,amount,token=''){
  if(!ACTIVITY_KEYS.includes(key)||!Number.isFinite(amount)||amount<=0||(key!=='distance'&&!Number.isSafeInteger(amount)))return;ensureActivity(w,p);
+ if(rememberReceipt(p,token))return;
  recordKingdomContribution(w,p,key,amount);
  recordSeason(w,p,key,amount,token);
  p.daily.counters[key]=Math.min(MAX_COUNTER,p.daily.counters[key]+amount);
@@ -84,29 +92,32 @@ export function recordStrongholdActivity(w,report){
 const score=p=>DAILY_TASKS.filter(t=>p.daily.claimed.includes(t.id)).reduce((n,t)=>n+t.points,0);
 const progress=(p,t)=>Math.min(t.goal,Math.floor(p.daily.counters[t.key]+0.000001));
 const total=(data,g)=>g.key==='strongholds'?data.strongholdEvents.length:Object.values(data.contributions).reduce((n,c)=>n+c[g.key],0);
-const grant=grantReward;
+const grant=(p,reward)=>{try{grantReward(p,reward);}catch(error){throw new Error(error.message==='Reward inventory capacity exceeded.'||error.message==='Reward balance limit reached.'?error.message:'Reward inventory capacity exceeded.');}};
 export function activityCommand(w,p,c,fail){
  if(!['daily-claim','activity-chest','alliance-goal-claim','login-claim'].includes(c.type))return false;
  const {day,week}=ensureActivity(w,p);
  if(c.type==='login-claim'){
   const state=loginEligibility(p.loginStreak,day);
   if(!Number.isInteger(c.day)||c.day!==state.day||!state.canClaim)fail('This seven-day reward is not available today.');
-  grant(p,LOGIN_REWARDS[state.day-1].reward);
+  try{grant(p,LOGIN_REWARDS[state.day-1].reward);}catch(error){fail(error.message);}
   p.loginStreak={lastClaimDay:day,claimedDay:state.day};
   return true;
  }
  if(c.type==='alliance-goal-claim'){
   const a=w.alliances.get(p.allianceId);if(!a||c.allianceId!==a.id||c.period!==date(week*7-3))fail('This alliance objective request is stale or belongs to another alliance.');
   const g=ALLIANCE_GOALS.find(g=>g.id===c.targetId),data=allianceWeek(w,a);if(!g||p.weeklyClaims.claimed.includes(g.id)||total(data,g)<g.goal||(data.contributions[p.id]?.[g.key]||0)<g.personal)fail('Meet the shared goal and personal contribution requirement; each goal pays once per week across alliances.');
-  grant(p,g.reward);p.weeklyClaims.claimed.push(g.id);return true;
+  try{grant(p,g.reward);}catch(error){fail(error.message);}
+  p.weeklyClaims.claimed.push(g.id);return true;
  }
  if(c.period!==date(day))fail('This daily reward request has expired. Refresh the activity screen.');
  if(c.type==='daily-claim'){
   const t=DAILY_TASKS.find(t=>t.id===c.targetId);if(!t||p.daily.claimed.includes(t.id)||progress(p,t)<t.goal)fail('This daily task is incomplete or already claimed.');
-  grant(p,t.reward);p.daily.claimed.push(t.id);
+  try{grant(p,t.reward);}catch(error){fail(error.message);}
+  p.daily.claimed.push(t.id);
  }else{
   const chest=ACTIVITY_CHESTS.find(t=>t.id===c.targetId);if(!chest||p.daily.chests.includes(chest.id)||score(p)<chest.points)fail('Earn enough claimed activity points; each chest opens once per day.');
-  grant(p,chest.reward);p.daily.chests.push(chest.id);
+  try{grant(p,chest.reward);}catch(error){fail(error.message);}
+  p.daily.chests.push(chest.id);
  }
  return true;
 }
@@ -126,7 +137,8 @@ export function validateActivity(w){
  for(const p of w.players.values()){
   const d=p.daily,c=p.weeklyClaims;
   const streak=p.loginStreak;
-  if(!d||!integer(d.day)||d.day>day||!d.counters||Object.keys(d.counters).length!==ACTIVITY_KEYS.length||ACTIVITY_KEYS.some(k=>!Number.isFinite(d.counters[k])||d.counters[k]<0||d.counters[k]>MAX_COUNTER||(k!=='distance'&&!Number.isSafeInteger(d.counters[k])))||!validList(d.claimed,DAILY_TASKS.map(t=>t.id))||!validList(d.chests,ACTIVITY_CHESTS.map(c=>c.id))||d.claimed.some(id=>{const t=DAILY_TASKS.find(t=>t.id===id);return progress(p,t)<t.goal;})||d.chests.some(id=>score(p)<ACTIVITY_CHESTS.find(c=>c.id===id).points)||!c||!integer(c.week)||c.week>week||!validList(c.claimed,ALLIANCE_GOALS.map(g=>g.id))||!streak||!Number.isInteger(streak.lastClaimDay)||streak.lastClaimDay<-1||streak.lastClaimDay>day||!Number.isInteger(streak.claimedDay)||streak.claimedDay<0||streak.claimedDay>7||(streak.lastClaimDay<0)!==(streak.claimedDay===0))throw new Error('Invalid saved daily activity or reward claims.');
+  const receipts=d?.receipts??[];
+  if(!d||!integer(d.day)||d.day>day||!d.counters||Object.keys(d.counters).length!==ACTIVITY_KEYS.length||ACTIVITY_KEYS.some(k=>!Number.isFinite(d.counters[k])||d.counters[k]<0||d.counters[k]>MAX_COUNTER||(k!=='distance'&&!Number.isSafeInteger(d.counters[k])))||!validList(d.claimed,DAILY_TASKS.map(t=>t.id))||!validList(d.chests,ACTIVITY_CHESTS.map(c=>c.id))||d.claimed.some(id=>{const t=DAILY_TASKS.find(t=>t.id===id);return progress(p,t)<t.goal;})||d.chests.some(id=>score(p)<ACTIVITY_CHESTS.find(c=>c.id===id).points)||(d.receipts!==undefined&&(!Array.isArray(receipts)||receipts.length>400||new Set(receipts).size!==receipts.length||receipts.some(token=>typeof token!=='string'||token.length<1||token.length>96)))||!c||!integer(c.week)||c.week>week||!validList(c.claimed,ALLIANCE_GOALS.map(g=>g.id))||!streak||!Number.isInteger(streak.lastClaimDay)||streak.lastClaimDay<-1||streak.lastClaimDay>day||!Number.isInteger(streak.claimedDay)||streak.claimedDay<0||streak.claimedDay>7||(streak.lastClaimDay<0)!==(streak.claimedDay===0))throw new Error('Invalid saved daily activity or reward claims.');
  }
  for(const a of w.alliances.values()){
   const data=a.weekly;if(data===undefined)continue;

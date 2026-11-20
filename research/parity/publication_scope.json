@@ -52,6 +52,14 @@
       "approved_compatibility": "research/parity/approvals/task7-b3-hardening.json"
     },
     {
+      "feature_id": "ROK-EVENT-DAILY",
+      "paths": [
+        "server/activity.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-phase2-daily.json"
+    },
+    {
       "feature_id": "ROK-EXPLORATION-FULL-MAP",
       "paths": [
         "server/exploration.mjs",

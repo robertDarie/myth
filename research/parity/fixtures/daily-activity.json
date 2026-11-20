@@ -1,0 +1,5 @@
+{
+  "classification": "Existing prototype activity chest thresholds and the first seven-day reward. No replacement RoK payout was verified.",
+  "chestPoints": [20, 40, 60, 80, 100],
+  "loginDayOne": { "food": 100, "wood": 100 }
+}
