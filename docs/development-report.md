@@ -1,5 +1,11 @@
 # Development report — 2026-11-20
 
+## Task 8B — casualty classes and one treatment order
+
+A defeat still moves the existing quarter of each class into the House of Renewal. The soldiers who stay with the commander are reported as light wounds, and permanent losses stay at zero because no verified death rule exists. A repeated treatment request does not heal twice. Schema stays 28. Native clicks were not run.
+
+# Development report — 2026-11-20
+
 ## Phase 3 — inventory order receipts
 
 A repeated inventory request no longer spends a second item or moves the same job again. Pack sizes, 60-second speedups, 100 commander XP, the 20 AP tonic and the 10 percent oaths stayed on the existing table. Construction, research, training, healing and universal speedups still affect only the selected legacy job. Experimental city timers are unchanged and are not speedup targets. Native clicks were not run.

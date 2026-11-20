@@ -1,5 +1,10 @@
 # V1 functional backlog
 
+## Task 8B — casualty classes and one treatment order
+
+The hospital ledger remains the severe-wound ledger. Light wounds are the march that is already recovering with its commander. Deaths and overflow deaths stay blocked. Treatment costs and bed counts were not retuned. Native hospital clicks were not run.
+
+
 ## Phase 3 — inventory order receipts
 
 Resource packs, category speedups, universal speedups, commander XP, shards, sigils, AP tonics and attack/defense oaths already ran on the server. The hole was a second delivery of the same order. That second delivery no longer spends the stack. Live Rise of Kingdoms VIP, teleports, peace shields, equipment chests, multi-duration speedups and drop rates remain unknown and were not invented. Experimental city jobs still need the integration owner before a speedup can see them. Native inventory clicks were not run.

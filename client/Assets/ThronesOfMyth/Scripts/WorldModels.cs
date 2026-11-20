@@ -80,6 +80,7 @@ namespace ThronesOfMyth
         public UnitCounts units, reserveUnits, wounded;
         public int woundedMythic, hospitalCapacity, hospitalTroops, hospitalMythic;
         public HealingJob healing;
+        public CasualtyPolicy casualtyPolicy;
         public BattleReport[] battleReports;
         public GroupBattleReport[] groupReports;
         public JourneyCampaign journeyCampaign;
@@ -140,7 +141,8 @@ namespace ThronesOfMyth
     [Serializable] public sealed class CivilizationData { public string id, name, specialty, mythic; }
     [Serializable] public sealed class EventData { public float time; public string message; }
     [Serializable] public sealed class HealingJob { public string id; public UnitCounts units; public int mythic; public float remaining, duration; public ResourceAmounts cost; }
-    [Serializable] public sealed class BattleSide { public string playerId, playerName, armyId, commanderId, team, result; public UnitCounts unitsBefore, unitsAfter, wounded; public int mythicBefore, mythicAfter, woundedMythic; public int experience; public float damageDealt, damageTaken, healed, absorbed, shieldCreated, structureDamage; }
+    [Serializable] public sealed class CasualtyPolicy { public string fatalities, overflowDeaths, note; }
+    [Serializable] public sealed class BattleSide { public string playerId, playerName, armyId, commanderId, team, result, fatalityPolicy; public UnitCounts unitsBefore, unitsAfter, wounded, light, dead; public int mythicBefore, mythicAfter, woundedMythic, lightMythic, deadMythic; public int experience; public float damageDealt, damageTaken, healed, absorbed, shieldCreated, structureDamage; }
     [Serializable] public sealed class BattleReport { public string id, outcome; public float started, ended; public int rounds; public BattleSide[] sides; }
     [Serializable] public sealed class ChatMessage { public string id, channel, allianceId, authorId, author, text; public float time; }
     [Serializable] public sealed class AllianceMarker { public string id, allianceId, authorId, name; public float x, z, expires; }

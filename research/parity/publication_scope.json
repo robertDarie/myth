@@ -168,6 +168,16 @@
         "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
       ],
       "approved_compatibility": "research/parity/approvals/cursor-phase4-troops.json"
+    },
+    {
+      "feature_id": "ROK-COMBAT-HOSPITAL",
+      "paths": [
+        "server/war.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Warfare.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-task8b-hospital.json"
     }
   ]
 }

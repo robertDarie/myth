@@ -63,6 +63,9 @@ export function retreat(w, a, result) {
     remaining-=amount;
   }
   if (a.mythic > 0 && remaining > 1) { a.mythic--; p.woundedMythic++; result.woundedMythic++; }
+  // The troops who remain are light wounds: they recover with the commander. They are not a second pile.
+  // Dead stays empty because no verified fatality or overflow-death rule exists.
+  result.light = { ...a.units }; result.lightMythic = a.mythic; result.dead = emptyUnits(); result.deadMythic = 0; result.fatalityPolicy = 'BLOCKED';
   loseCargo(w,a);a.deployed=false;
   a.troops = unitTotal(a.units); a.health = 1; a.recovery = 8; a.x = p.homeX; a.z = p.homeZ; a.target = null; a.state = 'Recovering'; a.rage = 0; a.shield = 0; a.shieldTime = 0;
 }
@@ -104,8 +107,24 @@ export function tickBattle(w, a, b) {
     w.event(`${battle.sides[0].playerName} and ${battle.sides[1].playerName} fought in the field: ${battle.outcome}.`);
   }
 }
+const HEAL_RECEIPT_LIMIT = 4096;
+const healReceiptId = /^[A-Za-z0-9_-]{8,80}$/;
+const healDigest = c => JSON.stringify({ type: 'hospital-heal', mythic: c.mythic ?? 0, units: TROOP_TYPES.map(t => [t.id, countOf(validUnits(c.units) ? normalizedUnits(c.units) : emptyUnits(), t.id)]) });
+function openHealReceipt(p, c, fail) {
+  if (c.requestId == null || c.requestId === '') return null;
+  if (typeof c.requestId !== 'string' || !healReceiptId.test(c.requestId)) fail('Invalid treatment request.');
+  const receipts = p.healingReceipts ?? [];
+  if (!Array.isArray(receipts)) fail('Invalid treatment request.');
+  const prior = receipts.find(row => row.id === c.requestId);
+  if (prior) { if (prior.digest !== healDigest(c)) fail('This treatment request already describes a different order.'); return 'replay'; }
+  if (receipts.length >= HEAL_RECEIPT_LIMIT) fail('Treatment request ledger is full.');
+  return { id: c.requestId, digest: healDigest(c) };
+}
+function closeHealReceipt(p, receipt) { if (!receipt) return; p.healingReceipts ??= []; p.healingReceipts.push(receipt); }
 export function warCommand(w, p, c, fail) {
   if (c.type === 'hospital-heal') {
+    const healReceipt = openHealReceipt(p, c, fail);
+    if (healReceipt === 'replay') return true;
     if (!p.buildings.infirmary) fail('Build the House of Renewal before starting treatment.');
     if (p.healing) fail('The healing ward is already occupied.');
     const units = validUnits(c.units)?normalizedUnits(c.units):c.units, mythic = c.mythic ?? 0;
@@ -118,7 +137,7 @@ export function warCommand(w, p, c, fail) {
     w.spend(p, cost);
     for (const t of TROOP_TYPES) changeUnits(p.wounded,t.id,-countOf(units,t.id)); p.woundedMythic -= mythic;
     const duration = Math.max(2, (healingWeight * 1.2 + mythic * 8) / treatmentSpeed(p));
-    p.healing = { id: randomUUID(), units: { ...units }, mythic, cost, duration, remaining: duration }; return true;
+    p.healing = { id: randomUUID(), units: { ...units }, mythic, cost, duration, remaining: duration }; closeHealReceipt(p, healReceipt); return true;
   }
   if (c.type === 'hospital-cancel') {
     const job = p.healing; if (!job || job.id !== c.targetId) fail('That healing batch no longer exists.');
@@ -149,16 +168,24 @@ export function tickHospital(w, p, dt) {
 }
 export function warSnapshot(w, p) {
   return { wounded: { ...p.wounded }, woundedMythic: p.woundedMythic, healing: p.healing, hospitalCapacity: hospitalCapacity(p), hospitalTroops: wardTroops(p), hospitalMythic: wardMythic(p),
+    casualtyPolicy: { fatalities: 'BLOCKED', overflowDeaths: 'BLOCKED', note: 'Troops who stay with a recovering commander are light wounds. The hospital ledger is severe wounds. No death or overflow-death rule is active.' },
     battleReports: [...w.battles.values()].filter(b => b.sides.some(s => s.playerId === p.id)).map(b => structuredClone(b)).concat(p.battleReports) };
 }
 export function validateWar(p) {
   if (!validUnits(p.wounded) || !Number.isSafeInteger(p.woundedMythic) || p.woundedMythic < 0 || !Array.isArray(p.battleReports) || p.battleReports.length > 30) throw new Error('Invalid saved hospital or reports.');
   const job = p.healing;
   if (job && (typeof job.id !== 'string' || !job.id || !validUnits(job.units) || !Number.isSafeInteger(job.mythic) || job.mythic < 0 || unitTotal(job.units) + job.mythic < 1 || !Number.isFinite(job.remaining) || !Number.isFinite(job.duration) || job.remaining < 0 || job.duration <= 0 || job.remaining > job.duration || !job.cost || Object.entries(job.cost).some(([key, n]) => !['food','gold'].includes(key) || !Number.isSafeInteger(n) || n < 0))) throw new Error('Invalid saved healing batch.');
+  if (p.healingReceipts != null && (!Array.isArray(p.healingReceipts) || p.healingReceipts.length > HEAL_RECEIPT_LIMIT || new Set(p.healingReceipts.map(row => row?.id)).size !== p.healingReceipts.length || p.healingReceipts.some(row => !row || typeof row.id !== 'string' || !healReceiptId.test(row.id) || typeof row.digest !== 'string' || row.digest.length < 2 || row.digest.length > 800))) throw new Error('Invalid saved treatment receipts.');
   for (const report of p.battleReports) validateReport(report);
 }
 export function validateReport(b) {
   if (!b || typeof b.id !== 'string' || !Number.isFinite(b.started) || !Number.isFinite(b.ended) || b.started < 0 || b.ended < 0 || !Number.isSafeInteger(b.rounds) || b.rounds < 0 || typeof b.outcome !== 'string' || !Array.isArray(b.sides) || b.sides.length !== 2) throw new Error('Invalid saved battle report.');
   if (b.sides[0]?.armyId === b.sides[1]?.armyId || b.sides[0]?.playerId === b.sides[1]?.playerId) throw new Error('Invalid saved battle participants.');
-  for (const s of b.sides) if (!s || ['playerId','playerName','armyId','commanderId'].some(k => typeof s[k] !== 'string') || !validUnits(s.unitsBefore) || !validUnits(s.unitsAfter) || !validUnits(s.wounded) || ['mythicBefore','mythicAfter','woundedMythic','damageDealt','damageTaken','healed','absorbed','shieldCreated'].some(k => !Number.isFinite(s[k]) || s[k] < 0)) throw new Error('Invalid saved battle totals.');
+  for (const s of b.sides) {
+    if (!s || ['playerId','playerName','armyId','commanderId'].some(k => typeof s[k] !== 'string') || !validUnits(s.unitsBefore) || !validUnits(s.unitsAfter) || !validUnits(s.wounded) || ['mythicBefore','mythicAfter','woundedMythic','damageDealt','damageTaken','healed','absorbed','shieldCreated'].some(k => !Number.isFinite(s[k]) || s[k] < 0)) throw new Error('Invalid saved battle totals.');
+    if (s.fatalityPolicy == null) continue;
+    if (s.fatalityPolicy !== 'BLOCKED' || !validUnits(s.light) || !validUnits(s.dead) || !Number.isSafeInteger(s.lightMythic) || s.lightMythic < 0 || !Number.isSafeInteger(s.deadMythic) || s.deadMythic < 0) throw new Error('Invalid saved casualty classes.');
+    if (s.mythicBefore !== s.mythicAfter + s.woundedMythic + s.deadMythic || s.lightMythic !== s.mythicAfter) throw new Error('Invalid saved casualty classes.');
+    if (TROOP_TYPES.some(t => countOf(s.unitsBefore, t.id) !== countOf(s.unitsAfter, t.id) + countOf(s.wounded, t.id) + countOf(s.dead, t.id) || countOf(s.light, t.id) !== countOf(s.unitsAfter, t.id))) throw new Error('Invalid saved casualty classes.');
+  }
 }

@@ -9,6 +9,11 @@ namespace ThronesOfMyth
         private int healingMythic, chatChannel;
         private string chatDraft = "", markerName = "Regroup here", pendingAllianceAction;
         private float confirmAllianceUntil;
+        private static string CasualtyLines(BattleSide side)
+        {
+            if (side == null || side.fatalityPolicy != "BLOCKED" || side.light == null || side.dead == null) return "";
+            return "\nWith the commander, recovering: " + UnitSummary(side.light) + " · " + side.lightMythic + " mythic\nPermanently lost: " + UnitSummary(side.dead) + " · " + side.deadMythic + " mythic\nFatalities and overflow deaths are blocked.";
+        }
         private int HospitalQuantity(string label, int value, int maximum)
         {
             GUILayout.BeginHorizontal(); GUILayout.Label(label + " · " + maximum + " wounded", noteStyle, GUILayout.Width(250));
@@ -23,6 +28,7 @@ namespace ThronesOfMyth
             GUILayout.Label("HOUSE OF RENEWAL", theme.Eyebrow);
             GUILayout.Label("Recover your wounded", sectionStyle);
             GUILayout.Label("Field defeats send a portion of your troops here. Waiting patients are retained even when beds are full. Beds limit one treatment batch; mythic units need five beds each.", noteStyle);
+            if (me.casualtyPolicy != null) GUILayout.Label(me.casualtyPolicy.note, noteStyle);
             GUILayout.Label("Healing beds " + me.hospitalCapacity + " · Total patients " + me.hospitalTroops + " mortal / " + me.hospitalMythic + " mythic", sectionStyle);
             if (me.healing != null && !string.IsNullOrEmpty(me.healing.id))
             {
@@ -49,7 +55,7 @@ namespace ThronesOfMyth
                 var cost = new ResourceAmounts { food = healingDraft.HealingWeight * 2 + healingMythic * 20, gold = healingDraft.HealingWeight + healingMythic * 15 };
                 GUILayout.Label("Selected " + used + " / " + me.hospitalCapacity + " beds · " + Cost(cost), noteStyle);
                 GUI.enabled = BuildingLevel("infirmary") > 0 && used > 0 && used <= me.hospitalCapacity && Afford(cost) && !processing;
-                if (GUILayout.Button("Begin treatment", theme.Primary, GUILayout.Height(44))) Send(new GameCommand { type = "hospital-heal", units = healingDraft.Copy(), mythic = healingMythic });
+                if (GUILayout.Button("Begin treatment", theme.Primary, GUILayout.Height(44))) Send(new GameCommand { type = "hospital-heal", units = healingDraft.Copy(), mythic = healingMythic, requestId = Guid.NewGuid().ToString("N") });
                 GUI.enabled = true;
             }
             GUILayout.Space(12); GUILayout.Label("Treatment runs independently of construction, training and your field armies. Healed units join reserves; choose their next march at home. Upgrade this institution in the City screen for more beds and faster treatment.", noteStyle);
@@ -68,7 +74,7 @@ namespace ThronesOfMyth
                 {
                     GUILayout.Label((side.playerId == playerId ? "YOUR MARCH · " : "OPPOSING MARCH · ") + HeroName(side.commanderId), theme.Eyebrow);
                     GUILayout.Label($"Damage dealt {side.damageDealt:F1} · Received {side.damageTaken:F1} · Healing {side.healed:F1}\nShield created {side.shieldCreated:F1} · Absorbed {side.absorbed:F1}", noteStyle);
-                    GUILayout.Label("Before: " + UnitSummary(side.unitsBefore) + " · " + side.mythicBefore + " mythic\nAfter: " + UnitSummary(side.unitsAfter) + " · " + side.mythicAfter + " mythic\nSent to hospital: " + UnitSummary(side.wounded) + " · " + side.woundedMythic + " mythic", noteStyle);
+                    GUILayout.Label("Before: " + UnitSummary(side.unitsBefore) + " · " + side.mythicBefore + " mythic\nAfter: " + UnitSummary(side.unitsAfter) + " · " + side.mythicAfter + " mythic\nSent to hospital: " + UnitSummary(side.wounded) + " · " + side.woundedMythic + " mythic" + CasualtyLines(side), noteStyle);
                 }
                 GUILayout.EndVertical();
             }

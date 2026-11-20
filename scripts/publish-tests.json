@@ -2,6 +2,14 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "a defeat keeps the existing hospital share and records the remaining march as light wounds",
+      "command": ["node", "--test", "--test-name-pattern", "existing hospital share", "server/casualties.test.mjs"]
+    },
+    {
+      "name": "a repeated treatment request heals once and an old hospital save still loads",
+      "command": ["node", "--test", "--test-name-pattern", "repeated treatment request", "server/casualties.test.mjs"]
+    },
+    {
       "name": "a repeated inventory request does not consume the stack or the job twice",
       "command": ["node", "--test", "--test-name-pattern", "repeated inventory request", "server/inventory-orders.test.mjs"]
     },

@@ -1,0 +1,21 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner task 8B instruction for casualty classes and hospital recovery, before this correction",
+  "owner_decision": "Task 8B records the existing hospital transfer as severe wounds and the troops who remain with a recovering commander as light wounds, while fatalities stay blocked and healing costs, capacity and the retreat share stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-COMBAT-HOSPITAL"],
+  "paths": [
+    "server/war.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Warfare.cs"
+  ],
+  "evidence_document": "research/parity/features/casualty-accounting.md",
+  "functional_checks": [
+    "a repeated treatment request heals once and an old hospital save still loads"
+  ],
+  "unchanged_numeric_checks": [
+    "a defeat keeps the existing hospital share and records the remaining march as light wounds"
+  ]
+}

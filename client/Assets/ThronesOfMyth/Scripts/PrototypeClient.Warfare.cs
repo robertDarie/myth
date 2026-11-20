@@ -173,7 +173,7 @@ namespace ThronesOfMyth
                         if (entry.team != team) continue;
                         GUILayout.Label(entry.playerName + " · " + HeroName(entry.commanderId) + " · " + entry.result, new GUIStyle(noteStyle) { richText = false });
                         GUILayout.Label($"Damage {entry.damageDealt:F1} · Taken {entry.damageTaken:F1} · Healing {entry.healed:F1} · Absorbed {entry.absorbed:F1}\nStructure damage {entry.structureDamage:F1} · Shield created {entry.shieldCreated:F1}", theme.Small);
-                        GUILayout.Label("Before: " + UnitSummary(entry.unitsBefore) + " / " + entry.mythicBefore + " mythic\nAfter: " + UnitSummary(entry.unitsAfter) + " / " + entry.mythicAfter + " mythic\nSent to hospital: " + UnitSummary(entry.wounded) + " / " + entry.woundedMythic + " mythic", theme.Small);
+                        GUILayout.Label("Before: " + UnitSummary(entry.unitsBefore) + " / " + entry.mythicBefore + " mythic\nAfter: " + UnitSummary(entry.unitsAfter) + " / " + entry.mythicAfter + " mythic\nSent to hospital: " + UnitSummary(entry.wounded) + " / " + entry.woundedMythic + " mythic" + (entry.fatalityPolicy == "BLOCKED" && entry.light != null && entry.dead != null ? "\nWith the commander, recovering: " + UnitSummary(entry.light) + " / " + entry.lightMythic + " mythic\nPermanently lost: " + UnitSummary(entry.dead) + " / " + entry.deadMythic + " mythic\nFatalities and overflow deaths are blocked." : ""), theme.Small);
                     }
                 }
                 GUILayout.EndVertical();

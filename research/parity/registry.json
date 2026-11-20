@@ -1,6 +1,7 @@
 {
   "version": 1,
   "features": [
+    "research/parity/features/casualty-accounting.md",
     "research/parity/features/inventory-orders.md",
     "research/parity/features/military-roster.md",
     "research/parity/features/season-rankings.md",
