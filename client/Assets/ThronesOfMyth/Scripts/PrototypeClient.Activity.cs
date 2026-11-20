@@ -119,21 +119,38 @@ namespace ThronesOfMyth
                 return;
             }
             GUILayout.Label("EVENT HUB", theme.Eyebrow);
-            GUILayout.Label("These offerings follow the server UTC calendar. Daily activity, alliance goals, and seven-day rewards stay on their own screens.", noteStyle);
+            GUILayout.Label("These offerings follow the server UTC calendar. Daily activity, alliance goals, and seven-day rewards stay on their own screens. A family marked Not scheduled has no score and no reward.", noteStyle);
             foreach (var entry in events)
             {
+                var scheduled = entry.status == "active" || entry.status == "upcoming";
                 GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Label(entry.name + " · " + (entry.status == "active" ? "Active" : "Upcoming"), sectionStyle);
+                GUILayout.Label(entry.name + " · " + (entry.status == "active" ? "Active" : entry.status == "upcoming" ? "Upcoming" : entry.status == "ended" ? "Ended" : "Not scheduled"), sectionStyle);
                 GUILayout.Label(entry.description, noteStyle);
-                GUILayout.Label((entry.status == "active" ? "Ends " : "Opens ") + (entry.status == "active" ? entry.endsUtc : entry.startsUtc) + " · " + ActivityResetText(entry.remainingSeconds), theme.Small);
+                if (scheduled) GUILayout.Label((entry.status == "active" ? "Ends " : "Opens ") + (entry.status == "active" ? entry.endsUtc : entry.startsUtc) + " · " + ActivityResetText(entry.remainingSeconds), theme.Small);
                 if (entry.objectives != null) foreach (var objective in entry.objectives)
+                {
+                    GUILayout.BeginHorizontal();
                     GUILayout.Label(objective.label + " " + objective.progress + "/" + objective.goal, theme.Small);
-                GUILayout.Label(JourneyRewardText(entry.reward), theme.Small);
+                    GUI.enabled = !processing && !string.IsNullOrEmpty(objective.guide);
+                    if (GUILayout.Button("GO", GUILayout.Width(72))) GuideObjective(new JourneyTask { id = objective.id, guide = objective.guide, targetId = objective.targetId });
+                    GUI.enabled = true;
+                    GUILayout.EndHorizontal();
+                }
+                if (scheduled) GUILayout.Label(JourneyRewardText(entry.reward), theme.Small);
                 if (!string.IsNullOrEmpty(entry.lockedReason)) GUILayout.Label(entry.lockedReason, noteStyle);
-                GUI.enabled = entry.canClaim && !processing;
-                if (GUILayout.Button(entry.claimed ? "Claimed" : entry.canClaim ? "CLAIM REWARD" : "Not ready", theme.Primary))
-                    Send(new GameCommand { type = "event-claim", targetId = entry.id, period = entry.period });
-                GUI.enabled = true;
+                if (scheduled)
+                {
+                    GUI.enabled = entry.canClaim && !processing;
+                    if (GUILayout.Button(entry.claimed ? "Claimed" : entry.canClaim ? "CLAIM REWARD" : "Not ready", theme.Primary))
+                        Send(new GameCommand { type = "event-claim", targetId = entry.id, period = entry.period });
+                    GUI.enabled = true;
+                }
+                if (entry.history != null) foreach (var past in entry.history)
+                {
+                    GUILayout.Label("Ended " + past.period + " · " + (past.claimed ? "Claimed" : "Unclaimed"), theme.Small);
+                    if (past.objectives != null) foreach (var objective in past.objectives) GUILayout.Label(objective.label + " " + objective.progress + "/" + objective.goal, theme.Small);
+                    if (!string.IsNullOrEmpty(past.lockedReason)) GUILayout.Label(past.lockedReason, noteStyle);
+                }
                 GUILayout.EndVertical();
             }
         }

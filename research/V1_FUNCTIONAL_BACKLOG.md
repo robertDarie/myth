@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Phase 2 task 3 — event hub history
+
+Oath of the Builders and Frontier Vigil remain the only paying events. Closed periods are kept as history. Construction, research, training, commander, gathering, broader PvE, alliance, and ranked event families are listed and unscored because live Rise of Kingdoms rates were not verified. Native event-hub clicks were not run.
+
 ## Phase 2 task 2 — daily activity receipts
 
 Daily, chest, login and alliance claims already used server events. The hole was a second delivery of the same completion id. That second delivery is now ignored. Existing payout numbers were not replaced. Live Rise of Kingdoms chest contents and VIP dailies remain unknown. Native activity clicks were not run.

@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { World } from './testing/legacy-world.mjs';
 import { testWorld } from './testing/kingdom-fixture.mjs';
 import { activitySnapshot } from './activity.mjs';
-import { eventSnapshot, eventWindow } from './events.mjs';
+import { EVENTS, EVENT_FAMILIES, eventSnapshot, eventWindow, recordEvent } from './events.mjs';
+const expected = JSON.parse(readFileSync(new URL('../research/parity/fixtures/event-hub.json', import.meta.url), 'utf8'));
 import { cellIndex } from './exploration.mjs';
 import { tempDirectory } from './testing/cleanup.mjs';
 import { createGameServer } from './testing/legacy-services.mjs';
@@ -241,4 +243,73 @@ test('two claims at once pay once, and another city cannot read or collect the r
   assert.equal((await fetch(url + '/command', { method: 'POST', headers: { Authorization: 'Bearer ' + other.token, 'Content-Type': 'application/json' }, body })).status, 400);
   assert.equal(neighbor.wood, neighborWood);
   assert.equal(activitySnapshot(app.world, p).daily.points, 0);
+});
+
+test('event rewards stay on the existing Oath and Vigil schedule', () => {
+  assert.deepEqual(EVENTS.find(event => event.id === 'oath-of-the-builders').reward, expected.oath.reward);
+  assert.deepEqual(EVENTS.find(event => event.id === 'frontier-vigil').reward, expected.vigil.reward);
+  assert.deepEqual(EVENTS.find(event => event.id === 'oath-of-the-builders').objectives.map(objective => objective.goal), expected.oath.goals);
+  assert.deepEqual(EVENTS.find(event => event.id === 'frontier-vigil').objectives.map(objective => objective.goal), expected.vigil.goals);
+  assert.deepEqual(EVENT_FAMILIES.map(family => family.id), expected.families);
+  assert.ok(EVENT_FAMILIES.every(family => family.reward === undefined));
+});
+
+test('a repeated event token does not raise progress and a full receipt list does not revive an old token', () => {
+  const { w, p } = setup(monday);
+  recordEvent(w, p, 'development', 1, 'job-once');
+  recordEvent(w, p, 'development', 1, 'job-once');
+  assert.equal(progress(w, p, 'oath-of-the-builders', 'development'), 1);
+  recordEvent(w, p, 'trained', 50, 'batch');
+  assert.equal(progress(w, p, 'oath-of-the-builders', 'development'), 1);
+  for (let i = 0; i < 8; i++) recordEvent(w, p, 'development', 1, 'job-' + i);
+  recordEvent(w, p, 'development', 1, 'job-extra');
+  assert.equal(p.events['oath-of-the-builders'].credited.length, 8);
+  assert.equal(p.events['oath-of-the-builders'].credited.includes('job-extra'), false);
+  assert.equal(progress(w, p, 'oath-of-the-builders', 'development'), 2);
+  const closed = setup(thursday);
+  finishBuilding(closed.w, closed.p, 'quarry');
+  assert.equal(progress(closed.w, closed.p, 'oath-of-the-builders', 'development'), 0);
+  const other = closed.w.join('B');
+  const neighbor = closed.w.authenticate(other.token);
+  recordEvent(closed.w, closed.p, 'scouts', 1, 'survey:1');
+  assert.equal(progress(closed.w, neighbor, 'frontier-vigil', 'scouts'), 0);
+});
+
+test('closed periods stay in history and cannot be claimed again', () => {
+  const { w, p, s, setDate } = setup(monday);
+  prepareAcademy(p);
+  const period = card(w, p, 'oath-of-the-builders').period;
+  finishResearch(w, p, 'harvest');
+  setDate(thursday + 7 * DAY);
+  const closed = card(w, p, 'oath-of-the-builders');
+  assert.equal(closed.status, 'upcoming');
+  assert.equal(closed.history.length, 1);
+  assert.equal(closed.history[0].period, period);
+  assert.equal(closed.history[0].status, 'ended');
+  assert.equal(closed.history[0].claimed, false);
+  assert.equal(closed.history[0].objectives[0].progress, 1);
+  assert.equal(progress(w, p, 'oath-of-the-builders', 'development'), 0);
+  assert.throws(() => w.command(p, { type: 'event-claim', targetId: 'oath-of-the-builders', period }), /not open|expired/);
+  const kept = resources(p);
+  const loaded = World.fromSave(w.toSave(), { now: () => thursday + 7 * DAY });
+  const q = loaded.authenticate(s.token);
+  assert.equal(card(loaded, q, 'oath-of-the-builders').history[0].period, period);
+  assert.deepEqual(resources(q), kept);
+  assert.throws(() => loaded.command(q, { type: 'event-claim', targetId: 'family-training', period: '2026-01-05' }), /Unknown event/);
+  const broken = w.toSave();
+  broken.world.players[0].eventHistory.push(broken.world.players[0].eventHistory[0]);
+  assert.throws(() => World.fromSave(broken), /event progress/);
+});
+
+test('a reward that would overflow the balance stays unclaimed', () => {
+  const { w, p } = setup(monday);
+  prepareAcademy(p);
+  finishResearch(w, p, 'harvest');
+  finishResearch(w, p, 'logistics');
+  p.wood = Number.MAX_SAFE_INTEGER - 10;
+  const period = card(w, p, 'oath-of-the-builders').period;
+  assert.throws(() => w.command(p, { type: 'event-claim', targetId: 'oath-of-the-builders', period }), /balance/);
+  assert.equal(p.wood, Number.MAX_SAFE_INTEGER - 10);
+  assert.equal(card(w, p, 'oath-of-the-builders').claimed, false);
+  assert.equal(card(w, p, 'oath-of-the-builders').canClaim, true);
 });

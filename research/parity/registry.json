@@ -1,6 +1,7 @@
 {
   "version": 1,
   "features": [
+    "research/parity/features/event-hub.md",
     "research/parity/features/daily-activity.md",
     "research/parity/features/kingdom-search.md",
     "research/parity/features/alliance-invitations.md",

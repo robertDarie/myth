@@ -1,0 +1,24 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner phase 2 task 3 instruction for isolated local event work, before this correction",
+  "owner_decision": "Phase 2 task 3 authorizes event history and one credit per completion token while the existing Oath and Vigil rewards stay unchanged and unverified event families stay unscored.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-EVENT-LIMITED-TIME"],
+  "paths": [
+    "server/events.mjs",
+    "server/city.mjs",
+    "server/exploration.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Activity.cs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+  ],
+  "evidence_document": "research/parity/features/event-hub.md",
+  "functional_checks": [
+    "a repeated event token does not raise progress and a full receipt list does not revive an old token",
+    "closed periods stay in history and cannot be claimed again",
+    "a reward that would overflow the balance stays unclaimed"
+  ],
+  "unchanged_numeric_checks": [
+    "event rewards stay on the existing Oath and Vigil schedule"
+  ]
+}

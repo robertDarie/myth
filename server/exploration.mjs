@@ -152,8 +152,9 @@ function completeSurvey(w, p, s, profile) {
   p.scoutReports.length = Math.min(20, p.scoutReports.length);
   if (!s.rewardPending) return;
   s.rewardPending = false;
-  if (!claimSurvey(p, cellIndex({ x: s.targetX, z: s.targetZ }))) return;
-  journeyMetric(p, 'surveys', 1); recordActivity(w, p, 'scouts', 1); recordEvent(w, p, 'scouts', 1);
+  const surveyed = cellIndex({ x: s.targetX, z: s.targetZ });
+  if (!claimSurvey(p, surveyed)) return;
+  journeyMetric(p, 'surveys', 1); recordActivity(w, p, 'scouts', 1); recordEvent(w, p, 'scouts', 1, 'survey:' + surveyed);
 }
 function pathLength(w, s, destination, returning) {
   const path = route(w, s, destination, returning); if (!path) return Infinity;

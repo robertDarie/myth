@@ -60,6 +60,17 @@
       "approved_compatibility": "research/parity/approvals/cursor-phase2-daily.json"
     },
     {
+      "feature_id": "ROK-EVENT-LIMITED-TIME",
+      "paths": [
+        "server/events.mjs",
+        "server/city.mjs",
+        "server/exploration.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Activity.cs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-phase2-events.json"
+    },
+    {
       "feature_id": "ROK-EXPLORATION-FULL-MAP",
       "paths": [
         "server/exploration.mjs",

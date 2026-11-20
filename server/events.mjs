@@ -9,15 +9,15 @@ export const EVENTS = [
   {
     id: 'oath-of-the-builders', name: 'Oath of the Builders',
     description: 'From Monday 00:00 UTC until Thursday 00:00 UTC, finish two building upgrades or research projects.',
-    objectives: [{ id: 'development', label: 'Complete building upgrades or research projects.', goal: 2 }],
+    objectives: [{ id: 'development', label: 'Complete building upgrades or research projects.', goal: 2, guide: 'city', targetId: 'citadel' }],
     reward: { wood: 200, stone: 150, gold: 100 }
   },
   {
     id: 'frontier-vigil', name: 'Frontier Vigil',
     description: 'From Thursday 00:00 UTC until Monday 00:00 UTC, finish two scouting surveys and win one Forsaken camp battle.',
     objectives: [
-      { id: 'scouts', label: 'Complete scouting surveys.', goal: 2 },
-      { id: 'camps', label: 'Win a Forsaken camp battle.', goal: 1 }
+      { id: 'scouts', label: 'Complete scouting surveys.', goal: 2, guide: 'exploration', targetId: '' },
+      { id: 'camps', label: 'Win a Forsaken camp battle.', goal: 1, guide: 'combat', targetId: '' }
     ],
     reward: { food: 200, gold: 150, mana: 10 }
   }
@@ -38,15 +38,40 @@ export function eventWindow(id, day) {
   throw new Error('Unknown event.');
 }
 
+const HISTORY_LIMIT = 16;
+export const EVENT_FAMILIES = [
+  { id: 'family-construction', name: 'Construction and development', reason: 'A broader building-power event is not scheduled. Live Rise of Kingdoms scoring for that family was not verified.' },
+  { id: 'family-research', name: 'Research', reason: 'A separate research-power event is not scheduled. Live Rise of Kingdoms scoring for that family was not verified.' },
+  { id: 'family-training', name: 'Troop training', reason: 'Training batches do not score an event. Live Rise of Kingdoms training-event rates were not verified.' },
+  { id: 'family-commanders', name: 'Commander development', reason: 'Commander growth does not score an event. Live Rise of Kingdoms commander-event cycles were not verified.' },
+  { id: 'family-gathering', name: 'Gathering', reason: 'Delivered cargo does not score an event. Live Rise of Kingdoms gathering-event rates were not verified.' },
+  { id: 'family-pve', name: 'Frontier battles', reason: 'A broader battle event is not scheduled. Live Rise of Kingdoms PvE event scoring was not verified.' },
+  { id: 'family-alliance', name: 'Alliance participation', reason: 'Alliance help and shared goals stay on the weekly screen. A separate alliance event payout was not verified.' },
+  { id: 'family-ranking', name: 'Competitive ranking', reason: 'No ranking board, tie rule, or placement reward is enabled. Live Rise of Kingdoms ranked-event settlement was not verified.' }
+];
 const emptyProgress = event => Object.fromEntries(event.objectives.map(objective => [objective.id, 0]));
+const touched = (event, row) => row.claimed === true || event.objectives.some(objective => (row.progress?.[objective.id] ?? 0) > 0);
+const archivePeriod = (p, event, row) => {
+  if (!touched(event, row)) return;
+  p.eventHistory ??= [];
+  if (p.eventHistory.some(item => item.id === event.id && item.period === row.period)) return;
+  const progress = emptyProgress(event);
+  for (const objective of event.objectives) progress[objective.id] = row.progress?.[objective.id] ?? 0;
+  p.eventHistory.push({ id: event.id, period: row.period, claimed: row.claimed === true, progress });
+  if (p.eventHistory.length > HISTORY_LIMIT) p.eventHistory.splice(0, p.eventHistory.length - HISTORY_LIMIT);
+};
 
 export function ensureEvents(w, p) {
   const { day } = activityClock(w);
   p.events ??= {};
+  p.eventHistory ??= [];
   for (const event of EVENTS) {
     const window = eventWindow(event.id, day);
     const row = p.events[event.id];
-    if (!row || row.period !== window.period) p.events[event.id] = { period: window.period, progress: emptyProgress(event), claimed: false, credited: [] };
+    if (!row || row.period !== window.period) {
+      if (row && row.period !== window.period) archivePeriod(p, event, row);
+      p.events[event.id] = { period: window.period, progress: emptyProgress(event), claimed: false, credited: [] };
+    }
   }
 }
 
@@ -58,10 +83,9 @@ export function recordEvent(w, p, key, amount = 1, token = '') {
     const objective = event.objectives.find(item => item.id === key);
     if (!objective || !eventWindow(event.id, day).active) continue;
     const row = p.events[event.id];
-    if (token) {
-      if (row.credited.includes(token)) continue;
+    if (typeof token === 'string' && token.length > 0) {
+      if (token.length > 80 || row.credited.includes(token) || row.credited.length >= 8) continue;
       row.credited.push(token);
-      if (row.credited.length > 8) row.credited.shift();
     }
     row.progress[key] = Math.min(objective.goal, (row.progress[key] ?? 0) + amount);
   }
@@ -82,10 +106,20 @@ export function eventSnapshot(w, p) {
       id: event.id, name: event.name, description: event.description, status: window.active ? 'active' : 'upcoming',
       period: iso(window.period), startsUtc: new Date(window.period * DAY).toISOString(), endsUtc: new Date(window.end * DAY).toISOString(),
       remainingSeconds: Math.max(0, Math.ceil(((window.active ? window.end : window.period) * DAY - now) / 1000)),
-      objectives: event.objectives.map(objective => ({ id: objective.id, label: objective.label, goal: objective.goal, progress: row.progress[objective.id] })),
-      reward: rewardSnapshot(event.reward), canClaim, claimed: row.claimed, lockedReason
+      objectives: event.objectives.map(objective => ({ id: objective.id, label: objective.label, goal: objective.goal, progress: row.progress[objective.id], guide: objective.guide, targetId: objective.targetId })),
+      reward: rewardSnapshot(event.reward), canClaim, claimed: row.claimed, lockedReason,
+      history: (p.eventHistory ?? []).filter(item => item.id === event.id).map(item => ({
+        period: iso(item.period), status: 'ended', claimed: item.claimed,
+        lockedReason: item.claimed ? 'Claimed. This period has ended.' : 'This period ended before the reward was claimed.',
+        objectives: event.objectives.map(objective => ({ id: objective.id, label: objective.label, goal: objective.goal, progress: item.progress[objective.id] ?? 0 }))
+      }))
     };
-  });
+  }).concat(EVENT_FAMILIES.map(family => ({
+    id: family.id, name: family.name, description: family.reason, status: 'unavailable',
+    period: '', startsUtc: '', endsUtc: '', remainingSeconds: 0, objectives: [], history: [],
+    reward: rewardSnapshot({}), canClaim: false, claimed: false,
+    lockedReason: 'No score or reward is enabled for this event family.'
+  })));
 }
 
 export function eventCommand(w, p, c, fail) {
@@ -100,7 +134,7 @@ export function eventCommand(w, p, c, fail) {
   const row = p.events[event.id];
   if (row.claimed) fail('This event reward was already claimed.');
   if (event.objectives.some(objective => row.progress[objective.id] < objective.goal)) fail('Finish this event\'s objectives first.');
-  grantReward(p, event.reward);
+  try { grantReward(p, event.reward); } catch (error) { fail(error.message === 'Reward inventory capacity exceeded.' || error.message === 'Reward balance limit reached.' ? error.message : 'Reward inventory capacity exceeded.'); }
   row.claimed = true;
   return true;
 }
@@ -119,6 +153,20 @@ export function validateEvents(w, clock = w.activityClockMs) {
         if (!Number.isInteger(value) || value < 0 || value > objective.goal) throw new Error('Invalid saved event progress.');
       }
       if (row.claimed && event.objectives.some(objective => progress[objective.id] < objective.goal)) throw new Error('Invalid saved event progress.');
+    }
+    const history = p.eventHistory ?? [];
+    if (p.eventHistory !== undefined && (!Array.isArray(history) || history.length > HISTORY_LIMIT)) throw new Error('Invalid saved event progress.');
+    const seen = new Set();
+    for (const item of history) {
+      const event = EVENTS.find(entry => entry.id === item?.id);
+      const key = event ? event.id + ':' + item.period : '';
+      if (!event || !Number.isSafeInteger(item.period) || item.period < 0 || item.period >= eventWindow(event.id, day).period || typeof item.claimed !== 'boolean' || !item.progress || seen.has(key)) throw new Error('Invalid saved event progress.');
+      seen.add(key);
+      for (const objective of event.objectives) {
+        const value = item.progress[objective.id];
+        if (!Number.isInteger(value) || value < 0 || value > objective.goal) throw new Error('Invalid saved event progress.');
+      }
+      if (item.claimed && event.objectives.some(objective => item.progress[objective.id] < objective.goal)) throw new Error('Invalid saved event progress.');
     }
   }
 }

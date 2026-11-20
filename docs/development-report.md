@@ -1,5 +1,9 @@
 # Development report — 2026-11-20
 
+## Phase 2 task 3 — event hub history
+
+A repeated completion id no longer adds event progress, and a closed period with progress or a claim stays visible without becoming claimable. Oath of the Builders and Frontier Vigil keep their existing rewards. Eight other event families are shown as not scheduled and do not score. Native clicks were not run.
+
 ## Phase 2 task 2 — daily activity receipts
 
 A repeated completion id no longer adds a second daily or alliance credit. Chest thresholds and the day-1 login reward stayed on the existing table. A full resource balance refuses the chest and leaves it unclaimed. The world button opens the seven-day tab when that claim is the one ready. Native clicks were not run.

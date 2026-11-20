@@ -2,6 +2,22 @@
   "description": "Required regression commands for the systems they name. Passing this plan does not verify the whole game. Add the new feature's test command before publishing it.",
   "tests": [
     {
+      "name": "a repeated event token does not raise progress and a full receipt list does not revive an old token",
+      "command": ["node", "--test", "--test-name-pattern", "full receipt list", "server/events.test.mjs"]
+    },
+    {
+      "name": "closed periods stay in history and cannot be claimed again",
+      "command": ["node", "--test", "--test-name-pattern", "closed periods stay in history", "server/events.test.mjs"]
+    },
+    {
+      "name": "a reward that would overflow the balance stays unclaimed",
+      "command": ["node", "--test", "--test-name-pattern", "overflow the balance", "server/events.test.mjs"]
+    },
+    {
+      "name": "event rewards stay on the existing Oath and Vigil schedule",
+      "command": ["node", "--test", "--test-name-pattern", "Oath and Vigil schedule", "server/events.test.mjs"]
+    },
+    {
       "name": "a repeated completion token does not pay daily activity twice",
       "command": ["node", "--test", "--test-name-pattern", "repeated completion token", "server/activity.test.mjs"]
     },

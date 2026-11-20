@@ -1,0 +1,6 @@
+{
+  "classification": "Existing prototype event rewards and objective counts. No replacement RoK event payout or score rate was verified.",
+  "oath": { "reward": { "wood": 200, "stone": 150, "gold": 100 }, "goals": [2] },
+  "vigil": { "reward": { "food": 200, "gold": 150, "mana": 10 }, "goals": [2, 1] },
+  "families": ["family-construction", "family-research", "family-training", "family-commanders", "family-gathering", "family-pve", "family-alliance", "family-ranking"]
+}
