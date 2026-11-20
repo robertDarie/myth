@@ -1,0 +1,21 @@
+{
+  "classification": "Existing prototype item amounts and durations. No replacement Rise of Kingdoms pack, speedup, experience, Action Point or oath number was verified.",
+  "items": [
+    { "id": "chronicle-page", "amount": 100, "seconds": null },
+    { "id": "food-pack-100", "amount": 100, "seconds": null },
+    { "id": "wood-pack-100", "amount": 100, "seconds": null },
+    { "id": "stone-pack-75", "amount": 75, "seconds": null },
+    { "id": "gold-pack-50", "amount": 50, "seconds": null },
+    { "id": "mana-pack-10", "amount": 10, "seconds": null },
+    { "id": "build-minute", "amount": null, "seconds": 60 },
+    { "id": "universal-minute", "amount": null, "seconds": 60 },
+    { "id": "warden-echoes-10", "amount": 10, "seconds": null },
+    { "id": "research-minute", "amount": null, "seconds": 60 },
+    { "id": "training-minute", "amount": null, "seconds": 60 },
+    { "id": "healing-minute", "amount": null, "seconds": 60 },
+    { "id": "echo-sigil", "amount": 1, "seconds": null },
+    { "id": "ap-tonic-20", "amount": 20, "seconds": null },
+    { "id": "attack-oath-10m", "amount": 10, "seconds": 600 },
+    { "id": "defense-oath-10m", "amount": 10, "seconds": 600 }
+  ]
+}

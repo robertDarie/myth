@@ -1,5 +1,10 @@
 # V1 functional backlog
 
+## Phase 3 — inventory order receipts
+
+Resource packs, category speedups, universal speedups, commander XP, shards, sigils, AP tonics and attack/defense oaths already ran on the server. The hole was a second delivery of the same order. That second delivery no longer spends the stack. Live Rise of Kingdoms VIP, teleports, peace shields, equipment chests, multi-duration speedups and drop rates remain unknown and were not invented. Experimental city jobs still need the integration owner before a speedup can see them. Native inventory clicks were not run.
+
+
 ## Phase 2 task 4 — season receipts and rankings
 
 Season of the First Throne remains a 28-day single-kingdom prototype. Its rewards and the local power formula were not replaced. KvK preparation, matchmaking, Lost Kingdom entry, occupation, and return migration stay blocked. Native season and ranking clicks were not run.

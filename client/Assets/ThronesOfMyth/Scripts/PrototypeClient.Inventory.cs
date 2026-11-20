@@ -19,7 +19,7 @@ namespace ThronesOfMyth
             theme.Panel(list,false,true);theme.Panel(detail,false,true);
             GUILayout.BeginArea(new Rect(list.x+12,list.y+12,list.width-24,list.height-24));
             theme.Section("Stored supplies","Select a stack; items stay sealed until used.");
-            if(bag.suppliesAvailable&&theme.Action("Collect founding supplies",!processing&&pendingOrder==null,"Confirm the pending order first."))Send("inventory-supplies");
+            if(bag.suppliesAvailable&&theme.Action("Collect founding supplies",!processing&&pendingOrder==null,"Confirm the pending order first."))Send(new GameCommand{type="inventory-supplies",requestId=Guid.NewGuid().ToString("N")});
             inventoryCatalogue=GUILayout.Toggle(inventoryCatalogue,"Show unowned items");
             itemCategory=theme.Tabs(itemCategory,new[]{"All","Resources","Speedups","Summons","Energy","Combat buffs","Commander XP"},list.width-24);
             var categories=new[]{"","Resources","Speedups","Summons","Energy","Combat buffs","Commander XP"};
@@ -76,7 +76,8 @@ namespace ThronesOfMyth
             if(item.kind=="energy"&&me.economy!=null)valid &= me.economy.ap+item.amount*itemQuantity<=me.economy.apCap;
             if(item.kind=="buff"&&me.economy!=null)valid &= itemQuantity==1&&!Array.Exists(me.economy.buffs,b=>b.kind==item.scope&&b.remaining>0);
             string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm the previous order first.":item.count<itemQuantity?"Not enough items in this stack.":!valid?item.kind=="energy"?"This would exceed your AP capacity. Lower the quantity or use AP first.":item.kind=="buff"?"Use one oath at a time; the same active oath cannot stack.":"Select a compatible active job and an appropriate quantity.":"";
-            if(theme.Action(item.kind=="speedup"?"Use hourglass":item.kind=="buff"?"Activate oath":"Use selected supplies",string.IsNullOrEmpty(reason),reason))Send(new GameCommand{type="inventory-use",targetId=item.id,count=itemQuantity,name=chronicleCommanderId,jobId=job==null?"":job.id});
+            GUILayout.Label("One order is applied once. Retrying that order does not open or spend the stack again.",theme.Small);
+            if(theme.Action(item.kind=="speedup"?"Use hourglass":item.kind=="buff"?"Activate oath":"Use selected supplies",string.IsNullOrEmpty(reason),reason))Send(new GameCommand{type="inventory-use",targetId=item.id,count=itemQuantity,name=chronicleCommanderId,jobId=job==null?"":job.id,requestId=Guid.NewGuid().ToString("N")});
             GUILayout.EndScrollView();GUILayout.EndArea();
         }
         private void RenderRankingsWindow(Rect r)

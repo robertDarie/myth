@@ -23,8 +23,24 @@ ITEMS.push(
 for(const item of ITEMS)item.category=item.kind==='experience'?'Commander XP':item.kind==='resource'?'Resources':item.kind==='speedup'?'Speedups':(item.kind==='summon'||item.kind==='shards')?'Summons':item.kind==='energy'?'Energy':'Combat buffs';
 export const INITIAL_SUPPLIES = { 'food-pack-100':2,'wood-pack-100':2,'stone-pack-75':1,'gold-pack-50':1,'mana-pack-10':1,'build-minute':1,'universal-minute':2,'echo-sigil':1,'ap-tonic-20':2,'attack-oath-10m':1,'defense-oath-10m':1 };
 export function initializeInventory(p) { p.inventory={};p.suppliesClaimed=false; }
+const RECEIPT_LIMIT=4096;
+const receiptId=/^[A-Za-z0-9_-]{8,80}$/;
+const orderDigest=c=>JSON.stringify({type:c.type,targetId:c.targetId??'',count:c.count??1,name:c.name??'',jobId:c.jobId??''});
+function openReceipt(p,c,fail){
+  if(c.requestId==null||c.requestId==='')return null;
+  if(typeof c.requestId!=='string'||!receiptId.test(c.requestId))fail('Invalid inventory request.');
+  const receipts=p.inventoryReceipts??[];
+  if(!Array.isArray(receipts))fail('Invalid inventory request.');
+  const digest=orderDigest(c),prior=receipts.find(row=>row.id===c.requestId);
+  if(prior){if(prior.digest!==digest)fail('This inventory request already describes a different action.');return 'replay';}
+  if(receipts.length>=RECEIPT_LIMIT)fail('Inventory request ledger is full.');
+  return {id:c.requestId,digest};
+}
+function closeReceipt(p,receipt){if(!receipt)return;p.inventoryReceipts??=[];p.inventoryReceipts.push(receipt);}
 export function validateInventory(p) {
   if(!p.inventory||typeof p.inventory!=='object'||Array.isArray(p.inventory)||typeof p.suppliesClaimed!=='boolean'||Object.entries(p.inventory).some(([id,count])=>!ITEMS.some(i=>i.id===id)||!Number.isSafeInteger(count)||count<0||count>1000000))throw new Error('Invalid saved inventory.');
+  if(p.inventoryReceipts==null)return;
+  if(!Array.isArray(p.inventoryReceipts)||p.inventoryReceipts.length>RECEIPT_LIMIT||new Set(p.inventoryReceipts.map(row=>row?.id)).size!==p.inventoryReceipts.length||p.inventoryReceipts.some(row=>!row||typeof row.id!=='string'||!receiptId.test(row.id)||typeof row.digest!=='string'||row.digest.length<2||row.digest.length>400))throw new Error('Invalid saved inventory.');
 }
 export function inventoryJobs(p) {
   return [...constructionJobs(p).map(job=>({job,lane:'construction'})),...[p.research,p.crafting,p.healing,p.trainingQueue[0]].filter(Boolean).map(job=>({job,lane:job===p.research?'research':job===p.crafting?'crafting':job===p.healing?'healing':'training'}))];
@@ -34,6 +50,14 @@ export function inventorySnapshot(p) {
     jobs:inventoryJobs(p).map(({job,lane})=>({id:job.id,lane,type:job.type,targetId:job.targetId??'',remaining:job.remaining})) };
 }
 export function inventoryCommand(w,p,c,fail) {
+  if(c.type!=='inventory-supplies'&&c.type!=='inventory-use')return false;
+  const receipt=openReceipt(p,c,fail);
+  if(receipt==='replay')return true;
+  const applied=applyInventory(w,p,c,fail);
+  if(applied)closeReceipt(p,receipt);
+  return applied;
+}
+function applyInventory(w,p,c,fail) {
   if(c.type==='inventory-supplies') {
     if(p.suppliesClaimed)fail('Your founding supplies have already been claimed.');
     for(const [id,count] of Object.entries(INITIAL_SUPPLIES))if((p.inventory[id]??0)+count>1000000)fail('Inventory capacity exceeded.');

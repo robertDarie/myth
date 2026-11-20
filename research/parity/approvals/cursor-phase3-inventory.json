@@ -1,0 +1,19 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner phase 3 instruction for isolated local inventory and speedup work, before this correction",
+  "owner_decision": "Phase 3 authorizes one inventory order per request id while existing pack sizes, speedup durations, commander XP, AP tonic size and oath percents stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-ITEM-SPEEDUPS"],
+  "paths": [
+    "server/inventory.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Inventory.cs"
+  ],
+  "evidence_document": "research/parity/features/inventory-orders.md",
+  "functional_checks": [
+    "a repeated inventory request does not consume the stack or the job twice"
+  ],
+  "unchanged_numeric_checks": [
+    "existing item amounts and speedup durations stay unchanged"
+  ]
+}

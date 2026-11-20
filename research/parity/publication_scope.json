@@ -80,6 +80,14 @@
       "approved_compatibility": "research/parity/approvals/cursor-phase2-season.json"
     },
     {
+      "feature_id": "ROK-ITEM-SPEEDUPS",
+      "paths": [
+        "server/inventory.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Inventory.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-phase3-inventory.json"
+    },
+    {
       "feature_id": "ROK-EXPLORATION-FULL-MAP",
       "paths": [
         "server/exploration.mjs",
