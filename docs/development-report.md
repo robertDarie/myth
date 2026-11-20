@@ -1,5 +1,9 @@
 # Development report — 2026-11-20
 
+## QA-01 — native Windows playtest
+
+The packaged Windows client from `0b7e102` joined an isolated kingdom, collected founding supplies, used one food pack, and queued one infantry batch without a second spend. Siege training stayed refused. Two clients created two cities. A fight and a hospital treatment were not completed, so those paths stay unproven. Details are in `docs/qa/QA01_NATIVE_GAMEPLAY_REPORT.md`. No gameplay rule changed.
+
 ## Task 8B — casualty classes and one treatment order
 
 A defeat still moves the existing quarter of each class into the House of Renewal. The soldiers who stay with the commander are reported as light wounds, and permanent losses stay at zero because no verified death rule exists. A repeated treatment request does not heal twice. Schema stays 28. Native clicks were not run.
