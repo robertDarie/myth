@@ -22,10 +22,10 @@
   },
   {
     "path": "server/qa-reference-world.mjs",
-    "checked": "2026-11-19",
-    "sha256": "57b636c087926d29b6736b6a524d82eace05f02fe394463c67184d7e44c70961",
-    "evidence": "research/parity/features/task7-b3-integration-hardening.md",
-    "disposition": "B3 isolated QA correctness hardening; supplied values unchanged; ordinary activation disabled"
+    "checked": "2026-11-20",
+    "sha256": "0a158a865bdbacf3bb42e4d9f67871333a721f6159503677d31dc2977c0576f7",
+    "evidence": "research/parity/features/combined-overnight-integration.md",
+    "disposition": "Combined integration preserves QA isolation; military preview rejects unsupported actions; no normal activation"
   },
   {
     "path": "server/qa-reference-host.mjs",

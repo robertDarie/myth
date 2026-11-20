@@ -1,5 +1,5 @@
 import { initializePopulation, prepareSavedPopulation, restorePopulation, populationTick, populationCommand, campDestination, publicForsakenProgress } from './forsaken-population.mjs';
-import { configureForsaken, forsakenCard, initializeForsakenPlayer, restoreForsaken, fightForsaken, forsakenReason } from './forsaken.mjs';
+import { configureForsaken, forsakenCard, initializeForsakenPlayer, restoreForsaken, fightForsaken, forsakenReason, hasSearchPin } from './forsaken.mjs';
 import { WORLD_SCHEMA, PROTOCOL, LIMITS, cityLimit, provinceAt, PROVINCES, MAP_CORRIDORS, PASS_DEFINITIONS, frontierNodes, frontierCamps, frontierSites, migrateMap } from './world-map.mjs';
 import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
 import { migrateNumericWorld } from './numeric-migration.mjs';
@@ -208,6 +208,7 @@ export class World {
       case 'alliance-join':
         if (p.allianceId || !this.alliances.has(c.targetId)) throw new GameError('Choose an existing alliance while unaffiliated.');
         if ([...this.players.values()].filter(member=>member.allianceId===c.targetId).length>=LIMITS.allianceMembers) throw new GameError('This alliance has reached its 100-member capacity.');
+        if(!this.alliances.get(c.targetId).invites?.some(i=>i.playerId===p.id)&&[...this.players.values()].filter(member=>member.allianceId===c.targetId).length+(this.alliances.get(c.targetId).invites?.length??0)>=LIMITS.allianceMembers)throw new GameError('The remaining alliance places are reserved by invitations.');
         p.allianceId = c.targetId;
         for (const alliance of this.alliances.values()) alliance.invites = (alliance.invites ?? []).filter(invite => invite.playerId !== p.id);
         this.event(`${p.name} joined ${this.alliances.get(p.allianceId).name}.`); return;
@@ -554,7 +555,7 @@ export class World {
     // Public strategic control, never hidden enemy troop/garrison intelligence.
     result.passes=this.sites.filter(s=>s.kind==='gate').map(s=>{const locked=!siteIsOpen(this,s.id),own=!!viewer?.allianceId&&s.allianceId===viewer.allianceId,known=!viewer||own||vision.seen(s),approachAccessible=!reachable||s.zoneIds.some(id=>reachable.has(id));return {...s,locked,health:known?s.health:0,maxHealth:known?s.maxHealth:0,defendersKnown:known,garrisonMarches:own?this.garrisons.find(g=>g.targetId===s.id)?.armyIds.length??0:-1,approachAccessible,militaryAccess:!locked&&own,accessExplanation:locked?'Sealed until The Divine Gates Awaken':own?'Your alliance controls this crossing':!viewer?.allianceId?'Join an alliance; scouts may pass':!approachAccessible?'Secure the earlier passes before approaching':!territoryNear(this,viewer.allianceId,s)?'Extend connected alliance territory to this pass':'Rally from an accessible side to defeat the pass fortification'};});
     if(referenceScale(this)&&viewer?.forsaken?.searchResult?.status==='found'){
-      const pin=this.camps.find(c=>c.id===viewer.forsaken.searchResult.id&&c.spawned!==false&&c.health>0);
+      const pin=this.camps.find(c=>hasSearchPin(viewer,c));
       if(pin&&!result.camps.some(c=>c.id===pin.id))result.camps.push({...forsakenCard(pin),searchPin:true});
     }
     if(referenceScale(this)&&viewer)for(const c of result.camps)c.lockedReason=forsakenReason(this,viewer,c);

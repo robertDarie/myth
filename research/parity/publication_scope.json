@@ -1,5 +1,5 @@
 {
-  "description": "B2 owner-authorized real-game QA integration only; synthetic data isolated; unsupported cross-profile actions blocked; normal reference activation disabled.",
+  "description": "Reviewed combined Cursor gameplay plus Codex B3; no normal25-level activation or real-city conversion.",
   "features": [
     {
       "feature_id": "ROK-WORLD-PASS-OBJECTIVES",
@@ -114,6 +114,13 @@
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs"
       ],
       "approved_compatibility": "research/parity/approvals/cursor-night-5-kingdom-search.json"
+    },
+    {
+      "feature_id": "ROK-CITY-LEVELS-1-25",
+      "paths": [
+        "server/qa-reference-world.mjs"
+      ],
+      "approved_compatibility": "research/parity/approvals/combined-city-isolation.json"
     }
   ]
 }

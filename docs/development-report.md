@@ -183,3 +183,8 @@ Fetched clean d59c114a7e2c15610aa22c4b0723108c70ab7d27 (original requested basel
 ## Task7 B3 integration hardening —2026-11-19
 
 Five lasting tests include71 actual HTTP requests,12 concurrent retries, four trainers and seven parallel paid jobs, safe mixed-profile alliance/transfer/military isolation and persisted exactly-once completion. Four reproduced QA defects corrected: expired/zero-time jobs, malformed command types and corrupt saved identity/prerequisites. No supplied balance values or normal World/legacy progression changed. Full270-upgrade synthetic acceptance remains separate from authentic RoK progression: current birth/CH1–5 evidence still blocked. Unity compiled/DTO status and native NOT TESTED explicitly recorded in docs/qa/TASK7_B3_REPORT.md. No normal25 activation, migration, real saves, art/audio/tree work or Task8.
+
+
+## Combined Codex+Cursor integration —2026-11-20
+
+Six Cursor checkpoints imported sequentially onto ab033864 with additive metadata and both city/Forsaken DTOs preserved. Scouting4096automatic coverage, lawful private Forsaken search, disclosed local secondary actives, private alliance invitations and server route previews coexist with B3. Added decline/reservation/privacy/repeat-click/QA preview repairs and strict declared-default legacy conservation. Historical evidence immutable; new current Unity/runtime fingerprints supplemental. No normal25activation or real-city migration. Commander alternating full rage bar remains explicitly non-parity. Full results/package/native limits: docs/qa/COMBINED_OVERNIGHT_INTEGRATION.md.

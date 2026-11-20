@@ -52,29 +52,31 @@ namespace ThronesOfMyth
             {
                 if (world.markers != null) foreach (var pin in world.markers) AddHit(pin.id, "marker", pin.name, "Alliance marker", pin.x, pin.z);
                 if (world.flags != null) foreach (var flag in world.flags) if (flag.allianceId == me.allianceId) AddHit(flag.id, "flag", flag.isRoot ? "Alliance Fort" : "Alliance Beacon", flag.connected ? "Connected" : "Disconnected", flag.x, flag.z);
-                if (world.rallies != null) foreach (var rally in world.rallies) if (rally.allianceId == me.allianceId) AddHit(rally.targetId, "rally", "Rally · " + rally.phase, "Assembly", rally.meetX, rally.meetZ);
+                if (world.rallies != null) foreach (var rally in world.rallies) if (rally.allianceId == me.allianceId) AddHit(rally.id, "rally", "Rally · " + rally.phase, "Assembly", rally.meetX, rally.meetZ);
             }
         }
         private void AddHit(string id, string kind, string title, string detail, float x, float z) { if (string.IsNullOrEmpty(id) || kingdomHits.Count >= 8) return; kingdomHits.Add(new KingdomSearchHit { id = id, kind = kind, title = title, detail = detail, x = x, z = z }); }
         private void ConfirmMarkerAction(MapMarker marker)
         {
+            if (processing || pendingOrder != null || commands.Count > 0) return;
             bool ownArmy = marker.kind == "army" && System.Array.Exists(world.armies, army => army.id == marker.id && army.ownerId == playerId);
             if (ownArmy || marker.kind == "city" || marker.kind == "marker") { ActOnSelection(); return; }
             string type = marker.kind == "camp" ? "attack" : marker.kind == "node" ? "gather" : marker.kind == "site" ? "capture" : "";
             if (type.Length == 0) { ActOnSelection(); return; }
-            if (PreviewMatches(type, marker.id, 0, 0)) { if (marchPreview.authorized) ActOnSelection(); else status = marchPreview.message; return; }
+            if (PreviewMatches(type, marker.id, 0, 0)) { if (marchPreview.authorized) { marchPreview = null; marchPreviewKey = ""; ActOnSelection(); } else status = marchPreview.message; return; }
             if (marchPreviewBusy) { status = "Checking the authorized route…"; return; }
             QueueMarchPreview(type, marker.id, 0, 0);
         }
         private void ConfirmGroundMarch(float x, float z)
         {
-            if (PreviewMatches("move", "", x, z)) { if (marchPreview.authorized) Send(new GameCommand { type = "move", x = x, z = z }); else status = marchPreview.message; return; }
+            if (processing || pendingOrder != null || commands.Count > 0) return;
+            if (PreviewMatches("move", "", x, z)) { if (marchPreview.authorized) { marchPreview = null; marchPreviewKey = ""; Send(new GameCommand { type = "move", x = x, z = z }); } else status = marchPreview.message; return; }
             if (marchPreviewBusy) { status = "Checking the authorized route…"; return; }
             QueueMarchPreview("move", "", x, z);
         }
         private bool PreviewMatches(string type, string id, float x, float z) => !marchPreviewBusy && marchPreview != null && marchPreviewKey == PreviewKey(type, id, x, z);
         private string PreviewKey(string type, string id, float x, float z) => type + "|" + (id ?? "") + "|" + x.ToString("0.00", CultureInfo.InvariantCulture) + "|" + z.ToString("0.00", CultureInfo.InvariantCulture) + "|" + (ActiveArmy == null ? "" : ActiveArmy.id);
-        private void QueueMarchPreview(string type, string id, float x, float z) { if (me == null || string.IsNullOrEmpty(token)) return; StartCoroutine(FetchMarchPreview(type, id, x, z)); }
+        private void QueueMarchPreview(string type, string id, float x, float z) { if (me == null || ActiveArmy == null || string.IsNullOrEmpty(token)) return; StartCoroutine(FetchMarchPreview(type, id, x, z)); }
         private IEnumerator FetchMarchPreview(string type, string id, float x, float z)
         {
             int serial = ++marchPreviewSerial; string key = PreviewKey(type, id, x, z); marchPreviewBusy = true; string owner = playerId, origin = serverUrl;

@@ -376,7 +376,10 @@ namespace ThronesOfMyth
                 if (GUILayout.Button("Create · 50 gold")) Send(new GameCommand { type = "alliance-create", name = allianceName });
                 GUILayout.Label("Or join an existing alliance", sectionStyle);
                 foreach (var invite in world.incoming ?? Array.Empty<AllianceInvite>())
+                {
                     if (GUILayout.Button("Accept invitation · " + invite.allianceName, theme.Primary)) Send("alliance-join", invite.allianceId);
+                    if (GUILayout.Button("Decline invitation · " + invite.allianceName)) Send("alliance-decline-invite", invite.id);
+                }
                 foreach (var a in world.alliances) if (GUILayout.Button(a.name + " · " + a.members + " members")) Send("alliance-join", a.id);
                 return;
             }

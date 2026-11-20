@@ -1,0 +1,22 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner integrate Codex+Cursor mission sections3–5; safe rejection and B3 conservation",
+  "owner_decision": "No regression to Codex B3 is acceptable.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": [
+    "ROK-CITY-LEVELS-1-25"
+  ],
+  "paths": [
+    "server/qa-reference-world.mjs"
+  ],
+  "evidence_document": "research/parity/features/combined-overnight-integration.md",
+  "functional_checks": [
+    "combined multiplayer and stale preview authority",
+    "combined current Unity and source-bound evidence"
+  ],
+  "unchanged_numeric_checks": [
+    "Task7 B3 concurrent production HTTP queues payments and save boundaries",
+    "Task7 production city policy legacy quote and package closure regressions"
+  ]
+}

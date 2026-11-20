@@ -615,6 +615,32 @@
         "march preview leaves the save unchanged",
         "server/kingdom-play.test.mjs"
       ]
+    },
+    {
+      "name": "combined multiplayer and stale preview authority",
+      "command": [
+        "node",
+        "--test",
+        "server/combined-integration.test.mjs"
+      ]
+    },
+    {
+      "name": "combined current Unity and source-bound evidence",
+      "command": [
+        "python",
+        "-X",
+        "utf8",
+        "scripts/check-combined-integration.py"
+      ]
+    },
+    {
+      "name": "complete integrated server suite",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=4",
+        "server/*.test.mjs"
+      ]
     }
   ]
 }

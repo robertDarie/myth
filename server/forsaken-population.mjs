@@ -147,6 +147,6 @@ export function populationCommand(w,p,c,fail){
       }
     }
   }
-  p.forsaken.searchResult={...result,sequence:p.forsaken.searchSequence};return true;
+  p.forsaken.searchResult={...result,...(result.status==='found'?{cycle:w.camps.find(c=>c.id===result.id).cycle}:{}),sequence:p.forsaken.searchSequence};return true;
 }
 export function publicForsakenProgress(w,p){return {version:1,unlocked:p.forsaken.unlocked,kingdomLevel:kingdomForsakenLevel(w),firstClears:p.forsaken.firstClears,searchReadySeconds:Math.max(0,Math.ceil((p.forsaken.searchReadyAtMs-economyTime(w))/1000)),searchResult:p.forsaken.searchResult};}

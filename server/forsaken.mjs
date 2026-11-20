@@ -1,4 +1,5 @@
 import { validUnits, unitTotal } from './troops.mjs';
+export const hasSearchPin=(p,c)=>p.forsaken?.searchResult?.status==='found'&&p.forsaken.searchResult.id===c.id&&p.forsaken.searchResult.level===c.level&&p.forsaken.searchResult.cycle===c.cycle&&c.spawned!==false&&c.health>0;
 import { randomUUID } from 'node:crypto';
 import { referenceScale, referenceCamp, defenseFactor } from './numerics.mjs';
 import { armyList, ensureHero, heroLevel, castBattleSkill } from './progression.mjs';

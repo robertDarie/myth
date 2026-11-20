@@ -129,8 +129,8 @@ test('automatic exploration reaches every fog cell through legal scout movement'
     scouts: player.scouts.map(s => ({ phase: s.phase, x: s.x, z: s.z, targetX: s.targetX, targetZ: s.targetZ })),
     home: { x: player.homeX, z: player.homeZ }
   };
-  mkdirSync('docs/qa/evidence/cursor-night-1', { recursive: true });
-  writeFileSync('docs/qa/evidence/cursor-night-1/legal-exploration.json', JSON.stringify(report, null, 2) + '\n');
+  mkdirSync('work/combined-integration', { recursive: true });
+  writeFileSync('work/combined-integration/legal-exploration.json', JSON.stringify(report, null, 2) + '\n');
   assert.equal(report.cells, expected.fogCells);
   assert.equal(report.restarted, expected.fogCells);
 });

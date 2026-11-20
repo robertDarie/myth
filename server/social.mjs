@@ -7,6 +7,11 @@ export const allianceRole = (w, p) => { const a = w.alliances.get(p.allianceId);
 export function initializeSocial(p) { p.lastChatAt = -10; }
 const canManage = (w,p) => ['Leader','Officer'].includes(allianceRole(w,p));
 export function socialCommand(w,p,c,fail) {
+  if(c.type==='alliance-decline-invite'){
+    const alliance=[...w.alliances.values()].find(a=>(a.invites??[]).some(i=>i.id===c.targetId&&i.playerId===p.id));
+    if(!alliance)fail('That invitation is no longer open for your city.');
+    alliance.invites=alliance.invites.filter(i=>i.id!==c.targetId);return true;
+  }
   if(c.type === 'chat-send') {
     const channel = c.targetId || 'kingdom';
     if(!['kingdom','alliance','coalition'].includes(channel) || (channel==='alliance' && !p.allianceId)) fail('Choose an available chat channel.');

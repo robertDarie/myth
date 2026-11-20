@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+from qa_evidence_sources import dated_source
 
 ROOT = Path(__file__).resolve().parents[1]
 def read(path):
@@ -14,7 +15,7 @@ assert unity['success'] and unity['unityVersion'] == '6000.3.0f1'
 assert unity['independentBuildings'] == 11 and unity['paidJobs'] >= 1
 digest = hashlib.sha256()
 for name in ['Scripts/WorldModels.cs', 'Scripts/PrototypeClient.Interface.cs', 'Scripts/PrototypeClient.CityExperience.cs', 'Scripts/PrototypeClient.ReferenceCityQa.cs', 'Editor/ReferenceCityReview.cs']:
-    source = (ROOT / 'client/Assets/ThronesOfMyth' / name).read_text(encoding='utf-8-sig')
+    source = dated_source('client/Assets/ThronesOfMyth/' + name)
     digest.update((name + '\0' + source + '\0').encode('utf-8'))
 assert digest.hexdigest() == unity['sourceFingerprint'], 'Rerun actual Unity ReferenceCityReview; never rebind old evidence'
 assert evidence['normal_activation'] is False and evidence['real_saves_used'] is False

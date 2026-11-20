@@ -1,0 +1,11 @@
+{
+    "unityVersion": "6000.3.0f1",
+    "sourceFingerprint": "255766d129bbcdff33381aa92b6b213738ae89bf731acb6869bc4c0bd500a39a",
+    "scope": "Actual Unity map objects; no native input, readability or FPS certification",
+    "zones": 7,
+    "passes": 10,
+    "crossings": 10,
+    "mountainRenderers": 447,
+    "passModels": 10,
+    "success": true
+}

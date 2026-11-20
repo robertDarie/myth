@@ -19,8 +19,8 @@ for(let initial=1;initial<=32;initial++){
  for(let i=0;i<16;i++)old.tick(.25);
  const saved=structuredClone(old.toSave());assert.equal(saved.schema,27);
  const copy=World.fromSave(saved,{now}),next=copy.toSave();assert.equal(next.schema,28);
- const expected=saved.world.players.map(p=>({...p,offline:true}));assert.ok(isDeepStrictEqual(next.world.players,expected),'Player/commander/job/resource state changed for seed'+initial);
- for(const key of ['sessions','alliances','nodes','camps','flags','strongholds','rallies','garrisons','sieges','kingdom'])assert.ok(isDeepStrictEqual(next.world[key],saved.world[key]),key+' changed for seed'+initial);
+ const expected=saved.world.players.map(p=>({...p,offline:true,nextActive:'primary',lastSkillRole:'',marches:p.marches.map(a=>({...a,nextActive:'primary',lastSkillRole:''})),scouts:p.scouts.map(s=>({...s,autoAssigned:s.autoAssigned??false}))}));assert.ok(isDeepStrictEqual(next.world.players,expected),'Player/commander/job/resource state changed beyond declared defaults for seed'+initial);
+ for(const key of ['sessions','alliances','nodes','camps','flags','strongholds','rallies','garrisons','sieges','kingdom']){const expectedValue=key==='alliances'?saved.world[key].map(a=>({...a,invites:[]})):saved.world[key];assert.ok(isDeepStrictEqual(next.world[key],expectedValue),key+' changed beyond declared empty invitations for seed'+initial);}
  for(const site of saved.world.sites){const actual=next.world.sites.find(s=>s.id===site.id);assert.ok(actual);for(const [key,value]of Object.entries(site))assert.ok(isDeepStrictEqual(actual[key],value),'Existing site '+site.id+'.'+key+' changed');}
  assert.equal(next.world.sites.length,saved.world.sites.length+8);assert.equal(next.world.sites.filter(s=>s.kind==='gate').length,10);
 }

@@ -1,7 +1,7 @@
-import { forsakenReason } from './forsaken.mjs';
+import { forsakenReason, hasSearchPin } from './forsaken.mjs';
 import { WORLD_SIZE } from './world-map.mjs';
 import { route, scoutRoute } from './navigation.mjs';
-import { initializeLogistics, cargoTotal } from './field-logistics.mjs';
+import { initializeLogistics, cargoTotal, activeMarches } from './field-logistics.mjs';
 import { visible } from './exploration.mjs';
 import { siteIsOpen } from './kingdom.mjs';
 import { initializeFortification, territoryNear, TERRITORY_RULES } from './campaign.mjs';
@@ -9,7 +9,7 @@ import { allianceRole } from './social.mjs';
 import { TROOP_TYPES, selection, readyFor, transfer, unitTotal, countOf, changeUnits } from './troops.mjs';
 import { randomUUID } from 'node:crypto';
 import { COMMANDERS } from './content.mjs';
-import { armyList, ensureHero } from './progression.mjs';
+import { armyList, ensureHero, age } from './progression.mjs';
 import { marchTroopCap } from './city.mjs';
 const withinMarchShare = (p, troops, fail,commanderId=p.commanderId) => {
   const cap = marchTroopCap(p,commanderId);
@@ -47,7 +47,7 @@ export function marchCommand(world, p, c, fail) {
       a.target = { type: 'move', x: c.x, z: c.z }; break;
     case 'attack': {
       const camp = world.camps.find(e => e.id === c.targetId);
-      const searched=camp&&p.forsaken?.searchResult?.status==='found'&&p.forsaken.searchResult.id===camp.id&&camp.health>0;
+      const searched=camp&&hasSearchPin(p,camp);
       const seen=camp&&camp.spawned!==false&&(visible(world,p,camp)||searched);
       const known=seen?camp:p.discovery.find(r=>r.kind==='camps'&&r.value.id===c.targetId)?.value;
       if (!camp||!known || (seen&&camp.health<=0)) fail('Camp unavailable or behind a locked gate.');
@@ -162,13 +162,14 @@ export function previewMarch(world, p, query) {
   const a = armyList(p).find(march => march.id === (asked.marchId || p.id));
   if (!a) return denyPreview('That march does not belong to your city.');
   if (a.health <= 0 || a.recovery > 0) return denyPreview('This army is recovering at home.');
+  if(!a.deployed&&activeMarches(p).length>=age(p).marches)return denyPreview('All deployment slots are in use. Return a march first.');
   let destination = null;
   if (type === 'move') {
     if (!point(asked)) return denyPreview(`Destination must be inside the map (1–${WORLD_SIZE - 1}).`);
     destination = { x: asked.x, z: asked.z };
   } else if (type === 'attack') {
     const camp = world.camps.find(e => e.id === asked.targetId);
-    const searched = camp && p.forsaken?.searchResult?.status === 'found' && p.forsaken.searchResult.id === camp.id && camp.health > 0;
+    const searched = camp && hasSearchPin(p,camp);
     const seen = camp && camp.spawned !== false && (visible(world, p, camp) || searched);
     const known = seen ? camp : p.discovery.find(r => r.kind === 'camps' && r.value.id === asked.targetId)?.value;
     if (!camp || !known || (seen && camp.health <= 0)) return denyPreview('Camp unavailable or behind a locked gate.');

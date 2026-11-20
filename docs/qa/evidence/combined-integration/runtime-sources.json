@@ -1,0 +1,86 @@
+[
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Exploration.cs",
+    "sha256": "e87967a6dbc53a611178f3a80cc756f8e800ddf44676cf2da25be3af384c4c07"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+    "sha256": "5346c04f10331714bd33b9f1e95d6fead75fe04407926ebe526d68205d2c5bdd"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
+    "sha256": "4fd3de05ab644adc44872af20a818c3a791e7a872731bdd41347aaaf842ecc5d"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
+    "sha256": "08c410bfbacaa0aaf6f0b26b2df94a369f2db9498c8edd5994a070ebdab66213"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs",
+    "sha256": "0e7cae5116ff7302a442a37ceee0ca2b309e3ceaae500a72e722a2c3efde9110"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+    "sha256": "0225f82a49b339a7bcc060095cbd74952a917173646657f8751f1b77274da59b"
+  },
+  {
+    "path": "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
+    "sha256": "5deca160539343904059404919e6bbfa922b894ea010fc705067e860ab150f26"
+  },
+  {
+    "path": "server/campaign.mjs",
+    "sha256": "bb81f35c9b2fe7900da2f7540c2cbb6d86b8068b816374705a32f666748bf34b"
+  },
+  {
+    "path": "server/city-content.mjs",
+    "sha256": "c4b80de0eac02f4a7f6e7840a1db5af2dc62583e12ed0c6344c7f74de4b2a9b3"
+  },
+  {
+    "path": "server/exploration.mjs",
+    "sha256": "360fa3aa887edbdd80975e4466045f7183a866139de9f3c56a0ef6efe4057ae7"
+  },
+  {
+    "path": "server/forsaken-population.mjs",
+    "sha256": "840dc3580c382305442da41552796934004e1271c6e73d043f5482e82c14fadd"
+  },
+  {
+    "path": "server/forsaken.mjs",
+    "sha256": "007fbfe5767b7c1e01cd57ae3dcfcaa2aa088c3e8b56d81c4f1d960b708aac40"
+  },
+  {
+    "path": "server/http.mjs",
+    "sha256": "fc93a5df07fd67449e5243dd8db1ef311a5c61d4a61bf51889bc5cf2f2061345"
+  },
+  {
+    "path": "server/marches.mjs",
+    "sha256": "db9fd04037d7e5a6590bc13edfdffb8598fc31ce6dd77c702b84cb9b29b235f4"
+  },
+  {
+    "path": "server/progression.mjs",
+    "sha256": "69c48fc9f5a8455bdc192b5128528adc821ef540338040862699142d12858566"
+  },
+  {
+    "path": "server/qa-reference-world.mjs",
+    "sha256": "0a158a865bdbacf3bb42e4d9f67871333a721f6159503677d31dc2977c0576f7"
+  },
+  {
+    "path": "server/realms.mjs",
+    "sha256": "b17cf01d9afa5e2b106d9b14d66a03f612393e93dc7cac992c17798a23f29360"
+  },
+  {
+    "path": "server/social.mjs",
+    "sha256": "ff9062d80af6ecc4c29f58037feec912e38f2aaa784ea0840661992aa2f6ee6c"
+  },
+  {
+    "path": "server/strongholds.mjs",
+    "sha256": "3a24de6b045fed986b6721643e8382636457fb830d5cb2d3893ec26b31337203"
+  },
+  {
+    "path": "server/war.mjs",
+    "sha256": "c1fc07dce2e7d56aafd753e78be5f4245a3a2e03f2a22044b6c1cc10a2ca457a"
+  },
+  {
+    "path": "server/world.mjs",
+    "sha256": "d1e64bd03b5fb2ff24b41ad79c1d8c32299be78ec2f9d6b49bdaa9cc14a66f75"
+  }
+]

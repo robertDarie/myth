@@ -124,7 +124,7 @@ namespace ThronesOfMyth
             }
             if (officer && world.rankings != null)
             {
-                GUILayout.Label("Invitations use the existing 100-member capacity. Donation prices and gift odds are not published here.", noteStyle);
+                GUILayout.Label("Invite an unaffiliated city. Each invitation reserves a place in your alliance.", noteStyle);
                 foreach (var city in world.rankings.players)
                 {
                     if (!string.IsNullOrEmpty(city.allianceId) || city.id == playerId) continue;

@@ -7,7 +7,7 @@ import {advanceDowntime} from './downtime.mjs';
 const configurations=new WeakMap(),engines=new WeakMap();
 const resources=['food','wood','stone','gold'];
 const membership=new Set(['alliance-join','alliance-leave','alliance-kick','alliance-promote','alliance-demote','alliance-transfer']);
-const referenceSocial=new Set(['alliance-join','alliance-leave','chat']);
+const referenceSocial=new Set(['alliance-join','alliance-leave','alliance-decline-invite','chat']);
 const label='EXPERIMENTAL / TEST DATA — NOT RoK parity';
 export const QA_REFERENCE_FORMAT='QA_REFERENCE_KINGDOM_V1';
 const requireQa=(condition,message)=>{if(!condition)throw new GameError(message);};
@@ -58,6 +58,11 @@ export class QaReferenceWorld extends World {
   return s;
  }
  isReference(id){return Object.hasOwn(this.qaReferenceState.bindings,id);}
+ previewMarch(p,query){
+  requireQa(p&&this.players.get(p.id)===p,'Authenticated World actor required');
+  if(this.isReference(p.id))return {authorized:false,message:'Reference QA military and scouting are BLOCKED pending verified integration',route:[]};
+  return super.previewMarch(p,query);
+ }
  command(p,c){
   requireQa(p&&this.players.get(p.id)===p,'Authenticated World actor required');
   requireQa(c&&typeof c==='object','Invalid QA command');

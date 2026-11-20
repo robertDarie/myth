@@ -19,11 +19,11 @@ for(let initial=1;initial<=8;initial++){
  old=new PreviousWorld({random,now});const s=old.join('Task7 historical '+initial),p=old.authenticate(s.token);
  old.command(p,{type:'upgrade'});for(let i=0;i<8;i++)old.tick(.25);
  const saved=old.toSave(),current=World.fromSave(saved,{now}),copy=current.authenticate(s.token);
- assert.deepEqual(current.toSave().world.players,saved.world.players.map(p=>({...p,offline:true})), 'All earned player state and paid jobs must survive');
+ assert.deepEqual(current.toSave().world.players,saved.world.players.map(p=>({...p,offline:true,nextActive:'primary',lastSkillRole:'',marches:p.marches.map(a=>({...a,nextActive:'primary',lastSkillRole:''}))})), 'All earned player state and paid jobs must survive; only explicitly declared new cast-state defaults added');
  // Explicit boundary fixtures, not legitimate progression evidence.
  for(const level of [1,2,3,4,5])for(const masonry of [0,1,2,3]){
   const fixture=structuredClone(p);fixture.cityLevel=level;fixture.technologies.masonry=masonry;
-  for(const b of BUILDINGS){assert.deepEqual(buildingCard(fixture,b),previousCard(fixture,b));fullCardComparisons++;}
+  for(const b of BUILDINGS){const prior=previousCard(fixture,b),actual=buildingCard(fixture,b);if(b.id==='scoutcamp'){assert.match(actual.description,/every reachable unexplored sector/);prior.description=actual.description;}assert.deepEqual(actual,prior);fullCardComparisons++;}
  }
  assert.deepEqual(copy.construction,p.construction);
 }

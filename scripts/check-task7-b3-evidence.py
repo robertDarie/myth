@@ -1,6 +1,7 @@
 """B3 deterministic local traceability, never proof of external reference truth."""
 import hashlib
 import json
+from qa_evidence_sources import dated_source
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,7 +20,7 @@ assert unity['independentBuildings'] == 11 and unity['paidJobs'] == 1
 assert 'native input NOT TESTED' in unity['scope']
 digest = hashlib.sha256()
 for name in ['Scripts/WorldModels.cs', 'Scripts/PrototypeClient.Interface.cs', 'Scripts/PrototypeClient.CityExperience.cs', 'Scripts/PrototypeClient.ReferenceCityQa.cs', 'Editor/ReferenceCityReview.cs']:
-    source = (ROOT / 'client/Assets/ThronesOfMyth' / name).read_text(encoding='utf-8-sig')
+    source = dated_source('client/Assets/ThronesOfMyth/' + name)
     digest.update((name + '\0' + source + '\0').encode('utf-8'))
 assert digest.hexdigest() == unity['sourceFingerprint'], 'Rerun actual Unity review, never rebind evidence'
 for row in read('research/parity/task7/source-module-supplement.json'):
