@@ -652,7 +652,8 @@ namespace ThronesOfMyth
                             }
                             if (!focused)
                             {
-                                cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);focused=true;
+                                // Capture the actual home view before the optional city intro saves its return camera.
+                                cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10,true);focused=true;
                                 string introKey="ThronesOfMyth.intro."+serverUrl.TrimEnd('/')+"."+playerId;
                                 if(openingEnabled&&freshGuest&&me.cityLevel==1&&me.kills==0&&PlayerPrefs.GetInt(introKey,0)==0){BeginCity();PlayerPrefs.SetInt(introKey,1);PlayerPrefs.Save();}
                                 freshGuest=false;

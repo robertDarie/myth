@@ -24,6 +24,23 @@ namespace ThronesOfMyth.Editor
             if (!qa.IsReferenceQa) throw new Exception("Bound explicit experimental city must retain the QA interface");
             qa.referenceCity.playerId="other-city";
             if (qa.IsReferenceQa) throw new Exception("Unbound reference DTO cannot select the QA interface");
+            var cameraRoot=new GameObject("Initial kingdom camera regression");
+            try
+            {
+                var camera=cameraRoot.AddComponent<Camera>();
+                var controller=cameraRoot.AddComponent<StrategyCamera>();
+                controller.SetMapBounds(new Rect(0,0,256,256));
+                var home=new Vector3(220,0,220);
+                controller.SetView(home,10,true);
+                var projected=camera.WorldToViewportPoint(home);
+                if(projected.z<=0||projected.x<0||projected.x>1||projected.y<0||projected.y>1)throw new Exception("Fresh far-from-origin city must be visible before the intro saves its return view");
+                var returnFocus=controller.FocusPoint;float returnZoom=camera.orthographicSize;
+                controller.SetView(home,controller.MinimumZoom,true);
+                controller.SetView(returnFocus,returnZoom,true);
+                projected=camera.WorldToViewportPoint(home);
+                if(projected.z<=0||projected.x<0||projected.x>1||projected.y<0||projected.y>1)throw new Exception("City-to-world return lost the initialized home view");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(cameraRoot); }
             ReferenceCityReview.Validate();
             string repository = Path.GetFullPath(Path.Combine(Application.dataPath, "../.."));
             string folder = Path.Combine(Application.dataPath, "ThronesOfMyth/Scripts");

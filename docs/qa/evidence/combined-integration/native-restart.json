@@ -1,0 +1,42 @@
+{
+  "source": "8e013f241ac56024b37293a290086eb3d5fb502c",
+  "nativeClientAndServerRestarts": 1,
+  "troops": 900,
+  "commanderXP": 100,
+  "kills": 1,
+  "alliancePreserved": true,
+  "fogBefore": 320,
+  "fogAfter": 320,
+  "resourcesBefore": {
+    "food": 12164,
+    "wood": 10164,
+    "stone": 150,
+    "gold": 1000,
+    "mana": 30,
+    "aether": 0
+  },
+  "resourcesAfter": {
+    "food": 12202,
+    "wood": 10202,
+    "stone": 150,
+    "gold": 1000,
+    "mana": 30,
+    "aether": 0
+  },
+  "pveReports": [
+    {
+      "outcome": "Victory",
+      "ap": 50,
+      "xp": 100
+    }
+  ],
+  "earnedStateConserved": true,
+  "positionBefore": [
+    108.50668334960938,
+    13.722389221191406
+  ],
+  "positionAfter": [
+    108.50668334960938,
+    13.722389221191406
+  ]
+}
