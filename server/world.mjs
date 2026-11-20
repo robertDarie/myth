@@ -23,7 +23,7 @@ import { initializeRecon, validateRecon } from './recon.mjs';
 import { campaignCommand, campaignFor, campaignDestination, tickCampaign, campaignSnapshot, groupReports, initializeCampaign, initializeFortification, restoreCampaign, territoryNear, reconcileCampaign } from './campaign.mjs';
 import { socialCommand, allianceRole, allianceRoster, allianceInviteView, initializeSocial, validateSocial } from './social.mjs';
 import { initializeWar, retreat, warCommand, tickBattle, finishBattle, attackReason, combatFor, tickHospital, warSnapshot, wardTroops, wardMythic, validateWar, validateReport } from './war.mjs';
-import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, troopTypes, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed } from './troops.mjs';
+import { TROOP_TYPES, FORMATION, legacyUnits, migrateUnits, validateUnits, troopBase, classCounts, countOf, changeUnits, troopTypes, tierLock, promotionCost, sourceType, trainingBatch, batchCost, formationOf, trainingSpeed, openTrainingReceipt, closeTrainingReceipt } from './troops.mjs';
 import { randomUUID, randomInt } from 'node:crypto';
 import { resourceNodes, RELICS, ARMAMENTS, SUMMON_RULES, TRADES, RESOURCES, TECHNOLOGIES } from './city-content.mjs';
 import { marchCommand, previewMarch as marchPreview } from './marches.mjs';
@@ -158,6 +158,8 @@ export class World {
     if (populationCommand(this,p,c,fail) || kingdomCommand(this, p, c, fail) || eventCommand(this, p, c, fail) || diplomacyCommand(this, p, c, fail) || coalitionCommand(this, p, c, fail) || seasonCommand(this, p, c, fail) || activityCommand(this, p, c, fail) || journeyCommand(this, p, c, fail) || findingCommand(this, p, c, fail) || explorationCommand(this, p, c, fail) || campaignCommand(this, p, c, fail) || socialCommand(this, p, c, fail) || warCommand(this, p, c, fail) || marchCommand(this, p, c, fail) || progressionCommand(this, p, c, fail) || cityCommand(this, p, c, fail)) { reconcileCampaign(this); return; }
     switch (c.type) {
       case 'promote': case 'train': {
+        const trainingReceipt = openTrainingReceipt(p, c, message => { throw new GameError(message); });
+        if (trainingReceipt === 'replay') return;
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');
         const queued = p.trainingQueue.filter(j => ['train','promote'].includes(j.type)).reduce((total, j) => total + j.amount, 0);
         const promoting=c.type==='promote';
@@ -173,7 +175,7 @@ export class World {
         if(promoting){changeUnits(p.reserveUnits,source.id,-amount);p.reserveTroops-=amount;}
         const baseDuration=promoting?type.duration-source.duration:type.duration;
         const job = this.job(promoting?'promote':'train', baseDuration * (referenceScale(p)?amount:promoting?1:amount/5) / trainingSpeed(p), { ...cost }, amount);
-        job.targetId = type.id;if(promoting)job.sourceId=source.id; p.trainingQueue.push(job); return;
+        job.targetId = type.id;if(promoting)job.sourceId=source.id; p.trainingQueue.push(job); closeTrainingReceipt(p, trainingReceipt); return;
       }
       case 'recruit': {
         if (p.trainingQueue.length >= 3) throw new GameError('Training queue is full (three orders).');

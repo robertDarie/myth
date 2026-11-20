@@ -4,6 +4,10 @@
 
 Resource packs, category speedups, universal speedups, commander XP, shards, sigils, AP tonics and attack/defense oaths already ran on the server. The hole was a second delivery of the same order. That second delivery no longer spends the stack. Live Rise of Kingdoms VIP, teleports, peace shields, equipment chests, multi-duration speedups and drop rates remain unknown and were not invented. Experimental city jobs still need the integration owner before a speedup can see them. Native inventory clicks were not run.
 
+## Phase 4 task 8A — training orders and a closed siege class
+
+Fifteen prototype troop rows remain trainable when their existing Citadel, Hall of Spears and Athenaeum gates are met. Siege has no verified cost or stat row, so a siege order is rejected and spends nothing. Per-class facilities and the wounded, severely wounded and dead split stay blocked. Native training clicks were not run.
+
 
 ## Phase 2 task 4 — season receipts and rankings
 

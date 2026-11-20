@@ -1,0 +1,22 @@
+{
+  "status": "OWNER_APPROVED",
+  "approved_on": "2026-11-20",
+  "authority": "Owner phase 4 task 8A instruction for isolated local troop progression work, before this correction",
+  "owner_decision": "Phase 4 task 8A authorizes one training or promotion order per request id and a closed siege class while existing troop costs, stats, batch sizes and the shared Hall of Spears stay unchanged.",
+  "reference_parity": "UNVERIFIED",
+  "feature_ids": ["ROK-MILITARY-TRAINING"],
+  "paths": [
+    "server/troops.mjs",
+    "server/world.mjs",
+    "server/city.mjs",
+    "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+    "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+  ],
+  "evidence_document": "research/parity/features/military-roster.md",
+  "functional_checks": [
+    "a repeated training request does not open a second batch"
+  ],
+  "unchanged_numeric_checks": [
+    "existing troop costs and stats stay unchanged"
+  ]
+}

@@ -1,5 +1,5 @@
 import { buildingPolicyQuote } from './city-policy.mjs';
-import { trainingOptions, trainingBatch, trainingSpeed } from './troops.mjs';
+import { trainingOptions, trainingBatch, trainingSpeed, militaryRoster } from './troops.mjs';
 import { recordActivity, activityClock } from './activity.mjs';
 import { recordEvent } from './events.mjs';
 import { BUILDINGS, INITIAL_BUILDINGS, TECHNOLOGIES, RELICS, ARMAMENTS, ARMAMENT_SET, ARMAMENT_SLOTS, TRADES, SUMMON_RULES, RESOURCES } from './city-content.mjs';
@@ -107,6 +107,7 @@ export function citySnapshot(world, p) {
     heroProgress: COMMANDERS.map(c => ({ ...skillInfo(p, c.id), marchTroopCap:marchTroopCap(p,c.id), rank: p.commanderRanks[c.id] ?? 0, shards: p.commanderShards[c.id] ?? 0, nextShards: 10 * ((p.commanderRanks[c.id] ?? 0) + 1), nextGold: 50 * ((p.commanderRanks[c.id] ?? 0) + 1) })),
     armamentLoadout: (p.ownedCommanders ?? []).map(id => ({ commanderId: id, ...(p.commanderArmaments?.[id] ?? emptyArmamentSlots()) })),
     armamentSet: ARMAMENT_SET,
+    militaryRoster: militaryRoster(),
     offeringAvailable: p.buildings.oracle > 0 && p.lastOfferingDay !== new Date(activityClock(world).now).toISOString().slice(0, 10),
     offeringAmount: p.buildings.oracle >= 5 ? 3 : p.buildings.oracle >= 3 ? 2 : 1,
     sealCost: { aether:10 } };

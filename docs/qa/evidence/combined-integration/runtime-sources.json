@@ -29,11 +29,11 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
-    "sha256": "cb0b3915fb80e90b63d61f159d8398f6b7d4c82e703d546dd00b41a4f90b27c8"
+    "sha256": "32e4529235d6d10ab9a73551d3966aa0e42a2d6b26abde0c15a255101c350b10"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
-    "sha256": "cd88d211406881e145eef717d16072f8c4cfdae3324139840f81d6bab48d39f5"
+    "sha256": "e9141aa8e9fed538d0a0f9b135882440bf9bd757e6d8a37ece262d81e10e7c0a"
   },
   {
     "path": "server/campaign.mjs",
@@ -89,6 +89,6 @@
   },
   {
     "path": "server/world.mjs",
-    "sha256": "d1e64bd03b5fb2ff24b41ad79c1d8c32299be78ec2f9d6b49bdaa9cc14a66f75"
+    "sha256": "9412f166c4d7dfcbd43b5975073bb70f2c9dec3fdc8f513bef4a0e48a7cdc4a8"
   }
 ]

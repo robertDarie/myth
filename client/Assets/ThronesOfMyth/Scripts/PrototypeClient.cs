@@ -170,6 +170,7 @@ namespace ThronesOfMyth
             DrawConstructionJobs();
             GUILayout.Space(8); GUILayout.Label("Training ground", sectionStyle);
             GUILayout.Label("Infantry counters cavalry · Cavalry counters archers · Archers counter infantry. Tiers keep these roles.",noteStyle);
+            if(me.militaryRoster!=null)GUILayout.Label(me.militaryRoster.productionClasses+" classes · "+me.militaryRoster.tiersPerClass+" tiers each · "+me.militaryRoster.sharedFacility+". "+me.militaryRoster.siegeReason,noteStyle);
             trainingTier=GUILayout.SelectionGrid(trainingTier,new[]{"I","II","III","IV","V"},5,GUILayout.Height(32));
             string[] tierNotes={
                 "Tier I trains from the Hall of Spears. Cavalry needs Citadel 2.",
@@ -191,14 +192,14 @@ namespace ThronesOfMyth
                 GUILayout.Label(troop.description + "  Health " + troop.health.ToString("0.##") + " · Damage " + troop.damage.ToString("0.##") + " per troop", noteStyle);
                 int batch=troop.orderAmount;
                 string reason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":batch<=0?"The server has not quoted this order.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:me.trainingQueue.Length>=3?"Training queue is full.":me.assignedTroops+me.reserveTroops+me.hospitalTroops+queuedTroops+batch>cap?"Increase troop capacity or finish current training.":!Afford(troop.orderCost)?"More resources required: "+Cost(troop.orderCost):"";
-                if(theme.Action("Train "+batch+" · "+Mathf.CeilToInt(troop.orderSeconds)+"s · "+Cost(troop.orderCost),string.IsNullOrEmpty(reason),reason))Send("train",troop.id);
+                if(theme.Action("Train "+batch+" · "+Mathf.CeilToInt(troop.orderSeconds)+"s · "+Cost(troop.orderCost),string.IsNullOrEmpty(reason),reason))Send(new GameCommand{type="train",targetId=troop.id,requestId=Guid.NewGuid().ToString("N")});
                 var source=troop.tier>=2?Array.Find(world.troopTypes,t=>t.id==troop.sourceId):null;
                 if(source!=null)
                 {
                     GUILayout.Label("Per unit: health "+source.health.ToString("0.##")+" → "+troop.health.ToString("0.##")+" · damage "+source.damage.ToString("0.##")+" → "+troop.damage.ToString("0.##"),noteStyle);
                     GUILayout.Label("Ready "+source.name+": "+troop.sourceAvailable+" · promotion preserves all "+troop.promotionAmount+" soldiers",noteStyle);
                     string promotionReason=processing?"Sending your order…":pendingOrder!=null?"Confirm your previous order first.":!string.IsNullOrEmpty(troop.lockedReason)?troop.lockedReason:troop.sourceAvailable<troop.promotionAmount?"Needs "+troop.promotionAmount+" ready "+source.name+".":me.trainingQueue.Length>=3?"Training queue is full.":!Afford(troop.promotionCost)?"More resources required: "+Cost(troop.promotionCost):"";
-                    if(theme.Action("Promote "+troop.promotionAmount+" · "+Mathf.CeilToInt(troop.promotionSeconds)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send("promote",troop.id);
+                    if(theme.Action("Promote "+troop.promotionAmount+" · "+Mathf.CeilToInt(troop.promotionSeconds)+"s · "+Cost(troop.promotionCost),string.IsNullOrEmpty(promotionReason),promotionReason,false))Send(new GameCommand{type="promote",targetId=troop.id,requestId=Guid.NewGuid().ToString("N")});
                 }
                 GUILayout.EndVertical();
             }

@@ -10,6 +10,14 @@
       "command": ["node", "--test", "--test-name-pattern", "item amounts and speedup durations", "server/inventory-orders.test.mjs"]
     },
     {
+      "name": "a repeated training request does not open a second batch",
+      "command": ["node", "--test", "--test-name-pattern", "repeated training request", "server/military-roster.test.mjs"]
+    },
+    {
+      "name": "existing troop costs and stats stay unchanged",
+      "command": ["node", "--test", "--test-name-pattern", "troop costs and stats stay unchanged", "server/military-roster.test.mjs"]
+    },
+    {
       "name": "season rewards stay on the existing milestone and placement schedule",
       "command": ["node", "--test", "--test-name-pattern", "milestone and placement schedule", "server/season.test.mjs"]
     },

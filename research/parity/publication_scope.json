@@ -157,6 +157,17 @@
         "server/qa-reference-world.mjs"
       ],
       "approved_compatibility": "research/parity/approvals/combined-city-isolation.json"
+    },
+    {
+      "feature_id": "ROK-MILITARY-TRAINING",
+      "paths": [
+        "server/troops.mjs",
+        "server/world.mjs",
+        "server/city.mjs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
+        "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs"
+      ],
+      "approved_compatibility": "research/parity/approvals/cursor-phase4-troops.json"
     }
   ]
 }

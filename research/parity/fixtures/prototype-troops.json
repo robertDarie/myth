@@ -1,0 +1,228 @@
+{
+  "classification": "Existing prototype troop table. Not a verified Rise of Kingdoms stat table.",
+  "count": 15,
+  "items": [
+    {
+      "id": "infantry",
+      "tier": 1,
+      "role": "Infantry",
+      "health": 5,
+      "damage": 0.75,
+      "speed": 1,
+      "duration": 8,
+      "cityLevel": 1,
+      "cost": {
+        "food": 50,
+        "gold": 20
+      }
+    },
+    {
+      "id": "archers",
+      "tier": 1,
+      "role": "Archers",
+      "health": 4,
+      "damage": 0.95,
+      "speed": 1,
+      "duration": 10,
+      "cityLevel": 1,
+      "cost": {
+        "food": 55,
+        "gold": 25
+      }
+    },
+    {
+      "id": "cavalry",
+      "tier": 1,
+      "role": "Cavalry",
+      "health": 5,
+      "damage": 0.85,
+      "speed": 1.2,
+      "duration": 12,
+      "cityLevel": 2,
+      "cost": {
+        "food": 70,
+        "gold": 30
+      }
+    },
+    {
+      "id": "veteranInfantry",
+      "tier": 2,
+      "role": "Infantry",
+      "health": 7,
+      "damage": 1.0125000000000002,
+      "speed": 1,
+      "duration": 12.8,
+      "cityLevel": 2,
+      "cost": {
+        "food": 90,
+        "gold": 36,
+        "stone": 10
+      }
+    },
+    {
+      "id": "veteranArchers",
+      "tier": 2,
+      "role": "Archers",
+      "health": 5.6,
+      "damage": 1.2825,
+      "speed": 1,
+      "duration": 16,
+      "cityLevel": 2,
+      "cost": {
+        "food": 99,
+        "gold": 45,
+        "stone": 10
+      }
+    },
+    {
+      "id": "veteranCavalry",
+      "tier": 2,
+      "role": "Cavalry",
+      "health": 7,
+      "damage": 1.1475,
+      "speed": 1.2,
+      "duration": 19.200000000000003,
+      "cityLevel": 2,
+      "cost": {
+        "food": 126,
+        "gold": 54,
+        "stone": 10
+      }
+    },
+    {
+      "id": "columnInfantry",
+      "tier": 3,
+      "role": "Infantry",
+      "health": 8.54,
+      "damage": 1.1947500000000002,
+      "speed": 1,
+      "duration": 16.384,
+      "cityLevel": 3,
+      "cost": {
+        "food": 140,
+        "gold": 56,
+        "stone": 25
+      }
+    },
+    {
+      "id": "columnArchers",
+      "tier": 3,
+      "role": "Archers",
+      "health": 6.832,
+      "damage": 1.51335,
+      "speed": 1,
+      "duration": 20.48,
+      "cityLevel": 3,
+      "cost": {
+        "food": 154,
+        "gold": 70,
+        "stone": 25
+      }
+    },
+    {
+      "id": "columnCavalry",
+      "tier": 3,
+      "role": "Cavalry",
+      "health": 8.54,
+      "damage": 1.35405,
+      "speed": 1.2,
+      "duration": 24.576000000000004,
+      "cityLevel": 3,
+      "cost": {
+        "food": 196,
+        "gold": 84,
+        "stone": 25
+      }
+    },
+    {
+      "id": "bulwarkInfantry",
+      "tier": 4,
+      "role": "Infantry",
+      "health": 10.4188,
+      "damage": 1.4098050000000002,
+      "speed": 1,
+      "duration": 20.97152,
+      "cityLevel": 4,
+      "cost": {
+        "food": 217,
+        "gold": 87,
+        "stone": 45
+      }
+    },
+    {
+      "id": "bulwarkArchers",
+      "tier": 4,
+      "role": "Archers",
+      "health": 8.33504,
+      "damage": 1.785753,
+      "speed": 1,
+      "duration": 26.2144,
+      "cityLevel": 4,
+      "cost": {
+        "food": 239,
+        "gold": 109,
+        "stone": 45
+      }
+    },
+    {
+      "id": "bulwarkCavalry",
+      "tier": 4,
+      "role": "Cavalry",
+      "health": 10.4188,
+      "damage": 1.5977789999999998,
+      "speed": 1.2,
+      "duration": 31.457280000000004,
+      "cityLevel": 4,
+      "cost": {
+        "food": 304,
+        "gold": 131,
+        "stone": 45
+      }
+    },
+    {
+      "id": "titanInfantry",
+      "tier": 5,
+      "role": "Infantry",
+      "health": 12.710935999999998,
+      "damage": 1.6635699000000002,
+      "speed": 1,
+      "duration": 26.843545600000002,
+      "cityLevel": 5,
+      "cost": {
+        "food": 337,
+        "gold": 135,
+        "stone": 70
+      }
+    },
+    {
+      "id": "titanArchers",
+      "tier": 5,
+      "role": "Archers",
+      "health": 10.1687488,
+      "damage": 2.1071885399999997,
+      "speed": 1,
+      "duration": 33.554432000000006,
+      "cityLevel": 5,
+      "cost": {
+        "food": 371,
+        "gold": 169,
+        "stone": 70
+      }
+    },
+    {
+      "id": "titanCavalry",
+      "tier": 5,
+      "role": "Cavalry",
+      "health": 12.710935999999998,
+      "damage": 1.8853792199999997,
+      "speed": 1.2,
+      "duration": 40.265318400000005,
+      "cityLevel": 5,
+      "cost": {
+        "food": 472,
+        "gold": 204,
+        "stone": 70
+      }
+    }
+  ]
+}

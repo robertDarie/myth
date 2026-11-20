@@ -89,7 +89,33 @@ export function migrateUnits(p) {
   for (const army of [p, ...p.marches]) army.units = legacyUnits(army.troops);
   for (const job of p.trainingQueue) if (job.type === 'train') job.targetId = 'infantry';
 }
+const TRAINING_RECEIPT_LIMIT = 4096;
+const trainingReceiptId = /^[A-Za-z0-9_-]{8,80}$/;
+const trainingDigest = c => JSON.stringify({ type: c.type, targetId: c.targetId || 'infantry' });
+export function openTrainingReceipt(p, c, fail) {
+  if (c.requestId == null || c.requestId === '') return null;
+  if (typeof c.requestId !== 'string' || !trainingReceiptId.test(c.requestId)) fail('Invalid training request.');
+  const receipts = p.trainingReceipts ?? [];
+  if (!Array.isArray(receipts)) fail('Invalid training request.');
+  const digest = trainingDigest(c), prior = receipts.find(row => row.id === c.requestId);
+  if (prior) { if (prior.digest !== digest) fail('This training request already describes a different order.'); return 'replay'; }
+  if (receipts.length >= TRAINING_RECEIPT_LIMIT) fail('Training request ledger is full.');
+  return { id: c.requestId, digest };
+}
+export function closeTrainingReceipt(p, receipt) { if (!receipt) return; p.trainingReceipts ??= []; p.trainingReceipts.push(receipt); }
+export function militaryRoster() {
+  return { siegeAvailable: false, siegeReason: 'Siege training is closed. Costs, stats, load, speed, power and a separate facility are not verified.', sharedFacility: 'Hall of Spears', productionClasses: 3, tiersPerClass: 5 };
+}
+export function troopCensus(p) {
+  const deployed = [p, ...(p.marches ?? [])].reduce((sum, army) => sum + (army.troops ?? 0), 0);
+  const queued = (p.trainingQueue ?? []).filter(job => ['train', 'promote'].includes(job.type)).reduce((sum, job) => sum + job.amount, 0);
+  const wounded = unitTotal(p.wounded);
+  const healing = p.healing ? unitTotal(p.healing.units) : 0;
+  const reserves = p.reserveTroops ?? 0;
+  return { deployed, queued, wounded, healing, reserves, total: deployed + queued + wounded + healing + reserves };
+}
 export function validateUnits(p) {
+  if (p.trainingReceipts != null && (!Array.isArray(p.trainingReceipts) || p.trainingReceipts.length > TRAINING_RECEIPT_LIMIT || new Set(p.trainingReceipts.map(row => row?.id)).size !== p.trainingReceipts.length || p.trainingReceipts.some(row => !row || typeof row.id !== 'string' || !trainingReceiptId.test(row.id) || typeof row.digest !== 'string' || row.digest.length < 2 || row.digest.length > 240))) throw new Error('Invalid saved training receipts.');
   if(!referenceScale(p)&&[p.reserveUnits,p.wounded,p.healing?.units,...[p,...p.marches].map(a=>a.units)].filter(Boolean).some(u=>Object.values(u).some(n=>n>100000)))throw new Error('Invalid legacy troop count.');
   const ledgers=[p.reserveUnits,p.wounded,p.healing?.units,...[p,...p.marches].map(a=>a.units)].filter(Boolean);
   for(const type of TROOP_TYPES.filter(t=>t.tier>=2))if((ledgers.some(units=>countOf(units,type.id)>0)||p.trainingQueue.some(job=>job.targetId===type.id))&&tierLock(p,type))throw new Error('Invalid saved troop unlock.');

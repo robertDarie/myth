@@ -4,6 +4,10 @@
 
 A repeated inventory request no longer spends a second item or moves the same job again. Pack sizes, 60-second speedups, 100 commander XP, the 20 AP tonic and the 10 percent oaths stayed on the existing table. Construction, research, training, healing and universal speedups still affect only the selected legacy job. Experimental city timers are unchanged and are not speedup targets. Native clicks were not run.
 
+## Phase 4 task 8A — training orders and a closed siege class
+
+A repeated train or promotion request no longer opens a second batch. Infantry, archers and cavalry keep the existing five-tier table. Siege is named on the training screen and refused by the server. Separate class buildings and 25-level facilities were not added. Native clicks were not run.
+
 ## Phase 2 task 4 — season receipts and rankings
 
 A season completion id is no longer dropped, so it cannot score a second time. A reward that would pass the resource ceiling stays claimable. Milestone and placement amounts are unchanged. The season screen shows those server amounts and says this is not a cross-kingdom war. Power coefficients were not edited. Native clicks were not run.
