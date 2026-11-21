@@ -2,7 +2,7 @@
 
 ## Task 8B — casualty classes and one treatment order
 
-The hospital ledger remains the severe-wound ledger. Light wounds are the march that is already recovering with its commander. Deaths and overflow deaths stay blocked. Treatment costs and bed counts were not retuned. Native hospital clicks were not run.
+The hospital ledger remains the severe-wound ledger. Light wounds are the march that is already recovering with its commander. Deaths and overflow deaths stay blocked. Treatment costs and bed counts were not retuned. Native hospital clicks were not run for the original Task 8B pass. On 2026-11-21 an isolated Outer Marches defeat put 225 of Seeker's 900 Oathguard in the hospital and left 675 recovering, with 0 dead. Ten completed into reserves and one cancellation refunded once. The fresh march had no archers, cavalry or mythic.
 
 
 ## Phase 3 — inventory order receipts

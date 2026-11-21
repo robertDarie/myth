@@ -84,3 +84,81 @@ test('a repeated treatment request heals once and an old hospital save still loa
   assert.throws(() => legacy.command(restored, { type: 'hospital-heal', units: { ...emptyUnits(), archers: 1 }, mythic: 0, requestId: 'no' }), /Invalid treatment/);
   assert.equal(restored.food, q.food);
 });
+
+const mythicCensus = p => p.mythic + p.marches.reduce((n, army) => n + army.mythic, 0) + p.reserveMythic + p.woundedMythic + (p.healing?.mythic ?? 0);
+
+test('a field defeat conserves every class, and one treatment survives restart, conflict, and a single refund', () => {
+  const { w, a, b, session } = setup();
+  b.units = { ...emptyUnits(), infantry: 12, archers: 8, cavalry: 8 };
+  b.troops = 28; b.mythic = 4; b.health = 1;
+  const mortals = census(b), mythic = mythicCensus(b);
+  w.command(a, { type: 'attack-player', targetId: b.id });
+  w.tick(0.1);
+  const side = b.battleReports[0].sides.find(row => row.playerId === b.id);
+  assert.equal(side.wounded.infantry, 3);
+  assert.equal(side.wounded.archers, 2);
+  assert.equal(side.wounded.cavalry, 2);
+  assert.equal(side.woundedMythic, 1);
+  assert.equal(side.light.infantry, 9);
+  assert.equal(side.light.cavalry, 6);
+  assert.equal(side.lightMythic, 3);
+  assert.equal(unitTotal(side.dead), 0);
+  assert.equal(side.deadMythic, 0);
+  assert.equal(side.fatalityPolicy, 'BLOCKED');
+  assert.equal(conserved(side), true);
+  assert.equal(census(b), mortals);
+  assert.equal(mythicCensus(b), mythic);
+  assert.ok(TROOP_TYPES.every(t => countOf(b.units, t.id) >= 0 && countOf(b.wounded, t.id) >= 0));
+  assert.throws(() => w.command(b, { type: 'hospital-heal', units: emptyUnits(), mythic: 0, requestId: 'empty-treatment-01' }), /whole wounded/);
+  assert.equal(b.healing, null);
+  assert.throws(() => w.command(b, { type: 'hospital-heal', units: { ...emptyUnits(), infantry: -1 }, mythic: 0, requestId: 'negative-treat-01' }), /whole wounded|not in your hospital|Invalid/);
+  assert.equal(b.wounded.infantry, 3);
+  const food = b.food, gold = b.gold;
+  w.command(b, { type: 'hospital-heal', units: { ...emptyUnits(), cavalry: 2 }, mythic: 0, requestId: 'treat-cavalry-01' });
+  const paid = { food: b.food, gold: b.gold }, jobId = b.healing.id, remaining = b.healing.remaining;
+  assert.ok(b.food < food && b.gold < gold);
+  assert.equal(b.wounded.cavalry, 0);
+  w.command(b, { type: 'hospital-heal', units: { ...emptyUnits(), cavalry: 2 }, mythic: 0, requestId: 'treat-cavalry-01' });
+  assert.deepEqual({ food: b.food, gold: b.gold }, paid);
+  assert.equal(b.healing.remaining, remaining);
+  assert.throws(() => w.command(b, { type: 'hospital-heal', units: { ...emptyUnits(), infantry: 1 }, mythic: 0, requestId: 'treat-cavalry-01' }), /different/);
+  const fresh = structuredClone(w.toSave());
+  assert.equal(fresh.schema, 28);
+  const loaded = World.fromSave(structuredClone(fresh));
+  const q = loaded.authenticate(session.token);
+  loaded.command(q, { type: 'hospital-heal', units: { ...emptyUnits(), cavalry: 2 }, mythic: 0, requestId: 'treat-cavalry-01' });
+  assert.equal(q.food, paid.food);
+  assert.equal(q.healing.units.cavalry, 2);
+  assert.throws(() => loaded.command(q, { type: 'hospital-heal', units: { ...emptyUnits(), infantry: 1 }, mythic: 0, requestId: 'treat-cavalry-01' }), /different/);
+  advance(loaded, remaining + 0.2);
+  assert.equal(q.healing, null);
+  assert.equal(q.reserveUnits.cavalry, 2);
+  assert.equal(q.wounded.infantry, 3);
+  assert.equal(census(q), mortals);
+  assert.equal(mythicCensus(q), mythic);
+  const again = World.fromSave(structuredClone(fresh));
+  const restored = again.authenticate(session.token);
+  const refundFood = restored.food, refundGold = restored.gold;
+  again.command(restored, { type: 'hospital-cancel', targetId: jobId });
+  assert.equal(restored.healing, null);
+  assert.equal(restored.wounded.cavalry, 2);
+  assert.equal(restored.food, refundFood + (food - paid.food));
+  assert.equal(restored.gold, refundGold + (gold - paid.gold));
+  assert.throws(() => again.command(restored, { type: 'hospital-cancel', targetId: jobId }));
+  assert.equal(restored.food, refundFood + (food - paid.food));
+  assert.equal(restored.reserveUnits.cavalry, 0);
+  const oldCopy = structuredClone(fresh);
+  for (const player of oldCopy.world.players) {
+    delete player.healingReceipts;
+    for (const report of player.battleReports ?? []) for (const row of report.sides) {
+      delete row.fatalityPolicy; delete row.light; delete row.dead; delete row.lightMythic; delete row.deadMythic;
+    }
+  }
+  const oldText = JSON.stringify(oldCopy);
+  const legacy = World.fromSave(JSON.parse(oldText));
+  assert.equal(JSON.stringify(oldCopy), oldText);
+  const legacyPlayer = legacy.authenticate(session.token);
+  assert.equal(legacyPlayer.healing.units.cavalry, 2);
+  assert.equal(legacyPlayer.wounded.infantry, 3);
+  assert.equal(census(legacyPlayer), mortals);
+});

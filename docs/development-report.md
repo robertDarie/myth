@@ -1,5 +1,15 @@
 # Development report — 2026-11-21
 
+## Field defeat and House of Renewal — one real loss, one treatment, one refund
+
+Seeker, a fresh Greek city in an isolated kingdom on port 8100, reached the Age of Oaths and marched into the Outer Marches. Rival 1, an Egyptian city spawned in the same province, met that march away from both homes and attacked. The published Overnight client (`d57c38baa44f0a6e5b99da75d07fa8ca8ba926ef`) stayed joined to that kingdom. No casualty rate, bed count, or treatment cost changed. Permanent losses stayed blocked.
+
+The report that survived a server restart reads: before 900 Oathguard and 0 mythic; after 675; sent to hospital 225; with the commander, recovering, 675; permanently lost, no mortal troops; fatalities and overflow deaths are blocked. 675 + 225 + 0 = 900. Archers, cavalry and mythic were not in that fresh march.
+
+The House of Renewal showed 2,000 beds and the existing policy sentence. Ten Oathguard were selected at 20 food and 10 gold. Treatment ran for 12 seconds and the toast said the House of Renewal had begun treatment. Those ten moved into reserves once: 675 with the commander, 215 still wounded, 10 in reserve. A second order of ten spent the same cost, gold moved from 915 to 905, and Cancel treatment returned the wounded and the 20 food / 10 gold once. The cancel control was gone after that, and gold stayed at 915. The client reconnected after the kingdom process restarted and still showed 215 patients, 915 gold, and the same battle report.
+
+The client creates a new treatment id on every click, so a repeated identical request and a conflicting reuse of one id were not sent from the game. Those two cases, plus an empty order, a negative count, all three mortal classes, and one mythic severe wound, are in `server/casualties.test.mjs`. That test also loads a fresh schema-28 copy and an older-shaped copy with the casualty fields and treatment receipts removed, without rewriting the source JSON. Screenshots: `docs/qa/evidence/defeat-healing/native-battle-report.webp` and `docs/qa/evidence/defeat-healing/native-hospital-after-restart.webp`.
+
 ## Fresh Forsaken search — a camp outside city sight stays reachable
 
 A fresh city's explored disk sits inside city sight, and ordinary level-1 camps are spawned outside that sight. Search used to require current sight, so it reported that no Forsaken of that level was reachable, including a camp a short march away. Search now returns the nearest camp of the requested level that already has a legal military route, as a private pin. The pin does not add fog cells. If no legal camp exists, levels 1 through 12 can still be placed on explored land that is outside the city footprint and on a legal route. A locked pass still has no route. Enemy stats, the 50 AP charge, commander XP, respawn and the rare-item chance are unchanged.

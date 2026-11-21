@@ -10,6 +10,10 @@
       "command": ["node", "--test", "--test-name-pattern", "repeated treatment request", "server/casualties.test.mjs"]
     },
     {
+      "name": "a field defeat conserves every class, and one treatment survives restart, conflict, and a single refund",
+      "command": ["node", "--test", "--test-name-pattern", "field defeat conserves every class", "server/casualties.test.mjs"]
+    },
+    {
       "name": "a repeated inventory request does not consume the stack or the job twice",
       "command": ["node", "--test", "--test-name-pattern", "repeated inventory request", "server/inventory-orders.test.mjs"]
     },
