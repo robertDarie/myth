@@ -9,7 +9,7 @@ namespace ThronesOfMyth
         private InterfacePage interfacePage;
         private MythInterfaceTheme theme;
         private float interfaceScalePreference = 1, toastUntil, lastSnapshotAt;
-        private bool compactHud, labelsEnabled = true, advancedConnection, reducedMotion;
+        private bool compactHud, labelsEnabled = true, advancedConnection, reducedMotion, selectionDockCollapsed;
         private string previousToast = "";
         private Vector2 contentScroll, rosterScroll;
         private int heroFilter;
@@ -21,7 +21,15 @@ namespace ThronesOfMyth
         private Rect WindowRect => new Rect((ViewWidth - Mathf.Min(1320, ViewWidth - 72)) / 2, 112, Mathf.Min(1320, ViewWidth - 72), ViewHeight - 204);
         private Rect MinimapRect => new Rect(ViewWidth - 202, ViewHeight-94-InterfaceLayout.MinimapHeight(ViewHeight),184,InterfaceLayout.MinimapHeight(ViewHeight));
         private bool PassContext => world!=null&&!string.IsNullOrEmpty(selectedId)&&KnownSite(selectedId)?.kind=="gate";
-        private Rect ContextRect => new Rect((ViewWidth - 620) / 2, ViewHeight - 90 - InterfaceLayout.ContextHeight(PassContext), 620, InterfaceLayout.ContextHeight(PassContext));
+        private bool MarchDeployed => ActiveArmy!=null&&ActiveArmy.deployed;
+        private bool SelectionForcedClosed => !InterfaceLayout.SelectionFits(ViewWidth,ViewHeight,PassContext,false,MarchDeployed);
+        private bool SelectionCollapsed => selectionDockCollapsed||SelectionForcedClosed;
+        private void SelectionChrome(out Rect selection,out Rect orders)
+        {
+            InterfaceLayout.Dock(ViewWidth,ViewHeight,PassContext,SelectionCollapsed,MarchDeployed,out var card,out var bar);
+            selection=new Rect(card.X,card.Y,card.W,card.H);orders=new Rect(bar.X,bar.Y,bar.W,bar.H);
+        }
+        private Rect ContextRect { get { SelectionChrome(out var selection,out _); return selection; } }
         private Rect QuestRect => new Rect(18,150,242,Opening==null?142:200);
         private Rect ActivityRect => new Rect(18,112,242,28);
         private Rect CityShortcutRect => new Rect(18,ViewHeight-148,124,44);

@@ -31,7 +31,26 @@ static class InterfacePolishContracts
    Check(InterfaceLayout.ContextHealthY(pass)+5<InterfaceLayout.ContextActionY(pass)&&InterfaceLayout.ContextActionY(pass)+35<=card-10,"Context actions must sit below intelligence and health and inside their panel");
   }
   Check(InterfaceLayout.ContextDescriptionHeight(true)>=8*18,"Pass owner, opening, access, adjacent zones and defender lines have room to wrap");
-  foreach(bool pass in new[]{false,true})Check(InterfaceLayout.MarchOrdersTop(900,pass)+46<=900-90-InterfaceLayout.ContextHeight(pass)-10,"Deployed-march controls must stay above the entire context card, including expanded pass intelligence");
+  foreach(var size in new[]{(1280f,720f),(1920f,1080f)})foreach(float pref in new[]{.85f,1f,1.15f})foreach(bool pass in new[]{false,true})foreach(bool deployed in new[]{false,true})
+  {
+   float scale=InterfaceLayout.Scale(size.Item1,size.Item2,pref),w=size.Item1/scale,h=size.Item2/scale;
+   bool expandedFits=InterfaceLayout.SelectionFits(w,h,pass,false,deployed);
+   bool collapsedFits=InterfaceLayout.SelectionFits(w,h,pass,true,deployed);
+   Check(expandedFits||collapsedFits,"Selection card must fit the left column at "+size.Item1+"x"+size.Item2+" scale "+pref);
+   bool collapsed=!expandedFits;
+   InterfaceLayout.Dock(w,h,pass,collapsed,deployed,out var card,out var orders);
+   var play=InterfaceLayout.Playfield(w,h);
+   var legacy=new UiRect((w-620)/2f,h-90-InterfaceLayout.ContextHeight(false),620,InterfaceLayout.ContextHeight(false));
+   Check(!card.Overlaps(play),"Docked selection card must leave the map playfield clear");
+   Check(deployed==false||!orders.Overlaps(play),"Docked march orders must leave the map playfield clear");
+   Check(!card.Contains(legacy.X+legacy.W/2f,legacy.Y+legacy.H/2f),"The old centered march card must not remain over the map");
+   Check(play.Contains(play.X+play.W/2f,play.Y+play.H/2f)&&!card.Contains(play.X+play.W/2f,play.Y+play.H/2f),"A legal map point at the playfield center stays clickable");
+   var action=InterfaceLayout.ActionButton(card,pass,collapsed);
+   Check(InterfaceLayout.ContainsCard(card,action),"The march action button stays inside the card that blocks world clicks");
+   Check(!play.Contains(action.X+1,action.Y+1),"Pressing the action button is not a map click");
+  }
+  Check(MarchClick.IssuesOrder(false,true,true),"A second click on the same authorized target issues the march");
+  Check(!MarchClick.IssuesOrder(true,true,true)&&!MarchClick.IssuesOrder(false,false,true)&&!MarchClick.IssuesOrder(false,true,false),"A busy check, a refused route, or a different target does not issue a march");
   Check(ReleaseVersion.Current=="0.45.0"&&ReleaseVersion.Protocol==17,"Release identity advances with the expanded-map protocol");
   foreach(var size in new[]{(1024f,768f),(1280f,800f),(1920f,1080f)})
   {

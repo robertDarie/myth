@@ -63,14 +63,14 @@ namespace ThronesOfMyth
             if (ownArmy || marker.kind == "city" || marker.kind == "marker") { ActOnSelection(); return; }
             string type = marker.kind == "camp" ? "attack" : marker.kind == "node" ? "gather" : marker.kind == "site" ? "capture" : "";
             if (type.Length == 0) { ActOnSelection(); return; }
-            if (PreviewMatches(type, marker.id, 0, 0)) { if (marchPreview.authorized) { marchPreview = null; marchPreviewKey = ""; ActOnSelection(); } else status = marchPreview.message; return; }
+            if (PreviewMatches(type, marker.id, 0, 0)) { if (MarchClick.IssuesOrder(marchPreviewBusy, marchPreview.authorized, true)) { marchPreview = null; marchPreviewKey = ""; ActOnSelection(); } else status = marchPreview.message; return; }
             if (marchPreviewBusy) { status = "Checking the authorized route…"; return; }
             QueueMarchPreview(type, marker.id, 0, 0);
         }
         private void ConfirmGroundMarch(float x, float z)
         {
             if (processing || pendingOrder != null || commands.Count > 0) return;
-            if (PreviewMatches("move", "", x, z)) { if (marchPreview.authorized) { marchPreview = null; marchPreviewKey = ""; Send(new GameCommand { type = "move", x = x, z = z }); } else status = marchPreview.message; return; }
+            if (PreviewMatches("move", "", x, z)) { if (MarchClick.IssuesOrder(marchPreviewBusy, marchPreview.authorized, true)) { marchPreview = null; marchPreviewKey = ""; Send(new GameCommand { type = "move", x = x, z = z }); } else status = marchPreview.message; return; }
             if (marchPreviewBusy) { status = "Checking the authorized route…"; return; }
             QueueMarchPreview("move", "", x, z);
         }

@@ -27,6 +27,17 @@
   ],
   "exemptions": [
     {
+      "kind": "bug-fix",
+      "paths": [
+        "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.HudPolish.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Screens.cs"
+      ],
+      "reason": "The selected-march card was a hit-test bug: its centered panel blocked a visible node at 1280x720, so a right-click refreshed a route preview and never reached the second authorized order. The card and the deployed Stop/Recall bar now dock in the left column and collapse when they would cover the map. Button clicks stay inside that panel. The second click still sends only an already authorized preview. Action points, route speed, combat, and map geography are unchanged."
+    },
+    {
       "kind": "infrastructure",
       "paths": [
         "server/city.mjs"

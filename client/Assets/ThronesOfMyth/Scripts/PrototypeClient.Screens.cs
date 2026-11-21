@@ -469,7 +469,7 @@ namespace ThronesOfMyth
             if(theme.Action("Leave this kingdom",!processing&&!accountBusy&&pendingOrder==null&&commands.Count==0,"Finish pending orders before leaving this kingdom."))LeaveKingdom();
             GUILayout.Label("Build "+ReleaseIdentity.Label,theme.Small);GUILayout.Label("Connected to " + serverUrl, theme.Small);
             GUILayout.Label(world.persistence != null && world.persistence.enabled ? world.persistence.backend=="sqlite"?"SQLite kingdom · progress saves on the server; downtime job recovery is enabled.":"Local JSON kingdom · progress saves on this PC. A restart catches up paid city timers and up to eight hours of passive production." : "This server is not saving world progress.", theme.Small);
-            if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; openingEnabled=true;PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",1); PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
+            if (GUILayout.Button("Restore interface defaults", GUILayout.Width(300))) { interfaceScalePreference = 1; labelsEnabled = true; reducedMotion = false; openingEnabled=true;selectionDockCollapsed=false;PlayerPrefs.SetInt("ThronesOfMyth.openingGuidance",1); PlayerPrefs.SetInt("ThronesOfMyth.reducedMotion", 0); PlayerPrefs.SetFloat("ThronesOfMyth.uiScale", 1); PlayerPrefs.SetInt("ThronesOfMyth.labels", 1); }
             GUILayout.EndScrollView(); GUILayout.EndArea();
         }
         private void DrawContextActions()
@@ -574,24 +574,37 @@ namespace ThronesOfMyth
                 if(!keepCityReading){action="Scout to refresh";enabled=!processing;perform=()=>ScoutAt(sx,sz);}
                 if(camp!=null){action="March & attack";enabled=!processing&&ActiveArmy!=null&&ActiveArmy.health>0&&ActiveArmy.recovery<=0;perform=()=>Send("attack",camp.id);}}
             if(camp!=null&&!string.IsNullOrEmpty(camp.lockedReason)){enabled=false;action="Level locked";subtitle=camp.lockedReason;}
-            theme.Panel(r); theme.Icon(new Rect(r.x + 18, r.y + 23, 34, 34), emblem, MythInterfaceTheme.Gold);
-            theme.OneLine(new Rect(r.x + 68, r.y + 12, r.width-116, 27), title, theme.Heading);
             bool passContext=site?.kind=="gate";
-            if(passContext)theme.Text(new Rect(r.x+68,r.y+46,r.width-92,InterfaceLayout.ContextDescriptionHeight(true)),subtitle,theme.Small);
-            else theme.OneLine(new Rect(r.x + 68, r.y + 46, r.width-92, 23), subtitle, theme.Small);
-            if(camp!=null)theme.Hint(new Rect(r.x+68,r.y+46,r.width-92,37),camp.enemyTroops.ToString("N0")+" enemy mortals · T"+camp.enemyTier+" · "+camp.health.ToString("N0")+" / "+camp.maxHealth.ToString("N0")+" health. Recommendations vary with commanders, talents and research.");
-            if (health >= 0) theme.Bar(new Rect(r.x + 68, r.y + InterfaceLayout.ContextHealthY(passContext), 220, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
+            var actionSlot=InterfaceLayout.ActionButton(new UiRect(r.x,r.y,r.width,r.height),passContext,SelectionCollapsed);
+            var actionRect=new Rect(actionSlot.X,actionSlot.Y,actionSlot.W,actionSlot.H);
+            if(SelectionCollapsed)
+            {
+                theme.Panel(r);
+                theme.OneLine(new Rect(r.x+8,r.y+8,r.width-144,28),string.IsNullOrEmpty(title)?"Selected":title,theme.Small);
+                if(theme.Button(actionRect,string.IsNullOrEmpty(action)?"Open":action,true,enabled&&perform!=null))perform?.Invoke();
+                if(!SelectionForcedClosed&&theme.Button(new Rect(r.xMax-34,r.y+6,26,32),"+"))selectionDockCollapsed=false;
+                return;
+            }
+            theme.Panel(r); theme.Icon(new Rect(r.x + 12, r.y + 28, 28, 28), emblem, MythInterfaceTheme.Gold);
+            theme.OneLine(new Rect(r.x + 46, r.y + 8, r.width-112, 24), title, theme.Heading);
+            if(passContext)theme.Text(new Rect(r.x+12,r.y+46,r.width-24,InterfaceLayout.ContextDescriptionHeight(true)),subtitle,theme.Small);
+            else theme.OneLine(new Rect(r.x + 46, r.y + 36, r.width-58, 22), subtitle, theme.Small);
+            if(camp!=null)theme.Hint(new Rect(r.x+46,r.y+36,r.width-58,28),camp.enemyTroops.ToString("N0")+" enemy mortals · T"+camp.enemyTier+" · "+camp.health.ToString("N0")+" / "+camp.maxHealth.ToString("N0")+" health. Recommendations vary with commanders, talents and research.");
+            if (health >= 0) theme.Bar(new Rect(r.x + 12, r.y + InterfaceLayout.ContextHealthY(passContext), r.width-24, 5), health, camp != null ? MythInterfaceTheme.Red : MythInterfaceTheme.Teal);
             bool readMarch = army != null && army.ownerId != playerId && (string.IsNullOrEmpty(me.allianceId) || army.allianceId != me.allianceId) && army.deployed && !army.protectedField;
             bool readGarrison = (site != null || beacon != null) && (string.IsNullOrEmpty(me.allianceId) || (site != null ? site.allianceId : beacon.allianceId) != me.allianceId) && (site == null || !site.unknown && !site.locked);
-            if ((city == null || city.id != playerId) && !readMarch && !readGarrison) theme.OneLine(new Rect(r.x + 18, r.y + r.height-38, 370, 24), "SELECTED MARCH · " + HeroName(ActiveArmy.commanderId), theme.Small);
-            if (theme.Button(new Rect(r.xMax - 38, r.y + 7, 28, 27), "×")) { selectedId = ""; map.selectedId = ""; }
+            if (theme.Button(new Rect(r.xMax - 32, r.y + 6, 26, 24), "×")) { selectedId = ""; map.selectedId = ""; }
+            if (theme.Button(new Rect(r.xMax - 60, r.y + 6, 26, 24), "–")) selectionDockCollapsed = true;
             if (city != null && city.id == playerId)
             {
-                if (theme.Button(new Rect(r.x + 18, r.y + 94, 140, 32), "Prepare march")) PrepareCityMarch();
+                var prepare=new Rect(actionRect.x,actionRect.y,actionRect.width*.42f,actionRect.height);
+                actionRect=new Rect(prepare.xMax+6,actionRect.y,actionRect.width-prepare.width-6,actionRect.height);
+                if (theme.Button(prepare, "Prepare")) PrepareCityMarch();
             }
-            if (readMarch && theme.Button(new Rect(r.x + 18, r.y + 94, 150, 32), "Read this march")) Send(new GameCommand { type = "recon-march", targetId = army.id });
-            if (readGarrison && theme.Button(new Rect(r.x + 18, r.y + r.height-44, 160, 32), "Read the garrison")) Send(new GameCommand { type = "recon-garrison", targetId = site != null ? site.id : beacon.id });
-            if (theme.Button(new Rect(r.xMax - 208, r.y + InterfaceLayout.ContextActionY(passContext), 190, 35), action, true, enabled)) perform?.Invoke();
+            var read=new Rect(r.x+12,actionRect.y-30,Mathf.Min(150,r.width-24),26);
+            if (readMarch && read.y>r.y+40 && theme.Button(read, "Read this march")) Send(new GameCommand { type = "recon-march", targetId = army.id });
+            if (readGarrison && read.y>r.y+40 && theme.Button(read, "Read the garrison")) Send(new GameCommand { type = "recon-garrison", targetId = site != null ? site.id : beacon.id });
+            if (theme.Button(actionRect, action, true, enabled)) perform?.Invoke();
         }
     }
 }

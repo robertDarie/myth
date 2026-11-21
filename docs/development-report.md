@@ -1,3 +1,11 @@
+# Development report — 2026-11-21
+
+## March card — the selection panel no longer covers the map
+
+The selected-march card and the deployed Stop and Recall controls now sit in the left column instead of across the lower middle of the map. A click on those buttons stays on the button. A second right-click on the same authorized target is what sends the march. No route, combat, or action-point value changed.
+
+Native play used the default interface preference of 1. A 1280×720 window (client 1264×681, interface scale 0.80) confirmed the Frontier Captain's 900 infantry, previewed Starwell Spring, and the next right-click on that node accepted a gather. The spring stayed in the open map while the card stayed on the left. A 1920×1080 window (client 1904×1041, interface scale about 1.16) kept the same dock. The preference slider was not moved to 0.85 or 1.15; those two values are covered by the presentation contract and were not played. Action points stayed at 1500. Screenshots: `docs/qa/evidence/march-card/native-1280-gather-ordered.png` and `docs/qa/evidence/march-card/native-1920-card-docked.png`.
+
 # Development report — 2026-11-20
 
 ## QA-01 — native Windows playtest

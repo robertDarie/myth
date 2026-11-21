@@ -1,7 +1,7 @@
 {
     "success": true,
     "unityVersion": "6000.3.0f1",
-    "sourceFingerprint": "e6022642305d5c43fd9ea993307f9a0f9439c66c5a80bd78770243142788594c",
+    "sourceFingerprint": "039af919a78e8ba8a6971606a829a312b74cbb0ff7b77dc82ef80ace53e48c82",
     "scope": "Actual compiled Unity scripts and reference snapshot/topology assertions; native input independent",
     "scripts": 88
 }
