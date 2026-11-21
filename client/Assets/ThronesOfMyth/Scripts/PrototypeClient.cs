@@ -213,9 +213,8 @@ namespace ThronesOfMyth
             }
             string mythic = "Mythic guardian";
             foreach (var civ in world.civilizations) if (civ.id == me.civilization) mythic = civ.mythic;
-            GUI.enabled = BuildingLevel("menagerie") > 0 && me.cityLevel >= 2 && me.trainingQueue.Length < 3 && me.assignedMythic + me.reserveMythic + me.hospitalMythic + queuedMythic < me.mythicCapacity && me.food >= 80 && me.gold >= 100;
-            if (GUILayout.Button(mythic + " · " + Mathf.CeilToInt(me.recruitDuration) + "s · 80 food / 100 gold")) Send("recruit");
-            GUI.enabled = true;
+            string mythicReason = processing ? "Sending your order…" : BuildingLevel("menagerie") <= 0 ? "Build the Sanctuary of Beasts first." : me.cityLevel < 2 ? "Citadel level 2 required." : me.trainingQueue.Length >= 3 ? "Training queue is full." : me.assignedMythic + me.reserveMythic + me.hospitalMythic + queuedMythic >= me.mythicCapacity ? "Mythic capacity is full." : me.food < 80 || me.gold < 100 ? "More resources required: 80 food / 100 gold" : "";
+            if (theme.Action(mythic + " · " + Mathf.CeilToInt(me.recruitDuration) + "s · 80 food / 100 gold", string.IsNullOrEmpty(mythicReason), mythicReason, false)) Send("recruit");
             GUILayout.Label($"One training lane · {me.trainingQueue.Length}/3 orders. Mythic recruitment needs Citadel 2 and Sanctuary of Beasts.", noteStyle);
             for (int i = 0; i < me.trainingQueue.Length; i++)
                 DrawJob(me.trainingQueue[i], (me.trainingQueue[i].type == "train"||me.trainingQueue[i].type=="promote") ? me.trainingQueue[i].amount + " " + TroopName(me.trainingQueue[i].targetId) : mythic, i > 0);
@@ -408,9 +407,8 @@ namespace ThronesOfMyth
                 GUILayout.Label("Bring territory within " + rules.supplyRadius.ToString("0") + " units of a site, then send your army to capture it. Uncontested occupation takes 15 seconds. The map ring is that supply radius, not a filled province.", noteStyle);
             }
             if (GUILayout.Button(SupplyReachShown() ? "Hide supply reach" : "Show supply reach")) { PlayerPrefs.SetInt("ThronesOfMyth.supplyReach", SupplyReachShown() ? 0 : 1); ApplySupplyReach(); }
-            GUI.enabled = me.allianceRole == "Leader" || me.allianceRole == "Officer";
-            if (GUILayout.Button(placeBeacon ? "Cancel beacon placement" : "Place fort / beacon · 60 wood / 20 gold")) placeBeacon = !placeBeacon;
-            GUI.enabled = true;
+            bool beaconOfficer = me.allianceRole == "Leader" || me.allianceRole == "Officer";
+            if (theme.Action(placeBeacon ? "Cancel beacon placement" : "Place fort / beacon · 60 wood / 20 gold", beaconOfficer, beaconOfficer ? "" : "Only a leader or officer can place a beacon.", false)) placeBeacon = !placeBeacon;
             foreach (var site in world.sites)
             {
                 string reach = site.lastKnown ? "Last observation" : TerritoryReach.AllianceCovers(world, me.allianceId, site.x, site.z) ? "Inside your supply" : "Outside your supply";
@@ -425,9 +423,8 @@ namespace ThronesOfMyth
             GUILayout.Label(me.ageName + " · " + me.marchSlots + "/5 march slots · " + me.constructionSlots + " builder(s)", sectionStyle);
             GUILayout.Label("A foothold in the fallen world", sectionStyle);
             GUILayout.Label($"Defeat three camps: {Mathf.Min(3, me.kills)}/3\nReward: Epic Atalanta, 200 gold, 150 wood, 150 food.", noteStyle);
-            GUI.enabled = me.kills >= 3 && !me.questClaimed;
-            if (GUILayout.Button(me.questClaimed ? "Reward claimed" : "Claim reward")) Send("quest");
-            GUI.enabled = true;
+            string questReason = me.questClaimed ? "Reward claimed." : me.kills >= 3 ? "" : "Defeat three camps first.";
+            if (theme.Action(me.questClaimed ? "Reward claimed" : "Claim reward", me.kills >= 3 && !me.questClaimed && !processing, processing ? "Sending your order…" : questReason, false)) Send("quest");
             GUILayout.Space(10); GUILayout.Label("Kingdom chronicle", sectionStyle);
             foreach (var e in world.events) GUILayout.Label($"[{Mathf.FloorToInt(e.time)}s] {e.message}", noteStyle);
             if (world.persistence != null)
@@ -493,11 +490,10 @@ namespace ThronesOfMyth
             var experience = GUILayoutUtility.GetRect(80, 9, GUILayout.ExpandWidth(true));
             theme.Bar(experience, progress.heroLevel >= progress.stars * 10 ? 1 : (progress.xp-progress.xpLevelStart)/Mathf.Max(1,progress.xpNextLevel-progress.xpLevelStart), MythInterfaceTheme.Teal);
             GUILayout.Space(8);
-            GUI.enabled = progress.heroLevel < progress.stars * 10 && me.gold >= 40 && me.food >= 20 && !processing;
-            if (GUILayout.Button("Mentor +100 XP · 40 gold / 20 food")) Send("mentor-commander", hero.id);
-            GUI.enabled = progress.stars < 6 && progress.heroLevel >= progress.stars * 10 && me.gold >= progress.stars * 100 && me.mana >= progress.stars * 10 && !processing;
-            if (GUILayout.Button("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana")) Send("promote-commander", hero.id);
-            GUI.enabled = true;
+            string mentorReason = processing ? "Sending your order…" : progress.heroLevel >= progress.stars * 10 ? "This commander is at the star cap. Promote a star first." : me.gold < 40 || me.food < 20 ? "More resources required: 40 gold / 20 food" : "";
+            if (theme.Action("Mentor +100 XP · 40 gold / 20 food", string.IsNullOrEmpty(mentorReason), mentorReason, false)) Send("mentor-commander", hero.id);
+            string starReason = processing ? "Sending your order…" : progress.stars >= 6 ? "Six stars is the cap." : progress.heroLevel < progress.stars * 10 ? "Reach level " + progress.stars * 10 + " before the next star." : me.gold < progress.stars * 100 || me.mana < progress.stars * 10 ? "More resources required: " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana" : "";
+            if (theme.Action("Promote star · " + progress.stars * 100 + " gold / " + progress.stars * 10 + " mana", string.IsNullOrEmpty(starReason), starReason, false)) Send("promote-commander", hero.id);
                 return;
             }
             foreach (var skill in progress.skills)
@@ -515,9 +511,9 @@ namespace ThronesOfMyth
                 var pips = GUILayoutUtility.GetRect(80, 10, GUILayout.ExpandWidth(true));
                 for (int i = 0; i < 5; i++) MythInterfaceTheme.Fill(new Rect(pips.x + i * (pips.width / 5), pips.y + 3, pips.width / 5 - 4, 3), i < skill.level ? color : new Color(0.22f, 0.29f, 0.3f));
                 GUILayout.Label(skill.description + (skill.level == 0 ? " Unlocks at " + skill.unlockStar + " stars." : ""), noteStyle);
-                GUI.enabled = skill.level > 0 && skill.level < 5 && progress.shards >= 5 * (skill.level + 1) && me.gold >= 25 * (skill.level + 1) && !processing;
-                if (GUILayout.Button("Upgrade · " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold")) Send(new GameCommand { type = "upgrade-skill", targetId = hero.id, skillIndex = skill.index });
-                GUI.enabled = true; GUILayout.EndVertical();
+                string skillReason = processing ? "Sending your order…" : skill.level == 0 ? "Unlocks at " + skill.unlockStar + " stars." : skill.level >= 5 ? "This skill is at level 5." : progress.shards < 5 * (skill.level + 1) || me.gold < 25 * (skill.level + 1) ? "More resources required: " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold" : "";
+                if (theme.Action("Upgrade · " + 5 * (skill.level + 1) + " shards / " + 25 * (skill.level + 1) + " gold", string.IsNullOrEmpty(skillReason), skillReason, false)) Send(new GameCommand { type = "upgrade-skill", targetId = hero.id, skillIndex = skill.index });
+                GUILayout.EndVertical();
             }
             GUILayout.Label((progress.expertise ? "EXPERTISE ACTIVE · " : "Expertise · ") + progress.expertiseDescription, noteStyle);
             GUILayout.Label("Stars unlock skill slots; skill levels and ascension ranks are separate. Spends 1,000 rage. A paired secondary active spends the next full rage bar.", noteStyle);

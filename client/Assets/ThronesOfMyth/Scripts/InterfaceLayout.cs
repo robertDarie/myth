@@ -52,6 +52,13 @@ namespace ThronesOfMyth
         public static bool ContainsCard(UiRect card,UiRect inner)=>card.Contains(inner.X+1,inner.Y+1)&&card.Contains(inner.XMax-1,inner.YMax-1);
         public static float MinimapHeight(float viewHeight)=>viewHeight<800?132:152;
         public static int TabColumns(float logicalWidth,int count)=>Math.Max(1,Math.Min(count,(int)(logicalWidth/150)));
+        // Keep a readable cell. Extra items wrap instead of crushing a label onto two clipped lines.
+        public static int FlowColumns(float width,int count,float minimum)
+        {
+            if(count<1)return 1;
+            int fit=(int)Math.Floor(Math.Max(0,width)/Math.Max(1,minimum));
+            return Math.Max(1,Math.Min(count,fit));
+        }
         public static string Duration(float seconds)
         {int s=Math.Max(0,(int)Math.Ceiling(seconds));return s>=3600?(s/3600)+"h "+(s%3600/60)+"m":s>=60?(s/60)+"m "+(s%60)+"s":s+"s";}
         public static float Countdown(float observed,float elapsed)=>Math.Max(0,observed-Math.Max(0,Math.Min(elapsed,3)));

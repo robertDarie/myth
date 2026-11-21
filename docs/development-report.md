@@ -1,5 +1,13 @@
 # Development report — 2026-11-21
 
+## Daily, event and campaign controls stay readable
+
+The daily chest row at 1280×720 and interface scale 1.0 kept each column at its 90-pixel minimum inside the scroll view. "Locked" wrapped to "Lock" / "ed", reward names broke mid-word, and the Event hub toggle was not a row the player could use. At a maximized 1920×1009 window with the interface slider at 113 percent, the six chronicle titles shared one row and the last title was cut off at "VI · A".
+
+Chests now flow at a 168-pixel minimum, so five chests sit on one row and "Locked" stays one word, with the point requirement under the button. Daily activity, alliance weekly goals, seven-day rewards and the event hub share one tab grid. Chronicle titles use a 240-pixel cell and a taller row, so "V · Raise the Banners · Locked" and "VI · An Oath at Dawn · Locked" are both visible. Disabled activity, login, event, season, hospital, training, commander, campaign and journal actions say why they are locked. Scheduled events still show a claim control. A family that is not scheduled says "Not scheduled" and "No score or reward is enabled for this event family." and has no claim button.
+
+No reward amount, claim id, season power formula, cost or duration changed. The existing activity, event, season and social tests passed: 39 tests, 0 failures. The presentation contracts passed, including the chest-column and tab-row checks at 1280×720 and 1920×1080 for scales 0.85, 1.0 and 1.15. Native play used the rebuilt client on isolated port 8106. Screenshots: `docs/qa/evidence/ui/`. The 1280×720 scale-1 before and after are the Mason window and the review client. The 1920 check is that client maximized; the client area was 1920×1009 because of the taskbar, not a hidden 1080-pixel client. The slider reached 113 percent at that size, not a displayed 115. Scale 0.85 was not played as its own native screenshot. No frame-time recorder was started, so no FPS number is claimed.
+
 ## City jobs — one spend, one completion, one bounded restart
 
 Mason, a fresh Greek city, joined an isolated kingdom on port 8105. The client was the already-built Scout window, footer `THRONES OF MYTH · 0.45.0 · d9c7ee07 · modified sources`. The server advertised that identity so the existing executable could connect. No cost, duration, batch, queue size, five-second cadence, stockpile formula, or eight-hour offline bound was changed. The five-level city profile stayed the only active profile. No save was converted to a 25-level city.

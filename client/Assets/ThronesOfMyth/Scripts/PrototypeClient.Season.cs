@@ -38,9 +38,8 @@ namespace ThronesOfMyth
                 GUILayout.Label(milestone.points + " season points", sectionStyle);
                 GUILayout.Label(SeasonPay(milestone.reward), theme.Small);
                 if (!string.IsNullOrEmpty(milestone.lockedReason)) GUILayout.Label(milestone.lockedReason, theme.Small);
-                GUI.enabled = milestone.canClaim && !processing;
-                if (GUILayout.Button(milestone.claimed ? "Milestone claimed" : "Claim milestone", theme.Primary)) Send(new GameCommand { type = milestone.id != null && milestone.id.Contains(":") ? "season-reward" : "season-milestone", targetId = milestone.id });
-                GUI.enabled = true;
+                string milestoneReason = processing ? "Sending your order…" : !string.IsNullOrEmpty(milestone.lockedReason) ? milestone.lockedReason : milestone.claimed ? "This milestone was already claimed." : milestone.canClaim ? "" : "Not ready.";
+                if (theme.Action(milestone.claimed ? "Milestone claimed" : "Claim milestone", milestone.canClaim && !processing, milestoneReason)) Send(new GameCommand { type = milestone.id != null && milestone.id.Contains(":") ? "season-reward" : "season-milestone", targetId = milestone.id });
                 GUILayout.EndVertical();
             }
             if (season.claims != null) foreach (var claim in season.claims)
@@ -50,9 +49,8 @@ namespace ThronesOfMyth
                 GUILayout.Label(claim.label + " · expires " + claim.expiresUtc, sectionStyle);
                 GUILayout.Label(SeasonPay(claim.reward), theme.Small);
                 if (!string.IsNullOrEmpty(claim.lockedReason)) GUILayout.Label(claim.lockedReason, theme.Small);
-                GUI.enabled = claim.canClaim && !processing;
-                if (GUILayout.Button(claim.claimed ? "Reward claimed" : "Claim season reward", theme.Primary)) Send(new GameCommand { type = "season-reward", targetId = claim.id });
-                GUI.enabled = true;
+                string claimReason = processing ? "Sending your order…" : !string.IsNullOrEmpty(claim.lockedReason) ? claim.lockedReason : claim.claimed ? "This season reward was already claimed." : claim.canClaim ? "" : "Not ready.";
+                if (theme.Action(claim.claimed ? "Reward claimed" : "Claim season reward", claim.canClaim && !processing, claimReason)) Send(new GameCommand { type = "season-reward", targetId = claim.id });
                 GUILayout.EndVertical();
             }
             GUILayout.Label("Current alliance standings", sectionStyle);

@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Usability of daily, event and campaign screens
+
+On 2026-11-21 the daily chest row at 1280×720 crushed each chest to a few words, so "Locked" drew as "Lock" / "ed", and the Event hub control was not a usable tab. Chapter titles at a large interface size ran off the row, leaving the last chronicle only partly visible. The layout now keeps a readable chest width, puts Event hub on the same tab grid, and wraps the six chronicle titles onto full rows. A disabled claim states why it is locked. An unscheduled event family says "Not scheduled" and has no reward button. Reward amounts, claim ids, season power and the Greek art were not changed. Native screenshots are in `docs/qa/evidence/ui/`. The slider's reachable high end on the maximized window read 113 percent; 0.85 and 1.15 were checked by the layout contract. No frame-time capture was run.
+
 ## City resources, jobs, speedups and offline catch-up
 
 On 2026-11-21 Mason exercised the existing five-level city on an isolated port 8105 kingdom. Production stayed the five-second tick. Founding supplies were collected once and resource packs were not opened. Construction, research and the 100 Oathguard order each spent the quoted cost once. Locked prerequisites, a busy crew, a short stockpile and a second click spent nothing. One Builder's Hourglass finished the Blessed Fields job and did not change the Oathguard job id. Echo of Haste stayed at 2 because no job was selected. Restarting the kingdom process caught up the real outage only: gold stayed 505, Citadel stayed 3, Fields stayed 3, and the training job kept counting. The eight-hour production bound and the five-level profile were not changed. A 25-level city was not activated and no save was converted. No new defect was found, so no new server test was added.

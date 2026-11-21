@@ -65,7 +65,7 @@ namespace ThronesOfMyth
             GUILayout.Label("Tasks track your actions even before their chapter unlocks. Claim each objective, then its chapter reward. City work continues while armies and scouts are away.", noteStyle);
             var chapterTitles=new string[campaign.chapters.Length];int selectedIndex=0;
             for(int i=0;i<chapterTitles.Length;i++){var c=campaign.chapters[i];chapterTitles[i]=c.title+(c.claimed?" · Complete":c.locked?" · Locked":"");if(c.id==selectedChapterId)selectedIndex=i;}
-            selectedIndex=Mathf.Clamp(theme.Tabs(selectedIndex,chapterTitles,WindowRect.width-280),0,campaign.chapters.Length-1);
+            selectedIndex=Mathf.Clamp(theme.Tabs(selectedIndex,chapterTitles,WindowRect.width-280,240,52),0,campaign.chapters.Length-1);
             var chapter=campaign.chapters[selectedIndex];
             selectedChapterId=chapter.id;
             GUILayout.Space(12); GUILayout.Label(chapter.title, sectionStyle); GUILayout.Label(chapter.story, noteStyle);
@@ -77,17 +77,17 @@ namespace ThronesOfMyth
                 GUILayout.Label(task.description, noteStyle);
                 theme.Bar(GUILayoutUtility.GetRect(80, 7, GUILayout.ExpandWidth(true)), (float)task.progress / Mathf.Max(1, task.goal), MythInterfaceTheme.Gold);
                 GUILayout.Label("Reward · " + JourneyRewardText(task.reward), theme.Small);
-                GUILayout.BeginHorizontal(); GUI.enabled = task.canClaim && !processing;
-                if (GUILayout.Button(task.claimed ? "Claimed" : task.canClaim ? "CLAIM" : task.progress >= task.goal ? "Complete · chapter locked" : "In progress", theme.Primary)) Send("journey-claim", task.id);
+                GUILayout.BeginHorizontal();
+                string taskReason = processing ? "Sending your order…" : task.claimed ? "This objective reward was already claimed." : task.canClaim ? "" : task.progress >= task.goal ? "Finish and claim the earlier chapters first." : "This objective is still in progress.";
+                if (theme.Action(task.claimed ? "Claimed" : task.canClaim ? "Claim" : task.progress >= task.goal ? "Complete · chapter locked" : "In progress", task.canClaim && !processing, taskReason)) Send("journey-claim", task.id);
                 GUI.enabled = !processing;
                 if (!task.claimed && GUILayout.Button("GO", GUILayout.Width(100))) GuideObjective(task);
                 GUI.enabled = true; GUILayout.EndHorizontal(); GUILayout.EndVertical();
             }
             GUILayout.Space(12); GUILayout.Label("CHAPTER REWARD", theme.Eyebrow);
             GUILayout.Label(JourneyRewardText(chapter.reward) + (string.IsNullOrEmpty(chapter.commanderReward) ? "" : " · Guaranteed Epic Atalanta"), noteStyle);
-            GUI.enabled = chapter.canClaim && !processing;
-            if (GUILayout.Button(chapter.claimed ? "Chapter reward claimed" : "CLAIM CHAPTER REWARD", theme.Primary, GUILayout.Height(44))) Send("chapter-claim", chapter.id);
-            GUI.enabled = true;
+            string chapterReason = processing ? "Sending your order…" : chapter.claimed ? "This chapter reward was already claimed." : chapter.canClaim ? "" : chapter.locked ? "Finish and claim the earlier chapters first." : "Finish this chapter's objectives first.";
+            if (theme.Action(chapter.claimed ? "Chapter reward claimed" : "Claim chapter reward", chapter.canClaim && !processing, chapterReason)) Send("chapter-claim", chapter.id);
             if (campaign.complete) GUILayout.Label("Your opening chronicle is complete. Continue building your alliance, holding sacred sites and developing your commanders. Later kingdom chapters are still in development.", noteStyle);
         }
     }

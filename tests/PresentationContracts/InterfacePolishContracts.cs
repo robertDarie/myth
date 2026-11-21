@@ -14,6 +14,11 @@ static class InterfacePolishContracts
    Check(83+16<=InterfaceLayout.TroopRowHeight&&InterfaceLayout.TroopRowStep>InterfaceLayout.TroopRowHeight,"Slider stays inside row with space between stacks");
    Check(w>=1279&&h>=719,"Minimum logical viewport");Check(lastMarch<minimapTop,"March cards must not overlap minimap");Check(InterfaceLayout.HudHeight<112,"HUD must clear side controls");
    Check(w-232>260,"Rails must leave gameplay viewport");Check(InterfaceLayout.TabColumns(w-280,7)>=2,"Responsive tab columns");
+   float activity=Math.Min(1320f,w-72f)-302f;
+   int chests=InterfaceLayout.FlowColumns(activity,5,168f);
+   Check(activity/chests>=168f,"Daily chests keep a readable column at "+size.Item1+"x"+size.Item2+" scale "+pref);
+   int tabs=InterfaceLayout.TabColumns(activity,4);
+   Check(tabs==InterfaceLayout.FlowColumns(activity,4,150f)&&tabs>=2,"Activity tabs including the event hub stay on full rows");
   }
   var cells=new System.Collections.Generic.HashSet<int>();
   foreach(string id in new[]{"harvest","masonry","writing","logistics","march","drill","vitality","beastlore","veterans","veilreading"})

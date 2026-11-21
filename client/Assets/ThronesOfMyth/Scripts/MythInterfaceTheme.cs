@@ -196,10 +196,10 @@ namespace ThronesOfMyth
             if(!enabled&&!string.IsNullOrEmpty(tip))GUI.Label(rect,new GUIContent("",tip),GUIStyle.none);
             return result;
         }
-        public int Tabs(int selected,string[] titles,float width)
+        public int Tabs(int selected,string[] titles,float width,float minimumCell=150,float rowHeight=36)
         {
-            int columns=InterfaceLayout.TabColumns(width,titles.Length);if(wrappedTabs==null)wrappedTabs=new GUIStyle(Tab){wordWrap=true};wrappedTabs.fontSize=Tab.fontSize;var style=wrappedTabs;
-            return GUILayout.SelectionGrid(selected,titles,columns,style,GUILayout.MinHeight(Mathf.CeilToInt(titles.Length/(float)columns)*36));
+            int columns=minimumCell<=150?InterfaceLayout.TabColumns(width,titles.Length):InterfaceLayout.FlowColumns(width,titles.Length,minimumCell);if(wrappedTabs==null)wrappedTabs=new GUIStyle(Tab){wordWrap=true};wrappedTabs.fontSize=Tab.fontSize;var style=wrappedTabs;
+            return GUILayout.SelectionGrid(selected,titles,columns,style,GUILayout.MinHeight(Mathf.CeilToInt(titles.Length/(float)columns)*rowHeight));
         }
         public void Section(string title,string subtitle="")
         {GUILayout.Space(8);GUILayout.Label(title,Heading);if(!string.IsNullOrEmpty(subtitle))GUILayout.Label(subtitle,Small);GUILayout.Space(5);}

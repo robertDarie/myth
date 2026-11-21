@@ -54,9 +54,8 @@ namespace ThronesOfMyth
                 int used = healingDraft.Total + healingMythic * 5;
                 var cost = new ResourceAmounts { food = healingDraft.HealingWeight * 2 + healingMythic * 20, gold = healingDraft.HealingWeight + healingMythic * 15 };
                 GUILayout.Label("Selected " + used + " / " + me.hospitalCapacity + " beds · " + Cost(cost), noteStyle);
-                GUI.enabled = BuildingLevel("infirmary") > 0 && used > 0 && used <= me.hospitalCapacity && Afford(cost) && !processing;
-                if (GUILayout.Button("Begin treatment", theme.Primary, GUILayout.Height(44))) Send(new GameCommand { type = "hospital-heal", units = healingDraft.Copy(), mythic = healingMythic, requestId = Guid.NewGuid().ToString("N") });
-                GUI.enabled = true;
+                string healReason = processing ? "Sending your order…" : BuildingLevel("infirmary") <= 0 ? "Build the House of Renewal first." : used <= 0 ? "Choose wounded troops first." : used > me.hospitalCapacity ? "That selection needs more beds than this house has." : !Afford(cost) ? "More resources required: " + Cost(cost) : "";
+                if (theme.Action("Begin treatment", string.IsNullOrEmpty(healReason), healReason)) Send(new GameCommand { type = "hospital-heal", units = healingDraft.Copy(), mythic = healingMythic, requestId = Guid.NewGuid().ToString("N") });
             }
             GUILayout.Space(12); GUILayout.Label("Treatment runs independently of construction, training and your field armies. Healed units join reserves; choose their next march at home. Upgrade this institution in the City screen for more beds and faster treatment.", noteStyle);
         }

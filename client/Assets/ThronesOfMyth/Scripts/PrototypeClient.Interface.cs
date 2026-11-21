@@ -553,7 +553,7 @@ namespace ThronesOfMyth
             if (interfacePage == InterfacePage.Warfare) DrawWarfare();
             if (interfacePage == InterfacePage.Exploration) DrawExploration();
             if (interfacePage == InterfacePage.Campaign) DrawCampaign();
-            if (interfacePage == InterfacePage.Activity) DrawActivity();
+            if (interfacePage == InterfacePage.Activity) DrawActivity(main.width - 40);
             if (interfacePage == InterfacePage.Season) DrawSeason();
             if (interfacePage == InterfacePage.Kingdom) DrawKingdomStages();
             if (interfacePage == InterfacePage.Forge) DrawForge();
