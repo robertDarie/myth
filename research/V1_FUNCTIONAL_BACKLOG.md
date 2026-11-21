@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## City resources, jobs, speedups and offline catch-up
+
+On 2026-11-21 Mason exercised the existing five-level city on an isolated port 8105 kingdom. Production stayed the five-second tick. Founding supplies were collected once and resource packs were not opened. Construction, research and the 100 Oathguard order each spent the quoted cost once. Locked prerequisites, a busy crew, a short stockpile and a second click spent nothing. One Builder's Hourglass finished the Blessed Fields job and did not change the Oathguard job id. Echo of Haste stayed at 2 because no job was selected. Restarting the kingdom process caught up the real outage only: gold stayed 505, Citadel stayed 3, Fields stayed 3, and the training job kept counting. The eight-hour production bound and the five-level profile were not changed. A 25-level city was not activated and no save was converted. No new defect was found, so no new server test was added.
+
 ## Scout, fog, search and pass locks
 
 On 2026-11-21 Surveyor auto-explored an isolated port 8104 kingdom at the existing speed 7 and reveal 9. Olive Rest was claimed once for 25 gold and a second claim was refused. An uninvestigated cave claim was refused and spent nothing. A denied cross-pass march preview named the open scout route and left action points at 1500. The scout preview of that point stayed authorized. Ledger's snapshot omitted Surveyor's stockpile, findings and explored cells. Explored land, the one claim, and one private survey report were still in the save after the kingdom process restarted. The native window was played at 1280×720 and maximized on the 1920×1080 display. A completed cave gift was not claimed from the client because no cave had finished investigation.
