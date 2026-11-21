@@ -9,11 +9,11 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
-    "sha256": "620cad2844133166fdd402a9e1618a0c90a12a6ecb6cf93afc28356d8adca656"
+    "sha256": "6bce89a6c92cb0d3c4fe45e35fc696a31589afffe4dc14566895fa59f8c903b3"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
-    "sha256": "e50f7c2cd99a93e4916f798edca0e81bb241af1d790bcda588e86e86ad45f3cf"
+    "sha256": "d2f67bcc3ec71e30ab2f912fab35ed73819a905c3a792874e9677e8406dadc6f"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
@@ -29,7 +29,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
-    "sha256": "65fe250b22ff5c042752e94587d910023210be61801e71db08ac9862fc32271a"
+    "sha256": "1d83a1c29884a0ffa4fb4c676b6ed3cfb94b86bf89943eebef1f69890614aac4"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
