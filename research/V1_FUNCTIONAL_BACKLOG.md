@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Two clients in one kingdom — privacy and one seeded duel
+
+On 2026-11-21 two real client windows joined an isolated port 8103 kingdom as Herald and Banner. Their homes landed in different provinces, about 254.3 units apart, and the passes stayed sealed, so no legal field or pass fight was available. After a server restart both clients reconnected at Citadel 2 with their own food and wood, 900 troops, empty inventories, and no reports. Foreign snapshots omitted stockpiles, troops, inventory, and reports. An unseen attack, an alliance-less rally, and an unheld garrison were rejected. Native combat was not completed. `server/two-player-privacy.test.mjs` covers the legal same-province path in a seeded world: one accepted duel, the existing 225-wound defeat, one shared report, no plunder, a bystander who cannot read it, and the same rally and garrison refusals after reload.
+
 ## Task 8B — casualty classes and one treatment order
 
 The hospital ledger remains the severe-wound ledger. Light wounds are the march that is already recovering with its commander. Deaths and overflow deaths stay blocked. Treatment costs and bed counts were not retuned. Native hospital clicks were not run for the original Task 8B pass. On 2026-11-21 an isolated Outer Marches defeat put 225 of Seeker's 900 Oathguard in the hospital and left 675 recovering, with 0 dead. Ten completed into reserves and one cancellation refunded once. The fresh march had no archers, cavalry or mythic.

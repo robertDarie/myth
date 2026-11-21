@@ -101,3 +101,5 @@ The publication plan was not re-run for this playtest because no gameplay file c
 The game launches, creates a city, spends one real training order once, and keeps that order across a server restart. It is not yet shown that a player can finish a march, win or lose a fight, and heal the resulting wounded through the same build.
 
 Next engineering task: make the 1280×720 march card leave the clicked world target usable, then repeat the native path through one explored Forsaken fight and one House of Renewal treatment. Do not add a death percentage or a siege roster in that pass. Capture a version-bound casualty table before any later change that would let troops die.
+
+A later isolated kingdom, recorded in the 2026-11-21 development report, put two more clients on one server. That pair also persisted and reconnected. They still did not fight: their homes were in different provinces and the passes were sealed. This QA-01 report is unchanged on that point.

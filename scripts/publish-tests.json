@@ -26,6 +26,10 @@
       "command": ["node", "--test", "--test-name-pattern", "item amounts and speedup durations", "server/inventory-orders.test.mjs"]
     },
     {
+      "name": "two legal cities fight once and a bystander cannot read the report",
+      "command": ["node", "--test", "--test-name-pattern", "two legal cities fight once", "server/two-player-privacy.test.mjs"]
+    },
+    {
       "name": "a repeated training request does not open a second batch",
       "command": ["node", "--test", "--test-name-pattern", "repeated training request", "server/military-roster.test.mjs"]
     },
