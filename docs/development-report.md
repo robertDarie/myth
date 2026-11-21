@@ -1,5 +1,9 @@
 # Development report — 2026-11-21
 
+## Release candidate from the published UI commit
+
+The Windows and Linux playtest packages were built from clean `23f58ceb23fd3fa0da729e3face4445e2714305a`. Both manifests say version 0.45.0, protocol 17, and dirty false. The publication plan passed: 95 commands, including the server suite at 511 passed, 0 failed, and 5 Linux-only skips. The new Windows executable was not clicked. The Linux player is a StandaloneLinux64 ELF and was not executed: this machine's WSL disk is full and has musl rather than the glibc loader. The shared server modules match; the Linux archive also carries four unimported reference-city files, so its server digest differs. Details, hashes, ports, and tomorrow's checklist are in `docs/qa/OVERNIGHT_HANDOFF_2026-11-21.md`. The production save hash stayed `699A555BF038E28082626EDA55F9F5F53B725DF021FEF5FED2D9989700744101`.
+
 ## Daily, event and campaign controls stay readable
 
 The daily chest row at 1280×720 and interface scale 1.0 kept each column at its 90-pixel minimum inside the scroll view. "Locked" wrapped to "Lock" / "ed", reward names broke mid-word, and the Event hub toggle was not a row the player could use. At a maximized 1920×1009 window with the interface slider at 113 percent, the six chronicle titles shared one row and the last title was cut off at "VI · A".

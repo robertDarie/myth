@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Release-candidate package — partial
+
+The 2026-11-21 packages are stamped with `23f58ceb23fd3fa0da729e3face4445e2714305a`. Server checks and both Unity player compiles passed. Playing the new Windows executable, and playing the Linux ELF on a glibc machine, are still open. The handoff is `docs/qa/OVERNIGHT_HANDOFF_2026-11-21.md`. No reward, cost, or season-power value changed in that pass.
+
 ## Usability of daily, event and campaign screens
 
 On 2026-11-21 the daily chest row at 1280×720 crushed each chest to a few words, so "Locked" drew as "Lock" / "ed", and the Event hub control was not a usable tab. Chapter titles at a large interface size ran off the row, leaving the last chronicle only partly visible. The layout now keeps a readable chest width, puts Event hub on the same tab grid, and wraps the six chronicle titles onto full rows. A disabled claim states why it is locked. An unscheduled event family says "Not scheduled" and has no reward button. Reward amounts, claim ids, season power and the Greek art were not changed. Native screenshots are in `docs/qa/evidence/ui/`. The slider's reachable high end on the maximized window read 113 percent; 0.85 and 1.15 were checked by the layout contract. No frame-time capture was run.
