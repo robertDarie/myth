@@ -26,6 +26,10 @@
       "command": ["node", "--test", "--test-name-pattern", "repeated training request", "server/military-roster.test.mjs"]
     },
     {
+      "name": "reference quotes train each class once, and promotion keeps the count through restart and one refund",
+      "command": ["node", "--test", "--test-name-pattern", "reference quotes train each class", "server/military-roster.test.mjs"]
+    },
+    {
       "name": "existing troop costs and stats stay unchanged",
       "command": ["node", "--test", "--test-name-pattern", "troop costs and stats stay unchanged", "server/military-roster.test.mjs"]
     },

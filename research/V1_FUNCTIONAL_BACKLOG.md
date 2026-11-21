@@ -11,7 +11,7 @@ Resource packs, category speedups, universal speedups, commander XP, shards, sig
 
 ## Phase 4 task 8A — training orders and a closed siege class
 
-Fifteen prototype troop rows remain trainable when their existing Citadel, Hall of Spears and Athenaeum gates are met. Siege has no verified cost or stat row, so a siege order is rejected and spends nothing. Per-class facilities and the wounded, severely wounded and dead split stay blocked. Native training clicks were not run.
+Fifteen prototype troop rows remain trainable when their existing Citadel, Hall of Spears and Athenaeum gates are met. Siege has no verified cost or stat row, so a siege order is rejected and spends nothing. Per-class facilities and the wounded, severely wounded and dead split stay blocked. A native reference-scale city ordered 100 of each class from the one Hall of Spears, finished one infantry batch into 100 reserves, and promoted those 100 into Veteran Oathguard for the existing 5000 food / 5000 wood difference. Siege stayed closed on screen and rejected by the server.
 
 
 ## Phase 2 task 4 — season receipts and rankings
