@@ -24,7 +24,8 @@
   "essential_unknowns": [],
   "acceptance_checks": [
     "known kingdom search hides private targets and previews the same military route",
-    "march preview leaves the save unchanged"
+    "march preview leaves the save unchanged",
+    "a denied military preview names an open scout route without spending action points"
   ],
   "covers": [
     "server/marches.mjs",
@@ -49,7 +50,7 @@ The App Store listing checked on 2026-11-17 identifies the game. It does not pub
 
 ## Verified mechanics and prerequisites
 
-A player can list resources, divine passes, sanctuaries and shrines, strongholds, and that player's alliance markers, beacons and rallies from the snapshot the server already sent. The first right-click asks `/march-preview`. A second right-click on the same target sends the existing move, attack, gather or capture command only when that preview is authorized. Scouting still uses the physical route. A closed or unowned pass still blocks an army.
+A player can list resources, divine passes, sanctuaries and shrines, strongholds, and that player's alliance markers, beacons and rallies from the snapshot the server already sent. The first right-click asks `/march-preview`. A second right-click on the same target sends the existing move, attack, gather or capture command only when that preview is authorized. When that military preview is denied, the same response says whether a scout can still survey the point. Scouting still uses the physical route and spends no action points. A closed or unowned pass still blocks an army.
 
 ## Numeric reference
 
@@ -61,7 +62,7 @@ Military preview uses `route`. Scout preview uses `scoutRoute`. An attack previe
 
 ## Known uncertainties
 
-The live Rise of Kingdoms search categories, result order and confirmation gestures are unknown. Pass defender counts and territory bonuses were not added. Native clicks were not run.
+The live Rise of Kingdoms search categories, result order and confirmation gestures are unknown. Pass defender counts and territory bonuses were not added. On 2026-11-21 a native client listed known resources, searched for a legal Forsaken camp, and a right-click across a sealed pass showed the scout sentence without spending action points.
 
 ## Current Thrones of Myth behavior
 
@@ -85,7 +86,7 @@ No schema or protocol version change. Old saves load through the existing world 
 
 ## Acceptance tests
 
-`node --test server/kingdom-play.test.mjs` passed. A denied cross-province preview did not change the save. The same preview over HTTP returned unauthorized and left the army idle. A private Forsaken pin was absent from the other city's camps. Native UI remains NOT TESTED.
+`node --test server/kingdom-play.test.mjs` passed. A denied cross-province preview did not change the save. The same preview over HTTP returned unauthorized and left the army idle. A private Forsaken pin was absent from the other city's camps. On 2026-11-21 the native client showed the same denied-preview sentence, kept action points at 1500, and did not issue the march.
 
 ## Implementation status
 

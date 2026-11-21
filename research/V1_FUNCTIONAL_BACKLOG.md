@@ -1,5 +1,9 @@
 # V1 functional backlog
 
+## Scout, fog, search and pass locks
+
+On 2026-11-21 Surveyor auto-explored an isolated port 8104 kingdom at the existing speed 7 and reveal 9. Olive Rest was claimed once for 25 gold and a second claim was refused. An uninvestigated cave claim was refused and spent nothing. A denied cross-pass march preview named the open scout route and left action points at 1500. The scout preview of that point stayed authorized. Ledger's snapshot omitted Surveyor's stockpile, findings and explored cells. Explored land, the one claim, and one private survey report were still in the save after the kingdom process restarted. The native window was played at 1280×720 and maximized on the 1920×1080 display. A completed cave gift was not claimed from the client because no cave had finished investigation.
+
 ## Two clients in one kingdom — privacy and one seeded duel
 
 On 2026-11-21 two real client windows joined an isolated port 8103 kingdom as Herald and Banner. Their homes landed in different provinces, about 254.3 units apart, and the passes stayed sealed, so no legal field or pass fight was available. After a server restart both clients reconnected at Citadel 2 with their own food and wood, 900 troops, empty inventories, and no reports. Foreign snapshots omitted stockpiles, troops, inventory, and reports. An unseen attack, an alliance-less rally, and an unheld garrison were rejected. Native combat was not completed. `server/two-player-privacy.test.mjs` covers the legal same-province path in a seeded world: one accepted duel, the existing 225-wound defeat, one shared report, no plunder, a bystander who cannot read it, and the same rally and garrison refusals after reload.

@@ -26,6 +26,10 @@
       "command": ["node", "--test", "--test-name-pattern", "item amounts and speedup durations", "server/inventory-orders.test.mjs"]
     },
     {
+      "name": "a denied military preview names an open scout route without spending action points",
+      "command": ["node", "--test", "--test-name-pattern", "known kingdom search hides private targets", "server/kingdom-play.test.mjs"]
+    },
+    {
       "name": "two legal cities fight once and a bystander cannot read the report",
       "command": ["node", "--test", "--test-name-pattern", "two legal cities fight once", "server/two-player-privacy.test.mjs"]
     },

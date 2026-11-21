@@ -188,6 +188,13 @@ export function previewMarch(world, p, query) {
     destination = site;
   } else return denyPreview('Choose a march, attack, gather, capture or scout preview.');
   const path = route(world, a, destination);
-  if (!path) return denyPreview('No authorized gate route from this march to that destination.');
+  if (!path) {
+    if (type === 'move' && point(destination)) {
+      const scoutPath = scoutRoute(world, { ownerId: p.id, x: p.homeX, z: p.homeZ }, destination);
+      if (scoutPath) return denyPreview('No authorized gate route from this march to that destination. A scout can still survey it. Scouting follows the physical route and spends no action points.');
+      return denyPreview('No authorized gate route from this march to that destination. No open scout route from this city either.');
+    }
+    return denyPreview('No authorized gate route from this march to that destination.');
+  }
   return { authorized: true, message: destination.kind === 'gate' ? 'Authorized approach. This pass opens only its own corridor.' : 'Authorized route from the selected march.', route: path };
 }

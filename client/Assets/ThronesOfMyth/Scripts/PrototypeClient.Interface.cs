@@ -388,10 +388,12 @@ namespace ThronesOfMyth
             theme.Panel(r);
             theme.OneLine(new Rect(r.x + 8, r.y + 6, 198, 18), "FORSAKEN  " + card.unlocked + " unlocked · kingdom " + card.kingdomLevel, theme.Eyebrow);
             forsakenSearchLevel = GUI.TextField(new Rect(r.x + 8, r.y + 28, 46, 28), forsakenSearchLevel ?? "1", 2);
-            bool wait = card.searchReadySeconds > 0 || processing;
+            bool parsed = int.TryParse(forsakenSearchLevel, out int forsakenLevel);
+            bool wait = card.searchReadySeconds > 0 || processing || !parsed;
             string label = card.searchReadySeconds > 0 ? "Wait " + card.searchReadySeconds + "s" : "Search";
-            if (theme.Button(new Rect(r.x + 60, r.y + 28, 146, 28), label, !wait && int.TryParse(forsakenSearchLevel, out _)))
-                Send(new GameCommand { type = "forsaken-search", count = int.Parse(forsakenSearchLevel) });
+            string searchReason = processing ? "Waiting for the kingdom server…" : card.searchReadySeconds > 0 ? "Wait " + card.searchReadySeconds + "s before searching again." : !parsed ? "Enter a whole Forsaken level." : "";
+            if (theme.Button(new Rect(r.x + 60, r.y + 28, 146, 28), label, true, !wait, searchReason))
+                Send(new GameCommand { type = "forsaken-search", count = forsakenLevel });
             string message = card.searchResult != null ? card.searchResult.message : "Search a level you have unlocked. Godbreakers stay rally-only.";
             theme.Text(new Rect(r.x + 8, r.y + 60, 198, 30), message ?? "", theme.Small);
         }

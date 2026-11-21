@@ -25,7 +25,7 @@ namespace ThronesOfMyth
             CollectKingdomSearch();
             var list = new Rect(r.x + 8, r.y + 40, r.width - 16, 168);
             kingdomSearchScroll = GUI.BeginScrollView(list, kingdomSearchScroll, new Rect(0, 0, list.width - 18, Mathf.Max(list.height, kingdomHits.Count * 36)));
-            if (kingdomHits.Count == 0) theme.Text(new Rect(0, 0, list.width - 18, 48), "Nothing in this list is on your map yet.", theme.Small);
+            if (kingdomHits.Count == 0) theme.Text(new Rect(0, 0, list.width - 18, 48), "Nothing in this list is on your map yet. Scout farther, or choose another category.", theme.Small);
             for (int i = 0; i < kingdomHits.Count; i++)
             {
                 var hit = kingdomHits[i];
@@ -56,9 +56,17 @@ namespace ThronesOfMyth
             }
         }
         private void AddHit(string id, string kind, string title, string detail, float x, float z) { if (string.IsNullOrEmpty(id) || kingdomHits.Count >= 8) return; kingdomHits.Add(new KingdomSearchHit { id = id, kind = kind, title = title, detail = detail, x = x, z = z }); }
+        private bool MarchClickReady()
+        {
+            if (me == null || string.IsNullOrEmpty(token)) { status = "Join the kingdom before ordering a march."; return false; }
+            if (ActiveArmy == null) { status = "Select your own march before ordering a route."; return false; }
+            if (pendingOrder != null) { status = "Confirm your previous order before sending another march."; return false; }
+            if (processing || commands.Count > 0) { status = "Waiting for the kingdom server…"; return false; }
+            return true;
+        }
         private void ConfirmMarkerAction(MapMarker marker)
         {
-            if (processing || pendingOrder != null || commands.Count > 0) return;
+            if (!MarchClickReady()) return;
             bool ownArmy = marker.kind == "army" && System.Array.Exists(world.armies, army => army.id == marker.id && army.ownerId == playerId);
             if (ownArmy || marker.kind == "city" || marker.kind == "marker") { ActOnSelection(); return; }
             string type = marker.kind == "camp" ? "attack" : marker.kind == "node" ? "gather" : marker.kind == "site" ? "capture" : "";
@@ -69,14 +77,14 @@ namespace ThronesOfMyth
         }
         private void ConfirmGroundMarch(float x, float z)
         {
-            if (processing || pendingOrder != null || commands.Count > 0) return;
+            if (!MarchClickReady()) return;
             if (PreviewMatches("move", "", x, z)) { if (MarchClick.IssuesOrder(marchPreviewBusy, marchPreview.authorized, true)) { marchPreview = null; marchPreviewKey = ""; Send(new GameCommand { type = "move", x = x, z = z }); } else status = marchPreview.message; return; }
             if (marchPreviewBusy) { status = "Checking the authorized route…"; return; }
             QueueMarchPreview("move", "", x, z);
         }
         private bool PreviewMatches(string type, string id, float x, float z) => !marchPreviewBusy && marchPreview != null && marchPreviewKey == PreviewKey(type, id, x, z);
         private string PreviewKey(string type, string id, float x, float z) => type + "|" + (id ?? "") + "|" + x.ToString("0.00", CultureInfo.InvariantCulture) + "|" + z.ToString("0.00", CultureInfo.InvariantCulture) + "|" + (ActiveArmy == null ? "" : ActiveArmy.id);
-        private void QueueMarchPreview(string type, string id, float x, float z) { if (me == null || ActiveArmy == null || string.IsNullOrEmpty(token)) return; StartCoroutine(FetchMarchPreview(type, id, x, z)); }
+        private void QueueMarchPreview(string type, string id, float x, float z) { if (!MarchClickReady()) return; StartCoroutine(FetchMarchPreview(type, id, x, z)); }
         private IEnumerator FetchMarchPreview(string type, string id, float x, float z)
         {
             int serial = ++marchPreviewSerial; string key = PreviewKey(type, id, x, z); marchPreviewBusy = true; string owner = playerId, origin = serverUrl;

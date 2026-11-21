@@ -9,7 +9,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
-    "sha256": "6f643a0be46048edabc6c44215afdf2fb8cf577bdb166ea1922858c89a01a85a"
+    "sha256": "620cad2844133166fdd402a9e1618a0c90a12a6ecb6cf93afc28356d8adca656"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
@@ -17,7 +17,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
-    "sha256": "b02465a486fbd072e7e55c0051425cd4ff1cd93ebe3a3fb189e518cc70883621"
+    "sha256": "9f30ee8c9d18fcd7e89b27e71a8a6070f46d7d85875b0b29eb553310ebb5950b"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.ReferenceCityQa.cs",
@@ -29,7 +29,7 @@
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs",
-    "sha256": "32e4529235d6d10ab9a73551d3966aa0e42a2d6b26abde0c15a255101c350b10"
+    "sha256": "65fe250b22ff5c042752e94587d910023210be61801e71db08ac9862fc32271a"
   },
   {
     "path": "client/Assets/ThronesOfMyth/Scripts/WorldModels.cs",
@@ -61,7 +61,7 @@
   },
   {
     "path": "server/marches.mjs",
-    "sha256": "db9fd04037d7e5a6590bc13edfdffb8598fc31ce6dd77c702b84cb9b29b235f4"
+    "sha256": "b3c4fb3aafd507bb5f29f09b08f54eca8da52a480f23066645e3bd3b81d1102e"
   },
   {
     "path": "server/progression.mjs",

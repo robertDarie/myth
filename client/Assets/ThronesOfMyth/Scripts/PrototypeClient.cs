@@ -85,8 +85,16 @@ namespace ThronesOfMyth
             if (Input.GetKeyDown(KeyCode.H)) cameraControl?.SetView(new Vector3(me.homeX,0,me.homeZ),10);
             if (Input.GetKeyDown(KeyCode.Space)) FocusGameplay(ActiveArmy.x,ActiveArmy.z);
             if (Input.GetKeyDown(KeyCode.R)) Send("return");
-            if (PointerOverUI() || Camera.main == null) return;
-            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 300)) return;
+            if (PointerOverUI() || Camera.main == null)
+            {
+                if (chooseScoutDestination && (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) status = "That click landed on a panel. Left-click open ground to send the scout, or press Esc.";
+                return;
+            }
+            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 300))
+            {
+                if (chooseScoutDestination && Input.GetMouseButtonDown(0)) status = "That click missed the map. Left-click open ground inside the kingdom.";
+                return;
+            }
             var marker = hit.collider.GetComponentInParent<MapMarker>();
             map.hoveredId=marker==null?"":marker.id;
             if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1)) return;

@@ -57,8 +57,18 @@ test('known kingdom search hides private targets and previews the same military 
     assert.equal(a.state, 'Returning');
   }
   assert.throws(() => w.command(a, { type: 'move', x: far.x, z: far.z }), /authorized gate/);
+  const ap = a.ap;
+  const explored = a.explored.length;
+  const deniedMove = w.previewMarch(a, { type: 'move', x: far.x, z: far.z });
+  assert.equal(deniedMove.authorized, false);
+  assert.equal(deniedMove.route.length, 0);
+  if (scout.authorized) assert.match(deniedMove.message, /scout can still survey/);
+  else assert.match(deniedMove.message, /No open scout route/);
+  assert.equal(a.ap, ap);
+  assert.equal(a.explored.length, explored);
   assert.equal(a.target?.type === 'move' && a.target.x === far.x, false);
   w.command(a, { type: 'scout-send', x: a.homeX + 1, z: a.homeZ + 1 });
+  assert.equal(a.ap, ap);
   w.command(a, { type: 'scout-redirect', targetId: a.scouts[0].id, x: a.homeX + 2, z: a.homeZ + 1 });
   w.command(a, { type: 'scout-recall', targetId: a.scouts[0].id });
   w.command(a, { type: 'scout-auto', enabled: true });
