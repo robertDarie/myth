@@ -1,5 +1,13 @@
 # Development report — 2026-11-21
 
+## Fresh Forsaken search — a camp outside city sight stays reachable
+
+A fresh city's explored disk sits inside city sight, and ordinary level-1 camps are spawned outside that sight. Search used to require current sight, so it reported that no Forsaken of that level was reachable, including a camp a short march away. Search now returns the nearest camp of the requested level that already has a legal military route, as a private pin. The pin does not add fog cells. If no legal camp exists, levels 1 through 12 can still be placed on explored land that is outside the city footprint and on a legal route. A locked pass still has no route. Enemy stats, the 50 AP charge, commander XP, respawn and the rare-item chance are unchanged.
+
+`node --test server/forsaken-encounters.test.mjs server/forsaken.test.mjs server/kingdom-play.test.mjs` is the focused check. Forty fresh cities all received a legal level-1 pin and none gained fog cells from the search.
+
+Native play used the published Overnight Windows client (`d57c38baa44f0a6e5b99da75d07fa8ca8ba926ef`) against this server on port 8099 and a new save, `work/forsaken-loop/world.json`. Commander Seeker searched level 1, saw "Found a Forsaken on a legal route," previewed the attack, and sent the Frontier Captain. The fight spent 50 AP once, granted 100 captain XP once, wrote one core report titled "Forsaken Lv. 1 · Victory," and left 900 infantry with no severe wounded. Recall brought the march home. A second city, Outsider, received no Forsaken search record and no pin for that camp. Port 8095 was not started. The production save hash stayed `699A555BF038E28082626EDA55F9F5F53B725DF021FEF5FED2D9989700744101`. Screenshot: `docs/qa/evidence/forsaken-loop/native-return-home.webp`.
+
 ## Overnight package — clean Windows build of the published march-card commit
 
 Unity 6000.3.0f1 built `dist/Thrones-of-Myth-OvernightWindows.zip` (121,961,219 bytes) from clean `d57c38baa44f0a6e5b99da75d07fa8ca8ba926ef`. The manifest says version 0.45.0, protocol 17, dirty false, and server digest `67533707637586487b7d78a028a22f1fc7c2f9d4ea6a902469f4c02d4452e39f`. The packaged server answered `/health` on port 8098 with that same commit. Its save is the new empty file `work/overnight-kingdom/world.json`. Port 8095 was not started. The production save hash stayed `699A555BF038E28082626EDA55F9F5F53B725DF021FEF5FED2D9989700744101`. The new executable was not clicked. Linux launcher tests were not run: the WSL root is 127 MB and full, and it has no Node, Python, or glibc loader. Details are in `docs/qa/OVERNIGHT_2026-11-21_HANDOFF.md`.

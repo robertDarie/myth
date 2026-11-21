@@ -1,4 +1,5 @@
-import { PROVINCES, provinceAt, cellIndex } from './world-map.mjs';
+import { PROVINCES, provinceAt, cellIndex, CELL_SIZE, FOG_WIDTH } from './world-map.mjs';
+import { route } from './navigation.mjs';
 import { FINDINGS } from './findings.mjs';
 import { FOG, visible, visionContext } from './exploration.mjs';
 import { scoutProfile } from './scout-camp.mjs';
@@ -45,8 +46,8 @@ function observerEyes(w){
   return eyes;
 }
 const observed=(eyes,p)=>eyes.some(e=>distance(e,p)<=e.r);
-function suitable(w,region,p,context,eyes,except=null){
-  if(p.x<region.minX+4||p.x>region.maxX-4||p.z<region.minZ+4||p.z>region.maxZ-4||context.blocked(p,p)||observed(eyes,p))return false;
+function suitable(w,region,p,context,eyes,except=null,allowObserved=false){
+  if(p.x<region.minX+4||p.x>region.maxX-4||p.z<region.minZ+4||p.z>region.maxZ-4||context.blocked(p,p)||(!allowObserved&&observed(eyes,p)))return false;
   const live=aliveForsaken(w).filter(c=>c!==except);
   if(live.some(c=>distance(p,c)<POPULATION_RULES.separation||distance(p,{x:c.anchorX,z:c.anchorZ})<POPULATION_RULES.separation))return false;
   return live.filter(c=>distance(p,{x:c.anchorX,z:c.anchorZ})<18).length<6;
@@ -134,17 +135,21 @@ export function populationCommand(w,p,c,fail){
   const seen=visionContext(w,p).seen,home={x:p.homeX,z:p.homeZ},previous=p.forsaken.searchResult?.status==='found'?p.forsaken.searchResult.id:'';
   const ranked=aliveForsaken(w).filter(c=>c.level===level&&w.canEnter(p,c)&&seen(c)).sort((a,b)=>distance(a,home)-distance(b,home));
   const visibleEnemy=ranked.find(c=>c.id!==previous)||ranked[0];
+  const actor={ownerId:p.id,x:p.homeX,z:p.homeZ};
+  const reachable=aliveForsaken(w).filter(c=>c.level===level&&route(w,actor,c)).sort((a,b)=>distance(a,home)-distance(b,home));
+  const routed=reachable.find(c=>c.id!==previous)||reachable[0];
   let result={status:'none',message:'No reachable Forsaken of this level is in explored land. Scout farther and search again.'};
   if(visibleEnemy)result={status:'found',id:visibleEnemy.id,x:visibleEnemy.x,z:visibleEnemy.z,level,message:'Found a Forsaken. The sighting stays on your map until you search again.'};
+  else if(routed)result={status:'found',id:routed.id,x:routed.x,z:routed.z,level,message:'Found a Forsaken on a legal route. The sighting stays on your map until you search again.'};
   else if(level<=12){
     const region=provinceAt(home),r=REGIONAL_POPULATION.find(r=>r.id===region?.id),live=aliveForsaken(w);
     if(r&&live.length<192&&live.filter(c=>c.provinceId===r.id).length<r.target+4){
       const context=collisionContext(w),eyes=observerEyes(w);
-      for(let i=0;i<24;i++){const angle=(w.random()+i*.61803398875)*Math.PI*2,radius=8+w.random()*8,location={x:p.homeX+Math.cos(angle)*radius,z:p.homeZ+Math.sin(angle)*radius};
-        if(!p.explored.includes(cellIndex(location))||!suitable(w,region,location,context,eyes))continue;
-        const slot=freeSlot(w);if(!slot)break;spawn(w,slot,r,location,level);
-        result={status:'found',id:slot.id,x:slot.x,z:slot.z,level,message:'A Forsaken stepped onto explored land. Focus it and march.'};break;
-      }
+      const spots=p.explored.map(index=>({index,x:(index%FOG_WIDTH)*CELL_SIZE+CELL_SIZE/2,z:Math.floor(index/FOG_WIDTH)*CELL_SIZE+CELL_SIZE/2}))
+        .filter(location=>suitable(w,region,location,context,eyes,null,true)&&route(w,actor,location))
+        .sort((a,b)=>Number(observed(eyes,a))-Number(observed(eyes,b))||distance(home,b)-distance(home,a)||a.index-b.index);
+      const slot=spots.length?freeSlot(w):null;
+      if(slot){spawn(w,slot,r,spots[0],level);result={status:'found',id:slot.id,x:slot.x,z:slot.z,level,message:'A Forsaken stepped onto explored land. Focus it and march.'};}
     }
   }
   p.forsaken.searchResult={...result,...(result.status==='found'?{cycle:w.camps.find(c=>c.id===result.id).cycle}:{}),sequence:p.forsaken.searchSequence};return true;

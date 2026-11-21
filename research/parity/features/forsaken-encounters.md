@@ -6,7 +6,7 @@
   "description": "Player search and march to a lawful Forsaken without new drop rates or enemy stats",
   "reference_game": "Rise of Kingdoms",
   "reference_version": "UNKNOWN live build. Ordinary rows already recorded in the Forsaken numeric evidence. No new live client capture on 2026-11-19.",
-  "checked": "2026-11-19",
+  "checked": "2026-11-21",
   "status": "IMPLEMENTED",
   "parity": "Partial parity",
   "sources": [
@@ -21,7 +21,7 @@
     {"path": "research/parity/fixtures/forsaken-encounters.json", "checks": ["ordinary Forsaken level rows stay on the existing reference table"]}
   ],
   "deviations": [
-    {"decision": "A searched Forsaken on explored land can be focused and marched before it is inside current vision. The next search prefers a different visible match. Enemy stats, AP, XP, respawn and the 10 percent rare-item chance stay as they are.", "reason": "The server already chose a target, but the attack command refused it until the camp was visible, and the client had no search control.", "impact": "One private pin is returned to the searching city. Other cities do not receive that search result. Unexplored fog is not filled. Special fort, guardian and event-boss numbers remain unresolved.", "authority": "Overnight task 2 authorizes legal Forsaken search and marching while ordinary enemy numbers and unknown drop rates stay unchanged."}
+    {"decision": "A searched Forsaken on a legal military route can be focused and marched before it is inside current vision, including a camp that is still outside the explored disk. The next search prefers a different match. Enemy stats, AP, XP, respawn and the 10 percent rare-item chance stay as they are.", "reason": "A fresh city's explored disk sits inside city sight, and the level-1 camps are spawned outside that sight, so the old search reported that none were reachable.", "impact": "One private pin is returned to the searching city. Other cities do not receive that search result. Unexplored fog cells are not filled and a locked pass still has no route. Special fort, guardian and event-boss numbers remain unresolved.", "authority": "The fresh-player Forsaken loop requires a reachable level-1 target without revealing fog or changing combat numbers."}
   ],
   "essential_unknowns": [],
   "acceptance_checks": [
@@ -58,7 +58,7 @@ Levels 1 through 25 already exist. A city starts at unlock 1. The kingdom cap st
 
 ## Formulas and modifiers
 
-Search returns the nearest visible reachable Forsaken of the requested level, skipping the previous found id when another match exists. Otherwise, for levels 1 through 12, it may place one Forsaken on explored land that is not inside a city, a structure or current sight. That id is a private pin. The march uses the military route, so a closed pass still blocks the army. Arrival still fights only the live camp.
+Search returns the nearest Forsaken of the requested level that the army can legally march to, preferring one already in current sight and skipping the previous found id when another match exists. A camp outside the explored disk can be returned as that city's private pin. The pin does not add fog cells and is not copied onto another city's search. If no legal camp exists, levels 1 through 12 may place one Forsaken on explored land outside the city footprint, still on a legal route. A closed pass still blocks the army. Arrival still fights only the live camp. Enemy stats, AP, XP, respawn and the rare-item chance are unchanged.
 
 ## Known uncertainties
 
@@ -86,7 +86,7 @@ No schema change. Existing search results still validate. A restarted city keeps
 
 ## Acceptance tests
 
-`node --test server/forsaken-encounters.test.mjs` passed: level-1 search, inspection, one victory, one AP charge, restart, unlock and kingdom gates for levels 21 and 25, a second city's private search field, solo Godbreaker rejection, insufficient AP, population bounds and a 200-tick budget. `server/forsaken.test.mjs` also passed, including the existing 175-battle calibration. Native UI remains NOT TESTED.
+`node --test server/forsaken-encounters.test.mjs` covers level-1 search, inspection, one victory, one AP charge, restart, unlock and kingdom gates for levels 21 and 25, a second city's private search field, solo Godbreaker rejection, insufficient AP, population bounds and a 200-tick budget. A fresh city whose level-1 camps sit outside city sight still receives one legal route, spends 50 AP once, gains 100 commander XP once, keeps one victory report after a duplicate order and a reload, and does not reveal extra fog. `server/forsaken.test.mjs` keeps the existing 175-battle calibration. Native play is recorded separately from these server results.
 
 ## Implementation status
 
