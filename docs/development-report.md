@@ -1,5 +1,9 @@
 # Development report — 2026-11-21
 
+## Overnight package — clean Windows build of the published march-card commit
+
+Unity 6000.3.0f1 built `dist/Thrones-of-Myth-OvernightWindows.zip` (121,961,219 bytes) from clean `d57c38baa44f0a6e5b99da75d07fa8ca8ba926ef`. The manifest says version 0.45.0, protocol 17, dirty false, and server digest `67533707637586487b7d78a028a22f1fc7c2f9d4ea6a902469f4c02d4452e39f`. The packaged server answered `/health` on port 8098 with that same commit. Its save is the new empty file `work/overnight-kingdom/world.json`. Port 8095 was not started. The production save hash stayed `699A555BF038E28082626EDA55F9F5F53B725DF021FEF5FED2D9989700744101`. The new executable was not clicked. Linux launcher tests were not run: the WSL root is 127 MB and full, and it has no Node, Python, or glibc loader. Details are in `docs/qa/OVERNIGHT_2026-11-21_HANDOFF.md`.
+
 ## March card — the selection panel no longer covers the map
 
 The selected-march card and the deployed Stop and Recall controls now sit in the left column instead of across the lower middle of the map. A click on those buttons stays on the button. A second right-click on the same authorized target is what sends the march. No route, combat, or action-point value changed.
