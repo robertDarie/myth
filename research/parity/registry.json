@@ -30,6 +30,20 @@
       "kind": "bug-fix",
       "paths": [
         "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs",
+        "client/Assets/ThronesOfMyth/Scripts/MythInterfaceTheme.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Activity.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Campaign.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Kingdom.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Season.cs",
+        "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.cs"
+      ],
+      "reason": "Daily chest columns, the event-hub tab and chronicle titles were clipped, and several locked reward buttons had no reason. This is layout and disabled-state copy only. Reward amounts, claim ids, season power, costs and durations are unchanged."
+    },
+    {
+      "kind": "bug-fix",
+      "paths": [
+        "client/Assets/ThronesOfMyth/Scripts/InterfaceLayout.cs",
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.HudPolish.cs",
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.Interface.cs",
         "client/Assets/ThronesOfMyth/Scripts/PrototypeClient.KingdomSearch.cs",
