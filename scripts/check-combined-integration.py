@@ -9,7 +9,7 @@ def read(name):return json.loads((DATA/name).read_text(encoding='utf-8'))
 unity=read('unity-current.json')
 digest=hashlib.sha256()
 files=sorted((ROOT/'client/Assets/ThronesOfMyth/Scripts').glob('*.cs'),key=lambda p:p.name)
-for file in files:digest.update((file.name+'\0'+file.read_text(encoding='utf-8-sig')+'\0').encode())
+for file in files:digest.update((file.name+'\0'+file.read_text(encoding='utf-8-sig').replace('\r\n','\n')+'\0').encode())
 assert unity['success'] and unity['unityVersion']=='6000.3.0f1'
 assert unity['sourceFingerprint']==digest.hexdigest() and unity['scripts']==len(files), 'Run actual CombinedIntegrationReview; do not rebind old evidence'
 city=read('unity-city.json');assert city['success'] and city['independentBuildings']==11 and city['paidJobs']==1

@@ -7,7 +7,7 @@ The hospital ledger remains the severe-wound ledger. Light wounds are the march 
 
 ## Phase 3 — inventory order receipts
 
-Resource packs, category speedups, universal speedups, commander XP, shards, sigils, AP tonics and attack/defense oaths already ran on the server. The hole was a second delivery of the same order. That second delivery no longer spends the stack. Live Rise of Kingdoms VIP, teleports, peace shields, equipment chests, multi-duration speedups and drop rates remain unknown and were not invented. Experimental city jobs still need the integration owner before a speedup can see them. Native inventory clicks were not run.
+Resource packs, category speedups, universal speedups, commander XP, shards, sigils, AP tonics and attack/defense oaths already ran on the server. The hole was a second delivery of the same order. That second delivery no longer spends the stack. Live Rise of Kingdoms VIP, teleports, peace shields, equipment chests, multi-duration speedups and drop rates remain unknown and were not invented. Experimental city jobs still need the integration owner before a speedup can see them. On 2026-11-21 the native bag was checked per family: founding supplies, food, wood, the sigil, both oaths, and one universal training speedup passed; the builder hourglass showed the empty-job refusal and was not spent; the AP tonic showed the cap refusal and was not restored; commander XP, shards, and the research, training, and healing hourglasses were not owned. Restart replay of the saved food and universal receipts did not spend again.
 
 ## Phase 4 task 8A — training orders and a closed siege class
 

@@ -54,7 +54,7 @@ A defeat still moves the existing quarter of each class into the House of Renewa
 
 ## Phase 3 — inventory order receipts
 
-A repeated inventory request no longer spends a second item or moves the same job again. Pack sizes, 60-second speedups, 100 commander XP, the 20 AP tonic and the 10 percent oaths stayed on the existing table. Construction, research, training, healing and universal speedups still affect only the selected legacy job. Experimental city timers are unchanged and are not speedup targets. Native clicks were not run.
+A repeated inventory request no longer spends a second item or moves the same job again. Pack sizes, 60-second speedups, 100 commander XP, the 20 AP tonic and the 10 percent oaths stayed on the existing table. Construction, research, training, healing and universal speedups still affect only the selected legacy job. Experimental city timers are unchanged and are not speedup targets. On 2026-11-21 Scribe, on an isolated port 8102 kingdom, founding supplies, one food pack, one wood pack, one sigil, one attack oath, one defense oath, and one universal hourglass on a 100-Oathguard training job each spent once. Builder's Hourglass refused an empty construction lane and was not applied to the Citadel level 3 job before that job finished. The AP tonic refused a full 1500 cap and was not used below the cap. Chronicle pages, Warden shards, and the research, training, and healing hourglasses were not owned. After restart, the saved food and universal receipts did not spend again, and a conflicting digest on the food request was refused.
 
 ## Phase 4 task 8A — training orders and a closed siege class
 

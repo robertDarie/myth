@@ -1,7 +1,7 @@
 import { economyRules, ECONOMY, refreshEconomy, economyTime } from './economy.mjs';
 import { constructionJobs, ensureHero, heroLevel } from './progression.mjs';
 export const ITEMS = [
-  {id:'chronicle-page',name:'Chronicle of the Fallen',kind:'experience',amount:100,description:'Grants100 commander XP to one recruited commander below the current star cap.'},
+  {id:'chronicle-page',name:'Chronicle of the Fallen',kind:'experience',amount:100,description:'Grants 100 commander XP to one recruited commander below the current star cap.'},
   { id:'food-pack-100',name:'Harvest Satchel',kind:'resource',resource:'food',amount:100,description:'Open to add 100 food to your spendable stockpile.' },
   { id:'wood-pack-100',name:'Grove Supplies',kind:'resource',resource:'wood',amount:100,description:'Open to add 100 wood to your spendable stockpile.' },
   { id:'stone-pack-75',name:'Mason’s Crate',kind:'resource',resource:'stone',amount:75,description:'Open to add 75 stone to your spendable stockpile.' },

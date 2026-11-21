@@ -24,6 +24,7 @@
   "essential_unknowns": [],
   "acceptance_checks": [
     "a repeated inventory request does not consume the stack or the job twice",
+    "each owned item family spends once and a refused order keeps the stack",
     "existing item amounts and speedup durations stay unchanged"
   ],
   "covers": [
@@ -44,7 +45,7 @@ The App Store listing checked on 2026-11-17 names the game. It does not publish 
 
 ## Verified mechanics and prerequisites
 
-The server already opens packs, applies construction, research, training, healing and universal speedups to one owned job, grants commander XP under the star cap, restores Action Points under the cap, and applies one attack oath and one defense oath. The inventory screen sends those commands. A client cannot name its own reward.
+The server already opens packs, applies construction, research, training, healing and universal speedups to one owned job, grants commander XP under the star cap, restores Action Points under the cap, and applies one attack oath and one defense oath. The inventory screen sends those commands. A client cannot name its own reward. Speedup buttons name the city job the way the rest of the city does, and only list a lane that hourglass can affect. Resource, shard, sigil, XP, AP and oath previews use the existing item amounts. A capped commander says to promote stars. An empty lane says which job is missing. After the stack count drops, the list records that the previewed order was accepted once.
 
 ## Numeric reference
 
@@ -80,8 +81,8 @@ No schema change. A city without a receipt list still loads. New successful orde
 
 ## Acceptance tests
 
-`node --test server/inventory-orders.test.mjs` covers a repeated request, one job per speedup, the star cap, the AP cap, combat oaths, an atomic invalid order, and an experimental timer that does not move. The registered checks are "a repeated inventory request does not consume the stack or the job twice" and "existing item amounts and speedup durations stay unchanged".
+`node --test server/inventory-orders.test.mjs` covers a repeated request, one job per speedup, the star cap, the AP cap, combat oaths, an atomic invalid order, and an experimental timer that does not move. "each owned item family spends once and a refused order keeps the stack" opens a food pack and a wood pack, a sigil, ten Warden shards and one chronicle, restores 20 AP under the cap, activates each oath, and moves construction, research, the training head, treatment and one crafting job by one hourglass. A replay after reload does not spend again. A conflicting id, a short stack, an unknown item, a queued training batch and an unknown job leave the stack and the other lanes alone. The registered checks are "a repeated inventory request does not consume the stack or the job twice", "each owned item family spends once and a refused order keeps the stack" and "existing item amounts and speedup durations stay unchanged".
 
 ## Implementation status
 
-IMPLEMENTED. Partial parity. Native inventory clicks were not run. The Windows player was not rebuilt.
+IMPLEMENTED. Partial parity. On 2026-11-21 the isolated Scribe kingdom on port 8102 clicked founding supplies, one Harvest Satchel, one Grove Supplies, one Sealed Oracle Sigil, one Oath of Valor, one Oath of Shelter, and one Echo of Haste on Training 100 Oathguard. Each of those stacks dropped once and the previewed effect matched the existing item. Builder's Hourglass stayed owned: with no construction job the button stayed disabled and said no construction job was active, and while Citadel level 3 was listed beside that training job the category hourglass was not applied before the building finished. Pilgrim's Tonic stayed at two because 1500/1500 AP disabled the button. Chronicle of the Fallen, Warden Echo Shards, and the research, training, and healing hourglasses were not in the bag, so those families were not clicked. The client still creates a new request id on every click. After a restart of that kingdom only, the saved food-pack request and the saved universal-minute request returned without a second spend, and a wood target on the food request id was refused. A disposable InventoryClient build was used for those clicks and was not published as the overnight package.

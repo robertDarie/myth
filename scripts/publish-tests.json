@@ -18,6 +18,10 @@
       "command": ["node", "--test", "--test-name-pattern", "repeated inventory request", "server/inventory-orders.test.mjs"]
     },
     {
+      "name": "each owned item family spends once and a refused order keeps the stack",
+      "command": ["node", "--test", "--test-name-pattern", "each owned item family", "server/inventory-orders.test.mjs"]
+    },
+    {
       "name": "existing item amounts and speedup durations stay unchanged",
       "command": ["node", "--test", "--test-name-pattern", "item amounts and speedup durations", "server/inventory-orders.test.mjs"]
     },
